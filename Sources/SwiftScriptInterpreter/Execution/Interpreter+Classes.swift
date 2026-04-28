@@ -61,6 +61,7 @@ extension Interpreter {
         var methods: [String: Function] = [:]
         var computed: [String: Function] = [:]
         var customInits: [Function] = []
+        var dynamicMemberSubscript: Function? = nil
         var willSetObservers: [String: Function] = [:]
         var didSetObservers: [String: Function] = [:]
         var pendingStaticInits: [(name: String, expr: ExprSyntax)] = []
@@ -242,6 +243,10 @@ extension Interpreter {
                 } else {
                     methods[methodName] = fn
                 }
+            } else if let subscriptDecl = decl.as(SubscriptDeclSyntax.self) {
+                if let fn = makeDynamicMemberSubscript(subscriptDecl, owner: name, scope: scope) {
+                    dynamicMemberSubscript = fn
+                }
             }
         }
 
@@ -331,7 +336,8 @@ extension Interpreter {
             staticMembers: [:],
             willSetObservers: willSetObservers,
             didSetObservers: didSetObservers,
-            requiredInitSignatures: requiredInitSignatures
+            requiredInitSignatures: requiredInitSignatures,
+            dynamicMemberSubscript: dynamicMemberSubscript
         )
 
         for (memberName, expr) in pendingStaticInits {

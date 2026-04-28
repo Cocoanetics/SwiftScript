@@ -360,6 +360,73 @@ struct BridgesTests {
         #expect(captured == "swift\n")
     }
 
+    // MARK: KeyPath sugar
+
+    @Test func keyPathSugarPassesAsClosure() async throws {
+        let interp = Interpreter()
+        var captured = ""
+        interp.output = { captured += $0 + "\n" }
+        try await interp.eval("""
+            struct Person { var name: String; var age: Int }
+            let people = [Person(name: "Alice", age: 30), Person(name: "Bob", age: 25)]
+            print(people.map(\\.age))
+            """)
+        #expect(captured == "[30, 25]\n")
+    }
+
+    @Test func nestedKeyPath() async throws {
+        let interp = Interpreter()
+        var captured = ""
+        interp.output = { captured += $0 + "\n" }
+        try await interp.eval("""
+            struct Inner { var n: Int }
+            struct Outer { var inner: Inner }
+            let xs = [Outer(inner: Inner(n: 1)), Outer(inner: Inner(n: 2))]
+            print(xs.map(\\.inner.n))
+            """)
+        #expect(captured == "[1, 2]\n")
+    }
+
+    // MARK: Mirror
+
+    @Test func mirrorReportsStructFields() async throws {
+        let interp = Interpreter()
+        var captured = ""
+        interp.output = { captured += $0 + "\n" }
+        try await interp.eval("""
+            struct Person { var name: String; var age: Int }
+            let m = Mirror(reflecting: Person(name: "Alice", age: 30))
+            print(m.subjectType)
+            print(m.displayStyle ?? "?")
+            for child in m.children {
+                print("\\(child.label ?? "_")=\\(child.value)")
+            }
+            """)
+        #expect(captured == "Person\nstruct\nname=Alice\nage=30\n")
+    }
+
+    // MARK: @dynamicMemberLookup
+
+    @Test func dynamicMemberLookupRoutesToSubscript() async throws {
+        let interp = Interpreter()
+        var captured = ""
+        interp.output = { captured += $0 + "\n" }
+        try await interp.eval(#"""
+            @dynamicMemberLookup
+            struct Bag {
+                var storage: [String: Int]
+                subscript(dynamicMember name: String) -> Int? {
+                    return storage[name]
+                }
+            }
+            let b = Bag(storage: ["foo": 1, "bar": 2])
+            print(b.foo ?? -1)
+            print(b.bar ?? -1)
+            print(b.zap ?? -1)
+            """#)
+        #expect(captured == "1\n2\n-1\n")
+    }
+
     @Test func valueIsHashableOnHostSide() async throws {
         let interp = Interpreter()
         let arr = try await interp.eval(#"[1, "hello", true, 1, "hello"]"#)

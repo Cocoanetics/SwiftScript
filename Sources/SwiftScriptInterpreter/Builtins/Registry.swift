@@ -18,6 +18,9 @@ extension Interpreter {
         // `actor` declarations all run synchronously since this
         // interpreter has no scheduler.
         register(module: ConcurrencyModule())
+        // `Mirror(reflecting:)` — structural reflection over `Value`
+        // for generic dump / debug helpers. Always-on (no import).
+        register(module: MirrorModule())
 
         // Foundation-side: registered lazily on `import Foundation` (and
         // on `import Darwin`/`Glibc`, which bring the same C-math

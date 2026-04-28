@@ -156,6 +156,9 @@ extension Interpreter {
         if let isExpr = expr.as(IsExprSyntax.self) {
             return try await evaluate(isExpr: isExpr, in: scope)
         }
+        if let keyPath = expr.as(KeyPathExprSyntax.self) {
+            return try evaluate(keyPath: keyPath)
+        }
         if let seq = expr.as(SequenceExprSyntax.self) {
             // Operator folding should have eliminated these. If we still see one,
             // it's a sign the input contained an operator we don't know about.

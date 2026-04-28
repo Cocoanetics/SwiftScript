@@ -202,6 +202,11 @@ public struct StructDef {
     /// func stores a `.function` value; static var with `{ body }` is
     /// evaluated once at type-declaration time and stored as a value.
     public var staticMembers: [String: Value] = [:]
+    /// `subscript(dynamicMember name: String) -> T` — when set, a
+    /// member access that misses the normal lookup falls through to
+    /// this subscript with the member name as a String. Mirrors
+    /// `@dynamicMemberLookup` on the host side.
+    public var dynamicMemberSubscript: Function?
 
     public struct Property {
         public let name: String
@@ -245,6 +250,10 @@ public struct ClassDef {
     /// provide each required init their ancestors declare; the validator
     /// emits the matching swiftc diagnostic when one is missing.
     public var requiredInitSignatures: [[String?]] = []
+    /// `subscript(dynamicMember name: String) -> T` — fallback for
+    /// `@dynamicMemberLookup`-style classes. Resolved after explicit
+    /// fields, computed properties, and methods all miss.
+    public var dynamicMemberSubscript: Function?
 }
 
 /// Mutable reference cell for a class instance. Holding the same

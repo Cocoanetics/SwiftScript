@@ -243,6 +243,17 @@ extension Interpreter {
                 )
                 return result
             }
+            // `@dynamicMemberLookup`: when the type provides
+            // `subscript(dynamicMember:) -> T`, route the missing
+            // member through it with the name as a String.
+            if let def = structDefs[typeName],
+               let dyn = def.dynamicMemberSubscript
+            {
+                let (result, _) = try await invokeStructMethod(
+                    dyn, on: receiver, fields: fields, args: [.string(name)]
+                )
+                return result
+            }
         case .classInstance(let inst):
             if let f = inst.fields.first(where: { $0.name == name }) {
                 return f.value
@@ -262,6 +273,15 @@ extension Interpreter {
             // wrapped value as the receiver.
             if let wrapped = wrappedBridgedValue(inst) {
                 return try await lookupProperty(name, on: wrapped, at: offset)
+            }
+            // `@dynamicMemberLookup` for classes — same shape as for
+            // structs, dispatched via `invokeClassMethod`.
+            for def in classDefChain(inst.typeName) {
+                if let dyn = def.dynamicMemberSubscript {
+                    return try await invokeClassMethod(
+                        dyn, on: inst, def: def, args: [.string(name)]
+                    )
+                }
             }
         case .enumValue(let typeName, let caseName, _):
             if name == "rawValue" {

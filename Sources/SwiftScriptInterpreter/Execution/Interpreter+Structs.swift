@@ -21,6 +21,7 @@ extension Interpreter {
         var methods: [String: Function] = [:]
         var computed: [String: Function] = [:]
         var customInits: [Function] = []
+        var dynamicMemberSubscript: Function? = nil
         // Static members are resolved in two passes: first we collect them
         // (so struct-name references in their initializers can resolve
         // later), then after registering the struct shell we evaluate each.
@@ -127,8 +128,15 @@ extension Interpreter {
                 } else {
                     methods[methodName] = fn
                 }
+            } else if let subscriptDecl = decl.as(SubscriptDeclSyntax.self) {
+                // Currently only the dynamicMember-shape is recognized:
+                // `subscript(dynamicMember name: String) -> T`. Other
+                // subscripts (indexed `subscript(_ i: Int)`) aren't
+                // modeled yet — they'd need a separate dispatch path.
+                if let fn = makeDynamicMemberSubscript(subscriptDecl, owner: name, scope: scope) {
+                    dynamicMemberSubscript = fn
+                }
             }
-            // init / subscript / computed properties: not yet supported.
         }
 
         // Register the shell so static initializers that reference the
@@ -139,7 +147,8 @@ extension Interpreter {
             methods: methods,
             computedProperties: computed,
             customInits: customInits,
-            staticMembers: [:]
+            staticMembers: [:],
+            dynamicMemberSubscript: dynamicMemberSubscript
         )
 
         // Evaluate static initializers and getters; install everything.
@@ -155,6 +164,31 @@ extension Interpreter {
             structDefs[name]!.staticMembers[memberName] = .function(fn)
         }
         return .void
+    }
+
+    /// If `subscriptDecl` matches the `subscript(dynamicMember:)` shape
+    /// expected by `@dynamicMemberLookup`, build a one-arg Function
+    /// from its getter body so we can dispatch member-access misses
+    /// through it. Returns nil for non-dynamicMember subscripts.
+    func makeDynamicMemberSubscript(
+        _ subscriptDecl: SubscriptDeclSyntax,
+        owner: String,
+        scope: Scope
+    ) -> Function? {
+        let params = subscriptDecl.parameterClause.parameters
+        guard params.count == 1,
+              params.first?.firstName.text == "dynamicMember",
+              let accessorBlock = subscriptDecl.accessorBlock,
+              let body = try? extractGetterBody(accessorBlock)
+        else { return nil }
+        let internalName = params.first?.secondName?.text
+            ?? params.first!.firstName.text
+        return Function(
+            name: "\(owner).subscript(dynamicMember:)",
+            parameters: [.init(label: "dynamicMember", name: internalName)],
+            returnType: subscriptDecl.returnClause.type,
+            kind: .user(body: body, capturedScope: scope)
+        )
     }
 
     /// Pull the getter body from an `AccessorBlockSyntax`. Supports the
