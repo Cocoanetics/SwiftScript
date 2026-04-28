@@ -30,6 +30,17 @@ extension Interpreter {
                 at: memberAccess.positionAfterSkippingLeadingTrivia.utf8Offset
             )
         }
+        // `[T].self` — array metatype. Encoded as `"[T]"` so the
+        // decoder can recognize and dispatch element-by-element. Same
+        // shape works for `[T?].self` (encoded as `[T?]`).
+        if memberAccess.declName.baseName.text == "self",
+           let arrExpr = base.as(ArrayExprSyntax.self),
+           arrExpr.elements.count == 1,
+           let inner = arrExpr.elements.first
+        {
+            let innerText = inner.expression.description.trimmingCharacters(in: .whitespaces)
+            return .opaque(typeName: "Metatype", value: "[\(innerText)]")
+        }
         // Nested type access: `Calendar.Component.year` — base is itself a
         // member-access whose dotted form (`Calendar.Component`) is a
         // registered type. We don't model nested types via a `typeRef`
