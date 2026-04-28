@@ -24,66 +24,115 @@ struct JSONModule: BuiltinModule {
     let name = "JSON"
 
     func register(into i: Interpreter) {
-        // JSONEncoder/JSONDecoder are sentinel-shaped — a `.structValue`
-        // with a known typeName, no fields. They have no real state today.
+        // Encoders/Decoders carry a real Foundation instance as their
+        // `.opaque` payload, so configuration set from script
+        // (`outputFormatting`, `dateEncodingStrategy`, …) propagates to
+        // the actual coder.
         i.registerInit(on: "JSONEncoder", labels: []) { _ in
-            return .structValue(typeName: "JSONEncoder", fields: [])
+            .opaque(typeName: "JSONEncoder", value: JSONEncoder())
         }
         i.registerInit(on: "JSONDecoder", labels: []) { _ in
-            return .structValue(typeName: "JSONDecoder", fields: [])
+            .opaque(typeName: "JSONDecoder", value: JSONDecoder())
         }
-        i.registerMethod(on: "JSONEncoder", name: "encode") { _, args in
+        i.registerInit(on: "PropertyListEncoder", labels: []) { _ in
+            .opaque(typeName: "PropertyListEncoder", value: PropertyListEncoder())
+        }
+        i.registerInit(on: "PropertyListDecoder", labels: []) { _ in
+            .opaque(typeName: "PropertyListDecoder", value: PropertyListDecoder())
+        }
+
+        // `encode(_:)` — same shape on every encoder type. We unwrap
+        // the receiver, build a `ScriptCodable` around the value, and
+        // hand it to Foundation. Strategies the user set on the
+        // encoder propagate naturally because we hold the real instance.
+        let encodeBody: @Sendable (Value, [Value]) async throws -> Value = { recv, args in
             guard args.count == 1 else {
-                throw RuntimeError.invalid("JSONEncoder.encode: expected 1 argument")
+                throw RuntimeError.invalid("encode: expected 1 argument")
             }
-            let encoder = JSONEncoder()
-            // Match Swift's default ordering: declaration order from
-            // synthesized Encodable. The bridge already walks fields in
-            // that order, but the encoder may otherwise stable-sort if
-            // we don't pin this.
-            encoder.outputFormatting = []
+            guard case .opaque(_, let any) = recv else {
+                throw RuntimeError.invalid("encode: bad receiver")
+            }
             do {
-                let data = try encoder.encode(ScriptCodable(args[0]))
-                return .opaque(typeName: "Data", value: data)
+                if let enc = any as? JSONEncoder {
+                    return .opaque(typeName: "Data", value: try enc.encode(ScriptCodable(args[0])))
+                }
+                if let enc = any as? PropertyListEncoder {
+                    return .opaque(typeName: "Data", value: try enc.encode(ScriptCodable(args[0])))
+                }
+                throw RuntimeError.invalid("encode: unknown encoder type")
             } catch {
-                throw RuntimeError.invalid("JSONEncoder.encode: \(error)")
+                throw RuntimeError.invalid("encode: \(error)")
             }
         }
-        // Capture `self` so the decode closure can read interpreter state
-        // (structDefs, enumDefs) for type-driven coercion.
-        i.registerMethod(on: "JSONDecoder", name: "decode") { [weak i] _, args in
-            guard let i else {
-                throw RuntimeError.invalid("JSONDecoder.decode: interpreter unavailable")
+        i.registerMethod(on: "JSONEncoder",         name: "encode") { try await encodeBody($0, $1) }
+        i.registerMethod(on: "PropertyListEncoder", name: "encode") { try await encodeBody($0, $1) }
+
+        // `decode(_:from:)` — symmetric. We thread the target type
+        // and interpreter through `userInfo` so the bridge knows what
+        // shape to coerce the JSON/PList tree into.
+        let decodeBody: @Sendable (Value, [Value], Interpreter?) async throws -> Value = { recv, args, interp in
+            guard let interp else {
+                throw RuntimeError.invalid("decode: interpreter unavailable")
             }
             guard args.count == 2 else {
-                throw RuntimeError.invalid(
-                    "JSONDecoder.decode(_:from:): expected 2 arguments"
-                )
+                throw RuntimeError.invalid("decode(_:from:): expected 2 arguments")
             }
-            guard case .opaque(typeName: "Metatype", let any) = args[0],
-                  let typeName = any as? String
+            guard case .opaque(typeName: "Metatype", let typeAny) = args[0],
+                  let typeName = typeAny as? String
             else {
-                throw RuntimeError.invalid(
-                    "JSONDecoder.decode: first argument must be a type (`T.self`)"
-                )
+                throw RuntimeError.invalid("decode: first argument must be a type (`T.self`)")
             }
             guard case .opaque(typeName: "Data", let dataAny) = args[1],
                   let data = dataAny as? Data
             else {
-                throw RuntimeError.invalid(
-                    "JSONDecoder.decode: second argument must be Data"
-                )
+                throw RuntimeError.invalid("decode: second argument must be Data")
             }
-            let decoder = JSONDecoder()
-            decoder.userInfo[.scriptInterpreter] = i
-            decoder.userInfo[.scriptTargetType] = typeName
+            guard case .opaque(_, let recvAny) = recv else {
+                throw RuntimeError.invalid("decode: bad receiver")
+            }
             do {
-                let wrapper = try decoder.decode(ScriptCodable.self, from: data)
-                return wrapper.value
+                if let dec = recvAny as? JSONDecoder {
+                    dec.userInfo[.scriptInterpreter] = interp
+                    dec.userInfo[.scriptTargetType] = typeName
+                    return try dec.decode(ScriptCodable.self, from: data).value
+                }
+                if let dec = recvAny as? PropertyListDecoder {
+                    dec.userInfo[.scriptInterpreter] = interp
+                    dec.userInfo[.scriptTargetType] = typeName
+                    return try dec.decode(ScriptCodable.self, from: data).value
+                }
+                throw RuntimeError.invalid("decode: unknown decoder type")
             } catch {
-                throw RuntimeError.invalid("JSONDecoder.decode: \(error)")
+                throw RuntimeError.invalid("decode: \(error)")
             }
         }
+        i.registerMethod(on: "JSONDecoder",         name: "decode") { [weak i] in try await decodeBody($0, $1, i) }
+        i.registerMethod(on: "PropertyListDecoder", name: "decode") { [weak i] in try await decodeBody($0, $1, i) }
+
+        // Configurable strategies — surface the common ones as static
+        // values on the nested types. The user assigns them to the
+        // encoder/decoder via property setters wired below.
+        i.registerStaticValue(on: "JSONEncoder.OutputFormatting",
+            name: "prettyPrinted",
+            value: .opaque(typeName: "JSONEncoder.OutputFormatting", value: JSONEncoder.OutputFormatting.prettyPrinted))
+        i.registerStaticValue(on: "JSONEncoder.OutputFormatting",
+            name: "sortedKeys",
+            value: .opaque(typeName: "JSONEncoder.OutputFormatting", value: JSONEncoder.OutputFormatting.sortedKeys))
+        i.registerStaticValue(on: "JSONEncoder.OutputFormatting",
+            name: "withoutEscapingSlashes",
+            value: .opaque(typeName: "JSONEncoder.OutputFormatting", value: JSONEncoder.OutputFormatting.withoutEscapingSlashes))
+        i.registerStaticValue(on: "JSONEncoder.DateEncodingStrategy",
+            name: "iso8601",
+            value: .opaque(typeName: "JSONEncoder.DateEncodingStrategy", value: JSONEncoder.DateEncodingStrategy.iso8601))
+        i.registerStaticValue(on: "JSONEncoder.DateEncodingStrategy",
+            name: "secondsSince1970",
+            value: .opaque(typeName: "JSONEncoder.DateEncodingStrategy", value: JSONEncoder.DateEncodingStrategy.secondsSince1970))
+        i.registerStaticValue(on: "JSONDecoder.DateDecodingStrategy",
+            name: "iso8601",
+            value: .opaque(typeName: "JSONDecoder.DateDecodingStrategy", value: JSONDecoder.DateDecodingStrategy.iso8601))
+        i.registerStaticValue(on: "JSONDecoder.DateDecodingStrategy",
+            name: "secondsSince1970",
+            value: .opaque(typeName: "JSONDecoder.DateDecodingStrategy", value: JSONDecoder.DateDecodingStrategy.secondsSince1970))
 
         // `String.data(using:)` — returns Data?. Hand-rolled because the
         // symbol-graph signature has a defaulted `allowLossyConversion`

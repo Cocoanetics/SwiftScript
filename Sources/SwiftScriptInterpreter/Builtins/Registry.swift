@@ -43,6 +43,12 @@ extension Interpreter {
         registerOnImport("Foundation", module: jsonModule)
         registerOnImport("Darwin",     module: jsonModule)
         registerOnImport("Glibc",      module: jsonModule)
+        // URLSession.shared.data(from:) — surface enough to fetch and
+        // decode JSON over HTTP. Foundation-gated.
+        let urlSessionModule = URLSessionModule()
+        registerOnImport("Foundation", module: urlSessionModule)
+        registerOnImport("Darwin",     module: urlSessionModule)
+        registerOnImport("Glibc",      module: urlSessionModule)
     }
 
     func registerBuiltin(name: String, body: @escaping ([Value]) async throws -> Value) {
