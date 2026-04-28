@@ -473,10 +473,10 @@ func render(_ template: String, _ expr: String) -> String {
 // Capture those in `EmitConfig`; the emit is then mechanical.
 
 struct EmitConfig {
-    /// The dispatch-table write up to (but not including) the closure
-    /// body. E.g. `i.bridges["URL.absoluteString"] = .computed` or
-    /// `i.bridges["URL(string:)"] = .\`init\``. The `renderEmit`
-    /// helper appends ` { params in body }` to this.
+    /// Lead-in for a dict entry — `"<key>": .<case>`. The renderer
+    /// appends ` { <closureParams> in <body> },` for the closure-bearing
+    /// cases. Static-value entries don't go through `renderEmit`; they
+    /// are emitted directly as a one-line dict entry.
     let registerLine: String
     /// The closure's parameter list — `args`, `receiver, args`, or `receiver`.
     let closureParams: String
@@ -498,10 +498,10 @@ struct EmitConfig {
     let tupleElements: [BridgedType]
 }
 
-/// Render a registration as code, using the unified shape. Indentation
-/// matches the existing per-case output so diff churn against the
-/// pre-refactor file is minimal.
-func renderEmit(_ c: EmitConfig) -> String {
+/// Render a runtime-time call: `i.<registerLine> { <params> in <body> }`.
+/// Used for globals (`registerGlobal(name:)`) which don't fit the
+/// bridges table — they bind into root scope at install time.
+func renderRuntimeEmit(_ c: EmitConfig) -> String {
     let returnExpr = buildReturnExpr(
         callExpr: c.callExpr,
         returnType: c.returnType,
@@ -523,6 +523,34 @@ func renderEmit(_ c: EmitConfig) -> String {
             \(c.registerLine) { \(c.closureParams) in
     \(bodyLines.joined(separator: "\n"))
             }
+    """
+}
+
+/// Render a dict entry: `"key": .case { params in body },`. Each per-
+/// type generated file is a `static let <type>: [String: Bridge] = [
+/// <entries> ]`, so emits all share this dict-entry shape.
+func renderEmit(_ c: EmitConfig) -> String {
+    let returnExpr = buildReturnExpr(
+        callExpr: c.callExpr,
+        returnType: c.returnType,
+        isOptional: c.isOptional,
+        isThrowing: c.isThrowing,
+        tupleElements: c.tupleElements
+    )
+    var bodyLines: [String] = []
+    if let arity = c.arity {
+        bodyLines.append("        guard args.count == \(arity) else {")
+        bodyLines.append("            throw RuntimeError.invalid(\"\(c.errorPrefix): expected \(arity) argument(s), got \\(args.count)\")")
+        bodyLines.append("        }")
+    }
+    if let recv = c.recvUnboxLine {
+        bodyLines.append("        \(recv)")
+    }
+    bodyLines.append("        \(returnExpr)")
+    return """
+        \(c.registerLine) { \(c.closureParams) in
+    \(bodyLines.joined(separator: "\n"))
+        },
     """
 }
 
@@ -755,9 +783,17 @@ func buildReturnExpr(
 // based on the source module: `Swift` symbols register at interpreter
 // startup; `Foundation` (and friends) wait for `import Foundation`.
 enum EmitGroup { case stdlib, foundation }
+/// What kind of file an emit lands in:
+/// - `.type(name)`: per-type bridge dict (`static let url: [String: Bridge] = [...]`)
+/// - `.runtime`:    code that runs at install time (globals, comparators)
+enum EmitBucket {
+    case type(String)
+    case runtime
+}
 struct EmitEntry {
     let symbolPath: String   // "sqrt(_:)" or "String.foo(...)"
     let group: EmitGroup
+    let bucket: EmitBucket
     let code: String
 }
 
@@ -903,8 +939,8 @@ for annotated in prioritizedSymbols {
     }
     /// Helper: append an emit entry and mark all the bookkeeping in one
     /// step so the per-kind blocks below stay tight.
-    func record(_ key: String, code: String) {
-        emitted.append(EmitEntry(symbolPath: path, group: emitGroup, code: code))
+    func record(_ key: String, bucket: EmitBucket, code: String) {
+        emitted.append(EmitEntry(symbolPath: path, group: emitGroup, bucket: bucket, code: code))
         seenPaths.insert(path)
         registeredKeys.insert(key)
     }
@@ -917,7 +953,10 @@ for annotated in prioritizedSymbols {
         let name = sym.names.title.split(separator: "(").first.map(String.init) ?? sym.names.title
         let key = "global:\(name)"
         if !claim(key, clashLabel: name) { continue }
-        record(key, code: renderEmit(EmitConfig(
+        // Globals don't fit the bridges table; they bind into rootScope.
+        // Stay as runtime-time `i.registerGlobal(...)` calls in the
+        // manifest's runtime block.
+        record(key, bucket: .runtime, code: renderRuntimeEmit(EmitConfig(
             registerLine: "i.registerGlobal(name: \"\(name)\")",
             closureParams: "args",
             arity: sig.parameters.count,
@@ -947,8 +986,8 @@ for annotated in prioritizedSymbols {
         let key = "method:\(receiverTypeName).\(methodName)"
         if !claim(key, clashLabel: "\(receiverTypeName).\(methodName)") { continue }
         let recvUnbox = render(recvType.unboxTemplate, "receiver")
-        record(key, code: renderEmit(EmitConfig(
-            registerLine: "i.bridges[\"func \(receiverTypeName).\(methodName)()\"] = .method",
+        record(key, bucket: .type(receiverTypeName), code: renderEmit(EmitConfig(
+            registerLine: "\"func \(receiverTypeName).\(methodName)()\": .method",
             closureParams: "receiver, args",
             arity: sig.parameters.count,
             recvUnboxLine: "let recv: \(recvType.swiftSpelling) = \(recvUnbox)",
@@ -983,8 +1022,8 @@ for annotated in prioritizedSymbols {
         }
         let labelDoc = labels.isEmpty ? "" : labels.map { "\($0):" }.joined()
         let initKey = "init \(receiverTypeName)(\(labelDoc))"
-        record(key, code: renderEmit(EmitConfig(
-            registerLine: "i.bridges[\"\(initKey)\"] = .`init`",
+        record(key, bucket: .type(receiverTypeName), code: renderEmit(EmitConfig(
+            registerLine: "\"\(initKey)\": .`init`",
             closureParams: "args",
             arity: sig.parameters.count,
             recvUnboxLine: nil,
@@ -1012,8 +1051,8 @@ for annotated in prioritizedSymbols {
             skippedReasons[path] = "non-value property type"; continue
         }
         let recvUnbox = render(recvType.unboxTemplate, "receiver")
-        record(key, code: renderEmit(EmitConfig(
-            registerLine: "i.bridges[\"var \(receiverTypeName).\(memberName)\"] = .computed",
+        record(key, bucket: .type(receiverTypeName), code: renderEmit(EmitConfig(
+            registerLine: "\"var \(receiverTypeName).\(memberName)\": .computed",
             closureParams: "receiver",
             arity: nil,
             recvUnboxLine: "let recv: \(recvType.swiftSpelling) = \(recvUnbox)",
@@ -1043,8 +1082,8 @@ for annotated in prioritizedSymbols {
             skippedReasons[path] = "non-value or optional static property"; continue
         }
         let valueExpr = render(propType.bridge.boxTemplate, "\(receiverTypeName).\(memberName)")
-        record(key, code: """
-                i.bridges[\"static let \(receiverTypeName).\(memberName)\"] = .staticValue(\(valueExpr))
+        record(key, bucket: .type(receiverTypeName), code: """
+            \"static let \(receiverTypeName).\(memberName)\": .staticValue(\(valueExpr)),
         """)
 
     case "swift.type.method" where sym.pathComponents.count == 2 && !isDeprecated(sym) && !isGeneric(sym) && !isAsync(sym):
@@ -1059,8 +1098,8 @@ for annotated in prioritizedSymbols {
         let methodName = sym.names.title.split(separator: "(").first.map(String.init) ?? sym.names.title
         let key = "static-method:\(receiverTypeName).\(methodName)"
         if !claim(key, clashLabel: "\(receiverTypeName).\(methodName)") { continue }
-        record(key, code: renderEmit(EmitConfig(
-            registerLine: "i.bridges[\"static func \(receiverTypeName).\(methodName)()\"] = .staticMethod",
+        record(key, bucket: .type(receiverTypeName), code: renderEmit(EmitConfig(
+            registerLine: "\"static func \(receiverTypeName).\(methodName)()\": .staticMethod",
             closureParams: "args",
             arity: sig.parameters.count,
             recvUnboxLine: nil,
@@ -1112,7 +1151,12 @@ for (usr, bridge) in bridgedTypes {
     // Foundation comparators go in the Foundation file (load on import);
     // any future stdlib opaque comparators would go in stdlib.
     let group: EmitGroup = usr.hasPrefix("s:10Foundation") || usr.hasPrefix("c:") ? .foundation : .stdlib
-    emitted.append(EmitEntry(symbolPath: "\(typeName).==", group: group, code: code))
+    // Comparators are runtime-time (writing to `opaqueComparators`,
+    // not the bridges table), so they live in the manifest's runtime
+    // block rather than a per-type dict.
+    emitted.append(EmitEntry(
+        symbolPath: "\(typeName).==", group: group, bucket: .runtime, code: code
+    ))
 }
 
 // Report missing entries.
@@ -1129,43 +1173,183 @@ let autogenBanner = """
 
 """
 
-func renderFile(
-    extensionTarget: String,
-    methodName: String,
-    bodies: [String]
-) -> String {
-    let body = bodies.isEmpty ? "        // (no bridges)" : bodies.joined(separator: "\n\n")
+/// Identifier-safe form of a type name: drop dots, lowercase the first
+/// segment. `URL` → `url`; `String.Encoding` → `stringEncoding`.
+func staticLetName(for typeName: String) -> String {
+    let parts = typeName.split(separator: ".")
+    guard let first = parts.first else { return "_unknown" }
+    let head = first.prefix(1).lowercased() + first.dropFirst()
+    let tail = parts.dropFirst().map { String($0) }.joined()
+    return head + tail
+}
+
+/// Filename slug — same as `staticLetName` but PascalCase, used for
+/// `<Bridge>+<TypeSlug>.swift` filenames.
+func filenameSlug(for typeName: String) -> String {
+    typeName.split(separator: ".").joined()
+}
+
+/// Render a per-type bridge file: `static let <name>: [String: Bridge]`.
+/// The `nonisolated(unsafe)` attribute is required because `Bridge`
+/// contains async closures that aren't `@Sendable` — the dict is
+/// effectively immutable post-init, so it's safe in practice, but
+/// the compiler can't prove it.
+func renderPerTypeFile(namespace: String, typeName: String, entries: [String]) -> String {
+    let dictName = staticLetName(for: typeName)
+    let body = entries.isEmpty ? "    // (no entries)" : entries.joined(separator: "\n")
     return """
     \(autogenBanner)import Foundation
 
+    extension \(namespace) {
+        nonisolated(unsafe) static let \(dictName): [String: Bridge] = [
+    \(body)
+        ]
+    }
+
+    """
+}
+
+/// Render the manifest file: declares the namespace, lists all per-type
+/// dicts, and provides a single entry point that drains them into
+/// `i.bridges` plus runs the runtime-time block (globals + comparators).
+func renderManifest(
+    namespace: String,
+    extensionTarget: String,
+    methodName: String,
+    typeNames: [String],
+    runtimeBodies: [String]
+) -> String {
+    let dictNames = typeNames.map(staticLetName(for:))
+    let dictList = dictNames.map { "        \(namespace).\($0)," }.joined(separator: "\n")
+    let runtimeBody = runtimeBodies.isEmpty
+        ? "        // (no runtime registrations)"
+        : runtimeBodies.joined(separator: "\n\n")
+    return """
+    \(autogenBanner)import Foundation
+
+    /// Namespace for the per-type bridge dicts. Each `static let` lives
+    /// in its own file (`\(namespace)+<Type>.swift`) and contributes a
+    /// chunk of `[String: Bridge]` entries; the installer below merges
+    /// them all into the interpreter's flat dispatch table.
+    enum \(namespace) {
+        /// Aggregated view of every per-type dict — convenient for
+        /// callers that want to introspect the full bridge surface.
+        nonisolated(unsafe) static let all: [String: Bridge] = [
+    \(dictList)
+        ].reduce(into: [:]) { acc, dict in
+            for (k, v) in dict { acc[k] = v }
+        }
+    }
+
     extension \(extensionTarget) {
         func \(methodName)(into i: Interpreter) {
-    \(body)
+            for (k, v) in \(namespace).all { i.bridges[k] = v }
+    \(runtimeBody)
         }
     }
 
     """
 }
 
-let stdlibBodies = emitted.filter { $0.group == .stdlib }.map(\.code)
-let foundationBodies = emitted.filter { $0.group == .foundation }.map(\.code)
+/// Group the type-bucket emits by their `typeName`, preserving the
+/// order in which they were added (which is the priority-sorted order
+/// from the symbol walk).
+func groupedByType(_ entries: [EmitEntry]) -> [(String, [String])] {
+    var order: [String] = []
+    var bodies: [String: [String]] = [:]
+    for entry in entries {
+        guard case .type(let name) = entry.bucket else { continue }
+        if bodies[name] == nil { order.append(name) }
+        bodies[name, default: []].append(entry.code)
+    }
+    return order.map { ($0, bodies[$0]!) }
+}
 
-let stdlibOutput = renderFile(
-    extensionTarget: "Interpreter",
-    methodName: "registerGeneratedStdlib",
-    bodies: stdlibBodies
-)
-let foundationOutput = renderFile(
-    extensionTarget: "FoundationModule",
-    methodName: "registerGenerated",
-    bodies: foundationBodies
-)
+func runtimeBodies(_ entries: [EmitEntry]) -> [String] {
+    entries.compactMap { entry in
+        if case .runtime = entry.bucket { return entry.code }
+        return nil
+    }
+}
+
+let stdlibEntries = emitted.filter { $0.group == .stdlib }
+let foundationEntries = emitted.filter { $0.group == .foundation }
+
+let stdlibTypes = groupedByType(stdlibEntries)
+let foundationTypes = groupedByType(foundationEntries)
+
+let stdlibRuntime = runtimeBodies(stdlibEntries)
+let foundationRuntime = runtimeBodies(foundationEntries)
+
+func writeOutputs(
+    namespace: String,
+    extensionTarget: String,
+    methodName: String,
+    types: [(String, [String])],
+    runtime: [String],
+    outputDir: URL
+) throws -> Int {
+    // Wipe stale per-type files. Anything matching `<namespace>+*.swift`
+    // gets removed first so a renamed type doesn't leave orphans behind.
+    let fm = FileManager.default
+    if let contents = try? fm.contentsOfDirectory(at: outputDir, includingPropertiesForKeys: nil) {
+        for url in contents {
+            let name = url.lastPathComponent
+            if name.hasPrefix(namespace) && name.hasSuffix(".swift") {
+                try? fm.removeItem(at: url)
+            }
+        }
+    } else {
+        try fm.createDirectory(at: outputDir, withIntermediateDirectories: true)
+    }
+    var count = 0
+    for (typeName, entries) in types {
+        let file = outputDir.appendingPathComponent(
+            "\(namespace)+\(filenameSlug(for: typeName)).swift"
+        )
+        let contents = renderPerTypeFile(namespace: namespace, typeName: typeName, entries: entries)
+        try contents.write(to: file, atomically: true, encoding: .utf8)
+        count += entries.count
+    }
+    let manifest = outputDir.appendingPathComponent("\(namespace).swift")
+    let manifestContents = renderManifest(
+        namespace: namespace,
+        extensionTarget: extensionTarget,
+        methodName: methodName,
+        typeNames: types.map(\.0),
+        runtimeBodies: runtime
+    )
+    try manifestContents.write(to: manifest, atomically: true, encoding: .utf8)
+    return count + runtime.count
+}
 
 do {
-    try stdlibOutput.write(to: outputStdlibURL, atomically: true, encoding: .utf8)
-    try foundationOutput.write(to: outputFoundationURL, atomically: true, encoding: .utf8)
-    print("wrote \(stdlibBodies.count) stdlib bridge(s) to \(outputStdlibURL.path)")
-    print("wrote \(foundationBodies.count) Foundation bridge(s) to \(outputFoundationURL.path)")
+    let stdlibDir = outputStdlibURL.deletingLastPathComponent()
+        .appendingPathComponent("StdlibBridge")
+    let foundationDir = outputFoundationURL.deletingLastPathComponent()
+        .appendingPathComponent("FoundationBridge")
+    let stdlibCount = try writeOutputs(
+        namespace: "StdlibBridges",
+        extensionTarget: "Interpreter",
+        methodName: "registerGeneratedStdlib",
+        types: stdlibTypes,
+        runtime: stdlibRuntime,
+        outputDir: stdlibDir
+    )
+    let foundationCount = try writeOutputs(
+        namespace: "FoundationBridges",
+        extensionTarget: "FoundationModule",
+        methodName: "registerGenerated",
+        types: foundationTypes,
+        runtime: foundationRuntime,
+        outputDir: foundationDir
+    )
+    // Remove the legacy single-file outputs; they're replaced by the
+    // per-type-file directory layout.
+    try? FileManager.default.removeItem(at: outputStdlibURL)
+    try? FileManager.default.removeItem(at: outputFoundationURL)
+    print("wrote \(stdlibCount) stdlib bridge(s) across \(stdlibTypes.count) type(s) under \(stdlibDir.path)")
+    print("wrote \(foundationCount) Foundation bridge(s) across \(foundationTypes.count) type(s) under \(foundationDir.path)")
 } catch {
     FileHandle.standardError.write(Data("error writing output: \(error)\n".utf8))
     exit(1)
