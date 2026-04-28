@@ -14,9 +14,6 @@ extension FoundationBridges {
     "static let ProgressUserInfoKey.fileURLKey": .staticValue(boxOpaque(ProgressUserInfoKey.fileURLKey, typeName: "ProgressUserInfoKey")),
     "static let ProgressUserInfoKey.fileTotalCountKey": .staticValue(boxOpaque(ProgressUserInfoKey.fileTotalCountKey, typeName: "ProgressUserInfoKey")),
     "static let ProgressUserInfoKey.fileCompletedCountKey": .staticValue(boxOpaque(ProgressUserInfoKey.fileCompletedCountKey, typeName: "ProgressUserInfoKey")),
-    "static let ProgressUserInfoKey.fileAnimationImageKey": .staticValue(boxOpaque(ProgressUserInfoKey.fileAnimationImageKey, typeName: "ProgressUserInfoKey")),
-    "static let ProgressUserInfoKey.fileAnimationImageOriginalRectKey": .staticValue(boxOpaque(ProgressUserInfoKey.fileAnimationImageOriginalRectKey, typeName: "ProgressUserInfoKey")),
-    "static let ProgressUserInfoKey.fileIconKey": .staticValue(boxOpaque(ProgressUserInfoKey.fileIconKey, typeName: "ProgressUserInfoKey")),
     "init ProgressUserInfoKey(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init ProgressUserInfoKey(_:): expected 1 argument(s), got \(args.count)")

@@ -55,3 +55,14 @@ StringProtocol.contains(_:)
 # we hand-roll for math scripts. The Decimal overload is rarely what
 # scripts want.
 pow(_:_:)
+
+# macOS-only symbols that the macOS-extracted symbol graph reports as
+# universally available but the iOS Foundation overlay doesn't expose.
+# Blocking here keeps the package buildable on both platforms.
+ProgressUserInfoKey.fileAnimationImageKey
+ProgressUserInfoKey.fileAnimationImageOriginalRectKey
+ProgressUserInfoKey.fileIconKey
+URLResourceKey.applicationIsScriptableKey
+URLResourceKey.tagNamesKey
+URLResourceKey.quarantinePropertiesKey
+NSHFSTypeOfFile(_:)

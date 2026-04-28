@@ -209,6 +209,15 @@ let autoPromoteSkip: Set<String> = [
     "UInt", "UInt8", "UInt16", "UInt32", "UInt64",
     "Int8", "Int16", "Int32", "Int64", "Int128", "UInt128",
     "Float", "Float80", "Float16",
+    // macOS-only types that the macOS-extracted symbol graph reports
+    // as universally available but the iOS Foundation overlay doesn't
+    // expose. Skipping promotion keeps the package buildable on iOS.
+    "AffineTransform", "AlignmentOptions",
+    "NSAppleEventDescriptor.SendOptions",
+    "FileManager.UnmountOptions",
+    "DistributedNotificationCenter.CenterType",
+    "DistributedNotificationCenter.Options",
+    "XMLNode.Options",
 ]
 
 /// When the symbol's owning type is one of these, we re-target the emit
