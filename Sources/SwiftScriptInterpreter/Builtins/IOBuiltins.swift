@@ -1,8 +1,14 @@
 extension Interpreter {
     func registerIOBuiltins() {
         registerBuiltin(name: "print") { [weak self] args in
-            let line = args.map { $0.description }.joined(separator: " ")
-            self?.output(line)
+            // Route each item through `describe` so script-defined
+            // `description` getters (CustomStringConvertible-style) are
+            // honored — the labeled form lives in `tryPrintCall`, this
+            // is the no-keyword-args fallback used for plain
+            // `print(x)` / `print(x, y)`.
+            guard let self else { return .void }
+            let parts = try await args.asyncMap { try await self.describe($0) }
+            self.output(parts.joined(separator: " "))
             return .void
         }
 

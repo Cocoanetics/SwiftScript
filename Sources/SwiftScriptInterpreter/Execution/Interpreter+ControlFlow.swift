@@ -222,6 +222,22 @@ extension Interpreter {
         if ScriptSequence.isIterable(value) {
             return Array(ScriptSequence(value))
         }
+        // Host-side AsyncSequence: bridged builtins (like
+        // `URLSession.shared.bytes(from:)`) hand back a value of shape
+        // `.opaque("AsyncStream", AsyncStreamBox)`. Drain it now —
+        // `for await x in stream` materializes synchronously below the
+        // surface, with the same 100M-step runaway guard as the
+        // duck-typed iterator path.
+        if case .opaque("AsyncStream", let any) = value,
+           let stream = any as? AsyncStreamBox
+        {
+            var result: [Value] = []
+            for _ in 0..<100_000_000 {
+                guard let v = try await stream.next() else { return result }
+                result.append(v)
+            }
+            throw RuntimeError.invalid("async stream yielded >100M elements; aborting")
+        }
         // Script-side `Sequence` conformance: receiver supplies a
         // `makeIterator()` zero-arg method whose result responds to
         // `next() -> Optional<T>`. We don't validate the actual

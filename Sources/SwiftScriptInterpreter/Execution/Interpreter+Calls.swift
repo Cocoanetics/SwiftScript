@@ -595,7 +595,11 @@ extension Interpreter {
                 items.append(value)
             }
         }
-        let body = items.map(\.description).joined(separator: separator)
+        // Route each item through `describe` so script-defined
+        // `description` getters are honored (CustomStringConvertible-
+        // style lookup) before falling back to Value's default.
+        let parts = try await items.asyncMap { try await describe($0) }
+        let body = parts.joined(separator: separator)
         // The default-`output` closure adds its own newline (it wraps
         // `Swift.print` in the binary, "$0 + \n" in tests). When the
         // user's terminator is `\n` we route through `output` so test

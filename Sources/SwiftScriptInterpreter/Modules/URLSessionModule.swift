@@ -44,6 +44,43 @@ struct URLSessionModule: BuiltinModule {
             }
         }
 
+        // `bytes(from:) async throws -> (AsyncBytes, URLResponse)` —
+        // returns a tuple of an AsyncStream of bytes (each a `.int`
+        // 0..<256) and the response. Lets script code do
+        // `for await b in stream { … }` over real async byte data.
+        i.registerMethod(on: "URLSession", name: "bytes") { recv, args in
+            guard case .opaque(_, let any) = recv,
+                  let session = any as? URLSession
+            else {
+                throw RuntimeError.invalid("URLSession.bytes: bad receiver")
+            }
+            guard args.count == 1,
+                  case .opaque(typeName: "URL", let urlAny) = args[0],
+                  let url = urlAny as? URL
+            else {
+                throw RuntimeError.invalid("URLSession.bytes(from:): expected a URL argument")
+            }
+            do {
+                let (bytes, response) = try await session.bytes(from: url)
+                // Erase the typed AsyncIterator into a closure the
+                // interpreter can drive.
+                var iterator = bytes.makeAsyncIterator()
+                let stream = AsyncStreamBox {
+                    guard let byte = try await iterator.next() else { return nil }
+                    return .int(Int(byte))
+                }
+                return .tuple(
+                    [
+                        .opaque(typeName: "AsyncStream", value: stream),
+                        .opaque(typeName: "URLResponse", value: response),
+                    ],
+                    labels: []
+                )
+            } catch {
+                throw RuntimeError.invalid("URLSession.bytes(from:): \(error)")
+            }
+        }
+
         // URLResponse computed properties commonly inspected after a
         // request — status code, MIME type, expected length.
         i.registerComputed(on: "URLResponse", name: "expectedContentLength") { recv in

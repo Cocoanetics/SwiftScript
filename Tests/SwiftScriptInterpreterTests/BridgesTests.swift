@@ -149,6 +149,53 @@ struct BridgesTests {
         #expect(captured == "0\n1\n1\n2\n")
     }
 
+    // MARK: CustomStringConvertible
+
+    @Test func scriptDescriptionWinsOverDefault() async throws {
+        let interp = Interpreter()
+        var captured = ""
+        interp.output = { captured += $0 + "\n" }
+        try await interp.eval("""
+            struct Point: CustomStringConvertible {
+                var x: Int
+                var y: Int
+                var description: String { "(\\(x), \\(y))" }
+            }
+            let p = Point(x: 3, y: 4)
+            print(p)
+            print("origin: \\(p)")
+            """)
+        #expect(captured == "(3, 4)\norigin: (3, 4)\n")
+    }
+
+    @Test func scriptDescriptionRecursesThroughCollections() async throws {
+        let interp = Interpreter()
+        var captured = ""
+        interp.output = { captured += $0 + "\n" }
+        try await interp.eval("""
+            struct Tag: CustomStringConvertible {
+                var name: String
+                var description: String { "#\\(name)" }
+            }
+            print([Tag(name: "swift"), Tag(name: "ios")])
+            """)
+        #expect(captured == "[#swift, #ios]\n")
+    }
+
+    // MARK: Hashable (host bridge)
+
+    @Test func valueIsHashableOnHostSide() async throws {
+        let interp = Interpreter()
+        let arr = try await interp.eval(#"[1, "hello", true, 1, "hello"]"#)
+        guard case .array(let items) = arr else {
+            #expect(Bool(false), "expected array")
+            return
+        }
+        // Stdlib `Set<Value>` works directly because Value is Hashable.
+        let unique = Set(items)
+        #expect(unique.count == 3)
+    }
+
     @Test func valueArrayPipesThroughZipPrefixMap() async throws {
         let interp = Interpreter()
         let arr = try await interp.eval("[10, 20, 30, 40]")

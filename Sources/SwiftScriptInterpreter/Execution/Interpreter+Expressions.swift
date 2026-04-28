@@ -201,7 +201,7 @@ extension Interpreter {
             } else if let exprSeg = segment.as(ExpressionSegmentSyntax.self) {
                 for arg in exprSeg.expressions {
                     let v = try await evaluate(arg.expression, in: scope)
-                    result += v.description
+                    result += try await describe(v)
                 }
             }
         }

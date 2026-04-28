@@ -193,6 +193,63 @@ extension Value: Equatable {
     }
 }
 
+extension Value: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        switch self {
+        case .int(let n):    hasher.combine(0); hasher.combine(n)
+        case .double(let d): hasher.combine(1); hasher.combine(d)
+        case .string(let s): hasher.combine(2); hasher.combine(s)
+        case .bool(let b):   hasher.combine(3); hasher.combine(b)
+        case .void:          hasher.combine(4)
+        case .range(let lo, let hi, let closed):
+            hasher.combine(5); hasher.combine(lo); hasher.combine(hi); hasher.combine(closed)
+        case .array(let xs):
+            hasher.combine(6); for x in xs { hasher.combine(x) }
+        case .optional(let inner):
+            hasher.combine(7); hasher.combine(inner)
+        case .tuple(let elements, _):
+            // Labels don't affect hash (matching equality semantics).
+            hasher.combine(8); for el in elements { hasher.combine(el) }
+        case .dict(let entries):
+            // Order-insensitive: hash the multiset of (k, v) pairs by
+            // XORing each pair's hash.
+            hasher.combine(9)
+            var combined: Int = 0
+            for entry in entries {
+                var h = Hasher()
+                h.combine(entry.key); h.combine(entry.value)
+                combined ^= h.finalize()
+            }
+            hasher.combine(combined)
+        case .set(let xs):
+            hasher.combine(10)
+            var combined: Int = 0
+            for x in xs {
+                var h = Hasher()
+                h.combine(x)
+                combined ^= h.finalize()
+            }
+            hasher.combine(combined)
+        case .opaque(let n, _):
+            // Opaque payloads aren't reliably Hashable (Any). Hash by
+            // type name only — false-positives are safe because
+            // Equatable already returns false for distinct opaque values.
+            hasher.combine(11); hasher.combine(n)
+        case .structValue(let n, let fields):
+            hasher.combine(12); hasher.combine(n)
+            for f in fields { hasher.combine(f.name); hasher.combine(f.value) }
+        case .classInstance(let inst):
+            // Identity-based, matching `===` Equatable behavior.
+            hasher.combine(13); hasher.combine(ObjectIdentifier(inst))
+        case .enumValue(let n, let c, let payload):
+            hasher.combine(14); hasher.combine(n); hasher.combine(c)
+            for v in payload { hasher.combine(v) }
+        case .function(let f):
+            hasher.combine(15); hasher.combine(f.name)
+        }
+    }
+}
+
 public func typeName(_ value: Value) -> String {
     switch value {
     case .int:      return "Int"
