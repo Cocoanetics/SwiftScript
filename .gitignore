@@ -1,0 +1,37 @@
+# SwiftPM
+.build/
+Package.resolved.lock
+.swiftpm/xcode/
+.swiftpm/configuration/
+.swiftpm/.netrc
+
+# Xcode user-specific
+*.xcuserstate
+xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+
+# Generated symbol-graph dumps used by BridgeGeneratorTool
+Tools/symbol-graphs/
+*.symbols.json
+
+# Temporary outputs from probe / variant harnesses
+Tests/diagnostic_variants/_*.out
+Tests/_tmp/
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*~
+
+# Swift / LLVM
+*.o
+*.dylib
+*.so
+*.dSYM/
+
+# Coverage
+*.profraw
+*.profdata

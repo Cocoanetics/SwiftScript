@@ -1,0 +1,68 @@
+import Foundation
+import SwiftScriptInterpreter
+
+let args = CommandLine.arguments
+let interpreter = Interpreter()
+
+func usage() -> Never {
+    FileHandle.standardError.write(Data("""
+        usage: swift-script <file.swift>
+               swift-script -e <expression>
+
+        """.utf8))
+    exit(2)
+}
+
+guard args.count >= 2 else { usage() }
+
+let source: String
+let fileName: String
+let isInline: Bool
+
+switch args[1] {
+case "-e":
+    guard args.count >= 3 else { usage() }
+    source = args[2]
+    fileName = "<expression>"
+    isInline = true
+case "-h", "--help":
+    usage()
+default:
+    let url = URL(fileURLWithPath: args[1])
+    do {
+        var contents = try String(contentsOf: url, encoding: .utf8)
+        // Honor `#!/usr/bin/env swift-script`-style shebangs by rewriting
+        // them to a Swift line comment. We only swap the leading `#!`
+        // (two chars) for `//` so byte offsets and line numbers stay
+        // identical — diagnostics still point at the right column.
+        if contents.hasPrefix("#!") {
+            contents = "//" + contents.dropFirst(2)
+        }
+        source = contents
+    } catch {
+        FileHandle.standardError.write(Data("error reading \(args[1]): \(error)\n".utf8))
+        exit(1)
+    }
+    fileName = args[1]
+    isInline = false
+}
+
+do {
+    let result = try interpreter.evalSync(source, fileName: fileName)
+    if isInline, case .void = result {
+        // nothing to print
+    } else if isInline {
+        print(result.description)
+    }
+} catch let parseError as ParseError {
+    FileHandle.standardError.write(Data(parseError.formatted.utf8))
+    if !parseError.formatted.hasSuffix("\n") {
+        FileHandle.standardError.write(Data("\n".utf8))
+    }
+    exit(1)
+} catch {
+    // Runtime errors get the same caret-style rendering as parse errors
+    // when the error carries source-location info.
+    FileHandle.standardError.write(Data(interpreter.renderRuntimeError(error).utf8))
+    exit(1)
+}

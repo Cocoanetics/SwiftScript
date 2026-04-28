@@ -1,0 +1,57 @@
+# Symbols intentionally excluded from auto-harvest because the
+# generator's bridge would diverge from a hand-rolled implementation
+# elsewhere in the interpreter. Each entry is the same path-component
+# format as the allowlist.
+
+# The single-arg primitive constructors are hand-rolled in
+# `Sources/SwiftScriptInterpreter/Builtins/IOBuiltins.swift` to handle
+# the multi-shape coercion (`Int("42") -> Int?`, `Int(3.14) -> Int`,
+# etc.). The auto-bridge would only model one shape.
+Int.init(_:)
+Double.init(_:)
+Bool.init(_:)
+String.init(_:)
+
+# `print(_:)` — hand-rolled to support `print(a, b, c)` variadic-style
+# calls and `print(_:separator:terminator:)` with labels. The auto-
+# bridge would only model the single-arg form.
+print(_:)
+
+# `readLine(strippingNewline:)` — hand-rolled in `IOBuiltins`. Auto
+# bridges as `Foundation.readLine` which doesn't exist.
+readLine()
+readLine(strippingNewline:)
+
+# `String.hasPrefix`/`hasSuffix`/`contains` — hand-rolled in
+# `Interpreter+Members.swift` (the inline `.string` switch). The
+# auto-bridge collides at register-time but the inline switch fires
+# first; cleaner to skip the bridge so it doesn't sit as dead code.
+String.hasPrefix(_:)
+String.hasSuffix(_:)
+
+# `String.uppercased()` and `lowercased()` — hand-rolled inline.
+String.uppercased()
+String.lowercased()
+
+# `Int.isMultiple(of:)` — auto-harvest emits an `extensions["Int"]`
+# method, but we want `5.isMultiple(of:)` to use the inline switch path.
+# Blocking is harmless because the bridge wouldn't be reached.
+Int.isMultiple(of:)
+
+# `Double.squareRoot()` / `Double.rounded()` — inline-cased.
+Double.squareRoot()
+Double.rounded()
+
+# `Double.rounded(_:)` — we hand-rolled the rule-arg form to support
+# implicit-member context (`d.rounded(.up)`).
+Double.rounded(_:)
+
+# `String.distance(from:to:)` and similar require String.Index, which
+# we don't model. They'd compile (since their signature is bridgeable
+# in shape) but always fail at runtime with malformed-Index errors.
+StringProtocol.contains(_:)
+
+# `pow(Decimal, Int) -> Decimal` shadows the C-math `pow(Double, Double)`
+# we hand-roll for math scripts. The Decimal overload is rarely what
+# scripts want.
+pow(_:_:)

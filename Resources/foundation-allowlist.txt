@@ -1,0 +1,126 @@
+# Symbols to bridge automatically — input to BridgeGeneratorTool.
+#
+# Format matches the symbol graph's `pathComponents` joined by `.`.
+# - For globals:  the name+arity (e.g. `sqrt(_:)`).
+# - For methods:  `<TypeName>.<name>(args...)` (e.g. `Double.advanced(by:)`).
+#
+# Symbols not found, or with non-bridgeable signatures (generics, Foundation
+# reference types, closures, …), are skipped with a warning. Anything not
+# auto-generated stays in the hand-written `FoundationModule.swift` /
+# `MathBuiltins.swift` modules.
+#
+# NOTE: the C math globals (sqrt, sin, cos, hypot, …) are NOT in any
+# extractable symbol graph — they're imported from <math.h> via Clang's
+# C-importer, which `swift-symbolgraph-extract` doesn't surface. Those
+# stay hand-written in FoundationModule.swift.
+#
+# Everything else below is harvested from `swift-symbolgraph-extract`,
+# regenerated via `Tools/regen-foundation-bridge.sh`. Bridgeable types
+# (primitives + Foundation opaque carriers) are listed in
+# BridgeGeneratorTool's `bridgedTypes` table.
+
+# Value-typed instance methods on stdlib types.
+Double.advanced(by:)
+Double.distance(to:)
+Double.isEqual(to:)
+Double.isLess(than:)
+Double.isLessThanOrEqualTo(_:)
+Double.truncatingRemainder(dividingBy:)
+Double.remainder(dividingBy:)
+Int.advanced(by:)
+Int.distance(to:)
+Int.isMultiple(of:)
+Int.signum()
+
+# Static type properties on numeric stdlib types. `Int.max`/`Int.min` have
+# declared type `Self`; the generator substitutes the owning type.
+Int.max
+Int.min
+Double.pi
+Double.infinity
+Double.nan
+Double.signalingNaN
+Double.greatestFiniteMagnitude
+Double.leastNormalMagnitude
+Double.leastNonzeroMagnitude
+Double.ulpOfOne
+Double.zero
+Double.radix
+Int.zero
+Int.bitWidth
+
+# StringProtocol extensions declared in Foundation. Generator re-targets
+# these onto concrete `String` (`StringProtocol` itself isn't a runtime
+# receiver in the interpreter).
+StringProtocol.trimmingCharacters(in:)
+StringProtocol.capitalized
+StringProtocol.addingPercentEncoding(withAllowedCharacters:)
+StringProtocol.removingPercentEncoding
+
+# CharacterSet static type properties (`.whitespaces`, `.alphanumerics`,
+# …). Generator emits these as `registerStaticValue` calls keyed by the
+# property name, capturing the Foundation value at module-load time.
+CharacterSet.whitespaces
+CharacterSet.whitespacesAndNewlines
+CharacterSet.newlines
+CharacterSet.alphanumerics
+CharacterSet.letters
+CharacterSet.uppercaseLetters
+CharacterSet.lowercaseLetters
+CharacterSet.decimalDigits
+CharacterSet.punctuationCharacters
+CharacterSet.symbols
+CharacterSet.capitalizedLetters
+CharacterSet.controlCharacters
+CharacterSet.illegalCharacters
+CharacterSet.nonBaseCharacters
+CharacterSet.decomposables
+CharacterSet.urlUserAllowed
+CharacterSet.urlPasswordAllowed
+CharacterSet.urlHostAllowed
+CharacterSet.urlPathAllowed
+CharacterSet.urlQueryAllowed
+CharacterSet.urlFragmentAllowed
+
+# CharacterSet construction. `CharacterSet(charactersIn:)` has multiple
+# overloads (Range<Unicode.Scalar>, ClosedRange, String); the generator
+# only picks up the String one — the others get skipped as non-value.
+CharacterSet.init(charactersIn:)
+
+# URL — value-typed Foundation overlay. `init(string:)` is failable so
+# the generator wraps it in `Optional`. `URL.host` is `String?` (also
+# Optional). Most properties are non-optional `String`.
+URL.init(string:)
+URL.init(fileURLWithPath:)
+URL.absoluteString
+URL.path
+URL.host
+URL.scheme
+URL.query
+URL.fragment
+URL.lastPathComponent
+URL.pathExtension
+URL.isFileURL
+URL.appendingPathComponent(_:)
+URL.deletingLastPathComponent()
+URL.appendingPathExtension(_:)
+URL.deletingPathExtension()
+
+# Date — opaque, ISO timestamp. Constructors and time-interval math are
+# the most common script-side usage.
+Date.init()
+Date.init(timeIntervalSince1970:)
+Date.init(timeIntervalSinceNow:)
+Date.timeIntervalSince1970
+Date.timeIntervalSinceNow
+Date.timeIntervalSince(_:)
+Date.addingTimeInterval(_:)
+Date.distance(to:)
+Date.advanced(by:)
+Date.distantFuture
+Date.distantPast
+Date.now
+
+# UUID — opaque identifier; mostly used via `.uuidString`.
+UUID.init()
+UUID.uuidString

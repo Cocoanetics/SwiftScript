@@ -1,0 +1,1170 @@
+import Foundation
+
+// MARK: - CLI
+
+/// Usage:
+///   BridgeGeneratorTool \
+///     --symbol-graph <path>          (repeatable)
+///     [--allowlist <path>]
+///     [--auto-allowlist]
+///     [--blocklist <path>]
+///     --output-stdlib <path>
+///     --output-foundation <path>
+///
+/// Either `--allowlist` or `--auto-allowlist` must be supplied.
+/// `--auto-allowlist` harvests every bridgeable symbol from the loaded
+/// graphs (useful for "give me everything you can"); `--blocklist`
+/// (paths, one per line, like the allowlist) excludes specific entries
+/// from the auto-harvest, e.g. for symbols whose auto-bridge diverges
+/// from a hand-rolled implementation.
+struct CLI {
+    var symbolGraphs: [URL] = []
+    var allowlist: URL?
+    var autoAllowlist: Bool = false
+    var blocklist: URL?
+    var outputStdlib: URL?
+    var outputFoundation: URL?
+}
+
+func parseArgs() -> CLI {
+    var cli = CLI()
+    var args = Array(CommandLine.arguments.dropFirst()).makeIterator()
+    while let arg = args.next() {
+        switch arg {
+        case "--symbol-graph":
+            if let v = args.next() { cli.symbolGraphs.append(URL(fileURLWithPath: v)) }
+        case "--allowlist":
+            if let v = args.next() { cli.allowlist = URL(fileURLWithPath: v) }
+        case "--auto-allowlist":
+            cli.autoAllowlist = true
+        case "--blocklist":
+            if let v = args.next() { cli.blocklist = URL(fileURLWithPath: v) }
+        case "--output-stdlib":
+            if let v = args.next() { cli.outputStdlib = URL(fileURLWithPath: v) }
+        case "--output-foundation":
+            if let v = args.next() { cli.outputFoundation = URL(fileURLWithPath: v) }
+        default:
+            FileHandle.standardError.write(Data("unknown arg: \(arg)\n".utf8))
+            exit(2)
+        }
+    }
+    return cli
+}
+
+let cli = parseArgs()
+guard !cli.symbolGraphs.isEmpty,
+      (cli.allowlist != nil || cli.autoAllowlist),
+      let outputStdlibURL = cli.outputStdlib,
+      let outputFoundationURL = cli.outputFoundation
+else {
+    FileHandle.standardError.write(Data("""
+        usage: BridgeGeneratorTool \
+        --symbol-graph <path> [--symbol-graph <path>...] \
+        [--allowlist <path>] [--auto-allowlist] [--blocklist <path>] \
+        --output-stdlib <path> \
+        --output-foundation <path>
+
+        """.utf8))
+    exit(2)
+}
+
+// MARK: - Inputs
+
+func parseList(_ url: URL, kind: String) -> Set<String> {
+    do {
+        let contents = try String(contentsOf: url, encoding: .utf8)
+        return Set(contents
+            .split(whereSeparator: \.isNewline)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty && !$0.hasPrefix("#") })
+    } catch {
+        FileHandle.standardError.write(Data("error reading \(kind): \(error)\n".utf8))
+        exit(1)
+    }
+}
+
+let allowlist: Set<String>
+if let url = cli.allowlist {
+    allowlist = parseList(url, kind: "allowlist")
+} else {
+    allowlist = []
+}
+let blocklist: Set<String> = cli.blocklist.map { parseList($0, kind: "blocklist") } ?? []
+let autoAllowlist = cli.autoAllowlist
+
+/// A symbol paired with the module it was extracted from. We need the
+/// module name to route the emit — stdlib bridges register at startup;
+/// Foundation bridges only after `import Foundation`.
+struct AnnotatedSymbol {
+    let module: String
+    let symbol: SymbolGraph.Symbol
+}
+
+var allSymbols: [AnnotatedSymbol] = []
+/// Per-source-USR conformance set, accumulated across all graphs. Used to
+/// emit comparators on bridged opaque types that conform to `Equatable`
+/// or `Comparable`.
+var conformancesByUSR: [String: Set<String>] = [:]
+for url in cli.symbolGraphs {
+    do {
+        let data = try Data(contentsOf: url)
+        let graph = try JSONDecoder().decode(SymbolGraph.self, from: data)
+        for s in graph.symbols {
+            allSymbols.append(AnnotatedSymbol(module: graph.module.name, symbol: s))
+        }
+        for r in graph.relationships ?? [] where r.kind == "conformsTo" {
+            conformancesByUSR[r.source, default: []].insert(r.target)
+        }
+    } catch {
+        FileHandle.standardError.write(
+            Data("error reading symbol graph \(url.path): \(error)\n".utf8)
+        )
+        exit(1)
+    }
+}
+
+let equatableUSR = "s:SQ"
+let comparableUSR = "s:SL"
+
+// Auto-discovery of opaque-bridgeable types runs further down, AFTER
+// `bridgedTypes` and `bridgeableReceivers` are declared. (Swift top-
+// level code executes in source order, so it has to live below the
+// declarations.) See "Auto-discovery pass".
+
+// MARK: - Type table
+
+/// Map from precise identifier (USR) to our `Value`-side type. Returning
+/// nil means the type isn't bridgeable today — the symbol gets skipped.
+struct BridgedType {
+    /// Source-Swift spelling, e.g. "Double", "Int", "String".
+    let swiftSpelling: String
+    /// Code that, given a `Value` named `<expr>`, produces the unboxed
+    /// Swift value. Receives the expression string in the `%@` placeholder.
+    let unboxTemplate: String
+    /// Code that wraps a Swift `<expr>` back into a `Value`. Same `%@` rule.
+    let boxTemplate: String
+}
+
+/// Helper for opaque-bridged Foundation types — they all use the same
+/// boxOpaque/unboxOpaque ABI keyed by their `swiftSpelling`.
+func opaqueBridge(_ swiftSpelling: String) -> BridgedType {
+    return BridgedType(
+        swiftSpelling: swiftSpelling,
+        unboxTemplate: "try unboxOpaque(%@, as: \(swiftSpelling).self, typeName: \"\(swiftSpelling)\")",
+        boxTemplate: "boxOpaque(%@, typeName: \"\(swiftSpelling)\")"
+    )
+}
+
+/// Hand-coded "structural" bridges — types we model directly via a
+/// dedicated `Value` case, not as opaque carriers. Always populated.
+let primitiveBridges: [String: BridgedType] = [
+    "s:Si": BridgedType(  // Swift.Int
+        swiftSpelling: "Int",
+        unboxTemplate: "try unboxInt(%@)",
+        boxTemplate: ".int(%@)"
+    ),
+    "s:Sd": BridgedType(  // Swift.Double
+        swiftSpelling: "Double",
+        unboxTemplate: "try toDouble(%@)",
+        boxTemplate: ".double(%@)"
+    ),
+    "s:SS": BridgedType(  // Swift.String
+        swiftSpelling: "String",
+        unboxTemplate: "try unboxString(%@)",
+        boxTemplate: ".string(%@)"
+    ),
+    "s:Sb": BridgedType(  // Swift.Bool
+        swiftSpelling: "Bool",
+        unboxTemplate: "try unboxBool(%@)",
+        boxTemplate: ".bool(%@)"
+    ),
+    // `TimeInterval` is a Foundation typealias for `Double`; it shows up
+    // in symbol graphs with this Clang-flavored USR.
+    "c:@T@NSTimeInterval": BridgedType(
+        swiftSpelling: "Double",
+        unboxTemplate: "try toDouble(%@)",
+        boxTemplate: ".double(%@)"
+    ),
+]
+
+/// Auto-discovered + hand-coded opaque overrides. The auto-discovery
+/// pass below runs after the symbol graphs load and populates this with
+/// any `swift.struct` (or class) that conforms to `Equatable`. Hand
+/// overrides for typealias-shaped types (`String.Encoding` lives as a
+/// nested-typealias struct).
+nonisolated(unsafe) var bridgedTypes: [String: BridgedType] = primitiveBridges
+
+/// Names of types we explicitly DON'T auto-promote, even if they
+/// conform to Equatable. Useful when the type is structurally modelled
+/// elsewhere (e.g. we model `Array`/`Set`/`Dictionary` via dedicated
+/// `Value` cases, not opaque) or when its public API is too large to
+/// safely auto-bridge.
+let autoPromoteSkip: Set<String> = [
+    "Array", "Dictionary", "Set", "Range", "ClosedRange", "Optional",
+    "Substring", "StaticString", "Character", "Unicode.Scalar",
+    "AnyHashable", "AnyKeyPath",
+    // Numeric stdlib types we don't bridge separately — they're
+    // structurally bridged via Int/Double, and adding them as opaque
+    // would cause type confusion.
+    "UInt", "UInt8", "UInt16", "UInt32", "UInt64",
+    "Int8", "Int16", "Int32", "Int64", "Int128", "UInt128",
+    "Float", "Float80", "Float16",
+]
+
+/// When the symbol's owning type is one of these, we re-target the emit
+/// to the value listed. `StringProtocol` extension methods declared by
+/// Foundation are callable on concrete `String` values, so we register
+/// them on `String` rather than the protocol name.
+let receiverAliases: [String: String] = [
+    "StringProtocol": "String",
+]
+
+/// A type extracted from a parameter or return slot, including whether it
+/// was wrapped in `Optional<>` (which the Swift compiler renders as a
+/// trailing `?` text fragment after the inner typeIdentifier).
+struct ExtractedType {
+    let bridge: BridgedType
+    let isOptional: Bool
+}
+
+/// Pull the `typeIdentifier` fragment out of a parameter or return slot.
+/// Returns nil if there isn't exactly one — i.e. the type isn't a bare
+/// nominal we know how to box (generics, tuples, …).
+///
+/// `T?` shows up as `[typeIdentifier T, text "?"]` and gets returned with
+/// `isOptional == true`.
+///
+/// When `selfType` is supplied, a fragment spelled `Self` (no USR — that's
+/// what protocol-requirement extractions look like) substitutes to that
+/// receiver's bridge. Lets methods like `Int.isMultiple(of: Self)` get
+/// auto-bridged once we know the concrete owning type.
+func extractType(
+    from fragments: [SymbolGraph.Fragment],
+    selfType: BridgedType? = nil
+) -> ExtractedType? {
+    // Reject array (`[T]`), dict (`[K: V]`), set (`Set<T>`), tuple,
+    // generic, and existential types. These all show up as text
+    // fragments wrapping a single typeIdentifier — bridging them needs
+    // generator infra we don't have. The bare-nominal case has nothing
+    // before the typeIdentifier except the parameter name and `: `.
+    let textFrags = fragments.filter { $0.kind == "text" }
+    let combinedText = textFrags.map(\.spelling).joined()
+    if combinedText.contains("[") || combinedText.contains("<") ||
+       combinedText.contains("(") || combinedText.contains("&") ||
+       combinedText.contains("any ") || combinedText.contains("some ")
+    {
+        return nil
+    }
+
+    // Dotted-namespace types like `String.Encoding` produce TWO
+    // typeIdentifier fragments separated by `.` text — `String` (the
+    // namespace) and `Encoding` (the actual nominal). Use the LAST one
+    // since it carries the leaf USR. The text-guard above rejects
+    // anything more exotic, so this is safe.
+    let typeFrags = fragments.filter { $0.kind == "typeIdentifier" }
+    guard let frag = typeFrags.last else { return nil }
+
+    // Optional wrapping: detect a `?` immediately after the typeIdentifier.
+    // The compiler emits this as a text fragment that may start with `?`
+    // and continue (`"? { "` for property getters, `"?"` on its own for
+    // method returns). `??` (defaulted) doesn't appear here — that lives
+    // in `Default.swift`-style sugar, not the type itself.
+    var isOptional = false
+    if let i = fragments.lastIndex(where: { $0.kind == "typeIdentifier" }),
+       i + 1 < fragments.count,
+       fragments[i + 1].kind == "text",
+       fragments[i + 1].spelling.trimmingCharacters(in: .whitespaces).hasPrefix("?")
+    {
+        isOptional = true
+    }
+
+    let bridge: BridgedType
+    if frag.spelling == "Self", let selfType {
+        bridge = selfType
+    } else if let usr = frag.preciseIdentifier, let b = bridgedTypes[usr] {
+        bridge = b
+    } else {
+        return nil
+    }
+    return ExtractedType(bridge: bridge, isOptional: isOptional)
+}
+
+// MARK: - Filter + emit
+
+struct ResolvedSignature {
+    /// `(label, type, isOptional)` — `label == "_"` means unlabeled at the
+    /// call site. Optional params arrive as `T?` and unbox via the same
+    /// `try unbox…` template (we don't bridge Optional inputs today, so
+    /// `isOptional` for params is a hard skip — see `resolveSignature`).
+    let parameters: [(label: String, type: BridgedType)]
+    /// `nil` here means Void; for non-Void use `returnIsOptional` to know
+    /// if the bridge should wrap the result in `.optional(...)`.
+    let returnType: BridgedType?
+    let returnIsOptional: Bool
+    /// When the return is a tuple of bridgeable elements (e.g.
+    /// `(quotient: Self, remainder: Self)` on `Int.quotientAndRemainder`),
+    /// the elements live here in declaration order. `returnType` is nil
+    /// in that case — the bridge wraps the call in `.tuple([…])`.
+    let returnTupleElements: [BridgedType]
+}
+
+/// Try to extract a tuple return type from a Swift signature's `returns`
+/// fragment list. Returns nil for non-tuples or tuples with non-bridgeable
+/// elements. Element labels are discarded — the bridged tuple value is
+/// positional (`Value.tuple([…])`).
+func extractTupleReturn(
+    from fragments: [SymbolGraph.Fragment],
+    selfType: BridgedType?
+) -> [BridgedType]? {
+    // Must start with `(` and end with `)` — but NOT be a closure type
+    // like `(Int) -> Int`. The combined text after stripping parens
+    // shouldn't contain `->`.
+    guard let first = fragments.first, first.kind == "text", first.spelling.contains("("),
+          let last = fragments.last, last.kind == "text", last.spelling.contains(")")
+    else { return nil }
+    let combined = fragments.map(\.spelling).joined()
+    if combined.contains("->") { return nil }
+    // Walk fragments at depth 1 (inside the outer parens). Each comma at
+    // depth 1 separates a tuple element. Collect typeIdentifiers per
+    // element; reject if any element doesn't have exactly one.
+    var depth = 0
+    var elements: [[SymbolGraph.Fragment]] = [[]]
+    for f in fragments {
+        if f.kind == "text" {
+            for ch in f.spelling {
+                switch ch {
+                case "(", "<", "[":
+                    depth += 1
+                    if depth > 1 {
+                        elements[elements.count - 1].append(SymbolGraph.Fragment(kind: "text", spelling: String(ch), preciseIdentifier: nil))
+                    }
+                case ")", ">", "]":
+                    depth -= 1
+                    if depth > 0 {
+                        elements[elements.count - 1].append(SymbolGraph.Fragment(kind: "text", spelling: String(ch), preciseIdentifier: nil))
+                    }
+                case ",":
+                    if depth == 1 {
+                        elements.append([])
+                    } else {
+                        elements[elements.count - 1].append(SymbolGraph.Fragment(kind: "text", spelling: String(ch), preciseIdentifier: nil))
+                    }
+                default:
+                    if depth >= 1 {
+                        elements[elements.count - 1].append(SymbolGraph.Fragment(kind: "text", spelling: String(ch), preciseIdentifier: nil))
+                    }
+                }
+            }
+        } else if depth >= 1 {
+            elements[elements.count - 1].append(f)
+        }
+    }
+    guard elements.count >= 2 else { return nil }  // single-element tuples are silly
+    var result: [BridgedType] = []
+    for el in elements {
+        guard let t = extractType(from: el, selfType: selfType) else { return nil }
+        if t.isOptional { return nil }   // Optional tuple elements not bridged.
+        result.append(t.bridge)
+    }
+    return result
+}
+
+/// Pull argument labels from a method title like `distance(to:)` →
+/// `["to"]`, `isLessThanOrEqualTo(_:)` → `["_"]`, `f(_:_:)` → `["_", "_"]`.
+/// Used at the call site since `name`/`internalName` in the symbol-graph
+/// `parameters[]` don't reliably distinguish labelled vs unlabelled.
+func argLabels(fromTitle title: String) -> [String] {
+    guard let open = title.firstIndex(of: "("),
+          let close = title.lastIndex(of: ")"),
+          open < close
+    else { return [] }
+    let inside = title[title.index(after: open)..<close]
+    if inside.isEmpty { return [] }
+    return inside.split(separator: ":", omittingEmptySubsequences: false)
+        .dropLast()
+        .map(String.init)
+}
+
+func resolveSignature(_ sym: SymbolGraph.Symbol) -> ResolvedSignature? {
+    guard let sig = sym.functionSignature else { return nil }
+    let labels = argLabels(fromTitle: sym.names.title)
+    let paramSyntaxes = sig.parameters ?? []
+    guard labels.count == paramSyntaxes.count else { return nil }
+    // For instance methods, the `Self` placeholder in protocol-requirement
+    // signatures resolves to the owning type's bridge. Walk through the
+    // alias map so `StringProtocol` resolves like `String`.
+    let selfBridge: BridgedType?
+    if sym.pathComponents.count == 2 {
+        let owner = receiverAliases[sym.pathComponents[0]] ?? sym.pathComponents[0]
+        selfBridge = bridgeableReceivers[owner]
+    } else {
+        selfBridge = nil
+    }
+    // Inout parameters can't be bridged through our value-passing
+    // closures — the receiver-side `Value` is a copy.
+    let inouts = parameterInouts(in: sym, count: paramSyntaxes.count)
+    if inouts.contains(true) { return nil }
+    // Per-parameter default-arg detection lets us drop params that have a
+    // default value AND a non-bridgeable type — the Swift call site uses
+    // the default. Unlocks methods like `Data(contentsOf:options:)` where
+    // `options: ReadingOptions = []` is the only blocker.
+    let defaults = parameterDefaults(in: sym, count: paramSyntaxes.count)
+    var params: [(String, BridgedType)] = []
+    for (i, (label, p)) in zip(labels, paramSyntaxes).enumerated() {
+        if let t = extractType(from: p.declarationFragments, selfType: selfBridge) {
+            if t.isOptional { return nil }  // Optional inputs not bridged.
+            params.append((label, t.bridge))
+            continue
+        }
+        // Unbridgeable type — only acceptable if the param has a default
+        // we can rely on at the Swift call site.
+        if i < defaults.count, defaults[i] {
+            // Drop the param from our bridge — Swift fills in the default.
+            continue
+        }
+        return nil
+    }
+    var ret: BridgedType? = nil
+    var retOptional = false
+    var retTupleElements: [BridgedType] = []
+    if let returns = sig.returns {
+        // Swift returns are a single fragment list. Void shows up as no
+        // typeIdentifier fragments at all (or `Void` USR).
+        let typeFrags = returns.filter { $0.kind == "typeIdentifier" }
+        if !typeFrags.isEmpty {
+            // Try a single-typed return first; if extractType rejects it
+            // because of the `(` text guard (a tuple), fall back to
+            // tuple-element extraction.
+            if let t = extractType(from: returns, selfType: selfBridge) {
+                ret = t.bridge
+                retOptional = t.isOptional
+            } else if let elements = extractTupleReturn(from: returns, selfType: selfBridge) {
+                retTupleElements = elements
+            } else {
+                return nil
+            }
+        }
+    }
+    return ResolvedSignature(
+        parameters: params,
+        returnType: ret,
+        returnIsOptional: retOptional,
+        returnTupleElements: retTupleElements
+    )
+}
+
+/// Render a unbox/box step using the BridgedType's template.
+func render(_ template: String, _ expr: String) -> String {
+    return template.replacingOccurrences(of: "%@", with: expr)
+}
+
+// MARK: - Unified closure-emit helper
+//
+// The five callable kinds (`swift.func`, `swift.method`, `swift.init`,
+// `swift.property`, `swift.type.method`) share the shape:
+//   `i.register…(<key>) { <closureParams> in
+//       <arity guard>
+//       <receiver unbox?>
+//       <return expr>
+//   }`
+// Differences are confined to: which `register` overload, what the
+// closure parameters are, whether we unbox a receiver, what the
+// callExpr looks like, and what label we use in arity error messages.
+// Capture those in `EmitConfig`; the emit is then mechanical.
+
+struct EmitConfig {
+    /// E.g. `i.registerMethod(on: "URL", name: "absoluteString")` or
+    /// `i.registerInit(on: "URL", labels: ["string"])`.
+    let registerLine: String
+    /// The closure's parameter list — `args`, `receiver, args`, or `receiver`.
+    let closureParams: String
+    /// Whether to emit an `args.count == N` guard. `nil` means no guard
+    /// (zero-arg closures like `registerComputed`'s `receiver in` form).
+    let arity: Int?
+    /// Receiver unbox line (`let recv: T = try unboxT(receiver)`), or nil.
+    let recvUnboxLine: String?
+    /// The body's call expression, e.g. `recv.foo(<args>)`, `URL(<args>)`,
+    /// `Foo.staticMethod(<args>)`. Already includes unboxed args.
+    let callExpr: String
+    /// Used in the arity-fail diagnostic, e.g. `"URL.absoluteString"` or
+    /// `"URL(string:)"`.
+    let errorPrefix: String
+    /// Return shape — flat-value, optional, throwing, tuple combinations.
+    let returnType: BridgedType?
+    let isOptional: Bool
+    let isThrowing: Bool
+    let tupleElements: [BridgedType]
+}
+
+/// Render a registration as code, using the unified shape. Indentation
+/// matches the existing per-case output so diff churn against the
+/// pre-refactor file is minimal.
+func renderEmit(_ c: EmitConfig) -> String {
+    let returnExpr = buildReturnExpr(
+        callExpr: c.callExpr,
+        returnType: c.returnType,
+        isOptional: c.isOptional,
+        isThrowing: c.isThrowing,
+        tupleElements: c.tupleElements
+    )
+    var bodyLines: [String] = []
+    if let arity = c.arity {
+        bodyLines.append("            guard args.count == \(arity) else {")
+        bodyLines.append("                throw RuntimeError.invalid(\"\(c.errorPrefix): expected \(arity) argument(s), got \\(args.count)\")")
+        bodyLines.append("            }")
+    }
+    if let recv = c.recvUnboxLine {
+        bodyLines.append("            \(recv)")
+    }
+    bodyLines.append("            \(returnExpr)")
+    return """
+            \(c.registerLine) { \(c.closureParams) in
+    \(bodyLines.joined(separator: "\n"))
+            }
+    """
+}
+
+/// Common arg-unboxing: produces the Swift-source argument list
+/// `(label: try unboxX(args[0]), …)` that goes inside the wrapped call.
+func unboxedCallArgs(for sig: ResolvedSignature) -> String {
+    let unboxed = sig.parameters.enumerated().map { (i, p) in
+        render(p.type.unboxTemplate, "args[\(i)]")
+    }
+    return zip(sig.parameters, unboxed)
+        .map { (p, u) in (p.label == "_" ? "" : "\(p.label): ") + u }
+        .joined(separator: ", ")
+}
+
+/// True when a method's `declarationFragments` start with `mutating` —
+/// the bridge ABI passes the receiver by value, so there's no path to
+/// mutate it from the closure body. Mutating methods stay hand-rolled
+/// via `tryMutatingMethodCall` in the interpreter.
+func isMutating(_ sym: SymbolGraph.Symbol) -> Bool {
+    let fragments = sym.declarationFragments ?? []
+    return fragments.first?.spelling == "mutating"
+}
+
+/// True for `@available(*, deprecated)`, `unavailable`, or symbols
+/// introduced after our deployment target. The deployment target lives
+/// in `Package.swift` (macOS 26 today); we bake it in here to keep the
+/// generator self-contained.
+let deploymentMacOSMajor = 26
+let deploymentMacOSMinor = 0
+
+func isDeprecated(_ sym: SymbolGraph.Symbol) -> Bool {
+    guard let avail = sym.availability else { return false }
+    for a in avail {
+        if a.isUnconditionallyDeprecated == true { return true }
+        if a.isUnconditionallyUnavailable == true { return true }
+        if a.obsoleted != nil { return true }
+        // "Soft-deprecated" symbols carry `deprecated: { major: 100000 }` —
+        // a sentinel meaning "we'd like you to migrate, but the symbol
+        // still compiles and runs". Only treat as deprecated if the
+        // version is at or below our deployment target. macOS-style
+        // entries dominate; other domains follow the same rule.
+        if a.domain == "macOS",
+           let dep = a.deprecated?.major,
+           dep <= deploymentMacOSMajor
+        {
+            return true
+        }
+        if a.domain == "macOS",
+           let major = a.introduced?.major
+        {
+            if major > deploymentMacOSMajor { return true }
+            if major == deploymentMacOSMajor,
+               let minor = a.introduced?.minor,
+               minor > deploymentMacOSMinor
+            {
+                return true
+            }
+        }
+    }
+    return false
+}
+
+/// True if the method signature includes `throws`.
+func isThrowing(_ sym: SymbolGraph.Symbol) -> Bool {
+    let fragments = sym.declarationFragments ?? []
+    return fragments.contains { $0.kind == "keyword" && $0.spelling == "throws" }
+}
+
+/// True if the method has unbound generic parameters or a `where`
+/// clause — we can't bridge these because the call site can't pick
+/// concrete witnesses. Detected via the `swiftGenerics` field (most
+/// reliable) plus a fragment scan as a backstop.
+func isGeneric(_ sym: SymbolGraph.Symbol) -> Bool {
+    if let params = sym.swiftGenerics?.parameters, !params.isEmpty { return true }
+    let fragments = sym.declarationFragments ?? []
+    for f in fragments {
+        if f.kind == "keyword" && f.spelling == "where" { return true }
+    }
+    var seenOpen = false
+    for f in fragments {
+        if f.kind == "text" {
+            for ch in f.spelling {
+                if ch == "(" { seenOpen = true; break }
+                if ch == "<" && !seenOpen { return true }
+            }
+            if seenOpen { break }
+        }
+    }
+    return false
+}
+
+/// True if the method or property is `async`. Bridge closures aren't
+/// async-capable today.
+func isAsync(_ sym: SymbolGraph.Symbol) -> Bool {
+    let fragments = sym.declarationFragments ?? []
+    return fragments.contains { $0.kind == "keyword" && $0.spelling == "async" }
+}
+
+/// Per-parameter "is `inout`" flags. We can't bridge inout (the
+/// closure's args arrive by value), so any symbol with an inout param
+/// is unbridgeable. Detected via the `inout` keyword fragment appearing
+/// at depth 1 between this param's start and the next.
+func parameterInouts(in sym: SymbolGraph.Symbol, count: Int) -> [Bool] {
+    let fragments = sym.declarationFragments ?? []
+    guard count > 0 else { return [] }
+    var result = [Bool](repeating: false, count: count)
+    var paramIdx = -1
+    var depth = 0
+    for f in fragments {
+        if f.kind == "text" {
+            for ch in f.spelling {
+                switch ch {
+                case "(", "<", "[":
+                    depth += 1
+                    if depth == 1 { paramIdx = 0 }
+                case ")", ">", "]":
+                    depth -= 1
+                case ",":
+                    if depth == 1 { paramIdx += 1 }
+                default: break
+                }
+            }
+        } else if f.kind == "keyword", f.spelling == "inout",
+                  depth == 1, paramIdx >= 0, paramIdx < count
+        {
+            result[paramIdx] = true
+        }
+    }
+    return result
+}
+
+/// Per-parameter "has a default value" flags in declaration order.
+///
+/// Walk the symbol's full declarationFragments at depth 1 (inside the
+/// outer `(...)`), tracking which parameter we're in by counting commas.
+/// A parameter with `=` somewhere in its text fragments has a default.
+/// Generic-bracket commas (`Dictionary<K, V>`) are skipped via depth
+/// tracking on `<>` and `()`.
+func parameterDefaults(in sym: SymbolGraph.Symbol, count: Int) -> [Bool] {
+    let fragments = sym.declarationFragments ?? []
+    guard count > 0 else { return [] }
+    var result = [Bool](repeating: false, count: count)
+    var paramIdx = -1   // -1 = before first `(`
+    var depth = 0       // bracket nesting; 1 means "inside outer parens"
+    for f in fragments {
+        if f.kind == "text" {
+            for ch in f.spelling {
+                switch ch {
+                case "(", "<", "[":
+                    depth += 1
+                    if depth == 1 { paramIdx = 0 }
+                case ")", ">", "]":
+                    depth -= 1
+                case ",":
+                    if depth == 1 {
+                        paramIdx += 1
+                    }
+                case "=":
+                    // Only count when at depth 1 (top-level param defs).
+                    // Type-level `=` like `where T == U` is at depth 0
+                    // so won't trigger.
+                    if depth == 1, paramIdx >= 0, paramIdx < count {
+                        result[paramIdx] = true
+                    }
+                default: break
+                }
+            }
+        }
+    }
+    return result
+}
+
+/// Build the `return …` statement(s) for a method/init/global call.
+///
+/// - When the signature throws (`throws` keyword), wrap in `do/catch`
+///   that re-raises Swift errors as `UserThrowSignal` so script-side
+///   `do/catch` blocks can handle them.
+/// - When the return is Optional, emit a guard-let so the success case
+///   wraps in `.optional(…)` and the nil case becomes `.optional(nil)`.
+/// - When throwing AND optional, both transforms apply.
+/// - Plain Void returns get `_ = …`.
+func buildReturnExpr(
+    callExpr: String,
+    returnType: BridgedType?,
+    isOptional: Bool,
+    isThrowing: Bool = false,
+    tupleElements: [BridgedType] = []
+) -> String {
+    let prefix = isThrowing ? "try " : ""
+
+    func core() -> String {
+        if !tupleElements.isEmpty {
+            // Tuple return: bind the call result to a temporary, then box
+            // each positional element via its element-type's box template.
+            let parts = tupleElements.enumerated().map { (i, bridge) in
+                render(bridge.boxTemplate, "_t.\(i)")
+            }
+            return """
+            let _t = \(prefix)\(callExpr)
+                    return .tuple([\(parts.joined(separator: ", "))])
+            """
+        }
+        guard let ret = returnType else {
+            return "_ = \(prefix)\(callExpr)\n            return .void"
+        }
+        if isOptional {
+            return """
+            if let _v = \(prefix)\(callExpr) {
+                        return .optional(\(render(ret.boxTemplate, "_v")))
+                    }
+                    return .optional(nil)
+            """
+        }
+        return "return " + render(ret.boxTemplate, "\(prefix)\(callExpr)")
+    }
+
+    if isThrowing {
+        return """
+        do {
+                    \(core())
+                } catch {
+                    throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+                }
+        """
+    }
+    return core()
+}
+
+// Walk symbols, pick out matches. Each emit goes into one of two groups
+// based on the source module: `Swift` symbols register at interpreter
+// startup; `Foundation` (and friends) wait for `import Foundation`.
+enum EmitGroup { case stdlib, foundation }
+struct EmitEntry {
+    let symbolPath: String   // "sqrt(_:)" or "String.foo(...)"
+    let group: EmitGroup
+    let code: String
+}
+
+var emitted: [EmitEntry] = []
+var seenPaths: Set<String> = []
+var skippedReasons: [String: String] = [:]  // path -> reason, for diagnostics
+
+/// Decide which generated-bridges file a symbol belongs in.
+///
+/// `Int.max` should always be available — it's stdlib — even if the
+/// authoritative symbol came from a Foundation cross-module graph. The
+/// determining factor is the owning type's USR, not the source module:
+///   - Stdlib primitives (`s:Si`, `s:Sd`, `s:SS`, `s:Sb` etc.) →
+///     `.stdlib`. Always loaded.
+///   - Anything else (Foundation opaque types, free functions surfaced
+///     by Foundation, …) → `.foundation`. Loads on `import Foundation`.
+/// Stdlib types whose methods/properties stay in the always-loaded
+/// bridge file. Anything else routes to the Foundation file (loads on
+/// `import Foundation`). The set is small and stable, so we list it.
+let stdlibReceivers: Set<String> = ["Int", "Double", "String", "Bool"]
+
+func emitGroupFor(symbol sym: SymbolGraph.Symbol, module: String) -> EmitGroup {
+    // Type-owned symbols: route by the receiver type. Receiver aliases
+    // (StringProtocol → String) are applied first so `StringProtocol.foo`
+    // lands on the same side as `String.foo`.
+    if sym.pathComponents.count == 2 {
+        let raw = sym.pathComponents[0]
+        let resolved = receiverAliases[raw] ?? raw
+        return stdlibReceivers.contains(resolved) ? .stdlib : .foundation
+    }
+    // Free functions and unbridged owners: source module decides.
+    return module == "Swift" ? .stdlib : .foundation
+}
+
+/// Bridgeable receiver types for method emission. Populated lazily
+/// from `bridgedTypes` (post auto-discovery) — there's only one
+/// authoritative table now.
+nonisolated(unsafe) var bridgeableReceivers: [String: BridgedType] = [:]
+
+// MARK: - Auto-discovery pass
+//
+// Walk every `swift.struct` / `swift.class` symbol seen in the loaded
+// graphs and promote it to an opaque-bridged type if it:
+//   - has a single-component path (top-level type)
+//   - conforms to `Equatable` (so script-side `==` works)
+//   - isn't in `autoPromoteSkip` (structurally modelled elsewhere)
+//   - isn't already in `primitiveBridges`
+// This subsumes what used to be a hand-curated 10-entry table.
+for annotated in allSymbols {
+    let sym = annotated.symbol
+    let kind = sym.kind.identifier
+    // Stick to value types — auto-promoting reference-type classes
+    // pulls in the entire NSObject hierarchy, where method names collide
+    // with `NSObject` itself (e.g. ambiguous `superclass`). Specific
+    // Foundation classes worth bridging can be added by allowlist.
+    guard kind == "swift.struct" else { continue }
+    // Top-level (`URL`) and one-level-nested (`String.Encoding`) are
+    // both fine. We use the dotted name as the spelling so the bridge
+    // emits `String.Encoding` consistently.
+    guard (1...2).contains(sym.pathComponents.count) else { continue }
+    let typeName = sym.pathComponents.joined(separator: ".")
+    guard !autoPromoteSkip.contains(typeName) else { continue }
+    let usr = sym.identifier.precise
+    guard primitiveBridges[usr] == nil else { continue }
+    if bridgedTypes[usr] != nil { continue }
+    // Generic types (`FloatingPointFormatStyle<Value>`) can't be carried
+    // as opaque without the witness — Swift refuses to infer it.
+    if let params = sym.swiftGenerics?.parameters, !params.isEmpty { continue }
+    let conformances = conformancesByUSR[usr] ?? []
+    guard conformances.contains(equatableUSR) else { continue }
+    bridgedTypes[usr] = opaqueBridge(typeName)
+}
+
+// Build `bridgeableReceivers` from the resolved `bridgedTypes`. Two
+// USRs can map to the same spelling (TimeInterval/Double); the
+// stdlib-USR entry wins so methods on Double get the primitive bridge.
+for (usr, bridge) in bridgedTypes {
+    if let existing = bridgeableReceivers[bridge.swiftSpelling] {
+        if usr.hasPrefix("s:S") && !existing.unboxTemplate.contains("toDouble") {
+            continue
+        }
+    }
+    bridgeableReceivers[bridge.swiftSpelling] = bridge
+}
+
+/// Tracks `(receiver, member)` registrations across emit so we can flag
+/// overloads where two source methods would generate the same registry
+/// key. We can't dispatch overloads from a single closure, so the second
+/// occurrence is dropped with a warning — letting hand-written code own
+/// the dispatch.
+var registeredKeys: Set<String> = []
+
+// Sort symbols for deterministic, helpful overload resolution:
+//   1. Foundation source-module BEFORE Swift stdlib. Foundation overlays
+//      often refine stdlib behavior (locale-aware string ops, etc.) and
+//      we want those overlays to win when both expose the same path.
+//      Group routing (`.stdlib` vs `.foundation`) is decided per-symbol
+//      based on the OWNING TYPE — so `Int.max` still ends up in
+//      `.stdlib` even if the chosen symbol came from a Foundation
+//      cross-module graph.
+//   2. Within a module, fewer parameters first. When two methods share
+//      a name (e.g. `appendingPathComponent(_:)` vs
+//      `appendingPathComponent(_:isDirectory:)`), the simpler shape wins
+//      — that's almost always what the script-side user wants.
+func paramCount(_ a: AnnotatedSymbol) -> Int {
+    return a.symbol.functionSignature?.parameters?.count ?? 0
+}
+let prioritizedSymbols = allSymbols.sorted { lhs, rhs in
+    let lp = lhs.module == "Foundation" ? 0 : 1
+    let rp = rhs.module == "Foundation" ? 0 : 1
+    if lp != rp { return lp < rp }
+    return paramCount(lhs) < paramCount(rhs)
+}
+
+for annotated in prioritizedSymbols {
+    let sym = annotated.symbol
+    let path = sym.pathComponents.joined(separator: ".")
+    if blocklist.contains(path) { continue }
+    if !autoAllowlist {
+        guard allowlist.contains(path) else { continue }
+    } else if !allowlist.isEmpty, !allowlist.contains(path) {
+        // Both flags supplied: allowlist constrains the auto-harvest.
+        // (No-op when allowlist is empty, which is the typical pure-auto
+        // case.)
+        continue
+    }
+    let emitGroup = emitGroupFor(symbol: sym, module: annotated.module)
+    // We *don't* dedupe by `path` here — `swift.type.property` and
+    // `swift.property` can share a name (e.g. `Int.bitWidth`, accessible
+    // on both the type and an instance), and we want both bridges
+    // emitted. The per-kind `registeredKeys` set still blocks legitimate
+    // overload clashes within a single kind.
+
+    /// Helper: dedup a per-kind key against `registeredKeys`. Returns true
+    /// if the key was claimed (continue with emit) or false if a previous
+    /// symbol already won the slot.
+    func claim(_ key: String, clashLabel: String) -> Bool {
+        if registeredKeys.contains(key) {
+            skippedReasons[path] = "overload clash with another '\(clashLabel)'"
+            return false
+        }
+        return true
+    }
+    /// Helper: append an emit entry and mark all the bookkeeping in one
+    /// step so the per-kind blocks below stay tight.
+    func record(_ key: String, code: String) {
+        emitted.append(EmitEntry(symbolPath: path, group: emitGroup, code: code))
+        seenPaths.insert(path)
+        registeredKeys.insert(key)
+    }
+
+    switch sym.kind.identifier {
+    case "swift.func" where sym.pathComponents.count == 1 && !isDeprecated(sym) && !isGeneric(sym) && !isAsync(sym):
+        guard let sig = resolveSignature(sym) else {
+            skippedReasons[path] = "non-value signature"; continue
+        }
+        let name = sym.names.title.split(separator: "(").first.map(String.init) ?? sym.names.title
+        let key = "global:\(name)"
+        if !claim(key, clashLabel: name) { continue }
+        record(key, code: renderEmit(EmitConfig(
+            registerLine: "i.registerGlobal(name: \"\(name)\")",
+            closureParams: "args",
+            arity: sig.parameters.count,
+            recvUnboxLine: nil,
+            callExpr: "\(name)(\(unboxedCallArgs(for: sig)))",
+            errorPrefix: name,
+            returnType: sig.returnType,
+            isOptional: sig.returnIsOptional,
+            isThrowing: isThrowing(sym),
+            tupleElements: sig.returnTupleElements
+        )))
+
+    case "swift.method" where sym.pathComponents.count == 2 &&
+                              !isMutating(sym) &&
+                              !isDeprecated(sym) &&
+                              !isGeneric(sym) &&
+                              !isAsync(sym):
+        let rawReceiver = sym.pathComponents[0]
+        let receiverTypeName = receiverAliases[rawReceiver] ?? rawReceiver
+        guard let recvType = bridgeableReceivers[receiverTypeName] else {
+            skippedReasons[path] = "unbridged receiver '\(rawReceiver)'"; continue
+        }
+        guard let sig = resolveSignature(sym) else {
+            skippedReasons[path] = "non-value parameter or return"; continue
+        }
+        let methodName = sym.names.title.split(separator: "(").first.map(String.init) ?? sym.names.title
+        let key = "method:\(receiverTypeName).\(methodName)"
+        if !claim(key, clashLabel: "\(receiverTypeName).\(methodName)") { continue }
+        let recvUnbox = render(recvType.unboxTemplate, "receiver")
+        record(key, code: renderEmit(EmitConfig(
+            registerLine: "i.registerMethod(on: \"\(receiverTypeName)\", name: \"\(methodName)\")",
+            closureParams: "receiver, args",
+            arity: sig.parameters.count,
+            recvUnboxLine: "let recv: \(recvType.swiftSpelling) = \(recvUnbox)",
+            callExpr: "recv.\(methodName)(\(unboxedCallArgs(for: sig)))",
+            errorPrefix: "\(receiverTypeName).\(methodName)",
+            returnType: sig.returnType,
+            isOptional: sig.returnIsOptional,
+            isThrowing: isThrowing(sym),
+            tupleElements: sig.returnTupleElements
+        )))
+
+    case "swift.init" where sym.pathComponents.count == 2 && !isDeprecated(sym) && !isGeneric(sym) && !isAsync(sym):
+        let rawReceiver = sym.pathComponents[0]
+        let receiverTypeName = receiverAliases[rawReceiver] ?? rawReceiver
+        guard let recvType = bridgeableReceivers[receiverTypeName] else {
+            skippedReasons[path] = "unbridged init owner '\(rawReceiver)'"; continue
+        }
+        guard let sig = resolveSignature(sym) else {
+            skippedReasons[path] = "non-value parameter or return"; continue
+        }
+        let labels = sig.parameters.map(\.label)
+        let labelKey = labels.joined(separator: ":")
+        let key = "init:\(receiverTypeName)(\(labelKey))"
+        if !claim(key, clashLabel: "\(receiverTypeName)(\(labelKey))") { continue }
+        // `init?(…)` failability: in the fragment list, the `init`
+        // keyword is followed by `?(…)` for failable variants.
+        let df = sym.declarationFragments ?? []
+        var failable = false
+        for (i, frag) in df.enumerated() where frag.spelling == "init" {
+            if i + 1 < df.count, df[i + 1].spelling.hasPrefix("?") { failable = true }
+            break
+        }
+        let labelsLiteral = "[" + labels.map { "\"\($0)\"" }.joined(separator: ", ") + "]"
+        let labelDoc = labels.isEmpty ? "" : labels.map { "\($0):" }.joined()
+        record(key, code: renderEmit(EmitConfig(
+            registerLine: "i.registerInit(on: \"\(receiverTypeName)\", labels: \(labelsLiteral))",
+            closureParams: "args",
+            arity: sig.parameters.count,
+            recvUnboxLine: nil,
+            callExpr: "\(receiverTypeName)(\(unboxedCallArgs(for: sig)))",
+            errorPrefix: "\(receiverTypeName)(\(labelDoc))",
+            returnType: recvType,
+            isOptional: failable,
+            isThrowing: isThrowing(sym),
+            tupleElements: []
+        )))
+
+    case "swift.property" where sym.pathComponents.count == 2 && !isDeprecated(sym) && !isAsync(sym):
+        let rawReceiver = sym.pathComponents[0]
+        let receiverTypeName = receiverAliases[rawReceiver] ?? rawReceiver
+        guard let recvType = bridgeableReceivers[receiverTypeName] else {
+            skippedReasons[path] = "unbridged owning type '\(rawReceiver)'"; continue
+        }
+        let memberName = sym.pathComponents[1]
+        let key = "computed:\(receiverTypeName).\(memberName)"
+        if !claim(key, clashLabel: "\(receiverTypeName).\(memberName)") { continue }
+        guard let propType = extractType(
+            from: sym.declarationFragments ?? [],
+            selfType: recvType
+        ) else {
+            skippedReasons[path] = "non-value property type"; continue
+        }
+        let recvUnbox = render(recvType.unboxTemplate, "receiver")
+        record(key, code: renderEmit(EmitConfig(
+            registerLine: "i.registerComputed(on: \"\(receiverTypeName)\", name: \"\(memberName)\")",
+            closureParams: "receiver",
+            arity: nil,
+            recvUnboxLine: "let recv: \(recvType.swiftSpelling) = \(recvUnbox)",
+            callExpr: "recv.\(memberName)",
+            errorPrefix: "\(receiverTypeName).\(memberName)",
+            returnType: propType.bridge,
+            isOptional: propType.isOptional,
+            isThrowing: false,
+            tupleElements: []
+        )))
+
+    case "swift.type.property" where sym.pathComponents.count == 2 && !isDeprecated(sym) && !isAsync(sym):
+        // The odd one out: emits a `registerStaticValue(value: …)` call
+        // (no closure body), so it bypasses `renderEmit`.
+        let rawReceiver = sym.pathComponents[0]
+        let receiverTypeName = receiverAliases[rawReceiver] ?? rawReceiver
+        guard let recvType = bridgeableReceivers[receiverTypeName] else {
+            skippedReasons[path] = "unbridged owning type '\(rawReceiver)'"; continue
+        }
+        let memberName = sym.pathComponents[1]
+        let key = "static:\(receiverTypeName).\(memberName)"
+        if !claim(key, clashLabel: "\(receiverTypeName).\(memberName)") { continue }
+        guard let propType = extractType(
+            from: sym.declarationFragments ?? [],
+            selfType: recvType
+        ), !propType.isOptional else {
+            skippedReasons[path] = "non-value or optional static property"; continue
+        }
+        let valueExpr = render(propType.bridge.boxTemplate, "\(receiverTypeName).\(memberName)")
+        record(key, code: """
+                i.registerStaticValue(on: \"\(receiverTypeName)\", name: \"\(memberName)\", value: \(valueExpr))
+        """)
+
+    case "swift.type.method" where sym.pathComponents.count == 2 && !isDeprecated(sym) && !isGeneric(sym) && !isAsync(sym):
+        let rawReceiver = sym.pathComponents[0]
+        let receiverTypeName = receiverAliases[rawReceiver] ?? rawReceiver
+        guard bridgeableReceivers[receiverTypeName] != nil else {
+            skippedReasons[path] = "unbridged owning type '\(rawReceiver)'"; continue
+        }
+        guard let sig = resolveSignature(sym) else {
+            skippedReasons[path] = "non-value parameter or return"; continue
+        }
+        let methodName = sym.names.title.split(separator: "(").first.map(String.init) ?? sym.names.title
+        let key = "static-method:\(receiverTypeName).\(methodName)"
+        if !claim(key, clashLabel: "\(receiverTypeName).\(methodName)") { continue }
+        record(key, code: renderEmit(EmitConfig(
+            registerLine: "i.registerStaticMethod(on: \"\(receiverTypeName)\", name: \"\(methodName)\")",
+            closureParams: "args",
+            arity: sig.parameters.count,
+            recvUnboxLine: nil,
+            callExpr: "\(receiverTypeName).\(methodName)(\(unboxedCallArgs(for: sig)))",
+            errorPrefix: "\(receiverTypeName).\(methodName)",
+            returnType: sig.returnType,
+            isOptional: sig.returnIsOptional,
+            isThrowing: isThrowing(sym),
+            tupleElements: sig.returnTupleElements
+        )))
+
+    default:
+        continue
+    }
+}
+
+// Emit `registerComparator` calls for every bridged opaque type that
+// conforms to `Equatable` (and use `<`/`>` ordering for those that also
+// conform to `Comparable`). Lets script code write `dateA < dateB`,
+// `localeA == localeB`, `urlA == urlB`, etc. without hand-rolling.
+for (usr, bridge) in bridgedTypes {
+    // Only opaque types — primitives are compared via `Value.==`.
+    guard bridge.unboxTemplate.contains("unboxOpaque") else { continue }
+    let conformances = conformancesByUSR[usr] ?? []
+    guard conformances.contains(equatableUSR) else { continue }
+    let isComparable = conformances.contains(comparableUSR)
+    let typeName = bridge.swiftSpelling
+    let body: String
+    if isComparable {
+        body = """
+                guard case .opaque(_, let a) = lhs, let la = a as? \(typeName),
+                      case .opaque(_, let b) = rhs, let lb = b as? \(typeName)
+                else { throw RuntimeError.invalid("\(typeName) comparison: bad payloads") }
+                return la < lb ? -1 : (la > lb ? 1 : 0)
+        """
+    } else {
+        body = """
+                guard case .opaque(_, let a) = lhs, let la = a as? \(typeName),
+                      case .opaque(_, let b) = rhs, let lb = b as? \(typeName)
+                else { throw RuntimeError.invalid("\(typeName) comparison: bad payloads") }
+                return la == lb ? 0 : -1
+        """
+    }
+    let code = """
+            i.registerComparator(on: \"\(typeName)\") { lhs, rhs in
+        \(body)
+            }
+    """
+    // Foundation comparators go in the Foundation file (load on import);
+    // any future stdlib opaque comparators would go in stdlib.
+    let group: EmitGroup = usr.hasPrefix("s:10Foundation") || usr.hasPrefix("c:") ? .foundation : .stdlib
+    emitted.append(EmitEntry(symbolPath: "\(typeName).==", group: group, code: code))
+}
+
+// Report missing entries.
+for entry in allowlist where !seenPaths.contains(entry) {
+    let reason = skippedReasons[entry] ?? "not found in any symbol graph"
+    FileHandle.standardError.write(Data("warning: \(entry): \(reason)\n".utf8))
+}
+
+// MARK: - Output
+
+let autogenBanner = """
+// AUTO-GENERATED by BridgeGeneratorTool. Do not edit by hand.
+// Regenerate with: bash Tools/regen-foundation-bridge.sh
+
+"""
+
+func renderFile(
+    extensionTarget: String,
+    methodName: String,
+    bodies: [String]
+) -> String {
+    let body = bodies.isEmpty ? "        // (no bridges)" : bodies.joined(separator: "\n\n")
+    return """
+    \(autogenBanner)import Foundation
+
+    extension \(extensionTarget) {
+        func \(methodName)(into i: Interpreter) {
+    \(body)
+        }
+    }
+
+    """
+}
+
+let stdlibBodies = emitted.filter { $0.group == .stdlib }.map(\.code)
+let foundationBodies = emitted.filter { $0.group == .foundation }.map(\.code)
+
+let stdlibOutput = renderFile(
+    extensionTarget: "Interpreter",
+    methodName: "registerGeneratedStdlib",
+    bodies: stdlibBodies
+)
+let foundationOutput = renderFile(
+    extensionTarget: "FoundationModule",
+    methodName: "registerGenerated",
+    bodies: foundationBodies
+)
+
+do {
+    try stdlibOutput.write(to: outputStdlibURL, atomically: true, encoding: .utf8)
+    try foundationOutput.write(to: outputFoundationURL, atomically: true, encoding: .utf8)
+    print("wrote \(stdlibBodies.count) stdlib bridge(s) to \(outputStdlibURL.path)")
+    print("wrote \(foundationBodies.count) Foundation bridge(s) to \(outputFoundationURL.path)")
+} catch {
+    FileHandle.standardError.write(Data("error writing output: \(error)\n".utf8))
+    exit(1)
+}
