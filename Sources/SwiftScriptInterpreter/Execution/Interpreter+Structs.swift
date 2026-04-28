@@ -90,11 +90,13 @@ extension Interpreter {
                     let internalName = (p.secondName?.text) ?? firstName
                     return Function.Parameter(label: label, name: internalName, type: p.type)
                 }
+                let isFailable = initDecl.optionalMark != nil
                 customInits.append(Function(
                     name: "\(name).init",
                     parameters: params,
                     returnType: nil,
                     isMutating: false,
+                    isFailable: isFailable,
                     kind: .user(body: body.statements, capturedScope: scope)
                 ))
             } else if let funcDecl = decl.as(FunctionDeclSyntax.self) {
@@ -327,16 +329,25 @@ extension Interpreter {
         returnTypeStack.append(nil)
         defer { returnTypeStack.removeLast() }
 
+        var failedInit = false
         do {
             for item in body {
                 _ = try await execute(item: item, in: callScope)
             }
-        } catch is ReturnSignal {
-            // Bare `return` inside an init is allowed; we don't return a value.
+        } catch let signal as ReturnSignal {
+            // Bare `return` is allowed in inits and means "stop here".
+            // For failable inits, a `return nil` carries `.optional(nil)`
+            // and signals construction failure.
+            if fn.isFailable, case .optional(.none) = signal.value {
+                failedInit = true
+            }
         }
 
         guard let final = callScope.lookup("self")?.value else {
             throw RuntimeError.invalid("init: 'self' lost from scope")
+        }
+        if fn.isFailable {
+            return failedInit ? .optional(nil) : .optional(final)
         }
         return final
     }

@@ -196,9 +196,11 @@ extension Interpreter {
                 if isRequired {
                     requiredInitSignatures.append(params.map { $0.label })
                 }
+                let isFailable = initDecl.optionalMark != nil
                 customInits.append(Function(
                     name: "\(name).init",
                     parameters: params,
+                    isFailable: isFailable,
                     kind: .user(body: body.statements, capturedScope: scope)
                 ))
             } else if let funcDecl = decl.as(FunctionDeclSyntax.self) {
@@ -778,12 +780,21 @@ extension Interpreter {
             currentClassContextStack.removeLast()
             instancesInInit.remove(ObjectIdentifier(inst))
         }
+        var failedInit = false
         do {
             for item in body {
                 _ = try await execute(item: item, in: callScope)
             }
-        } catch is ReturnSignal {
-            // `return` inside an init is allowed and means "stop here".
+        } catch let signal as ReturnSignal {
+            // `return` is allowed in inits as an early exit. For
+            // failable inits, `return nil` produces `.optional(nil)`
+            // and signals construction failure.
+            if fn.isFailable, case .optional(.none) = signal.value {
+                failedInit = true
+            }
+        }
+        if fn.isFailable {
+            return failedInit ? .optional(nil) : .optional(.classInstance(inst))
         }
         return .classInstance(inst)
     }

@@ -275,6 +275,91 @@ struct BridgesTests {
         #expect(captured == "0\n1\n2\n")
     }
 
+    // MARK: Failable init
+
+    @Test func failableScriptInitReturnsNilOnFailure() async throws {
+        let interp = Interpreter()
+        var captured = ""
+        interp.output = { captured += $0 + "\n" }
+        try await interp.eval(#"""
+            struct Money {
+                var amount: Int
+                init?(_ s: String) {
+                    guard let n = Int(s) else { return nil }
+                    self.amount = n
+                }
+            }
+            print(Money("42")?.amount ?? -1)
+            print(Money("nope")?.amount ?? -1)
+            """#)
+        #expect(captured == "42\n-1\n")
+    }
+
+    @Test func failableInitWrapsResultInOptional() async throws {
+        let interp = Interpreter()
+        var captured = ""
+        interp.output = { captured += $0 + "\n" }
+        try await interp.eval("""
+            struct Money {
+                var amount: Int
+                init?(_ n: Int) {
+                    if n < 0 { return nil }
+                    self.amount = n
+                }
+            }
+            let ok: Money? = Money(5)
+            print(ok?.amount ?? -1)
+            """)
+        #expect(captured == "5\n")
+    }
+
+    // MARK: ExpressibleBy*Literal
+
+    @Test func expressibleByIntegerLiteral() async throws {
+        let interp = Interpreter()
+        var captured = ""
+        interp.output = { captured += $0 + "\n" }
+        try await interp.eval("""
+            struct Money {
+                var amount: Int
+                init(integerLiteral value: Int) { self.amount = value }
+            }
+            let m: Money = 100
+            print(m.amount)
+            """)
+        #expect(captured == "100\n")
+    }
+
+    @Test func expressibleByFloatLiteral() async throws {
+        let interp = Interpreter()
+        var captured = ""
+        interp.output = { captured += $0 + "\n" }
+        try await interp.eval("""
+            struct Distance {
+                var meters: Double
+                init(floatLiteral value: Double) { self.meters = value }
+            }
+            let d: Distance = 3.14
+            print(d.meters)
+            """)
+        #expect(captured == "3.14\n")
+    }
+
+    @Test func expressibleByStringLiteral() async throws {
+        let interp = Interpreter()
+        var captured = ""
+        interp.output = { captured += $0 + "\n" }
+        try await interp.eval(#"""
+            struct Tag {
+                var name: String
+                init(stringLiteral value: String) { self.name = value }
+            }
+            let t: Tag = "swift"
+            print(t.name)
+            """#)
+        #expect(captured == "swift\n")
+    }
+
     @Test func valueIsHashableOnHostSide() async throws {
         let interp = Interpreter()
         let arr = try await interp.eval(#"[1, "hello", true, 1, "hello"]"#)

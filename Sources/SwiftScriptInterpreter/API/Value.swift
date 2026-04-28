@@ -327,6 +327,11 @@ public struct Function {
     /// runs so unqualified identifier reads/writes resolve against the
     /// type's `staticMembers`.
     public let staticContext: String?
+    /// `init?(...)` — failable initializer. The instantiator wraps the
+    /// result in `Optional<T>`, and a `return nil` in the body short-
+    /// circuits to `.optional(nil)`. Plain non-failable inits stay non-
+    /// optional.
+    public let isFailable: Bool
     public let kind: Kind
 
     public init(
@@ -336,6 +341,7 @@ public struct Function {
         isMutating: Bool = false,
         genericParameters: [String] = [],
         staticContext: String? = nil,
+        isFailable: Bool = false,
         kind: Kind
     ) {
         self.name = name
@@ -344,6 +350,7 @@ public struct Function {
         self.isMutating = isMutating
         self.genericParameters = genericParameters
         self.staticContext = staticContext
+        self.isFailable = isFailable
         self.kind = kind
     }
 

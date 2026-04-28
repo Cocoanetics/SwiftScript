@@ -8,14 +8,20 @@ enum CoercionContext {
     case returnValue     // `return ...` against a declared return type
 }
 
-/// Classify how an expression's numeric type is fixed.
-/// - `.integerLiteral`: the expression is composed of integer literals + arithmetic only.
-///    Such an expression is polymorphic — it can adapt to `Int` or `Double`.
-/// - `.floatLiteral`:  contains a Double literal somewhere; can only be `Double`.
+/// Classify how an expression's literal-ness affects coercion.
+/// - `.integerLiteral`: integer-literal expression (or arithmetic of
+///   only integer literals). Adapts polymorphically to Int / Double /
+///   any `ExpressibleByIntegerLiteral`.
+/// - `.floatLiteral`: contains a Double literal somewhere. Adapts to
+///   Double / any `ExpressibleByFloatLiteral`.
+/// - `.stringLiteral`: bare string literal — `ExpressibleByStringLiteral`.
+/// - `.booleanLiteral`: bare bool literal — `ExpressibleByBooleanLiteral`.
 /// - `.nonLiteral`: depends on a variable or call result — its type is fixed.
 enum LiteralKind {
     case integerLiteral
     case floatLiteral
+    case stringLiteral
+    case booleanLiteral
     case nonLiteral
 }
 
@@ -24,6 +30,8 @@ enum LiteralKind {
 func literalKind(_ expr: ExprSyntax) -> LiteralKind {
     if expr.is(IntegerLiteralExprSyntax.self) { return .integerLiteral }
     if expr.is(FloatLiteralExprSyntax.self)   { return .floatLiteral }
+    if expr.is(StringLiteralExprSyntax.self)  { return .stringLiteral }
+    if expr.is(BooleanLiteralExprSyntax.self) { return .booleanLiteral }
     if let infix = expr.as(InfixOperatorExprSyntax.self) {
         let l = literalKind(infix.leftOperand)
         let r = literalKind(infix.rightOperand)
@@ -227,6 +235,18 @@ extension Interpreter {
             return .opaque(typeName: parent, value: base)
         }
 
+        // Expressible-by-literal hooks. When the source value is a
+        // primitive that came from a literal expression and the target
+        // is a script-defined type providing the matching
+        // `init(integerLiteral:)` / `init(floatLiteral:)` /
+        // `init(stringLiteral:)`, dispatch to it. Mirrors how Swift
+        // synthesizes `ExpressibleBy*Literal` conformance.
+        if let coerced = try await tryExpressibleByLiteral(
+            value: value, expr: expr, targetType: typeName
+        ) {
+            return coerced
+        }
+
         switch (typeName, value) {
         // Same-type passthrough.
         case ("Int",    .int):    return value
@@ -326,6 +346,155 @@ extension Interpreter {
             return true
         }
         return false
+    }
+
+    /// Try to synthesize an `ExpressibleBy*Literal` conversion from a
+    /// primitive `value` to a script-defined `targetType`. Returns nil
+    /// if the type doesn't define the matching literal init or if
+    /// `value` isn't a literal-shaped primitive.
+    func tryExpressibleByLiteral(
+        value: Value, expr: ExprSyntax, targetType: String
+    ) async throws -> Value? {
+        // Each ExpressibleBy*Literal protocol pairs a primitive shape
+        // with the init label that synthesized conformance produces.
+        // We probe the target's customInits for an exact label match.
+        let candidates: [(label: String, source: Value?)]
+        switch value {
+        case .int:
+            candidates = [
+                ("integerLiteral", value),
+                ("floatLiteral",  .double(Double(intValue(value) ?? 0))),
+            ]
+        case .double:
+            candidates = [("floatLiteral", value)]
+        case .string:
+            candidates = [
+                ("stringLiteral", value),
+                ("extendedGraphemeClusterLiteral", value),
+                ("unicodeScalarLiteral", value),
+            ]
+        case .bool:
+            candidates = [("booleanLiteral", value)]
+        default:
+            return nil
+        }
+        // Only synthesize the conversion when the source expression
+        // really is a literal (or a literal-typed binding); otherwise
+        // we'd silently coerce a runtime Int into MyType and surprise
+        // the user. `literalKind` walks the expression and reports
+        // `.nonLiteral` for variable references.
+        guard literalKind(expr) != .nonLiteral else { return nil }
+
+        // Look up customInits on struct or class.
+        let inits: [Function]
+        if let def = structDefs[targetType] {
+            inits = def.customInits
+        } else if let def = classDefs[targetType] {
+            inits = def.customInits
+        } else {
+            return nil
+        }
+        for (label, src) in candidates {
+            guard let src else { continue }
+            if let initFn = inits.first(where: {
+                $0.parameters.count == 1 && $0.parameters[0].label == label
+            }) {
+                if let def = structDefs[targetType] {
+                    return try await invokeStructInitWithArg(
+                        initFn, def: def, arg: src
+                    )
+                }
+                if let def = classDefs[targetType] {
+                    return try await invokeClassInitWithArg(
+                        initFn, def: def, arg: src
+                    )
+                }
+            }
+        }
+        return nil
+    }
+
+    private func intValue(_ v: Value) -> Int? {
+        if case .int(let n) = v { return n }
+        return nil
+    }
+
+    private func invokeStructInitWithArg(
+        _ fn: Function, def: StructDef, arg: Value
+    ) async throws -> Value {
+        // Mirror the relevant parts of `invokeCustomInit` without
+        // re-evaluating the call's argument syntax — we already have
+        // a coerced value to pass.
+        guard case .user(let body, let capturedScope) = fn.kind else {
+            throw RuntimeError.invalid("init must be a user-defined function")
+        }
+        let blank = Value.structValue(
+            typeName: def.name,
+            fields: def.properties.map { StructField(name: $0.name, value: .void) }
+        )
+        let callScope = Scope(parent: capturedScope)
+        callScope.bind("self", value: blank, mutable: true)
+        callScope.bind(fn.parameters[0].name, value: arg, mutable: false)
+        var failed = false
+        do {
+            for item in body {
+                _ = try await execute(item: item, in: callScope)
+            }
+        } catch let signal as ReturnSignal {
+            if fn.isFailable, case .optional(.none) = signal.value {
+                failed = true
+            }
+        }
+        let final = callScope.lookup("self")?.value ?? blank
+        if fn.isFailable {
+            return failed ? .optional(nil) : .optional(final)
+        }
+        return final
+    }
+
+    private func invokeClassInitWithArg(
+        _ fn: Function, def: ClassDef, arg: Value
+    ) async throws -> Value {
+        guard case .user(let body, let capturedScope) = fn.kind else {
+            throw RuntimeError.invalid("init must be a user-defined function")
+        }
+        var fields: [StructField] = []
+        for prop in storedPropertyChain(of: def) {
+            var initial: Value = .void
+            if let defaultExpr = prop.defaultValue {
+                initial = try await evaluate(defaultExpr, in: capturedScope)
+                if let pt = prop.type {
+                    initial = try await coerce(
+                        value: initial, expr: defaultExpr, toType: pt, in: .binding
+                    )
+                }
+            }
+            fields.append(StructField(name: prop.name, value: initial))
+        }
+        let inst = ClassInstance(typeName: def.name, fields: fields)
+        let callScope = Scope(parent: capturedScope)
+        callScope.bind("self", value: .classInstance(inst), mutable: true)
+        callScope.bind(fn.parameters[0].name, value: arg, mutable: false)
+        currentClassContextStack.append(def.name)
+        instancesInInit.insert(ObjectIdentifier(inst))
+        defer {
+            currentClassContextStack.removeLast()
+            instancesInInit.remove(ObjectIdentifier(inst))
+        }
+        var failed = false
+        do {
+            for item in body {
+                _ = try await execute(item: item, in: callScope)
+            }
+        } catch let signal as ReturnSignal {
+            if fn.isFailable, case .optional(.none) = signal.value {
+                failed = true
+            }
+        }
+        if fn.isFailable {
+            return failed ? .optional(nil) : .optional(.classInstance(inst))
+        }
+        return .classInstance(inst)
     }
 
     func isKnownType(_ name: String) -> Bool {
