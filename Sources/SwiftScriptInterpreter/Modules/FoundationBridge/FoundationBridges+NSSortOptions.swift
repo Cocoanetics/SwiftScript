@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSSortOptions: [String: Bridge] = [
+    static let nSSortOptions: [String: Bridge] = [
     "init NSSortOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSSortOptions(): expected 0 argument(s), got \(args.count)")

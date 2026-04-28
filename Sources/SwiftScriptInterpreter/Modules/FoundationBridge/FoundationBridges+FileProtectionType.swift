@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let fileProtectionType: [String: Bridge] = [
+    static let fileProtectionType: [String: Bridge] = [
     "var FileProtectionType.hashValue": .computed { receiver in
         let recv: FileProtectionType = try unboxOpaque(receiver, as: FileProtectionType.self, typeName: "FileProtectionType")
         return .int(recv.hashValue)

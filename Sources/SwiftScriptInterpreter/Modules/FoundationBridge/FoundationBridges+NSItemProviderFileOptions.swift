@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSItemProviderFileOptions: [String: Bridge] = [
+    static let nSItemProviderFileOptions: [String: Bridge] = [
     "init NSItemProviderFileOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSItemProviderFileOptions(): expected 0 argument(s), got \(args.count)")

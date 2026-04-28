@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let termOfAddress: [String: Bridge] = [
+    static let termOfAddress: [String: Bridge] = [
     "var TermOfAddress.language": .computed { receiver in
         let recv: TermOfAddress = try unboxOpaque(receiver, as: TermOfAddress.self, typeName: "TermOfAddress")
         if let _v = recv.language {

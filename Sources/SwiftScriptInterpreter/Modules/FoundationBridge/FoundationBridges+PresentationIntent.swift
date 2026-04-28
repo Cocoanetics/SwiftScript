@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let presentationIntent: [String: Bridge] = [
+    static let presentationIntent: [String: Bridge] = [
     "var PresentationIntent.count": .computed { receiver in
         let recv: PresentationIntent = try unboxOpaque(receiver, as: PresentationIntent.self, typeName: "PresentationIntent")
         return .int(recv.count)

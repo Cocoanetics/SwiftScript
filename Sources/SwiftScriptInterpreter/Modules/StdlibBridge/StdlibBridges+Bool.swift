@@ -3,7 +3,7 @@
 import Foundation
 
 extension StdlibBridges {
-    nonisolated(unsafe) static let bool: [String: Bridge] = [
+    static let bool: [String: Bridge] = [
     "init Bool()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init Bool(): expected 0 argument(s), got \(args.count)")

@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let localizedStringResource: [String: Bridge] = [
+    static let localizedStringResource: [String: Bridge] = [
     "var LocalizedStringResource.key": .computed { receiver in
         let recv: LocalizedStringResource = try unboxOpaque(receiver, as: LocalizedStringResource.self, typeName: "LocalizedStringResource")
         return .string(recv.key)

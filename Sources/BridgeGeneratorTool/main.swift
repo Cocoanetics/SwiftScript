@@ -1190,10 +1190,6 @@ func filenameSlug(for typeName: String) -> String {
 }
 
 /// Render a per-type bridge file: `static let <name>: [String: Bridge]`.
-/// The `nonisolated(unsafe)` attribute is required because `Bridge`
-/// contains async closures that aren't `@Sendable` — the dict is
-/// effectively immutable post-init, so it's safe in practice, but
-/// the compiler can't prove it.
 func renderPerTypeFile(namespace: String, typeName: String, entries: [String]) -> String {
     let dictName = staticLetName(for: typeName)
     let body = entries.isEmpty ? "    // (no entries)" : entries.joined(separator: "\n")
@@ -1201,7 +1197,7 @@ func renderPerTypeFile(namespace: String, typeName: String, entries: [String]) -
     \(autogenBanner)import Foundation
 
     extension \(namespace) {
-        nonisolated(unsafe) static let \(dictName): [String: Bridge] = [
+        static let \(dictName): [String: Bridge] = [
     \(body)
         ]
     }
@@ -1234,7 +1230,7 @@ func renderManifest(
     enum \(namespace) {
         /// Aggregated view of every per-type dict — convenient for
         /// callers that want to introspect the full bridge surface.
-        nonisolated(unsafe) static let all: [String: Bridge] = [
+        static let all: [String: Bridge] = [
     \(dictList)
         ].reduce(into: [:]) { acc, dict in
             for (k, v) in dict { acc[k] = v }

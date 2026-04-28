@@ -3,7 +3,7 @@
 import Foundation
 
 extension StdlibBridges {
-    nonisolated(unsafe) static let int: [String: Bridge] = [
+    static let int: [String: Bridge] = [
     "static let Int.zero": .staticValue(.int(Int.zero)),
     "var Int.description": .computed { receiver in
         let recv: Int = try unboxInt(receiver)

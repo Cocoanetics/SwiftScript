@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSKeyValueObservingOptions: [String: Bridge] = [
+    static let nSKeyValueObservingOptions: [String: Bridge] = [
     "init NSKeyValueObservingOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSKeyValueObservingOptions(): expected 0 argument(s), got \(args.count)")

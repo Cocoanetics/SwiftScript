@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let morphology: [String: Bridge] = [
+    static let morphology: [String: Bridge] = [
     "init Morphology()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init Morphology(): expected 0 argument(s), got \(args.count)")

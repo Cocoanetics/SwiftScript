@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let uRLComponents: [String: Bridge] = [
+    static let uRLComponents: [String: Bridge] = [
     "init URLComponents()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init URLComponents(): expected 0 argument(s), got \(args.count)")

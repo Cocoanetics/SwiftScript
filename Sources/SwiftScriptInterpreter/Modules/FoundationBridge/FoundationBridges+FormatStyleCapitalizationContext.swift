@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let formatStyleCapitalizationContext: [String: Bridge] = [
+    static let formatStyleCapitalizationContext: [String: Bridge] = [
     "static let FormatStyleCapitalizationContext.unknown": .staticValue(boxOpaque(FormatStyleCapitalizationContext.unknown, typeName: "FormatStyleCapitalizationContext")),
     "static let FormatStyleCapitalizationContext.standalone": .staticValue(boxOpaque(FormatStyleCapitalizationContext.standalone, typeName: "FormatStyleCapitalizationContext")),
     "static let FormatStyleCapitalizationContext.listItem": .staticValue(boxOpaque(FormatStyleCapitalizationContext.listItem, typeName: "FormatStyleCapitalizationContext")),

@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let alignmentOptions: [String: Bridge] = [
+    static let alignmentOptions: [String: Bridge] = [
     "init AlignmentOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init AlignmentOptions(): expected 0 argument(s), got \(args.count)")

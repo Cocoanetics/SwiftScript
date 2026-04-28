@@ -3,7 +3,7 @@
 import Foundation
 
 extension StdlibBridges {
-    nonisolated(unsafe) static let string: [String: Bridge] = [
+    static let string: [String: Bridge] = [
     "var String.localizedCapitalized": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return .string(recv.localizedCapitalized)

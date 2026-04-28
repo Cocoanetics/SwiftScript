@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let pOSIXError: [String: Bridge] = [
+    static let pOSIXError: [String: Bridge] = [
     "var POSIXError.errorCode": .computed { receiver in
         let recv: POSIXError = try unboxOpaque(receiver, as: POSIXError.self, typeName: "POSIXError")
         return .int(recv.errorCode)

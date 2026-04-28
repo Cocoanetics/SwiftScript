@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let errorUserInfoKey: [String: Bridge] = [
+    static let errorUserInfoKey: [String: Bridge] = [
     "var ErrorUserInfoKey.hashValue": .computed { receiver in
         let recv: ErrorUserInfoKey = try unboxOpaque(receiver, as: ErrorUserInfoKey.self, typeName: "ErrorUserInfoKey")
         return .int(recv.hashValue)

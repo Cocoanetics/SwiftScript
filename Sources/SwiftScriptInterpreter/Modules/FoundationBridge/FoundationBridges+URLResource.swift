@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let uRLResource: [String: Bridge] = [
+    static let uRLResource: [String: Bridge] = [
     "var URLResource.name": .computed { receiver in
         let recv: URLResource = try unboxOpaque(receiver, as: URLResource.self, typeName: "URLResource")
         return .string(recv.name)

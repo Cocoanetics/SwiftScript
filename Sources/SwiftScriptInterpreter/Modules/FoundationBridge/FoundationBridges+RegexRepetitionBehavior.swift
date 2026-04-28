@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let regexRepetitionBehavior: [String: Bridge] = [
+    static let regexRepetitionBehavior: [String: Bridge] = [
     "var RegexRepetitionBehavior.hashValue": .computed { receiver in
         let recv: RegexRepetitionBehavior = try unboxOpaque(receiver, as: RegexRepetitionBehavior.self, typeName: "RegexRepetitionBehavior")
         return .int(recv.hashValue)

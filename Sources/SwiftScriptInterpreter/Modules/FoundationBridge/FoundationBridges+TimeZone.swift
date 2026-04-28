@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let timeZone: [String: Bridge] = [
+    static let timeZone: [String: Bridge] = [
     "static let TimeZone.timeZoneDataVersion": .staticValue(.string(TimeZone.timeZoneDataVersion)),
     "static let TimeZone.current": .staticValue(boxOpaque(TimeZone.current, typeName: "TimeZone")),
     "static let TimeZone.autoupdatingCurrent": .staticValue(boxOpaque(TimeZone.autoupdatingCurrent, typeName: "TimeZone")),

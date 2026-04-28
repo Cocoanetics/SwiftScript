@@ -3,11 +3,10 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSExceptionName: [String: Bridge] = [
-    "var NSExceptionName.hashValue": .computed { receiver in
-        let recv: NSExceptionName = try unboxOpaque(receiver, as: NSExceptionName.self, typeName: "NSExceptionName")
-        return .int(recv.hashValue)
-    },
+    static let nSExceptionName: [String: Bridge] = [
+    "static let NSExceptionName.fileHandleOperationException": .staticValue(boxOpaque(NSExceptionName.fileHandleOperationException, typeName: "NSExceptionName")),
+    "static let NSExceptionName.invalidArchiveOperationException": .staticValue(boxOpaque(NSExceptionName.invalidArchiveOperationException, typeName: "NSExceptionName")),
+    "static let NSExceptionName.invalidUnarchiveOperationException": .staticValue(boxOpaque(NSExceptionName.invalidUnarchiveOperationException, typeName: "NSExceptionName")),
     "static let NSExceptionName.decimalNumberExactnessException": .staticValue(boxOpaque(NSExceptionName.decimalNumberExactnessException, typeName: "NSExceptionName")),
     "static let NSExceptionName.decimalNumberOverflowException": .staticValue(boxOpaque(NSExceptionName.decimalNumberOverflowException, typeName: "NSExceptionName")),
     "static let NSExceptionName.decimalNumberUnderflowException": .staticValue(boxOpaque(NSExceptionName.decimalNumberUnderflowException, typeName: "NSExceptionName")),
@@ -27,14 +26,15 @@ extension FoundationBridges {
     "static let NSExceptionName.portReceiveException": .staticValue(boxOpaque(NSExceptionName.portReceiveException, typeName: "NSExceptionName")),
     "static let NSExceptionName.oldStyleException": .staticValue(boxOpaque(NSExceptionName.oldStyleException, typeName: "NSExceptionName")),
     "static let NSExceptionName.inconsistentArchiveException": .staticValue(boxOpaque(NSExceptionName.inconsistentArchiveException, typeName: "NSExceptionName")),
-    "static let NSExceptionName.invocationOperationVoidResultException": .staticValue(boxOpaque(NSExceptionName.invocationOperationVoidResultException, typeName: "NSExceptionName")),
-    "static let NSExceptionName.invocationOperationCancelledException": .staticValue(boxOpaque(NSExceptionName.invocationOperationCancelledException, typeName: "NSExceptionName")),
-    "static let NSExceptionName.undefinedKeyException": .staticValue(boxOpaque(NSExceptionName.undefinedKeyException, typeName: "NSExceptionName")),
-    "static let NSExceptionName.fileHandleOperationException": .staticValue(boxOpaque(NSExceptionName.fileHandleOperationException, typeName: "NSExceptionName")),
-    "static let NSExceptionName.invalidArchiveOperationException": .staticValue(boxOpaque(NSExceptionName.invalidArchiveOperationException, typeName: "NSExceptionName")),
-    "static let NSExceptionName.invalidUnarchiveOperationException": .staticValue(boxOpaque(NSExceptionName.invalidUnarchiveOperationException, typeName: "NSExceptionName")),
     "static let NSExceptionName.characterConversionException": .staticValue(boxOpaque(NSExceptionName.characterConversionException, typeName: "NSExceptionName")),
     "static let NSExceptionName.parseErrorException": .staticValue(boxOpaque(NSExceptionName.parseErrorException, typeName: "NSExceptionName")),
+    "static let NSExceptionName.invocationOperationVoidResultException": .staticValue(boxOpaque(NSExceptionName.invocationOperationVoidResultException, typeName: "NSExceptionName")),
+    "static let NSExceptionName.invocationOperationCancelledException": .staticValue(boxOpaque(NSExceptionName.invocationOperationCancelledException, typeName: "NSExceptionName")),
+    "var NSExceptionName.hashValue": .computed { receiver in
+        let recv: NSExceptionName = try unboxOpaque(receiver, as: NSExceptionName.self, typeName: "NSExceptionName")
+        return .int(recv.hashValue)
+    },
+    "static let NSExceptionName.undefinedKeyException": .staticValue(boxOpaque(NSExceptionName.undefinedKeyException, typeName: "NSExceptionName")),
     "init NSExceptionName(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init NSExceptionName(_:): expected 1 argument(s), got \(args.count)")

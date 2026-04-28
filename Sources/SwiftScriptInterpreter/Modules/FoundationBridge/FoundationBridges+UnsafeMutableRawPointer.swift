@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let unsafeMutableRawPointer: [String: Bridge] = [
+    static let unsafeMutableRawPointer: [String: Bridge] = [
     "func UnsafeMutableRawPointer.successor()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("UnsafeMutableRawPointer.successor: expected 0 argument(s), got \(args.count)")

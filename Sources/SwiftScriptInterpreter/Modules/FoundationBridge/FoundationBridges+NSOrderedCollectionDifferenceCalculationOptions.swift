@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSOrderedCollectionDifferenceCalculationOptions: [String: Bridge] = [
+    static let nSOrderedCollectionDifferenceCalculationOptions: [String: Bridge] = [
     "init NSOrderedCollectionDifferenceCalculationOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSOrderedCollectionDifferenceCalculationOptions(): expected 0 argument(s), got \(args.count)")

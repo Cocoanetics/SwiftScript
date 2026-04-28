@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let uRLRequest: [String: Bridge] = [
+    static let uRLRequest: [String: Bridge] = [
     "var URLRequest.url": .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         if let _v = recv.url {

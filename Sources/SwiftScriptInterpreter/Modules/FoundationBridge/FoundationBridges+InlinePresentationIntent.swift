@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let inlinePresentationIntent: [String: Bridge] = [
+    static let inlinePresentationIntent: [String: Bridge] = [
     "init InlinePresentationIntent()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init InlinePresentationIntent(): expected 0 argument(s), got \(args.count)")

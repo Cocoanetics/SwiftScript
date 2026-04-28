@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let calendar: [String: Bridge] = [
+    static let calendar: [String: Bridge] = [
     "static let Calendar.current": .staticValue(boxOpaque(Calendar.current, typeName: "Calendar")),
     "static let Calendar.autoupdatingCurrent": .staticValue(boxOpaque(Calendar.autoupdatingCurrent, typeName: "Calendar")),
     "var Calendar.locale": .computed { receiver in
