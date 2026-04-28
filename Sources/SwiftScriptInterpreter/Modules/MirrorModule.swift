@@ -15,7 +15,7 @@ struct MirrorModule: BuiltinModule {
         // `Mirror(reflecting: x)` — single-arg init with the labeled
         // form. The bridge stores the reflected value so children /
         // displayStyle can be computed lazily.
-        i.registerInit(on: "Mirror", labels: ["reflecting"]) { args in
+        i.bridges["Mirror(reflecting:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Mirror(reflecting:): expected 1 argument")
             }
@@ -26,7 +26,7 @@ struct MirrorModule: BuiltinModule {
         // `Mirror.children` — `[(label: String?, value: Any)]`. Encoded
         // as an array of 2-tuples so script code can pattern-match
         // (label, value) directly.
-        i.registerComputed(on: "Mirror", name: "children") { recv in
+        i.bridges["Mirror.children"] = .computed { recv in
             guard case .opaque(_, let any) = recv,
                   let box = any as? MirrorBox
             else {
@@ -39,7 +39,7 @@ struct MirrorModule: BuiltinModule {
         // simplest hint about the reflected shape: `.struct`, `.class`,
         // `.enum`, `.tuple`, `.collection`, `.dictionary`, `.set`,
         // `.optional`, or nil for atomic primitives.
-        i.registerComputed(on: "Mirror", name: "displayStyle") { recv in
+        i.bridges["Mirror.displayStyle"] = .computed { recv in
             guard case .opaque(_, let any) = recv,
                   let box = any as? MirrorBox
             else { return .optional(nil) }
@@ -52,7 +52,7 @@ struct MirrorModule: BuiltinModule {
         // `Mirror.subjectType` — type name as a String. Real Swift
         // returns an `Any.Type`; we surface the textual form which is
         // what most idiomatic uses inspect.
-        i.registerComputed(on: "Mirror", name: "subjectType") { recv in
+        i.bridges["Mirror.subjectType"] = .computed { recv in
             guard case .opaque(_, let any) = recv,
                   let box = any as? MirrorBox
             else { return .string("?") }

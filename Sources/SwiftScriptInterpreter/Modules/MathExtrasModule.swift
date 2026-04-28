@@ -64,12 +64,12 @@ public struct MathExtrasModule: BuiltinModule {
     // MARK: - Int methods
 
     private func registerIntMethods(_ i: Interpreter) {
-        i.registerMethod(on: "Int", name: "signum") { recv, args in
+        i.bridges["Int.signum"] = .method { recv, args in
             try expectNoArgs(args, "Int.signum")
             guard case .int(let n) = recv else { throw badReceiver("Int.signum", recv) }
             return .int(n.signum())
         }
-        i.registerMethod(on: "Int", name: "clamped") { recv, args in
+        i.bridges["Int.clamped"] = .method { recv, args in
             // .clamped(to: lo...hi)
             try expectCount(args, 1, "Int.clamped(to:)")
             guard case .int(let n) = recv else { throw badReceiver("Int.clamped(to:)", recv) }
@@ -84,7 +84,7 @@ public struct MathExtrasModule: BuiltinModule {
     // MARK: - Double methods
 
     private func registerDoubleMethods(_ i: Interpreter) {
-        i.registerMethod(on: "Double", name: "clamped") { recv, args in
+        i.bridges["Double.clamped"] = .method { recv, args in
             try expectCount(args, 1, "Double.clamped(to:)")
             guard case .double(let d) = recv else { throw badReceiver("Double.clamped(to:)", recv) }
             // Accept either an Int range or an explicit (Double, Double) tuple.
@@ -96,14 +96,14 @@ public struct MathExtrasModule: BuiltinModule {
                 throw RuntimeError.invalid("Double.clamped(to:): argument must be a Range")
             }
         }
-        i.registerMethod(on: "Double", name: "truncatingRemainder") { recv, args in
+        i.bridges["Double.truncatingRemainder"] = .method { recv, args in
             // .truncatingRemainder(dividingBy: y) — proper Swift semantic
             try expectCount(args, 1, "Double.truncatingRemainder(dividingBy:)")
             guard case .double(let x) = recv else { throw badReceiver("Double.truncatingRemainder", recv) }
             let y = try toDouble(args[0])
             return .double(x.truncatingRemainder(dividingBy: y))
         }
-        i.registerComputed(on: "Double", name: "sign") { recv in
+        i.bridges["Double.sign"] = .computed { recv in
             // Returns -1.0 / 0.0 / 1.0 — close enough to FloatingPointSign.
             guard case .double(let d) = recv else { throw badReceiver("Double.sign", recv) }
             if d > 0 { return .double(1.0) }
@@ -115,7 +115,7 @@ public struct MathExtrasModule: BuiltinModule {
     // MARK: - Array reductions
 
     private func registerArrayReductions(_ i: Interpreter) {
-        i.registerMethod(on: "Array", name: "sum") { recv, args in
+        i.bridges["Array.sum"] = .method { recv, args in
             try expectNoArgs(args, "Array.sum")
             guard case .array(let xs) = recv else { throw badReceiver("Array.sum", recv) }
             if xs.allSatisfy({ if case .int = $0 { return true }; return false }) {
@@ -127,7 +127,7 @@ public struct MathExtrasModule: BuiltinModule {
             for v in xs { s += try toDouble(v) }
             return .double(s)
         }
-        i.registerMethod(on: "Array", name: "product") { recv, args in
+        i.bridges["Array.product"] = .method { recv, args in
             try expectNoArgs(args, "Array.product")
             guard case .array(let xs) = recv else { throw badReceiver("Array.product", recv) }
             if xs.allSatisfy({ if case .int = $0 { return true }; return false }) {
@@ -139,7 +139,7 @@ public struct MathExtrasModule: BuiltinModule {
             for v in xs { s *= try toDouble(v) }
             return .double(s)
         }
-        i.registerMethod(on: "Array", name: "average") { recv, args in
+        i.bridges["Array.average"] = .method { recv, args in
             try expectNoArgs(args, "Array.average")
             guard case .array(let xs) = recv else { throw badReceiver("Array.average", recv) }
             guard !xs.isEmpty else {

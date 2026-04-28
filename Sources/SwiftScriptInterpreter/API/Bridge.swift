@@ -49,28 +49,49 @@ extension Interpreter {
 
     /// Set of type names that appear as the prefix of any bridge key —
     /// e.g. registering `"URLSession.shared"` makes `"URLSession"` a
-    /// known type for `isTypeName`. Cached and rebuilt when `bridges`
-    /// is reassigned. Subscript writes (`bridges["X"] = .method(…)`)
-    /// go through the setter above, which clears the cache too.
+    /// known type for `isTypeName`. Nested types are registered too:
+    /// `"JSONEncoder.OutputFormatting.prettyPrinted"` contributes both
+    /// `"JSONEncoder"` and `"JSONEncoder.OutputFormatting"` so nested-
+    /// type member access can resolve. Cached and rebuilt when
+    /// `bridges` is reassigned. Subscript writes
+    /// (`bridges["X"] = .method(…)`) go through the setter above,
+    /// which clears the cache too.
     var bridgedTypeNames: Set<String> {
         if let cached = _bridgedTypeNamesCache, cached.count == _bridges.count {
             return cached.types
         }
         var names = Set<String>()
         for key in _bridges.keys {
-            names.insert(typeNamePrefix(of: key))
+            insertTypePrefixes(of: key, into: &names)
         }
         _bridgedTypeNamesCache = (count: _bridges.count, types: names)
         return names
     }
 
-    /// Type-name prefix of a bridge key — everything up to the first
-    /// `.` (member separator) or `(` (init label list).
-    private func typeNamePrefix(of key: String) -> String {
-        var end = key.endIndex
-        if let dot = key.firstIndex(of: ".") { end = dot }
-        if let paren = key.firstIndex(of: "("), paren < end { end = paren }
-        return String(key[..<end])
+    /// Walk a bridge key and add every dot-separated type prefix to
+    /// `names`. The last segment is always a member (`prettyPrinted`,
+    /// or for inits, the parenthesised label list `(string:)`); the
+    /// preceding segments form one or more candidate type names.
+    private func insertTypePrefixes(of key: String, into names: inout Set<String>) {
+        // Strip the trailing `(...)` label list if present — that's the
+        // init form. What's left is dotted: type segments only.
+        let typeArea: Substring
+        if let paren = key.firstIndex(of: "(") {
+            typeArea = key[..<paren]
+        } else if let lastDot = key.lastIndex(of: ".") {
+            typeArea = key[..<lastDot]
+        } else {
+            // Bare bridge key like "globalFn" — no type to register.
+            return
+        }
+        guard !typeArea.isEmpty else { return }
+        // Insert every dot-prefix of the type area: "A.B.C" contributes
+        // "A", "A.B", "A.B.C".
+        var current = ""
+        for seg in typeArea.split(separator: ".") {
+            current = current.isEmpty ? String(seg) : current + "." + seg
+            names.insert(current)
+        }
     }
 }
 

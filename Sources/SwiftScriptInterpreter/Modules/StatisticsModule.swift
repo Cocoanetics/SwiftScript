@@ -7,7 +7,7 @@ public struct StatisticsModule: BuiltinModule {
     public init() {}
 
     public func register(into i: Interpreter) {
-        i.registerMethod(on: "Array", name: "median") { recv, args in
+        i.bridges["Array.median"] = .method { recv, args in
             guard args.isEmpty else { throw RuntimeError.invalid("Array.median: no arguments") }
             let xs = try numericArray(recv, methodName: "Array.median")
             guard !xs.isEmpty else { throw RuntimeError.invalid("Array.median: empty array") }
@@ -18,7 +18,7 @@ public struct StatisticsModule: BuiltinModule {
             }
             return .double((sorted[n/2 - 1] + sorted[n/2]) / 2)
         }
-        i.registerMethod(on: "Array", name: "variance") { recv, args in
+        i.bridges["Array.variance"] = .method { recv, args in
             guard args.isEmpty else { throw RuntimeError.invalid("Array.variance: no arguments") }
             let xs = try numericArray(recv, methodName: "Array.variance")
             guard !xs.isEmpty else { throw RuntimeError.invalid("Array.variance: empty array") }
@@ -26,7 +26,7 @@ public struct StatisticsModule: BuiltinModule {
             let v = xs.reduce(0) { $0 + ($1 - mean) * ($1 - mean) } / Double(xs.count)
             return .double(v)
         }
-        i.registerMethod(on: "Array", name: "stdDev") { recv, args in
+        i.bridges["Array.stdDev"] = .method { recv, args in
             guard args.isEmpty else { throw RuntimeError.invalid("Array.stdDev: no arguments") }
             let xs = try numericArray(recv, methodName: "Array.stdDev")
             guard !xs.isEmpty else { throw RuntimeError.invalid("Array.stdDev: empty array") }
@@ -34,7 +34,7 @@ public struct StatisticsModule: BuiltinModule {
             let v = xs.reduce(0) { $0 + ($1 - mean) * ($1 - mean) } / Double(xs.count)
             return .double(v.squareRoot())
         }
-        i.registerMethod(on: "Array", name: "percentile") { recv, args in
+        i.bridges["Array.percentile"] = .method { recv, args in
             // .percentile(0.5) → median-equivalent; linear interpolation
             // between adjacent samples (matches numpy's "linear" method).
             guard args.count == 1 else {

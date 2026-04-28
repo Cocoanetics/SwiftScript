@@ -31,7 +31,7 @@ extension Interpreter {
         // `CustomDebugStringConvertible.debugDescription` on script
         // types; falls back to the regular description for everything
         // else.
-        registerInit(on: "String", labels: ["reflecting"]) { [weak self] args in
+        bridges["String(reflecting:)"] = .`init` { [weak self] args in
             guard let self else { return .string("") }
             guard let v = args.first else { return .string("") }
             return .string(try await self.debugDescribe(v))
@@ -50,11 +50,8 @@ extension Interpreter {
             ("awayFromZero",     .awayFromZero),
         ]
         for (name, rule) in rules {
-            registerStaticValue(
-                on: "FloatingPointRoundingRule",
-                name: name,
-                value: .opaque(typeName: "FloatingPointRoundingRule", value: rule)
-            )
+            bridges["FloatingPointRoundingRule.\(name)"] =
+                .staticValue(.opaque(typeName: "FloatingPointRoundingRule", value: rule))
         }
 
         // Diagnostic builtins. `assert` is a no-op when condition is true
@@ -144,7 +141,7 @@ extension Interpreter {
         // `String(_:radix:)` and `String(_:radix:uppercase:)` —
         // formatting an Int into a non-decimal base. Common idiom for
         // hex / binary printing.
-        registerInit(on: "String", labels: ["_", "radix"]) { args in
+        bridges["String(_:radix:)"] = .`init` { args in
             guard args.count == 2,
                   case .int(let v) = args[0],
                   case .int(let radix) = args[1]
@@ -153,7 +150,7 @@ extension Interpreter {
             }
             return .string(String(v, radix: radix))
         }
-        registerInit(on: "String", labels: ["_", "radix", "uppercase"]) { args in
+        bridges["String(_:radix:uppercase:)"] = .`init` { args in
             guard args.count == 3,
                   case .int(let v) = args[0],
                   case .int(let radix) = args[1],
@@ -165,7 +162,7 @@ extension Interpreter {
         }
         // `Int(_ string: String, radix: Int)` — parse with a non-default
         // base. Returns Int? (nil for malformed input).
-        registerInit(on: "Int", labels: ["_", "radix"]) { args in
+        bridges["Int(_:radix:)"] = .`init` { args in
             guard args.count == 2,
                   case .string(let s) = args[0],
                   case .int(let radix) = args[1]
@@ -179,7 +176,7 @@ extension Interpreter {
         // `Int(exactly: Double)` — fails (returns nil) if the value
         // isn't representable losslessly. Distinct from `Int(d)` which
         // truncates toward zero.
-        registerInit(on: "Int", labels: ["exactly"]) { args in
+        bridges["Int(exactly:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Int(exactly:): expected 1 argument")
             }
@@ -193,7 +190,7 @@ extension Interpreter {
                 throw RuntimeError.invalid("Int(exactly:): expected Double or Int")
             }
         }
-        registerInit(on: "Double", labels: ["exactly"]) { args in
+        bridges["Double(exactly:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Double(exactly:): expected 1 argument")
             }
@@ -266,7 +263,7 @@ extension Interpreter {
         // `Array(repeating: x, count: n)` — keyword-init form. The
         // `[T](repeating:count:)` sugar already routes through
         // `evaluateTypedArrayInitializer`; this covers the bare-name form.
-        registerInit(on: "Array", labels: ["repeating", "count"]) { args in
+        bridges["Array(repeating:count:)"] = .`init` { args in
             guard args.count == 2, case .int(let n) = args[1], n >= 0 else {
                 throw RuntimeError.invalid(
                     "Array(repeating:count:): expected (Element, Int)"
@@ -301,7 +298,7 @@ extension Interpreter {
         // single-arg `String(_:)` already lives in `registerBuiltin`
         // above (line 9) — they'd collide. Wire as a registerInit
         // labelled overload that takes precedence.
-        registerInit(on: "String", labels: ["repeating", "count"]) { args in
+        bridges["String(repeating:count:)"] = .`init` { args in
             guard args.count == 2,
                   case .string(let s) = args[0],
                   case .int(let n) = args[1]

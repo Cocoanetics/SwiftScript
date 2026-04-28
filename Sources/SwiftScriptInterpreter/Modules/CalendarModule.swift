@@ -29,11 +29,8 @@ struct CalendarModule: BuiltinModule {
     }
 
     private func registerCalendarStatic(into i: Interpreter) {
-        i.registerStaticValue(
-            on: "Calendar",
-            name: "current",
-            value: .opaque(typeName: "Calendar", value: Calendar.current)
-        )
+        i.bridges["Calendar.current"] =
+            .staticValue(.opaque(typeName: "Calendar", value: Calendar.current))
     }
 
     private func registerCalendarComponentStatic(into i: Interpreter) {
@@ -54,16 +51,13 @@ struct CalendarModule: BuiltinModule {
             ("quarter", .quarter),
         ]
         for (name, value) in cases {
-            i.registerStaticValue(
-                on: "Calendar.Component",
-                name: name,
-                value: .opaque(typeName: "Calendar.Component", value: value)
-            )
+            i.bridges["Calendar.Component.\(name)"] =
+                .staticValue(.opaque(typeName: "Calendar.Component", value: value))
         }
     }
 
     private func registerCalendarMethods(into i: Interpreter) {
-        i.registerMethod(on: "Calendar", name: "component") { receiver, args in
+        i.bridges["Calendar.component"] = .method { receiver, args in
             guard args.count == 2,
                   case .opaque(_, let cal) = receiver, let cal = cal as? Calendar,
                   case .opaque(_, let comp) = args[0], let comp = comp as? Calendar.Component,
@@ -75,7 +69,7 @@ struct CalendarModule: BuiltinModule {
             }
             return .int(cal.component(comp, from: date))
         }
-        i.registerMethod(on: "Calendar", name: "date") { receiver, args in
+        i.bridges["Calendar.date"] = .method { receiver, args in
             guard case .opaque(_, let cal) = receiver, let cal = cal as? Calendar
             else { throw RuntimeError.invalid("Calendar.date: receiver must be Calendar") }
             // Two overloads: `date(byAdding:value:to:)` (3 args, no labels
@@ -105,7 +99,7 @@ struct CalendarModule: BuiltinModule {
             }
             throw RuntimeError.invalid("Calendar.date: 1 or 3 arguments expected, got \(args.count)")
         }
-        i.registerMethod(on: "Calendar", name: "dateComponents") { receiver, args in
+        i.bridges["Calendar.dateComponents"] = .method { receiver, args in
             guard args.count == 2,
                   case .opaque(_, let cal) = receiver, let cal = cal as? Calendar,
                   case .array(let compValues) = args[0],
@@ -146,7 +140,7 @@ struct CalendarModule: BuiltinModule {
             ("quarter",        \.quarter),
         ]
         for (name, get) in fields {
-            i.registerComputed(on: "DateComponents", name: name) { recv in
+            i.bridges["DateComponents.\(name)"] = .computed { recv in
                 guard case .opaque(_, let any) = recv, let dc = any as? DateComponents else {
                     throw RuntimeError.invalid("DateComponents.\(name): receiver must be DateComponents")
                 }
@@ -160,7 +154,8 @@ struct CalendarModule: BuiltinModule {
         // the exact label-set the user wrote. The most common shapes:
         // {year,month,day} and {year,month,day,hour,minute,second}.
         let registerInit: ([String]) -> Void = { labels in
-            i.registerInit(on: "DateComponents", labels: labels) { args in
+            let key = i.bridgeKey(forInit: "DateComponents", labels: labels.map { Optional($0) })
+            i.bridges[key] = .`init` { args in
                 var dc = DateComponents()
                 for (label, value) in zip(labels, args) {
                     guard case .int(let v) = value else {
