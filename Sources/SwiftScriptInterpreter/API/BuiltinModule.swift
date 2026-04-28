@@ -49,53 +49,13 @@ extension Interpreter {
     // MARK: - Module registration helpers
 
     /// Register a top-level free function callable as `name(args…)`.
+    /// Globals don't fit the `bridges` table (which keys on
+    /// `Type.member` shapes); they bind directly into the root scope.
     public func registerGlobal(
         name: String,
         body: @escaping ([Value]) async throws -> Value
     ) {
         registerBuiltin(name: name, body: body)
-    }
-
-    /// Register an instance method on a built-in type. Inside `body`,
-    /// `receiver` is the value the method was called on; `args` are the
-    /// remaining positional arguments. Label disambiguation is a
-    /// future step; for now every method on the same name shares one
-    /// body that branches on argcount internally.
-    public func registerMethod(
-        on typeName: String,
-        name: String,
-        body: @escaping (_ receiver: Value, _ args: [Value]) async throws -> Value
-    ) {
-        bridges[bridgeKey(forMethod: name, on: typeName, labels: [])] = .method(body)
-    }
-
-    /// Register a read-only computed property on a built-in type. The
-    /// `get` closure receives the receiver value.
-    public func registerComputed(
-        on typeName: String,
-        name: String,
-        get body: @escaping (_ receiver: Value) async throws -> Value
-    ) {
-        bridges[bridgeKey(forComputedProperty: name, on: typeName)] = .computed(body)
-    }
-
-    /// Register a static value (`Int.max`-style) on a built-in type.
-    public func registerStaticValue(
-        on typeName: String,
-        name: String,
-        value: Value
-    ) {
-        bridges[bridgeKey(forStaticValue: name, on: typeName)] = .staticValue(value)
-    }
-
-    /// Register a static method (`Int.random(in:)`-style) on a built-in
-    /// type. The receiver is implicit (the type itself).
-    public func registerStaticMethod(
-        on typeName: String,
-        name: String,
-        body: @escaping ([Value]) async throws -> Value
-    ) {
-        bridges[bridgeKey(forStaticMethod: name, on: typeName, labels: [])] = .staticMethod(body)
     }
 
     /// Register a comparator for an opaque type so script code can write
@@ -107,18 +67,5 @@ extension Interpreter {
         compare body: @escaping (Value, Value) throws -> Int
     ) {
         opaqueComparators[typeName] = body
-    }
-
-    /// Register a type-call initializer (`URL(string: "…")`, `Date()`).
-    /// `labels` is the call-site argument label list — `"_"` for unlabelled
-    /// positions. Multiple initializers can coexist on the same type as
-    /// long as their label lists differ.
-    public func registerInit(
-        on typeName: String,
-        labels: [String],
-        body: @escaping ([Value]) async throws -> Value
-    ) {
-        let key = bridgeKey(forInit: typeName, labels: labels.map { Optional($0) })
-        bridges[key] = .`init`(body)
     }
 }
