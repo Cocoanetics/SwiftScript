@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let uRLUbiquitousSharedItemPermissions: [String: Bridge] = [
+    nonisolated(unsafe) static let uRLUbiquitousSharedItemPermissions: [String: Bridge] = [
     "var URLUbiquitousSharedItemPermissions.hashValue": .computed { receiver in
         let recv: URLUbiquitousSharedItemPermissions = try unboxOpaque(receiver, as: URLUbiquitousSharedItemPermissions.self, typeName: "URLUbiquitousSharedItemPermissions")
         return .int(recv.hashValue)

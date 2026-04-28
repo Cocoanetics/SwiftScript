@@ -1190,6 +1190,10 @@ func filenameSlug(for typeName: String) -> String {
 }
 
 /// Render a per-type bridge file: `static let <name>: [String: Bridge]`.
+/// `nonisolated(unsafe)` opts the global out of the strict-concurrency
+/// shared-state check — `Bridge`'s closure cases aren't `@Sendable`,
+/// so the dict can't be plain `Sendable`. The dict is read-only after
+/// init, so the bypass is safe in practice.
 func renderPerTypeFile(namespace: String, typeName: String, entries: [String]) -> String {
     let dictName = staticLetName(for: typeName)
     let body = entries.isEmpty ? "    // (no entries)" : entries.joined(separator: "\n")
@@ -1197,7 +1201,7 @@ func renderPerTypeFile(namespace: String, typeName: String, entries: [String]) -
     \(autogenBanner)import Foundation
 
     extension \(namespace) {
-        static let \(dictName): [String: Bridge] = [
+        nonisolated(unsafe) static let \(dictName): [String: Bridge] = [
     \(body)
         ]
     }
@@ -1230,7 +1234,7 @@ func renderManifest(
     enum \(namespace) {
         /// Aggregated view of every per-type dict — convenient for
         /// callers that want to introspect the full bridge surface.
-        static let all: [String: Bridge] = [
+        nonisolated(unsafe) static let all: [String: Bridge] = [
     \(dictList)
         ].reduce(into: [:]) { acc, dict in
             for (k, v) in dict { acc[k] = v }

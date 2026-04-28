@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let dateComponents: [String: Bridge] = [
+    nonisolated(unsafe) static let dateComponents: [String: Bridge] = [
     "var DateComponents.calendar": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.calendar {

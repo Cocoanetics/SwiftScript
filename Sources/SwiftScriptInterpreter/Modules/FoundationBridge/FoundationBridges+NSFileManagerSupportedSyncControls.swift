@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let nSFileManagerSupportedSyncControls: [String: Bridge] = [
+    nonisolated(unsafe) static let nSFileManagerSupportedSyncControls: [String: Bridge] = [
     "init NSFileManagerSupportedSyncControls()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSFileManagerSupportedSyncControls(): expected 0 argument(s), got \(args.count)")

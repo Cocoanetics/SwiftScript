@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let nSLinguisticTagScheme: [String: Bridge] = [
+    nonisolated(unsafe) static let nSLinguisticTagScheme: [String: Bridge] = [
     "var NSLinguisticTagScheme.hashValue": .computed { receiver in
         let recv: NSLinguisticTagScheme = try unboxOpaque(receiver, as: NSLinguisticTagScheme.self, typeName: "NSLinguisticTagScheme")
         return .int(recv.hashValue)

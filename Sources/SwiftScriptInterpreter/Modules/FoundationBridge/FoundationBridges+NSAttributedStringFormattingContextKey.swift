@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let nSAttributedStringFormattingContextKey: [String: Bridge] = [
+    nonisolated(unsafe) static let nSAttributedStringFormattingContextKey: [String: Bridge] = [
     "var NSAttributedStringFormattingContextKey.hashValue": .computed { receiver in
         let recv: NSAttributedStringFormattingContextKey = try unboxOpaque(receiver, as: NSAttributedStringFormattingContextKey.self, typeName: "NSAttributedStringFormattingContextKey")
         return .int(recv.hashValue)

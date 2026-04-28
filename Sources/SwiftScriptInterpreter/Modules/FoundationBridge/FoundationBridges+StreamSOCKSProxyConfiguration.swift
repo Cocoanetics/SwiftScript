@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let streamSOCKSProxyConfiguration: [String: Bridge] = [
+    nonisolated(unsafe) static let streamSOCKSProxyConfiguration: [String: Bridge] = [
     "var StreamSOCKSProxyConfiguration.hashValue": .computed { receiver in
         let recv: StreamSOCKSProxyConfiguration = try unboxOpaque(receiver, as: StreamSOCKSProxyConfiguration.self, typeName: "StreamSOCKSProxyConfiguration")
         return .int(recv.hashValue)

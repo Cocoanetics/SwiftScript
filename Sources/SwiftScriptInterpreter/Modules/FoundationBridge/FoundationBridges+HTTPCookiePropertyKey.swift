@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let hTTPCookiePropertyKey: [String: Bridge] = [
+    nonisolated(unsafe) static let hTTPCookiePropertyKey: [String: Bridge] = [
     "var HTTPCookiePropertyKey.hashValue": .computed { receiver in
         let recv: HTTPCookiePropertyKey = try unboxOpaque(receiver, as: HTTPCookiePropertyKey.self, typeName: "HTTPCookiePropertyKey")
         return .int(recv.hashValue)

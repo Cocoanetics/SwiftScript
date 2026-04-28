@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let decimal: [String: Bridge] = [
+    nonisolated(unsafe) static let decimal: [String: Bridge] = [
     "var Decimal.description": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .string(recv.description)

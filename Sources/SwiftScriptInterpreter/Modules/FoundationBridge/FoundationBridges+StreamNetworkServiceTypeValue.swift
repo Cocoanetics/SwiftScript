@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let streamNetworkServiceTypeValue: [String: Bridge] = [
+    nonisolated(unsafe) static let streamNetworkServiceTypeValue: [String: Bridge] = [
     "var StreamNetworkServiceTypeValue.hashValue": .computed { receiver in
         let recv: StreamNetworkServiceTypeValue = try unboxOpaque(receiver, as: StreamNetworkServiceTypeValue.self, typeName: "StreamNetworkServiceTypeValue")
         return .int(recv.hashValue)

@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let attributedString: [String: Bridge] = [
+    nonisolated(unsafe) static let attributedString: [String: Bridge] = [
     "var AttributedString.description": .computed { receiver in
         let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
         return .string(recv.description)

@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let predicateError: [String: Bridge] = [
+    nonisolated(unsafe) static let predicateError: [String: Bridge] = [
     "var PredicateError.localizedDescription": .computed { receiver in
         let recv: PredicateError = try unboxOpaque(receiver, as: PredicateError.self, typeName: "PredicateError")
         return .string(recv.localizedDescription)

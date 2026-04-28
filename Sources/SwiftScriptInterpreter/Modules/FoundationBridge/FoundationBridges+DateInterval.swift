@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let dateInterval: [String: Bridge] = [
+    nonisolated(unsafe) static let dateInterval: [String: Bridge] = [
     "var DateInterval.start": .computed { receiver in
         let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
         return boxOpaque(recv.start, typeName: "Date")

@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let machError: [String: Bridge] = [
+    nonisolated(unsafe) static let machError: [String: Bridge] = [
     "var MachError.errorCode": .computed { receiver in
         let recv: MachError = try unboxOpaque(receiver, as: MachError.self, typeName: "MachError")
         return .int(recv.errorCode)

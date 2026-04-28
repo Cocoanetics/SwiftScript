@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let unsafeCurrentTask: [String: Bridge] = [
+    nonisolated(unsafe) static let unsafeCurrentTask: [String: Bridge] = [
     "var UnsafeCurrentTask.isCancelled": .computed { receiver in
         let recv: UnsafeCurrentTask = try unboxOpaque(receiver, as: UnsafeCurrentTask.self, typeName: "UnsafeCurrentTask")
         return .bool(recv.isCancelled)

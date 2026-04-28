@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let personNameComponents: [String: Bridge] = [
+    nonisolated(unsafe) static let personNameComponents: [String: Bridge] = [
     "init PersonNameComponents()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init PersonNameComponents(): expected 0 argument(s), got \(args.count)")

@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let notification: [String: Bridge] = [
+    nonisolated(unsafe) static let notification: [String: Bridge] = [
     "var Notification.description": .computed { receiver in
         let recv: Notification = try unboxOpaque(receiver, as: Notification.self, typeName: "Notification")
         return .string(recv.description)

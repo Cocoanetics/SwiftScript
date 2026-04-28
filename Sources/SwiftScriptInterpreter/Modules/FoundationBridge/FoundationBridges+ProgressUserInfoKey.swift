@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let progressUserInfoKey: [String: Bridge] = [
+    nonisolated(unsafe) static let progressUserInfoKey: [String: Bridge] = [
     "var ProgressUserInfoKey.hashValue": .computed { receiver in
         let recv: ProgressUserInfoKey = try unboxOpaque(receiver, as: ProgressUserInfoKey.self, typeName: "ProgressUserInfoKey")
         return .int(recv.hashValue)

@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let regexWordBoundaryKind: [String: Bridge] = [
+    nonisolated(unsafe) static let regexWordBoundaryKind: [String: Bridge] = [
     "static let RegexWordBoundaryKind.simple": .staticValue(boxOpaque(RegexWordBoundaryKind.simple, typeName: "RegexWordBoundaryKind")),
     "static let RegexWordBoundaryKind.default": .staticValue(boxOpaque(RegexWordBoundaryKind.default, typeName: "RegexWordBoundaryKind")),
     "var RegexWordBoundaryKind.hashValue": .computed { receiver in

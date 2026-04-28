@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let stringTransform: [String: Bridge] = [
+    nonisolated(unsafe) static let stringTransform: [String: Bridge] = [
     "var StringTransform.hashValue": .computed { receiver in
         let recv: StringTransform = try unboxOpaque(receiver, as: StringTransform.self, typeName: "StringTransform")
         return .int(recv.hashValue)

@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let opaquePointer: [String: Bridge] = [
+    nonisolated(unsafe) static let opaquePointer: [String: Bridge] = [
     "var OpaquePointer.hashValue": .computed { receiver in
         let recv: OpaquePointer = try unboxOpaque(receiver, as: OpaquePointer.self, typeName: "OpaquePointer")
         return .int(recv.hashValue)

@@ -3,7 +3,7 @@
 import Foundation
 
 extension StdlibBridges {
-    static let double: [String: Bridge] = [
+    nonisolated(unsafe) static let double: [String: Bridge] = [
     "static let Double.ulpOfOne": .staticValue(.double(Double.ulpOfOne)),
     "var Double.nextDown": .computed { receiver in
         let recv: Double = try toDouble(receiver)

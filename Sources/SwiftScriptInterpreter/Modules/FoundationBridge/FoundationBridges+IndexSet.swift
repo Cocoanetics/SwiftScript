@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let indexSet: [String: Bridge] = [
+    nonisolated(unsafe) static let indexSet: [String: Bridge] = [
     "var IndexSet.underestimatedCount": .computed { receiver in
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return .int(recv.underestimatedCount)

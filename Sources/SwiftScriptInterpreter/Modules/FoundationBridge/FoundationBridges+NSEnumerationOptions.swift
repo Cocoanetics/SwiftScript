@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let nSEnumerationOptions: [String: Bridge] = [
+    nonisolated(unsafe) static let nSEnumerationOptions: [String: Bridge] = [
     "init NSEnumerationOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSEnumerationOptions(): expected 0 argument(s), got \(args.count)")

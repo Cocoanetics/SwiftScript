@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let cocoaError: [String: Bridge] = [
+    nonisolated(unsafe) static let cocoaError: [String: Bridge] = [
     "var CocoaError.errorCode": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .int(recv.errorCode)

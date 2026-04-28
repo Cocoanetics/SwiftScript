@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let indexPath: [String: Bridge] = [
+    nonisolated(unsafe) static let indexPath: [String: Bridge] = [
     "var IndexPath.isEmpty": .computed { receiver in
         let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
         return .bool(recv.isEmpty)

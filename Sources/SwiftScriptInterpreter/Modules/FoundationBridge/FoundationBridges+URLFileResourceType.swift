@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let uRLFileResourceType: [String: Bridge] = [
+    nonisolated(unsafe) static let uRLFileResourceType: [String: Bridge] = [
     "var URLFileResourceType.hashValue": .computed { receiver in
         let recv: URLFileResourceType = try unboxOpaque(receiver, as: URLFileResourceType.self, typeName: "URLFileResourceType")
         return .int(recv.hashValue)

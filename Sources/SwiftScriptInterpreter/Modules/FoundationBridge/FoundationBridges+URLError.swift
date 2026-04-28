@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let uRLError: [String: Bridge] = [
+    nonisolated(unsafe) static let uRLError: [String: Bridge] = [
     "var URLError.errorCode": .computed { receiver in
         let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
         return .int(recv.errorCode)

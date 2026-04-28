@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let uRLUbiquitousItemDownloadingStatus: [String: Bridge] = [
+    nonisolated(unsafe) static let uRLUbiquitousItemDownloadingStatus: [String: Bridge] = [
     "var URLUbiquitousItemDownloadingStatus.hashValue": .computed { receiver in
         let recv: URLUbiquitousItemDownloadingStatus = try unboxOpaque(receiver, as: URLUbiquitousItemDownloadingStatus.self, typeName: "URLUbiquitousItemDownloadingStatus")
         return .int(recv.hashValue)

@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let taskPriority: [String: Bridge] = [
+    nonisolated(unsafe) static let taskPriority: [String: Bridge] = [
     "static let TaskPriority.high": .staticValue(boxOpaque(TaskPriority.high, typeName: "TaskPriority")),
     "static let TaskPriority.medium": .staticValue(boxOpaque(TaskPriority.medium, typeName: "TaskPriority")),
     "static let TaskPriority.low": .staticValue(boxOpaque(TaskPriority.low, typeName: "TaskPriority")),

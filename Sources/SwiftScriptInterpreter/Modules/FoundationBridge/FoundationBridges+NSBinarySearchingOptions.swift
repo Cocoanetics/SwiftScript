@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let nSBinarySearchingOptions: [String: Bridge] = [
+    nonisolated(unsafe) static let nSBinarySearchingOptions: [String: Bridge] = [
     "init NSBinarySearchingOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSBinarySearchingOptions(): expected 0 argument(s), got \(args.count)")

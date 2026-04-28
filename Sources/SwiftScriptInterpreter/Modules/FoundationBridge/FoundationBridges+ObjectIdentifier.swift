@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let objectIdentifier: [String: Bridge] = [
+    nonisolated(unsafe) static let objectIdentifier: [String: Bridge] = [
     "var ObjectIdentifier.debugDescription": .computed { receiver in
         let recv: ObjectIdentifier = try unboxOpaque(receiver, as: ObjectIdentifier.self, typeName: "ObjectIdentifier")
         return .string(recv.debugDescription)

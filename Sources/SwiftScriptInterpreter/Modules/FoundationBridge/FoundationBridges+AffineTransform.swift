@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let affineTransform: [String: Bridge] = [
+    nonisolated(unsafe) static let affineTransform: [String: Bridge] = [
     "init AffineTransform()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init AffineTransform(): expected 0 argument(s), got \(args.count)")

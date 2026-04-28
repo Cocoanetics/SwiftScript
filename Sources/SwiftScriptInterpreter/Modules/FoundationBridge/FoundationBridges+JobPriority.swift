@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let jobPriority: [String: Bridge] = [
+    nonisolated(unsafe) static let jobPriority: [String: Bridge] = [
     "init JobPriority(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init JobPriority(_:): expected 1 argument(s), got \(args.count)")

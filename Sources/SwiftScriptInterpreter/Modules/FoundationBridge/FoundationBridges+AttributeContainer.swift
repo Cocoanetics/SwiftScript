@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let attributeContainer: [String: Bridge] = [
+    nonisolated(unsafe) static let attributeContainer: [String: Bridge] = [
     "init AttributeContainer()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init AttributeContainer(): expected 0 argument(s), got \(args.count)")

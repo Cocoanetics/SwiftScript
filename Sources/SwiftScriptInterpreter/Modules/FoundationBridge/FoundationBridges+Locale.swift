@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let locale: [String: Bridge] = [
+    nonisolated(unsafe) static let locale: [String: Bridge] = [
     "static let Locale.autoupdatingCurrent": .staticValue(boxOpaque(Locale.autoupdatingCurrent, typeName: "Locale")),
     "static let Locale.current": .staticValue(boxOpaque(Locale.current, typeName: "Locale")),
     "var Locale.identifier": .computed { receiver in

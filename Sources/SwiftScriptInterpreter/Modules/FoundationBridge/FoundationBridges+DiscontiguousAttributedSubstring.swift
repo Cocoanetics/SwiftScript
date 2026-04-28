@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let discontiguousAttributedSubstring: [String: Bridge] = [
+    nonisolated(unsafe) static let discontiguousAttributedSubstring: [String: Bridge] = [
     "var DiscontiguousAttributedSubstring.base": .computed { receiver in
         let recv: DiscontiguousAttributedSubstring = try unboxOpaque(receiver, as: DiscontiguousAttributedSubstring.self, typeName: "DiscontiguousAttributedSubstring")
         return boxOpaque(recv.base, typeName: "AttributedString")

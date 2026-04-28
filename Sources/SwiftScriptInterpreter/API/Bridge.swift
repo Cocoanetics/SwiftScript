@@ -15,7 +15,7 @@ import Foundation
 /// The descriptor reads exactly like a Swift declaration, which makes the
 /// table greppable from outside the codebase and lets the kind be
 /// recognised at a glance instead of decoded from punctuation.
-public enum Bridge: @unchecked Sendable {
+public enum Bridge {
     /// Instance method. Receives the value the method was called on
     /// plus the positional arguments.
     case method((Value, [Value]) async throws -> Value)

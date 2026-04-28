@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let byteCountFormatStyle: [String: Bridge] = [
+    nonisolated(unsafe) static let byteCountFormatStyle: [String: Bridge] = [
     "var ByteCountFormatStyle.allowedUnits": .computed { receiver in
         let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
         return boxOpaque(recv.allowedUnits, typeName: "ByteCountFormatStyle.Units")

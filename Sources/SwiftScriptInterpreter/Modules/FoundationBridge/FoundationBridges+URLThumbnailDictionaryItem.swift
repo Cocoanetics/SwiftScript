@@ -3,7 +3,7 @@
 import Foundation
 
 extension FoundationBridges {
-    static let uRLThumbnailDictionaryItem: [String: Bridge] = [
+    nonisolated(unsafe) static let uRLThumbnailDictionaryItem: [String: Bridge] = [
     "var URLThumbnailDictionaryItem.hashValue": .computed { receiver in
         let recv: URLThumbnailDictionaryItem = try unboxOpaque(receiver, as: URLThumbnailDictionaryItem.self, typeName: "URLThumbnailDictionaryItem")
         return .int(recv.hashValue)
