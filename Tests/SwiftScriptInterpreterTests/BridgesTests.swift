@@ -97,6 +97,58 @@ struct BridgesTests {
         }
     }
 
+    @Test func scriptDefinedSequenceIteratesWithForLoop() async throws {
+        let interp = Interpreter()
+        var captured = ""
+        interp.output = { captured += $0 + "\n" }
+        try await interp.eval("""
+            struct Counter: Sequence {
+                let limit: Int
+                func makeIterator() -> CounterIterator {
+                    return CounterIterator(current: 0, limit: limit)
+                }
+            }
+            struct CounterIterator: IteratorProtocol {
+                var current: Int
+                let limit: Int
+                mutating func next() -> Int? {
+                    guard current < limit else { return nil }
+                    defer { current += 1 }
+                    return current
+                }
+            }
+            for i in Counter(limit: 5) {
+                print(i)
+            }
+            """)
+        #expect(captured == "0\n1\n2\n3\n4\n")
+    }
+
+    @Test func deferInsideStructMutatingMethodNowRuns() async throws {
+        // Pre-existing bug: `invokeStructMethod` skipped deferred bodies,
+        // so `defer { n += 1 }` inside a mutating method never executed.
+        // Fixed alongside the script-Sequence work because iterators
+        // commonly use the increment-on-exit pattern.
+        let interp = Interpreter()
+        var captured = ""
+        interp.output = { captured += $0 + "\n" }
+        try await interp.eval("""
+            struct Box {
+                var n: Int = 0
+                mutating func incrementAndGet() -> Int {
+                    defer { n += 1 }
+                    return n
+                }
+            }
+            var b = Box()
+            print(b.incrementAndGet())
+            print(b.n)
+            print(b.incrementAndGet())
+            print(b.n)
+            """)
+        #expect(captured == "0\n1\n1\n2\n")
+    }
+
     @Test func valueArrayPipesThroughZipPrefixMap() async throws {
         let interp = Interpreter()
         let arr = try await interp.eval("[10, 20, 30, 40]")

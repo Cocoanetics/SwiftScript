@@ -1,4 +1,5 @@
 import SwiftSyntax
+import SwiftParser
 
 extension Interpreter {
     /// Run a `{ … }` block in a fresh child scope. Returns the value of the
@@ -128,7 +129,7 @@ extension Interpreter {
 
     func execute(forIn forStmt: ForStmtSyntax, label: String? = nil, in scope: Scope) async throws -> Value {
         let sequenceValue = try await evaluate(forStmt.sequence, in: scope)
-        let elements = try iterableElements(of: sequenceValue, at: forStmt.sequence.positionAfterSkippingLeadingTrivia.utf8Offset)
+        let elements = try await iterableElements(of: sequenceValue, at: forStmt.sequence.positionAfterSkippingLeadingTrivia.utf8Offset)
         let isCasePattern = forStmt.caseKeyword != nil
 
         loop: for value in elements {
@@ -210,15 +211,107 @@ extension Interpreter {
         )
     }
 
-    /// Iterable adapter for `for x in y` loops. Delegates to the
-    /// `ScriptSequence` API so every iteration site shares the same
-    /// shape-handling and we don't drift between this and other
-    /// internal walkers.
-    private func iterableElements(of value: Value, at offset: Int) throws -> AnySequence<Value> {
-        guard ScriptSequence.isIterable(value) else {
-            throw RuntimeError.invalid("not iterable: \(typeName(value))")
+    /// Iterable adapter for `for x in y` loops. Built-in iterables go
+    /// through the `ScriptSequence` adapter; script-defined sequences
+    /// are duck-typed by looking for `makeIterator()` returning
+    /// something with a `next() -> Optional<T>` method (the same
+    /// signature `Sequence` / `IteratorProtocol` would require).
+    /// We materialize all elements eagerly so the surrounding `for`
+    /// loop stays a synchronous sequence walk over `[Value]`.
+    private func iterableElements(of value: Value, at offset: Int) async throws -> [Value] {
+        if ScriptSequence.isIterable(value) {
+            return Array(ScriptSequence(value))
         }
-        return AnySequence(ScriptSequence(value))
+        // Script-side `Sequence` conformance: receiver supplies a
+        // `makeIterator()` zero-arg method whose result responds to
+        // `next() -> Optional<T>`. We don't validate the actual
+        // protocol — duck-typing matches Swift's behavior closely
+        // enough for the iteration sites that care.
+        if try await hasZeroArgMethod(value, named: "makeIterator") {
+            let iterator = try await invokeMethod(
+                "makeIterator", on: value, args: [], at: offset
+            )
+            return try await drainIterator(iterator, at: offset)
+        }
+        throw RuntimeError.invalid("not iterable: \(typeName(value))")
+    }
+
+    /// True if `value`'s type defines a no-arg `methodName`. Used as a
+    /// cheap duck-type probe before we commit to invoking it.
+    private func hasZeroArgMethod(_ value: Value, named methodName: String) async throws -> Bool {
+        switch value {
+        case .structValue(let typeName, _):
+            return structDefs[typeName]?.methods[methodName] != nil
+        case .classInstance(let inst):
+            if let def = classDefs[inst.typeName],
+               lookupClassMethod(on: def, methodName) != nil
+            {
+                return true
+            }
+            return false
+        case .enumValue(let typeName, _, _):
+            return enumDefs[typeName]?.methods[methodName] != nil
+        default:
+            return false
+        }
+    }
+
+    /// Pull values out of a script-side iterator until `next()` returns
+    /// `.optional(nil)`. The iterator's `next` is mutating in real
+    /// Swift, but our struct-method dispatch already writes the new
+    /// `self` back through the receiver chain, so a plain call works.
+    private func drainIterator(_ iterator: Value, at offset: Int) async throws -> [Value] {
+        var result: [Value] = []
+        // Hold the iterator state in a freshly-bound mutable scope so
+        // the mutating `next()` writes back through `self`. We rebuild
+        // the receiver each loop with whatever `invokeMethod` produces
+        // for the new `self` — for class instances it's the same ref;
+        // for value types `invokeMethod` updates a temporary scope.
+        var current = iterator
+        // Step counter is a cheap runaway guard. ~100M is way more
+        // than any reasonable script `for` loop and stops a buggy
+        // iterator from spinning forever.
+        for _ in 0..<100_000_000 {
+            let r = try await invokeIteratorNext(&current, at: offset)
+            switch r {
+            case .optional(.none): return result
+            case .optional(.some(let v)): result.append(v)
+            default:
+                throw RuntimeError.invalid(
+                    "iterator's next() must return Optional, got \(typeName(r))"
+                )
+            }
+        }
+        throw RuntimeError.invalid("iterator emitted >100M elements; aborting")
+    }
+
+    /// Call `next()` on a script iterator and write the (possibly
+    /// mutated) iterator state back to `current`. For value-type
+    /// iterators this is essential — `mutating func next()` updates
+    /// a fresh `self`, and the new state lives in the writeback.
+    private func invokeIteratorNext(
+        _ current: inout Value,
+        at offset: Int
+    ) async throws -> Value {
+        // Use a local scope to host the iterator under a known name,
+        // then dispatch through the same mutating-method machinery the
+        // call evaluator already uses. That handles writeback for
+        // structs (rebuild with new `self`) and is a no-op for
+        // classes (ref cell mutates in place).
+        let scope = Scope(parent: rootScope)
+        scope.bind("__iter__", value: current, mutable: true)
+        let parsed = SwiftParser.Parser.parse(source: "__iter__.next()")
+        guard let stmt = parsed.statements.first?.item,
+              case .expr(let expr) = stmt,
+              let call = expr.as(FunctionCallExprSyntax.self)
+        else {
+            throw RuntimeError.invalid("internal: failed to build iterator call")
+        }
+        let r = try await evaluate(call: call, in: scope)
+        if let updated = scope.lookup("__iter__") {
+            current = updated.value
+        }
+        return r
     }
 
     /// Handle an `if let` / `while let` / `guard let` binding. Returns true if

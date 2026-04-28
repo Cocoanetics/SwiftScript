@@ -375,6 +375,7 @@ extension Interpreter {
         defer { returnTypeStack.removeLast() }
 
         let returnValue: Value
+        var caught: Error? = nil
         do {
             var last: Value = .void
             for item in body {
@@ -383,7 +384,16 @@ extension Interpreter {
             returnValue = last
         } catch let signal as ReturnSignal {
             returnValue = signal.value
+        } catch {
+            caught = error
+            returnValue = .void
         }
+        // Run any `defer` blocks the body registered. Mutations the
+        // deferred bodies make to `self` need to land *before* we read
+        // `finalSelf`, so the mutating-method writeback at the call
+        // site sees the post-defer state.
+        await runDeferred(in: callScope)
+        if let caught { throw caught }
 
         let finalSelf = callScope.lookup("self")?.value ?? instance
         return (returnValue, finalSelf)
