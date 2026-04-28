@@ -33,6 +33,15 @@ public final class Interpreter {
     /// merged directly into the respective StructDef/EnumDef.
     var extensions: [String: ExtensionMembers] = [:]
 
+    /// Flat bridge table — see `Bridge`. New bridge code writes here;
+    /// runtime dispatch sites consult this before falling through to
+    /// `extensions[…]`. The two will live side-by-side until the
+    /// migration is complete.
+    var _bridges: [String: Bridge] = [:]
+
+    /// Cache for `bridgedTypeNames` — invalidated by `bridges` setter.
+    var _bridgedTypeNamesCache: (count: Int, types: Set<String>)?
+
     /// `typealias Foo = Bar` declarations. Looked up at type-resolution
     /// sites (coerce, struct/enum init dispatch, isTypeName, …).
     var typeAliases: [String: TypeSyntax] = [:]

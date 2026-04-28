@@ -148,12 +148,28 @@ extension Interpreter {
 
     /// Look up a name in the user extensions for a given type. Used by
     /// invokeMethod / lookupProperty on built-in receivers as a fallback
-    /// after the built-in switch fails.
+    /// after the built-in switch fails. Consults the flat `bridges`
+    /// table first, then falls through to the legacy `extensions[]`
+    /// storage.
     func extensionMethod(typeName: String, name: String) -> Function? {
+        let key = "\(typeName).\(name)"
+        if case .method(let body)? = bridges[key] {
+            return Function(
+                name: key, parameters: [],
+                kind: .builtinMethod(body)
+            )
+        }
         return extensions[typeName]?.methods[name]
     }
 
     func extensionComputedProperty(typeName: String, name: String) -> Function? {
+        let key = "\(typeName).\(name)"
+        if case .computed(let body)? = bridges[key] {
+            return Function(
+                name: key, parameters: [],
+                kind: .builtinMethod({ recv, _ in try await body(recv) })
+            )
+        }
         return extensions[typeName]?.computedProperties[name]
     }
 

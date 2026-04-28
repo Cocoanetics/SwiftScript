@@ -23,6 +23,10 @@ extension Interpreter {
         {
             return true
         }
+        // Bridges populated via the flat `bridges[…]` table count too —
+        // a `URLSession.shared` static or a `URL(string:)` init makes
+        // the corresponding type name resolvable as a type.
+        if bridgedTypeNames.contains(resolved) { return true }
         switch resolved {
         case "Int", "Double", "String", "Bool", "Array", "Range", "Optional":
             return true
@@ -60,6 +64,12 @@ extension Interpreter {
             if let v = enumDefs[typeName]?.staticMembers[member] {
                 return v
             }
+        }
+        // Bridge-table static value (`URLSession.shared`, `Int.max`, …).
+        // Consulted before the legacy `extensions[]` table; both will
+        // coexist during migration.
+        if case .staticValue(let v)? = bridges[bridgeKey(forProperty: member, on: typeName)] {
+            return v
         }
         // User extension on a built-in type.
         if let v = extensions[typeName]?.staticMembers[member] {

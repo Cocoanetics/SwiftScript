@@ -53,6 +53,31 @@ extension Interpreter {
             }
             return .optional(nil)
         }
+        // Bridge-table initializer (`URL(string:)`, `Date()`, …). Keyed
+        // on the type name + ordered label list — same shape as the
+        // legacy `extensions[…].initializers` path below, just lookups
+        // happen against the flat `bridges` dict instead of per-type
+        // storage. Consulted first so migrating an init from one path
+        // to the other is a drop-in replacement.
+        if let ref = call.calledExpression.as(DeclReferenceExprSyntax.self) {
+            let typeName = resolveTypeName(ref.baseName.text)
+            let labels: [String?] = call.arguments.map { $0.label?.text }
+            let key = bridgeKey(forInit: typeName, labels: labels)
+            if case .`init`(let body)? = bridges[key] {
+                var args: [Value] = []
+                for arg in call.arguments {
+                    let label = arg.label?.text ?? "_"
+                    let context = implicitContextForInit(typeName: typeName, label: label)
+                    args.append(try await evaluateArg(
+                        arg.expression,
+                        label: label,
+                        contextType: context,
+                        in: scope
+                    ))
+                }
+                return try await body(args)
+            }
+        }
         // Built-in type initializer registered via `registerInit` (URL,
         // Date, UUID, CharacterSet, …). Keyed by the argument-label list,
         // matching the call site's labels in declaration order. We fall
