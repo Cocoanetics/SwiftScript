@@ -948,7 +948,7 @@ for annotated in prioritizedSymbols {
         if !claim(key, clashLabel: "\(receiverTypeName).\(methodName)") { continue }
         let recvUnbox = render(recvType.unboxTemplate, "receiver")
         record(key, code: renderEmit(EmitConfig(
-            registerLine: "i.bridges[\"\(receiverTypeName).\(methodName)()\"] = .method",
+            registerLine: "i.bridges[\"func \(receiverTypeName).\(methodName)()\"] = .method",
             closureParams: "receiver, args",
             arity: sig.parameters.count,
             recvUnboxLine: "let recv: \(recvType.swiftSpelling) = \(recvUnbox)",
@@ -982,7 +982,7 @@ for annotated in prioritizedSymbols {
             break
         }
         let labelDoc = labels.isEmpty ? "" : labels.map { "\($0):" }.joined()
-        let initKey = "\(receiverTypeName)(\(labelDoc))"
+        let initKey = "init \(receiverTypeName)(\(labelDoc))"
         record(key, code: renderEmit(EmitConfig(
             registerLine: "i.bridges[\"\(initKey)\"] = .`init`",
             closureParams: "args",
@@ -1013,7 +1013,7 @@ for annotated in prioritizedSymbols {
         }
         let recvUnbox = render(recvType.unboxTemplate, "receiver")
         record(key, code: renderEmit(EmitConfig(
-            registerLine: "i.bridges[\"\(receiverTypeName).\(memberName)\"] = .computed",
+            registerLine: "i.bridges[\"var \(receiverTypeName).\(memberName)\"] = .computed",
             closureParams: "receiver",
             arity: nil,
             recvUnboxLine: "let recv: \(recvType.swiftSpelling) = \(recvUnbox)",
@@ -1044,7 +1044,7 @@ for annotated in prioritizedSymbols {
         }
         let valueExpr = render(propType.bridge.boxTemplate, "\(receiverTypeName).\(memberName)")
         record(key, code: """
-                i.bridges[\"\(receiverTypeName).Type.\(memberName)\"] = .staticValue(\(valueExpr))
+                i.bridges[\"static let \(receiverTypeName).\(memberName)\"] = .staticValue(\(valueExpr))
         """)
 
     case "swift.type.method" where sym.pathComponents.count == 2 && !isDeprecated(sym) && !isGeneric(sym) && !isAsync(sym):
@@ -1060,7 +1060,7 @@ for annotated in prioritizedSymbols {
         let key = "static-method:\(receiverTypeName).\(methodName)"
         if !claim(key, clashLabel: "\(receiverTypeName).\(methodName)") { continue }
         record(key, code: renderEmit(EmitConfig(
-            registerLine: "i.bridges[\"\(receiverTypeName).Type.\(methodName)()\"] = .staticMethod",
+            registerLine: "i.bridges[\"static func \(receiverTypeName).\(methodName)()\"] = .staticMethod",
             closureParams: "args",
             arity: sig.parameters.count,
             recvUnboxLine: nil,

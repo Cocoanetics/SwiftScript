@@ -11,7 +11,7 @@ struct DictionaryModule: BuiltinModule {
         // `Dictionary(uniqueKeysWithValues: [(K, V)])` — build a dict
         // from a sequence of key/value tuples. Throws on duplicate keys
         // (matching Swift's runtime check).
-        i.bridges["Dictionary(uniqueKeysWithValues:)"] = .`init` { args in
+        i.bridges["init Dictionary(uniqueKeysWithValues:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Dictionary(uniqueKeysWithValues:): expected 1 argument")
             }
@@ -36,7 +36,7 @@ struct DictionaryModule: BuiltinModule {
         // by the closure's return value. Result type is `[K: [Element]]`.
         // Captures the interpreter weakly so the closure dispatcher (which
         // handles user closures) is available.
-        i.bridges["Dictionary(grouping:by:)"] = .`init` { [weak i] args in
+        i.bridges["init Dictionary(grouping:by:)"] = .`init` { [weak i] args in
             guard let i else {
                 throw RuntimeError.invalid("Dictionary(grouping:by:): interpreter unavailable")
             }
@@ -83,10 +83,10 @@ struct SetModule: BuiltinModule {
     let name = "Set"
 
     func register(into i: Interpreter) {
-        i.bridges["Set()"] = .`init` { _ in
+        i.bridges["init Set()"] = .`init` { _ in
             return .set([])
         }
-        i.bridges["Set(_:)"] = .`init` { args in
+        i.bridges["init Set(_:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Set(_:): expected 1 argument")
             }

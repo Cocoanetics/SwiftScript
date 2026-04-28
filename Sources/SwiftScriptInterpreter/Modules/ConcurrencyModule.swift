@@ -68,7 +68,7 @@ struct ConcurrencyModule: BuiltinModule {
         // `group.addTask { … }` — runs the closure now, appends the
         // result onto the group's queue. Subsequent `for await` reads
         // them in insertion order.
-        i.bridges["TaskGroup.addTask()"] = .method { [weak i] receiver, args in
+        i.bridges["func TaskGroup.addTask()"] = .method { [weak i] receiver, args in
             guard let i else {
                 throw RuntimeError.invalid("TaskGroup.addTask: interpreter unavailable")
             }

@@ -31,7 +31,7 @@ extension Interpreter {
         // `CustomDebugStringConvertible.debugDescription` on script
         // types; falls back to the regular description for everything
         // else.
-        bridges["String(reflecting:)"] = .`init` { [weak self] args in
+        bridges["init String(reflecting:)"] = .`init` { [weak self] args in
             guard let self else { return .string("") }
             guard let v = args.first else { return .string("") }
             return .string(try await self.debugDescribe(v))
@@ -50,7 +50,7 @@ extension Interpreter {
             ("awayFromZero",     .awayFromZero),
         ]
         for (name, rule) in rules {
-            bridges["FloatingPointRoundingRule.Type.\(name)"] =
+            bridges["static let FloatingPointRoundingRule.\(name)"] =
                 .staticValue(.opaque(typeName: "FloatingPointRoundingRule", value: rule))
         }
 
@@ -141,7 +141,7 @@ extension Interpreter {
         // `String(_:radix:)` and `String(_:radix:uppercase:)` —
         // formatting an Int into a non-decimal base. Common idiom for
         // hex / binary printing.
-        bridges["String(_:radix:)"] = .`init` { args in
+        bridges["init String(_:radix:)"] = .`init` { args in
             guard args.count == 2,
                   case .int(let v) = args[0],
                   case .int(let radix) = args[1]
@@ -150,7 +150,7 @@ extension Interpreter {
             }
             return .string(String(v, radix: radix))
         }
-        bridges["String(_:radix:uppercase:)"] = .`init` { args in
+        bridges["init String(_:radix:uppercase:)"] = .`init` { args in
             guard args.count == 3,
                   case .int(let v) = args[0],
                   case .int(let radix) = args[1],
@@ -162,7 +162,7 @@ extension Interpreter {
         }
         // `Int(_ string: String, radix: Int)` — parse with a non-default
         // base. Returns Int? (nil for malformed input).
-        bridges["Int(_:radix:)"] = .`init` { args in
+        bridges["init Int(_:radix:)"] = .`init` { args in
             guard args.count == 2,
                   case .string(let s) = args[0],
                   case .int(let radix) = args[1]
@@ -176,7 +176,7 @@ extension Interpreter {
         // `Int(exactly: Double)` — fails (returns nil) if the value
         // isn't representable losslessly. Distinct from `Int(d)` which
         // truncates toward zero.
-        bridges["Int(exactly:)"] = .`init` { args in
+        bridges["init Int(exactly:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Int(exactly:): expected 1 argument")
             }
@@ -190,7 +190,7 @@ extension Interpreter {
                 throw RuntimeError.invalid("Int(exactly:): expected Double or Int")
             }
         }
-        bridges["Double(exactly:)"] = .`init` { args in
+        bridges["init Double(exactly:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Double(exactly:): expected 1 argument")
             }
@@ -263,7 +263,7 @@ extension Interpreter {
         // `Array(repeating: x, count: n)` — keyword-init form. The
         // `[T](repeating:count:)` sugar already routes through
         // `evaluateTypedArrayInitializer`; this covers the bare-name form.
-        bridges["Array(repeating:count:)"] = .`init` { args in
+        bridges["init Array(repeating:count:)"] = .`init` { args in
             guard args.count == 2, case .int(let n) = args[1], n >= 0 else {
                 throw RuntimeError.invalid(
                     "Array(repeating:count:): expected (Element, Int)"
@@ -298,7 +298,7 @@ extension Interpreter {
         // single-arg `String(_:)` already lives in `registerBuiltin`
         // above (line 9) — they'd collide. Wire as a registerInit
         // labelled overload that takes precedence.
-        bridges["String(repeating:count:)"] = .`init` { args in
+        bridges["init String(repeating:count:)"] = .`init` { args in
             guard args.count == 2,
                   case .string(let s) = args[0],
                   case .int(let n) = args[1]

@@ -28,16 +28,16 @@ struct JSONModule: BuiltinModule {
         // `.opaque` payload, so configuration set from script
         // (`outputFormatting`, `dateEncodingStrategy`, …) propagates to
         // the actual coder.
-        i.bridges["JSONEncoder()"] = .`init` { _ in
+        i.bridges["init JSONEncoder()"] = .`init` { _ in
             .opaque(typeName: "JSONEncoder", value: JSONEncoder())
         }
-        i.bridges["JSONDecoder()"] = .`init` { _ in
+        i.bridges["init JSONDecoder()"] = .`init` { _ in
             .opaque(typeName: "JSONDecoder", value: JSONDecoder())
         }
-        i.bridges["PropertyListEncoder()"] = .`init` { _ in
+        i.bridges["init PropertyListEncoder()"] = .`init` { _ in
             .opaque(typeName: "PropertyListEncoder", value: PropertyListEncoder())
         }
-        i.bridges["PropertyListDecoder()"] = .`init` { _ in
+        i.bridges["init PropertyListDecoder()"] = .`init` { _ in
             .opaque(typeName: "PropertyListDecoder", value: PropertyListDecoder())
         }
 
@@ -64,8 +64,8 @@ struct JSONModule: BuiltinModule {
                 throw RuntimeError.invalid("encode: \(error)")
             }
         }
-        i.bridges["JSONEncoder.encode()"]         = .method { try await encodeBody($0, $1) }
-        i.bridges["PropertyListEncoder.encode()"] = .method { try await encodeBody($0, $1) }
+        i.bridges["func JSONEncoder.encode()"]         = .method { try await encodeBody($0, $1) }
+        i.bridges["func PropertyListEncoder.encode()"] = .method { try await encodeBody($0, $1) }
 
         // `decode(_:from:)` — symmetric. We thread the target type
         // and interpreter through `userInfo` so the bridge knows what
@@ -106,31 +106,31 @@ struct JSONModule: BuiltinModule {
                 throw RuntimeError.invalid("decode: \(error)")
             }
         }
-        i.bridges["JSONDecoder.decode()"]         = .method { [weak i] in try await decodeBody($0, $1, i) }
-        i.bridges["PropertyListDecoder.decode()"] = .method { [weak i] in try await decodeBody($0, $1, i) }
+        i.bridges["func JSONDecoder.decode()"]         = .method { [weak i] in try await decodeBody($0, $1, i) }
+        i.bridges["func PropertyListDecoder.decode()"] = .method { [weak i] in try await decodeBody($0, $1, i) }
 
         // Configurable strategies — surface the common ones as static
         // values on the nested types. The user assigns them to the
         // encoder/decoder via property setters wired below.
-        i.bridges["JSONEncoder.OutputFormatting.Type.prettyPrinted"] =
+        i.bridges["static let JSONEncoder.OutputFormatting.prettyPrinted"] =
             .staticValue(.opaque(typeName: "JSONEncoder.OutputFormatting", value: JSONEncoder.OutputFormatting.prettyPrinted))
-        i.bridges["JSONEncoder.OutputFormatting.Type.sortedKeys"] =
+        i.bridges["static let JSONEncoder.OutputFormatting.sortedKeys"] =
             .staticValue(.opaque(typeName: "JSONEncoder.OutputFormatting", value: JSONEncoder.OutputFormatting.sortedKeys))
-        i.bridges["JSONEncoder.OutputFormatting.Type.withoutEscapingSlashes"] =
+        i.bridges["static let JSONEncoder.OutputFormatting.withoutEscapingSlashes"] =
             .staticValue(.opaque(typeName: "JSONEncoder.OutputFormatting", value: JSONEncoder.OutputFormatting.withoutEscapingSlashes))
-        i.bridges["JSONEncoder.DateEncodingStrategy.Type.iso8601"] =
+        i.bridges["static let JSONEncoder.DateEncodingStrategy.iso8601"] =
             .staticValue(.opaque(typeName: "JSONEncoder.DateEncodingStrategy", value: JSONEncoder.DateEncodingStrategy.iso8601))
-        i.bridges["JSONEncoder.DateEncodingStrategy.Type.secondsSince1970"] =
+        i.bridges["static let JSONEncoder.DateEncodingStrategy.secondsSince1970"] =
             .staticValue(.opaque(typeName: "JSONEncoder.DateEncodingStrategy", value: JSONEncoder.DateEncodingStrategy.secondsSince1970))
-        i.bridges["JSONDecoder.DateDecodingStrategy.Type.iso8601"] =
+        i.bridges["static let JSONDecoder.DateDecodingStrategy.iso8601"] =
             .staticValue(.opaque(typeName: "JSONDecoder.DateDecodingStrategy", value: JSONDecoder.DateDecodingStrategy.iso8601))
-        i.bridges["JSONDecoder.DateDecodingStrategy.Type.secondsSince1970"] =
+        i.bridges["static let JSONDecoder.DateDecodingStrategy.secondsSince1970"] =
             .staticValue(.opaque(typeName: "JSONDecoder.DateDecodingStrategy", value: JSONDecoder.DateDecodingStrategy.secondsSince1970))
 
         // `String.data(using:)` — returns Data?. Hand-rolled because the
         // symbol-graph signature has a defaulted `allowLossyConversion`
         // parameter, which our generator currently treats as required.
-        i.bridges["String.data()"] = .method { recv, args in
+        i.bridges["func String.data()"] = .method { recv, args in
             guard case .string(let s) = recv else {
                 throw RuntimeError.invalid("String.data(using:): receiver must be String")
             }
@@ -153,7 +153,7 @@ struct JSONModule: BuiltinModule {
         // recognizing the receiver as the string itself with `.utf8`
         // applied. The simplest path is a `Data(stringLiteral:)`-like
         // bridge that takes a String directly.
-        i.bridges["Data(_:)"] = .`init` { args in
+        i.bridges["init Data(_:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Data(_:): expected 1 argument")
             }
@@ -182,10 +182,10 @@ struct JSONModule: BuiltinModule {
         // Real Swift returns `String.UTF8View` (a sequence of bytes); for
         // our purposes the only common consumer is `Data(_:)` above, which
         // accepts `.string` directly.
-        i.bridges["String.utf8"] = .computed { recv in recv }
+        i.bridges["var String.utf8"] = .computed { recv in recv }
 
         // `String(data:encoding:)` — failable init, returns String?.
-        i.bridges["String(data:encoding:)"] = .`init` { args in
+        i.bridges["init String(data:encoding:)"] = .`init` { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("String(data:encoding:): expected 2 arguments")
             }
@@ -218,7 +218,7 @@ struct JSONModule: BuiltinModule {
             ("macOSRoman",   .macOSRoman),
         ]
         for (name, enc) in encodings {
-            i.bridges["String.Encoding.Type.\(name)"] =
+            i.bridges["static let String.Encoding.\(name)"] =
                 .staticValue(.opaque(typeName: "String.Encoding", value: enc))
         }
     }

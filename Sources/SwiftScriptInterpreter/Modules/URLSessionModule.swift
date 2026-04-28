@@ -9,14 +9,14 @@ struct URLSessionModule: BuiltinModule {
     let name = "URLSession"
 
     func register(into i: Interpreter) {
-        i.bridges["URLSession.Type.shared"] = .staticValue(
+        i.bridges["static let URLSession.shared"] = .staticValue(
             .opaque(typeName: "URLSession", value: URLSession.shared)
         )
 
         // `data(from: URL) async throws -> (Data, URLResponse)` — real
         // suspending call. The interpreter's async `await` lands on
         // Foundation's runtime, then resumes with the decoded tuple.
-        i.bridges["URLSession.data()"] = .method { recv, args in
+        i.bridges["func URLSession.data()"] = .method { recv, args in
             guard case .opaque(_, let any) = recv,
                   let session = any as? URLSession
             else {
@@ -46,7 +46,7 @@ struct URLSessionModule: BuiltinModule {
         // returns a tuple of an AsyncStream of bytes (each a `.int`
         // 0..<256) and the response. Lets script code do
         // `for await b in stream { … }` over real async byte data.
-        i.bridges["URLSession.bytes()"] = .method { recv, args in
+        i.bridges["func URLSession.bytes()"] = .method { recv, args in
             guard case .opaque(_, let any) = recv,
                   let session = any as? URLSession
             else {
@@ -81,13 +81,13 @@ struct URLSessionModule: BuiltinModule {
 
         // URLResponse computed properties commonly inspected after a
         // request — status code, MIME type, expected length.
-        i.bridges["URLResponse.expectedContentLength"] = .computed { recv in
+        i.bridges["var URLResponse.expectedContentLength"] = .computed { recv in
             guard case .opaque(_, let any) = recv,
                   let r = any as? URLResponse
             else { return .int(-1) }
             return .int(Int(r.expectedContentLength))
         }
-        i.bridges["URLResponse.mimeType"] = .computed { recv in
+        i.bridges["var URLResponse.mimeType"] = .computed { recv in
             guard case .opaque(_, let any) = recv,
                   let r = any as? URLResponse,
                   let m = r.mimeType
@@ -95,7 +95,7 @@ struct URLSessionModule: BuiltinModule {
             return .optional(.string(m))
         }
         // HTTPURLResponse is a subclass — expose its statusCode the same way.
-        i.bridges["URLResponse.statusCode"] = .computed { recv in
+        i.bridges["var URLResponse.statusCode"] = .computed { recv in
             guard case .opaque(_, let any) = recv,
                   let http = any as? HTTPURLResponse
             else { return .optional(nil) }
