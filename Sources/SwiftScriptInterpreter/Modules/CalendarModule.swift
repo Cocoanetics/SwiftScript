@@ -29,7 +29,7 @@ struct CalendarModule: BuiltinModule {
     }
 
     private func registerCalendarStatic(into i: Interpreter) {
-        i.bridges["Calendar.current"] =
+        i.bridges["Calendar.Type.current"] =
             .staticValue(.opaque(typeName: "Calendar", value: Calendar.current))
     }
 
@@ -51,13 +51,13 @@ struct CalendarModule: BuiltinModule {
             ("quarter", .quarter),
         ]
         for (name, value) in cases {
-            i.bridges["Calendar.Component.\(name)"] =
+            i.bridges["Calendar.Component.Type.\(name)"] =
                 .staticValue(.opaque(typeName: "Calendar.Component", value: value))
         }
     }
 
     private func registerCalendarMethods(into i: Interpreter) {
-        i.bridges["Calendar.component"] = .method { receiver, args in
+        i.bridges["Calendar.component()"] = .method { receiver, args in
             guard args.count == 2,
                   case .opaque(_, let cal) = receiver, let cal = cal as? Calendar,
                   case .opaque(_, let comp) = args[0], let comp = comp as? Calendar.Component,
@@ -69,7 +69,7 @@ struct CalendarModule: BuiltinModule {
             }
             return .int(cal.component(comp, from: date))
         }
-        i.bridges["Calendar.date"] = .method { receiver, args in
+        i.bridges["Calendar.date()"] = .method { receiver, args in
             guard case .opaque(_, let cal) = receiver, let cal = cal as? Calendar
             else { throw RuntimeError.invalid("Calendar.date: receiver must be Calendar") }
             // Two overloads: `date(byAdding:value:to:)` (3 args, no labels
@@ -99,7 +99,7 @@ struct CalendarModule: BuiltinModule {
             }
             throw RuntimeError.invalid("Calendar.date: 1 or 3 arguments expected, got \(args.count)")
         }
-        i.bridges["Calendar.dateComponents"] = .method { receiver, args in
+        i.bridges["Calendar.dateComponents()"] = .method { receiver, args in
             guard args.count == 2,
                   case .opaque(_, let cal) = receiver, let cal = cal as? Calendar,
                   case .array(let compValues) = args[0],

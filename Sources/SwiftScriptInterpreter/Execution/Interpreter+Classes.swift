@@ -395,6 +395,11 @@ extension Interpreter {
     /// wrappable — that's the same set the user can already access via
     /// `T(…)` calls and member dispatch.
     func isBridgedClassParent(_ name: String) -> Bool {
+        // Bridge-table surface (`bridges["Date.timeIntervalSinceNow"]`,
+        // `bridges["URL(string:)"]`, …) — any member counts.
+        if bridgedTypeNames.contains(name) { return true }
+        // Legacy `extensions[…]` storage — anything that hasn't been
+        // routed through bridges yet still lives here.
         guard let ext = extensions[name] else { return false }
         return !ext.initializers.isEmpty
             || !ext.methods.isEmpty
@@ -605,11 +610,20 @@ extension Interpreter {
         // forward the call to the parent's bridged initializer to
         // populate `bridgedBase`, then initialize script fields from
         // their defaults.
-        if let parentName = def.bridgedParent,
-           let parentInits = extensions[parentName]?.initializers
-        {
-            let labels = argSyntaxes.map { $0.label?.text ?? "_" }
-            guard let initFn = parentInits[labels] else {
+        if let parentName = def.bridgedParent {
+            let labelOpt: [String?] = argSyntaxes.map { $0.label?.text }
+            let labels = labelOpt.map { $0 ?? "_" }
+            // Resolve the parent init: bridges[…] first (new path),
+            // then `extensions[parentName].initializers` (legacy).
+            let bridgeKey = bridgeKey(forInit: parentName, labels: labelOpt)
+            let bridgeInit: (([Value]) async throws -> Value)?
+            if case .`init`(let body)? = bridges[bridgeKey] {
+                bridgeInit = body
+            } else {
+                bridgeInit = nil
+            }
+            let extensionInit: Function? = extensions[parentName]?.initializers[labels]
+            guard bridgeInit != nil || extensionInit != nil else {
                 throw RuntimeError.invalid(
                     "no matching initializer on bridged parent '\(parentName)' for labels \(labels)"
                 )
@@ -624,7 +638,12 @@ extension Interpreter {
                     arg.expression, label: label, contextType: context, in: scope
                 ))
             }
-            let baseValue = try await invoke(initFn, args: args)
+            let baseValue: Value
+            if let body = bridgeInit {
+                baseValue = try await body(args)
+            } else {
+                baseValue = try await invoke(extensionInit!, args: args)
+            }
             // Failable inits (`URL(string:)`) return `Optional<T>`.
             // Propagate the optionality through the wrapper so that
             // `LabeledURL(string: "…")!` behaves like the underlying

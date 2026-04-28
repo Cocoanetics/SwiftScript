@@ -50,7 +50,7 @@ extension Interpreter {
             ("awayFromZero",     .awayFromZero),
         ]
         for (name, rule) in rules {
-            bridges["FloatingPointRoundingRule.\(name)"] =
+            bridges["FloatingPointRoundingRule.Type.\(name)"] =
                 .staticValue(.opaque(typeName: "FloatingPointRoundingRule", value: rule))
         }
 

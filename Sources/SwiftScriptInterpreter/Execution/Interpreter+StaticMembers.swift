@@ -65,11 +65,24 @@ extension Interpreter {
                 return v
             }
         }
-        // Bridge-table static value (`URLSession.shared`, `Int.max`, …).
-        // Consulted before the legacy `extensions[]` table; both will
-        // coexist during migration.
-        if case .staticValue(let v)? = bridges[bridgeKey(forProperty: member, on: typeName)] {
+        // Bridge-table static value (`URLSession.shared`, `Int.max`, …)
+        // and static methods (`Int.random(in:)`, `Date.now`-style
+        // factories). Static keys carry `.Type.` so they don't
+        // collide with same-named instance computeds (e.g. `Int`
+        // has both `static var bitWidth` and `var bitWidth`).
+        // Consulted before the legacy `extensions[]` table;
+        // both coexist during migration.
+        let staticPropertyKey  = "\(typeName).Type.\(member)"
+        let staticMethodKey    = "\(typeName).Type.\(member)()"
+        if case .staticValue(let v)? = bridges[staticPropertyKey] {
             return v
+        }
+        if case .staticMethod(let body)? = bridges[staticMethodKey] {
+            return .function(Function(
+                name: "\(typeName).\(member)",
+                parameters: [],
+                kind: .builtin(body)
+            ))
         }
         // User extension on a built-in type.
         if let v = extensions[typeName]?.staticMembers[member] {

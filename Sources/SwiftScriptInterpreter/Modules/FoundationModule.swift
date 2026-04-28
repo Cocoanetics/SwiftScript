@@ -112,7 +112,7 @@ public struct FoundationModule: BuiltinModule {
     // MARK: - Foundation-only String methods
 
     private func registerStringMethods(into i: Interpreter) {
-        i.bridges["String.replacingOccurrences"] = .method { recv, args in
+        i.bridges["String.replacingOccurrences()"] = .method { recv, args in
             guard args.count == 2,
                   case .string(let s) = recv,
                   case .string(let target) = args[0],
@@ -126,7 +126,7 @@ public struct FoundationModule: BuiltinModule {
         }
         // `trimmingCharacters(in:)` is auto-generated from the Foundation
         // symbol graph — see `FoundationBridge.generated.swift`.
-        i.bridges["String.padding"] = .method { recv, args in
+        i.bridges["String.padding()"] = .method { recv, args in
             guard case .string(let s) = recv else {
                 throw RuntimeError.invalid("String.padding: receiver must be String")
             }
@@ -141,7 +141,7 @@ public struct FoundationModule: BuiltinModule {
             }
             return .string(s.padding(toLength: n, withPad: p, startingAt: i))
         }
-        i.bridges["String.components"] = .method { recv, args in
+        i.bridges["String.components()"] = .method { recv, args in
             guard case .string(let s) = recv else {
                 throw RuntimeError.invalid("String.components: receiver must be String")
             }

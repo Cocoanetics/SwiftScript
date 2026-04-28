@@ -64,8 +64,8 @@ struct JSONModule: BuiltinModule {
                 throw RuntimeError.invalid("encode: \(error)")
             }
         }
-        i.bridges["JSONEncoder.encode"]         = .method { try await encodeBody($0, $1) }
-        i.bridges["PropertyListEncoder.encode"] = .method { try await encodeBody($0, $1) }
+        i.bridges["JSONEncoder.encode()"]         = .method { try await encodeBody($0, $1) }
+        i.bridges["PropertyListEncoder.encode()"] = .method { try await encodeBody($0, $1) }
 
         // `decode(_:from:)` — symmetric. We thread the target type
         // and interpreter through `userInfo` so the bridge knows what
@@ -106,31 +106,31 @@ struct JSONModule: BuiltinModule {
                 throw RuntimeError.invalid("decode: \(error)")
             }
         }
-        i.bridges["JSONDecoder.decode"]         = .method { [weak i] in try await decodeBody($0, $1, i) }
-        i.bridges["PropertyListDecoder.decode"] = .method { [weak i] in try await decodeBody($0, $1, i) }
+        i.bridges["JSONDecoder.decode()"]         = .method { [weak i] in try await decodeBody($0, $1, i) }
+        i.bridges["PropertyListDecoder.decode()"] = .method { [weak i] in try await decodeBody($0, $1, i) }
 
         // Configurable strategies — surface the common ones as static
         // values on the nested types. The user assigns them to the
         // encoder/decoder via property setters wired below.
-        i.bridges["JSONEncoder.OutputFormatting.prettyPrinted"] =
+        i.bridges["JSONEncoder.OutputFormatting.Type.prettyPrinted"] =
             .staticValue(.opaque(typeName: "JSONEncoder.OutputFormatting", value: JSONEncoder.OutputFormatting.prettyPrinted))
-        i.bridges["JSONEncoder.OutputFormatting.sortedKeys"] =
+        i.bridges["JSONEncoder.OutputFormatting.Type.sortedKeys"] =
             .staticValue(.opaque(typeName: "JSONEncoder.OutputFormatting", value: JSONEncoder.OutputFormatting.sortedKeys))
-        i.bridges["JSONEncoder.OutputFormatting.withoutEscapingSlashes"] =
+        i.bridges["JSONEncoder.OutputFormatting.Type.withoutEscapingSlashes"] =
             .staticValue(.opaque(typeName: "JSONEncoder.OutputFormatting", value: JSONEncoder.OutputFormatting.withoutEscapingSlashes))
-        i.bridges["JSONEncoder.DateEncodingStrategy.iso8601"] =
+        i.bridges["JSONEncoder.DateEncodingStrategy.Type.iso8601"] =
             .staticValue(.opaque(typeName: "JSONEncoder.DateEncodingStrategy", value: JSONEncoder.DateEncodingStrategy.iso8601))
-        i.bridges["JSONEncoder.DateEncodingStrategy.secondsSince1970"] =
+        i.bridges["JSONEncoder.DateEncodingStrategy.Type.secondsSince1970"] =
             .staticValue(.opaque(typeName: "JSONEncoder.DateEncodingStrategy", value: JSONEncoder.DateEncodingStrategy.secondsSince1970))
-        i.bridges["JSONDecoder.DateDecodingStrategy.iso8601"] =
+        i.bridges["JSONDecoder.DateDecodingStrategy.Type.iso8601"] =
             .staticValue(.opaque(typeName: "JSONDecoder.DateDecodingStrategy", value: JSONDecoder.DateDecodingStrategy.iso8601))
-        i.bridges["JSONDecoder.DateDecodingStrategy.secondsSince1970"] =
+        i.bridges["JSONDecoder.DateDecodingStrategy.Type.secondsSince1970"] =
             .staticValue(.opaque(typeName: "JSONDecoder.DateDecodingStrategy", value: JSONDecoder.DateDecodingStrategy.secondsSince1970))
 
         // `String.data(using:)` — returns Data?. Hand-rolled because the
         // symbol-graph signature has a defaulted `allowLossyConversion`
         // parameter, which our generator currently treats as required.
-        i.bridges["String.data"] = .method { recv, args in
+        i.bridges["String.data()"] = .method { recv, args in
             guard case .string(let s) = recv else {
                 throw RuntimeError.invalid("String.data(using:): receiver must be String")
             }
@@ -218,7 +218,7 @@ struct JSONModule: BuiltinModule {
             ("macOSRoman",   .macOSRoman),
         ]
         for (name, enc) in encodings {
-            i.bridges["String.Encoding.\(name)"] =
+            i.bridges["String.Encoding.Type.\(name)"] =
                 .staticValue(.opaque(typeName: "String.Encoding", value: enc))
         }
     }

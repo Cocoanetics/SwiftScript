@@ -64,13 +64,12 @@ extension Interpreter {
         name: String,
         body: @escaping (_ receiver: Value, _ args: [Value]) async throws -> Value
     ) {
-        var ext = extensions[typeName] ?? ExtensionMembers()
-        ext.methods[name] = Function(
-            name: "\(typeName).\(name)",
-            parameters: [],
-            kind: .builtinMethod(body)
-        )
-        extensions[typeName] = ext
+        // Method keys carry an empty `()` so they don't collide with a
+        // same-named computed property (e.g. `URL.host` vs
+        // `URL.host(percentEncoded:)`). Label disambiguation is a
+        // future-step; for now every method on the same name shares
+        // one body that branches on argcount internally.
+        bridges["\(typeName).\(name)()"] = .method(body)
     }
 
     /// Register a read-only computed property on a built-in type. The
@@ -80,24 +79,19 @@ extension Interpreter {
         name: String,
         get body: @escaping (_ receiver: Value) async throws -> Value
     ) {
-        var ext = extensions[typeName] ?? ExtensionMembers()
-        ext.computedProperties[name] = Function(
-            name: "\(typeName).\(name)",
-            parameters: [],
-            kind: .builtinMethod({ recv, _ in try await body(recv) })
-        )
-        extensions[typeName] = ext
+        bridges["\(typeName).\(name)"] = .computed(body)
     }
 
     /// Register a static value (`Int.max`-style) on a built-in type.
+    /// Static keys carry `.Type.` so they don't collide with a same-
+    /// named instance computed property (e.g. `Int.bitWidth` exists
+    /// both as `static var` and `var`).
     public func registerStaticValue(
         on typeName: String,
         name: String,
         value: Value
     ) {
-        var ext = extensions[typeName] ?? ExtensionMembers()
-        ext.staticMembers[name] = value
-        extensions[typeName] = ext
+        bridges["\(typeName).Type.\(name)"] = .staticValue(value)
     }
 
     /// Register a static method (`Int.random(in:)`-style) on a built-in
@@ -107,12 +101,7 @@ extension Interpreter {
         name: String,
         body: @escaping ([Value]) async throws -> Value
     ) {
-        let fn = Function(
-            name: "\(typeName).\(name)",
-            parameters: [],
-            kind: .builtin(body)
-        )
-        registerStaticValue(on: typeName, name: name, value: .function(fn))
+        bridges["\(typeName).Type.\(name)()"] = .staticMethod(body)
     }
 
     /// Register a comparator for an opaque type so script code can write
@@ -135,13 +124,7 @@ extension Interpreter {
         labels: [String],
         body: @escaping ([Value]) async throws -> Value
     ) {
-        var ext = extensions[typeName] ?? ExtensionMembers()
-        let fn = Function(
-            name: "\(typeName).init(\(labels.map { "\($0):" }.joined()))",
-            parameters: [],
-            kind: .builtin(body)
-        )
-        ext.initializers[labels] = fn
-        extensions[typeName] = ext
+        let key = bridgeKey(forInit: typeName, labels: labels.map { Optional($0) })
+        bridges[key] = .`init`(body)
     }
 }

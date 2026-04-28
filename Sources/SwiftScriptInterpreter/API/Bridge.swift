@@ -28,10 +28,13 @@ public enum Bridge {
     case computed((Value) async throws -> Value)
     /// Initializer reachable via `Type(label1:label2:)`.
     case `init`(([Value]) async throws -> Value)
-    /// Static value. For `static let` properties the closure is
-    /// pre-evaluated; for static methods we store a `.function(fn)`
-    /// that the call site invokes.
+    /// Static value. `static let` properties are pre-evaluated; the
+    /// closure is fixed at registration time.
     case staticValue(Value)
+    /// Static method (`Int.random(in:)`, `URL.init`-shaped factories
+    /// reached through a static slot). Wrapped into a `.function`
+    /// value at lookup time so call sites see it as a callable.
+    case staticMethod(([Value]) async throws -> Value)
 }
 
 extension Interpreter {
@@ -72,6 +75,9 @@ extension Interpreter {
     /// `names`. The last segment is always a member (`prettyPrinted`,
     /// or for inits, the parenthesised label list `(string:)`); the
     /// preceding segments form one or more candidate type names.
+    /// Static-member keys carry a `.Type.` discriminator before the
+    /// member; we drop that segment from the type prefix so the
+    /// metatype isn't accidentally surfaced as a real type name.
     private func insertTypePrefixes(of key: String, into names: inout Set<String>) {
         // Strip the trailing `(...)` label list if present — that's the
         // init form. What's left is dotted: type segments only.
@@ -86,9 +92,12 @@ extension Interpreter {
         }
         guard !typeArea.isEmpty else { return }
         // Insert every dot-prefix of the type area: "A.B.C" contributes
-        // "A", "A.B", "A.B.C".
+        // "A", "A.B", "A.B.C". Skip a trailing "Type" segment — that's
+        // the static-member discriminator, not a real nested type.
         var current = ""
-        for seg in typeArea.split(separator: ".") {
+        let segments = typeArea.split(separator: ".")
+        for (i, seg) in segments.enumerated() {
+            if seg == "Type" && i == segments.count - 1 { continue }
             current = current.isEmpty ? String(seg) : current + "." + seg
             names.insert(current)
         }

@@ -152,7 +152,9 @@ extension Interpreter {
     /// table first, then falls through to the legacy `extensions[]`
     /// storage.
     func extensionMethod(typeName: String, name: String) -> Function? {
-        let key = "\(typeName).\(name)"
+        // Methods carry `()` in their bridge key so they're distinct
+        // from a same-named computed property.
+        let key = "\(typeName).\(name)()"
         if case .method(let body)? = bridges[key] {
             return Function(
                 name: key, parameters: [],
