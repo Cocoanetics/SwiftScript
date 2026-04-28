@@ -27,6 +27,16 @@ extension Interpreter {
             return v
         }
 
+        // `String(reflecting:)` — produces what `dump` prints. Honors
+        // `CustomDebugStringConvertible.debugDescription` on script
+        // types; falls back to the regular description for everything
+        // else.
+        registerInit(on: "String", labels: ["reflecting"]) { [weak self] args in
+            guard let self else { return .string("") }
+            guard let v = args.first else { return .string("") }
+            return .string(try await self.debugDescribe(v))
+        }
+
         // FloatingPointRoundingRule cases as opaque values, registered
         // statically so script code can write
         // `d.rounded(FloatingPointRoundingRule.up)` (or `.up` shorthand
