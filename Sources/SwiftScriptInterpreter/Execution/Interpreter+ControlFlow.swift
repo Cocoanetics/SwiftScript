@@ -238,16 +238,19 @@ extension Interpreter {
             }
             throw RuntimeError.invalid("async stream yielded >100M elements; aborting")
         }
-        // Script-side `Sequence` conformance: receiver supplies a
-        // `makeIterator()` zero-arg method whose result responds to
-        // `next() -> Optional<T>`. We don't validate the actual
-        // protocol — duck-typing matches Swift's behavior closely
-        // enough for the iteration sites that care.
-        if try await hasZeroArgMethod(value, named: "makeIterator") {
-            let iterator = try await invokeMethod(
-                "makeIterator", on: value, args: [], at: offset
-            )
-            return try await drainIterator(iterator, at: offset)
+        // Script-side `Sequence` / `AsyncSequence` conformance: the
+        // receiver supplies `makeIterator()` or `makeAsyncIterator()`,
+        // returning a value whose `next() -> Optional<T>` (sync) or
+        // `next() async throws -> Optional<T>` we drain. Our invoke
+        // graph is async-throws end-to-end, so the sync/async split
+        // collapses — the same `drainIterator` works for both.
+        for makeName in ["makeIterator", "makeAsyncIterator"] {
+            if try await hasZeroArgMethod(value, named: makeName) {
+                let iterator = try await invokeMethod(
+                    makeName, on: value, args: [], at: offset
+                )
+                return try await drainIterator(iterator, at: offset)
+            }
         }
         throw RuntimeError.invalid("not iterable: \(typeName(value))")
     }

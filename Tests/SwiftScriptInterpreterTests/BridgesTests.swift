@@ -184,6 +184,97 @@ struct BridgesTests {
 
     // MARK: Hashable (host bridge)
 
+    // MARK: CaseIterable
+
+    @Test func caseIterableSynthesizesAllCases() async throws {
+        let interp = Interpreter()
+        var captured = ""
+        interp.output = { captured += $0 + "\n" }
+        try await interp.eval("""
+            enum Direction: CaseIterable {
+                case north, south, east, west
+            }
+            for d in Direction.allCases {
+                print(d)
+            }
+            """)
+        #expect(captured == "north\nsouth\neast\nwest\n")
+    }
+
+    @Test func caseIterableSkipsPayloadCases() async throws {
+        // Swift's auto-synthesis only fires for payload-less cases; we
+        // mirror that by filtering associated-value cases out of the
+        // generated allCases array.
+        let interp = Interpreter()
+        var captured = ""
+        interp.output = { captured += $0 + "\n" }
+        try await interp.eval("""
+            enum E: CaseIterable {
+                case a
+                case b
+            }
+            print(E.allCases.count)
+            """)
+        #expect(captured == "2\n")
+    }
+
+    // MARK: CustomDebugStringConvertible
+
+    @Test func dumpUsesDebugDescription() async throws {
+        let interp = Interpreter()
+        var captured = ""
+        interp.output = { captured += $0 + "\n" }
+        try await interp.eval("""
+            struct Point: CustomDebugStringConvertible {
+                var x: Int
+                var y: Int
+                var debugDescription: String { "P{\\(x),\\(y)}" }
+            }
+            _ = dump(Point(x: 1, y: 2))
+            """)
+        #expect(captured == "- P{1,2}\n")
+    }
+
+    @Test func dumpReturnsValueForChaining() async throws {
+        let interp = Interpreter()
+        var captured = ""
+        interp.output = { captured += $0 + "\n" }
+        try await interp.eval("""
+            let n = dump(42)
+            print(n + 1)
+            """)
+        #expect(captured == "- 42\n43\n")
+    }
+
+    // MARK: Script-defined AsyncIteratorProtocol
+
+    @Test func scriptDefinedAsyncSequenceWithForAwait() async throws {
+        let interp = Interpreter()
+        var captured = ""
+        interp.output = { captured += $0 + "\n" }
+        try await interp.eval("""
+            struct AsyncCounterIterator {
+                var current: Int
+                let limit: Int
+                mutating func next() async throws -> Int? {
+                    guard current < limit else { return nil }
+                    defer { current += 1 }
+                    return current
+                }
+            }
+            struct AsyncCounter {
+                let limit: Int
+                func makeAsyncIterator() -> AsyncCounterIterator {
+                    return AsyncCounterIterator(current: 0, limit: limit)
+                }
+            }
+            for await i in AsyncCounter(limit: 3) {
+                print(i)
+            }
+            """)
+        #expect(captured == "0\n1\n2\n")
+    }
+
     @Test func valueIsHashableOnHostSide() async throws {
         let interp = Interpreter()
         let arr = try await interp.eval(#"[1, "hello", true, 1, "hello"]"#)

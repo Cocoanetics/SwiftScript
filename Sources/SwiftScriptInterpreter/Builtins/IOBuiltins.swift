@@ -12,6 +12,21 @@ extension Interpreter {
             return .void
         }
 
+        // `dump(_:)` — print the value's debugDescription.
+        // Real Swift's dump produces an indented tree of every reflected
+        // child. We don't model `Mirror`, so a single-line debug
+        // description (honoring `CustomDebugStringConvertible`) is the
+        // pragmatic stand-in.
+        registerBuiltin(name: "dump") { [weak self] args in
+            guard let self else { return .void }
+            guard let v = args.first else { return .void }
+            let s = try await self.debugDescribe(v)
+            self.output("- " + s)
+            // Real `dump` returns the value it was given, so chained
+            // `let x = dump(expr)` works.
+            return v
+        }
+
         // FloatingPointRoundingRule cases as opaque values, registered
         // statically so script code can write
         // `d.rounded(FloatingPointRoundingRule.up)` (or `.up` shorthand

@@ -6,12 +6,15 @@ extension Interpreter {
         let name = enumDecl.name.text
 
         // Detect a raw type from the inheritance clause: `enum X: Int { … }`.
+        // Also check for `CaseIterable` so we can synthesize `allCases`.
         var rawType: String? = nil
+        var caseIterable = false
         if let inheritance = enumDecl.inheritanceClause {
             for type in inheritance.inheritedTypes {
                 if let identType = type.type.as(IdentifierTypeSyntax.self) {
                     let n = identType.name.text
-                    if n == "Int" || n == "String" { rawType = n; break }
+                    if rawType == nil, n == "Int" || n == "String" { rawType = n }
+                    if n == "CaseIterable" { caseIterable = true }
                 }
             }
         }
@@ -106,6 +109,17 @@ extension Interpreter {
                     }
                 }
             }
+        }
+
+        // CaseIterable synthesis — Swift's compiler does this for any
+        // payload-less enum that conforms; we mirror it as a static
+        // `allCases: [Self]` value built once at decl time. Cases with
+        // associated values are skipped (matching Swift's rule).
+        if caseIterable {
+            let payloadless = cases.filter { $0.arity == 0 }
+            staticMembers["allCases"] = .array(payloadless.map {
+                .enumValue(typeName: name, caseName: $0.name, associatedValues: [])
+            })
         }
 
         // Register the enum.

@@ -88,4 +88,38 @@ extension Interpreter {
         if case .string(let s) = value { return "\"\(s)\"" }
         return try await describe(value)
     }
+
+    /// `CustomDebugStringConvertible` lookup. Returns the type's
+    /// `debugDescription` getter result if defined, otherwise falls
+    /// through to the regular `describe` path. Used by `dump(_:)` and
+    /// `String(reflecting:)`.
+    func debugDescribe(_ value: Value) async throws -> String {
+        switch value {
+        case .structValue(let typeName, let fields):
+            if let getter = structDefs[typeName]?.computedProperties["debugDescription"] {
+                let (result, _) = try await invokeStructMethod(
+                    getter, on: value, fields: fields, args: []
+                )
+                if case .string(let s) = result { return s }
+            }
+        case .classInstance(let inst):
+            if let def = classDefs[inst.typeName],
+               let getter = lookupClassComputed(on: def, "debugDescription")
+            {
+                let r = try await invokeClassMethod(getter, on: inst, def: def, args: [])
+                if case .string(let s) = r { return s }
+            }
+        case .enumValue(let typeName, _, _):
+            if let getter = enumDefs[typeName]?.methods["debugDescription"],
+               getter.parameters.isEmpty
+            {
+                let r = try await invokeBuiltinExtensionMethod(
+                    getter, on: value, args: []
+                )
+                if case .string(let s) = r { return s }
+            }
+        default: break
+        }
+        return try await describe(value)
+    }
 }
