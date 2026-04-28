@@ -36,13 +36,22 @@ extension Interpreter {
     ) async throws -> Value {
         // First inheritance entry that names a registered class is the
         // superclass; remaining entries are protocol conformances we
-        // don't enforce statically.
+        // don't enforce statically. If the entry instead names a bridged
+        // Foundation/stdlib type (Date, URL, …), record it as
+        // `bridgedParent` so instantiation can wrap a real native value
+        // and member lookup can fall through to the bridged surface.
         var superclassName: String? = nil
+        var bridgedParent: String? = nil
         if let inherits = inheritance {
             for entry in inherits.inheritedTypes {
                 guard let ident = entry.type.as(IdentifierTypeSyntax.self) else { continue }
-                if classDefs[ident.name.text] != nil {
-                    superclassName = ident.name.text
+                let parentName = resolveTypeName(ident.name.text)
+                if classDefs[parentName] != nil {
+                    superclassName = parentName
+                    break
+                }
+                if isBridgedClassParent(parentName) {
+                    bridgedParent = parentName
                     break
                 }
             }
@@ -312,6 +321,7 @@ extension Interpreter {
         classDefs[name] = ClassDef(
             name: name,
             superclass: superclassName,
+            bridgedParent: bridgedParent,
             properties: properties,
             methods: methods,
             computedProperties: computed,
@@ -369,6 +379,29 @@ extension Interpreter {
         case .structType: structDefs[owner]?.staticMembers[name] = value
         case .classType:  classDefs[owner]?.staticMembers[name] = value
         }
+    }
+
+    /// True if `name` is a bridged Foundation/stdlib type that script
+    /// classes can wrap. We treat any type with registered `extensions`
+    /// (initializers, methods, computeds, or static members) as
+    /// wrappable — that's the same set the user can already access via
+    /// `T(…)` calls and member dispatch.
+    func isBridgedClassParent(_ name: String) -> Bool {
+        guard let ext = extensions[name] else { return false }
+        return !ext.initializers.isEmpty
+            || !ext.methods.isEmpty
+            || !ext.computedProperties.isEmpty
+            || !ext.staticMembers.isEmpty
+    }
+
+    /// Build the synthetic `.opaque` value that represents the bridged
+    /// half of a wrapper instance. Used when falling through to bridged
+    /// extension methods/properties — they take a `Value` receiver.
+    func wrappedBridgedValue(_ inst: ClassInstance) -> Value? {
+        guard let parent = classDefs[inst.typeName]?.bridgedParent,
+              let base = inst.bridgedBase
+        else { return nil }
+        return .opaque(typeName: parent, value: base)
     }
 
     /// Walk `def` plus each ancestor in turn so dispatch can find an
@@ -558,6 +591,73 @@ extension Interpreter {
                     return try await invokeClassInit(fn, def: def, call: call, in: scope)
                 }
             }
+        }
+
+        // Bridged-parent wrapper class without a matching custom init:
+        // forward the call to the parent's bridged initializer to
+        // populate `bridgedBase`, then initialize script fields from
+        // their defaults.
+        if let parentName = def.bridgedParent,
+           let parentInits = extensions[parentName]?.initializers
+        {
+            let labels = argSyntaxes.map { $0.label?.text ?? "_" }
+            guard let initFn = parentInits[labels] else {
+                throw RuntimeError.invalid(
+                    "no matching initializer on bridged parent '\(parentName)' for labels \(labels)"
+                )
+            }
+            // Evaluate args using the existing bridged-init context so
+            // implicit-member access (`.utf8`, `.gregorian`, …) resolves.
+            var args: [Value] = []
+            for arg in call.arguments {
+                let label = arg.label?.text ?? "_"
+                let context = implicitContextForInit(typeName: parentName, label: label)
+                args.append(try await evaluateArg(
+                    arg.expression, label: label, contextType: context, in: scope
+                ))
+            }
+            let baseValue = try await invoke(initFn, args: args)
+            // Failable inits (`URL(string:)`) return `Optional<T>`.
+            // Propagate the optionality through the wrapper so that
+            // `LabeledURL(string: "…")!` behaves like the underlying
+            // bridged init does.
+            let isFailable: Bool
+            let payload: Any?
+            switch baseValue {
+            case .optional(.none):
+                return .optional(nil)
+            case .optional(.some(.opaque(_, let p))):
+                isFailable = true; payload = p
+            case .opaque(_, let p):
+                isFailable = false; payload = p
+            default:
+                throw RuntimeError.invalid(
+                    "bridged init for '\(parentName)' returned an unexpected value: \(baseValue)"
+                )
+            }
+            // Script fields: only those with declared defaults can be
+            // populated here; the script can supply a custom init for
+            // anything more elaborate.
+            var fields: [StructField] = []
+            for prop in storedPropertyChain(of: def) {
+                guard let defaultExpr = prop.defaultValue else {
+                    throw RuntimeError.invalid(
+                        "wrapper class '\(def.name)' field '\(prop.name)' needs a default value or a custom init"
+                    )
+                }
+                var value = try await evaluate(defaultExpr, in: scope)
+                if let propType = prop.type {
+                    value = try await coerce(
+                        value: value, expr: defaultExpr,
+                        toType: propType, in: .binding
+                    )
+                }
+                fields.append(StructField(name: prop.name, value: value))
+            }
+            let inst = ClassInstance(
+                typeName: def.name, fields: fields, bridgedBase: payload
+            )
+            return isFailable ? .optional(.classInstance(inst)) : .classInstance(inst)
         }
 
         // Auto memberwise init across the inheritance chain. The full

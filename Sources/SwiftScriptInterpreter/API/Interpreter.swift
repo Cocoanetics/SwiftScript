@@ -221,6 +221,14 @@ public struct StructDef {
 public struct ClassDef {
     public let name: String
     public let superclass: String?
+    /// Name of a bridged Foundation/stdlib type that this class wraps.
+    /// Set when the inheritance clause names a type registered in
+    /// `extensions` (e.g. `Date`, `URL`) — script code can't truly
+    /// inherit from those, but we model it as composition: instances
+    /// hold a real Foundation value as `bridgedBase` and member lookup
+    /// falls through to the bridged extension surface for anything the
+    /// script doesn't override.
+    public let bridgedParent: String?
     public var properties: [StructDef.Property]
     public var methods: [String: Function] = [:]
     public var computedProperties: [String: Function] = [:]
@@ -245,9 +253,15 @@ public struct ClassDef {
 public final class ClassInstance {
     public let typeName: String
     public var fields: [StructField]
-    public init(typeName: String, fields: [StructField]) {
+    /// Underlying Foundation/stdlib value when this class wraps a
+    /// bridged type (the `ClassDef.bridgedParent` mechanism). Holds the
+    /// raw payload that `.opaque(bridgedParent, payload)` would carry —
+    /// member access on the wrapper falls through here.
+    public var bridgedBase: Any?
+    public init(typeName: String, fields: [StructField], bridgedBase: Any? = nil) {
         self.typeName = typeName
         self.fields = fields
+        self.bridgedBase = bridgedBase
     }
 }
 

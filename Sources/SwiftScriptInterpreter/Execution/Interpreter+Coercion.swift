@@ -216,6 +216,17 @@ extension Interpreter {
         }
         let typeName = identType.name.text
 
+        // Wrapper class flowing into a slot that expects its bridged
+        // parent: hand over the underlying Foundation/stdlib payload as
+        // an `.opaque` so host-side functions see the real value.
+        if case .classInstance(let inst) = value,
+           let parent = classDefs[inst.typeName]?.bridgedParent,
+           parent == typeName,
+           let base = inst.bridgedBase
+        {
+            return .opaque(typeName: parent, value: base)
+        }
+
         switch (typeName, value) {
         // Same-type passthrough.
         case ("Int",    .int):    return value

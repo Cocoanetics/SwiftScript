@@ -353,10 +353,13 @@ extension Interpreter {
         if valueType == raw { return true }
 
         // Class instances match against any ancestor class up the chain
-        // (`Dog is Animal` → true, `Dog as? Mammal` → succeeds).
+        // (`Dog is Animal` → true, `Dog as? Mammal` → succeeds). For
+        // wrapper classes, the bridged parent name also matches —
+        // `myDate is Date` returns true.
         if case .classInstance(let inst) = value {
             for def in classDefChain(inst.typeName) {
                 if def.name == raw { return true }
+                if def.bridgedParent == raw { return true }
             }
         }
 

@@ -272,6 +272,23 @@ extension Interpreter {
                 return try await invokeClassMethod(method, on: inst, def: owningDef, args: args)
             }
 
+            // Wrapper-class method fallback: the script class doesn't
+            // define `methodName`, but it wraps a bridged type whose
+            // extension surface might. Re-dispatch the call with the
+            // wrapped value as the receiver so the bridged method runs.
+            if case .classInstance(let inst) = receiver,
+               let wrapped = wrappedBridgedValue(inst)
+            {
+                let rewritten = call.with(\.calledExpression, ExprSyntax(
+                    memberAccess.with(\.base, ExprSyntax(
+                        DeclReferenceExprSyntax(baseName: .identifier("__wrapped__"))
+                    ))
+                ))
+                let bridgedScope = Scope(parent: scope)
+                bridgedScope.bind("__wrapped__", value: wrapped, mutable: false)
+                return try await evaluate(call: rewritten, in: bridgedScope)
+            }
+
             // Builtin methods: take raw values, no coercion. Implicit-member
             // arguments (`.whitespaces`) resolve against a known context type
             // for a small allowlist of methods — full bidirectional inference

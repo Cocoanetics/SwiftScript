@@ -245,6 +245,13 @@ extension Interpreter {
                     getter, on: inst, def: def, args: []
                 )
             }
+            // Wrapper-class fallback: if the script class wraps a
+            // bridged Foundation/stdlib type, try the bridged surface
+            // (computed properties + initializers etc.) using the
+            // wrapped value as the receiver.
+            if let wrapped = wrappedBridgedValue(inst) {
+                return try await lookupProperty(name, on: wrapped, at: offset)
+            }
         case .enumValue(let typeName, let caseName, _):
             if name == "rawValue" {
                 if let raw = enumDefs[typeName]?.cases.first(where: { $0.name == caseName })?.rawValue {
