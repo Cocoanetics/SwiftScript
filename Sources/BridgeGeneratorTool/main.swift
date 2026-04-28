@@ -473,8 +473,10 @@ func render(_ template: String, _ expr: String) -> String {
 // Capture those in `EmitConfig`; the emit is then mechanical.
 
 struct EmitConfig {
-    /// E.g. `i.registerMethod(on: "URL", name: "absoluteString")` or
-    /// `i.registerInit(on: "URL", labels: ["string"])`.
+    /// The dispatch-table write up to (but not including) the closure
+    /// body. E.g. `i.bridges["URL.absoluteString"] = .computed` or
+    /// `i.bridges["URL(string:)"] = .\`init\``. The `renderEmit`
+    /// helper appends ` { params in body }` to this.
     let registerLine: String
     /// The closure's parameter list — `args`, `receiver, args`, or `receiver`.
     let closureParams: String
@@ -946,7 +948,7 @@ for annotated in prioritizedSymbols {
         if !claim(key, clashLabel: "\(receiverTypeName).\(methodName)") { continue }
         let recvUnbox = render(recvType.unboxTemplate, "receiver")
         record(key, code: renderEmit(EmitConfig(
-            registerLine: "i.registerMethod(on: \"\(receiverTypeName)\", name: \"\(methodName)\")",
+            registerLine: "i.bridges[\"\(receiverTypeName).\(methodName)()\"] = .method",
             closureParams: "receiver, args",
             arity: sig.parameters.count,
             recvUnboxLine: "let recv: \(recvType.swiftSpelling) = \(recvUnbox)",
@@ -979,15 +981,15 @@ for annotated in prioritizedSymbols {
             if i + 1 < df.count, df[i + 1].spelling.hasPrefix("?") { failable = true }
             break
         }
-        let labelsLiteral = "[" + labels.map { "\"\($0)\"" }.joined(separator: ", ") + "]"
         let labelDoc = labels.isEmpty ? "" : labels.map { "\($0):" }.joined()
+        let initKey = "\(receiverTypeName)(\(labelDoc))"
         record(key, code: renderEmit(EmitConfig(
-            registerLine: "i.registerInit(on: \"\(receiverTypeName)\", labels: \(labelsLiteral))",
+            registerLine: "i.bridges[\"\(initKey)\"] = .`init`",
             closureParams: "args",
             arity: sig.parameters.count,
             recvUnboxLine: nil,
             callExpr: "\(receiverTypeName)(\(unboxedCallArgs(for: sig)))",
-            errorPrefix: "\(receiverTypeName)(\(labelDoc))",
+            errorPrefix: initKey,
             returnType: recvType,
             isOptional: failable,
             isThrowing: isThrowing(sym),
@@ -1011,7 +1013,7 @@ for annotated in prioritizedSymbols {
         }
         let recvUnbox = render(recvType.unboxTemplate, "receiver")
         record(key, code: renderEmit(EmitConfig(
-            registerLine: "i.registerComputed(on: \"\(receiverTypeName)\", name: \"\(memberName)\")",
+            registerLine: "i.bridges[\"\(receiverTypeName).\(memberName)\"] = .computed",
             closureParams: "receiver",
             arity: nil,
             recvUnboxLine: "let recv: \(recvType.swiftSpelling) = \(recvUnbox)",
@@ -1042,7 +1044,7 @@ for annotated in prioritizedSymbols {
         }
         let valueExpr = render(propType.bridge.boxTemplate, "\(receiverTypeName).\(memberName)")
         record(key, code: """
-                i.registerStaticValue(on: \"\(receiverTypeName)\", name: \"\(memberName)\", value: \(valueExpr))
+                i.bridges[\"\(receiverTypeName).Type.\(memberName)\"] = .staticValue(\(valueExpr))
         """)
 
     case "swift.type.method" where sym.pathComponents.count == 2 && !isDeprecated(sym) && !isGeneric(sym) && !isAsync(sym):
@@ -1058,7 +1060,7 @@ for annotated in prioritizedSymbols {
         let key = "static-method:\(receiverTypeName).\(methodName)"
         if !claim(key, clashLabel: "\(receiverTypeName).\(methodName)") { continue }
         record(key, code: renderEmit(EmitConfig(
-            registerLine: "i.registerStaticMethod(on: \"\(receiverTypeName)\", name: \"\(methodName)\")",
+            registerLine: "i.bridges[\"\(receiverTypeName).Type.\(methodName)()\"] = .staticMethod",
             closureParams: "args",
             arity: sig.parameters.count,
             recvUnboxLine: nil,

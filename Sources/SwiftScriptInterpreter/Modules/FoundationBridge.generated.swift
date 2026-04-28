@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationModule {
     func registerGenerated(into i: Interpreter) {
-        i.registerComputed(on: "TermOfAddress", name: "language") { receiver in
+        i.bridges["TermOfAddress.language"] = .computed { receiver in
             let recv: TermOfAddress = try unboxOpaque(receiver, as: TermOfAddress.self, typeName: "TermOfAddress")
             if let _v = recv.language {
             return .optional(boxOpaque(_v, typeName: "Locale.Language"))
@@ -12,123 +12,123 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerStaticValue(on: "TermOfAddress", name: "neutral", value: boxOpaque(TermOfAddress.neutral, typeName: "TermOfAddress"))
+        i.bridges["TermOfAddress.Type.neutral"] = .staticValue(boxOpaque(TermOfAddress.neutral, typeName: "TermOfAddress"))
 
-        i.registerStaticValue(on: "TermOfAddress", name: "feminine", value: boxOpaque(TermOfAddress.feminine, typeName: "TermOfAddress"))
+        i.bridges["TermOfAddress.Type.feminine"] = .staticValue(boxOpaque(TermOfAddress.feminine, typeName: "TermOfAddress"))
 
-        i.registerStaticValue(on: "TermOfAddress", name: "masculine", value: boxOpaque(TermOfAddress.masculine, typeName: "TermOfAddress"))
+        i.bridges["TermOfAddress.Type.masculine"] = .staticValue(boxOpaque(TermOfAddress.masculine, typeName: "TermOfAddress"))
 
-        i.registerStaticValue(on: "TermOfAddress", name: "currentUser", value: boxOpaque(TermOfAddress.currentUser, typeName: "TermOfAddress"))
+        i.bridges["TermOfAddress.Type.currentUser"] = .staticValue(boxOpaque(TermOfAddress.currentUser, typeName: "TermOfAddress"))
 
-        i.registerComputed(on: "TermOfAddress", name: "hashValue") { receiver in
+        i.bridges["TermOfAddress.hashValue"] = .computed { receiver in
             let recv: TermOfAddress = try unboxOpaque(receiver, as: TermOfAddress.self, typeName: "TermOfAddress")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "CharacterSet", name: "isEmpty") { receiver in
+        i.bridges["CharacterSet.isEmpty"] = .computed { receiver in
             let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
             return .bool(recv.isEmpty)
         }
 
-        i.registerInit(on: "CharacterSet", labels: []) { args in
+        i.bridges["CharacterSet()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("CharacterSet(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(CharacterSet(), typeName: "CharacterSet")
         }
 
-        i.registerStaticValue(on: "CharacterSet", name: "controlCharacters", value: boxOpaque(CharacterSet.controlCharacters, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.controlCharacters"] = .staticValue(boxOpaque(CharacterSet.controlCharacters, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "whitespaces", value: boxOpaque(CharacterSet.whitespaces, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.whitespaces"] = .staticValue(boxOpaque(CharacterSet.whitespaces, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "whitespacesAndNewlines", value: boxOpaque(CharacterSet.whitespacesAndNewlines, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.whitespacesAndNewlines"] = .staticValue(boxOpaque(CharacterSet.whitespacesAndNewlines, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "decimalDigits", value: boxOpaque(CharacterSet.decimalDigits, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.decimalDigits"] = .staticValue(boxOpaque(CharacterSet.decimalDigits, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "letters", value: boxOpaque(CharacterSet.letters, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.letters"] = .staticValue(boxOpaque(CharacterSet.letters, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "lowercaseLetters", value: boxOpaque(CharacterSet.lowercaseLetters, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.lowercaseLetters"] = .staticValue(boxOpaque(CharacterSet.lowercaseLetters, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "uppercaseLetters", value: boxOpaque(CharacterSet.uppercaseLetters, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.uppercaseLetters"] = .staticValue(boxOpaque(CharacterSet.uppercaseLetters, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "nonBaseCharacters", value: boxOpaque(CharacterSet.nonBaseCharacters, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.nonBaseCharacters"] = .staticValue(boxOpaque(CharacterSet.nonBaseCharacters, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "alphanumerics", value: boxOpaque(CharacterSet.alphanumerics, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.alphanumerics"] = .staticValue(boxOpaque(CharacterSet.alphanumerics, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "decomposables", value: boxOpaque(CharacterSet.decomposables, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.decomposables"] = .staticValue(boxOpaque(CharacterSet.decomposables, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "illegalCharacters", value: boxOpaque(CharacterSet.illegalCharacters, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.illegalCharacters"] = .staticValue(boxOpaque(CharacterSet.illegalCharacters, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "punctuationCharacters", value: boxOpaque(CharacterSet.punctuationCharacters, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.punctuationCharacters"] = .staticValue(boxOpaque(CharacterSet.punctuationCharacters, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "capitalizedLetters", value: boxOpaque(CharacterSet.capitalizedLetters, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.capitalizedLetters"] = .staticValue(boxOpaque(CharacterSet.capitalizedLetters, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "symbols", value: boxOpaque(CharacterSet.symbols, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.symbols"] = .staticValue(boxOpaque(CharacterSet.symbols, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "newlines", value: boxOpaque(CharacterSet.newlines, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.newlines"] = .staticValue(boxOpaque(CharacterSet.newlines, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "urlUserAllowed", value: boxOpaque(CharacterSet.urlUserAllowed, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.urlUserAllowed"] = .staticValue(boxOpaque(CharacterSet.urlUserAllowed, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "urlPasswordAllowed", value: boxOpaque(CharacterSet.urlPasswordAllowed, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.urlPasswordAllowed"] = .staticValue(boxOpaque(CharacterSet.urlPasswordAllowed, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "urlHostAllowed", value: boxOpaque(CharacterSet.urlHostAllowed, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.urlHostAllowed"] = .staticValue(boxOpaque(CharacterSet.urlHostAllowed, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "urlPathAllowed", value: boxOpaque(CharacterSet.urlPathAllowed, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.urlPathAllowed"] = .staticValue(boxOpaque(CharacterSet.urlPathAllowed, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "urlQueryAllowed", value: boxOpaque(CharacterSet.urlQueryAllowed, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.urlQueryAllowed"] = .staticValue(boxOpaque(CharacterSet.urlQueryAllowed, typeName: "CharacterSet"))
 
-        i.registerStaticValue(on: "CharacterSet", name: "urlFragmentAllowed", value: boxOpaque(CharacterSet.urlFragmentAllowed, typeName: "CharacterSet"))
+        i.bridges["CharacterSet.Type.urlFragmentAllowed"] = .staticValue(boxOpaque(CharacterSet.urlFragmentAllowed, typeName: "CharacterSet"))
 
-        i.registerComputed(on: "CharacterSet", name: "bitmapRepresentation") { receiver in
+        i.bridges["CharacterSet.bitmapRepresentation"] = .computed { receiver in
             let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
             return boxOpaque(recv.bitmapRepresentation, typeName: "Data")
         }
 
-        i.registerComputed(on: "CharacterSet", name: "inverted") { receiver in
+        i.bridges["CharacterSet.inverted"] = .computed { receiver in
             let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
             return boxOpaque(recv.inverted, typeName: "CharacterSet")
         }
 
-        i.registerComputed(on: "CharacterSet", name: "hashValue") { receiver in
+        i.bridges["CharacterSet.hashValue"] = .computed { receiver in
             let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "CharacterSet", name: "description") { receiver in
+        i.bridges["CharacterSet.description"] = .computed { receiver in
             let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "CharacterSet", name: "debugDescription") { receiver in
+        i.bridges["CharacterSet.debugDescription"] = .computed { receiver in
             let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "MachError", name: "errorCode") { receiver in
+        i.bridges["MachError.errorCode"] = .computed { receiver in
             let recv: MachError = try unboxOpaque(receiver, as: MachError.self, typeName: "MachError")
             return .int(recv.errorCode)
         }
 
-        i.registerStaticValue(on: "MachError", name: "errorDomain", value: .string(MachError.errorDomain))
+        i.bridges["MachError.Type.errorDomain"] = .staticValue(.string(MachError.errorDomain))
 
-        i.registerComputed(on: "MachError", name: "localizedDescription") { receiver in
+        i.bridges["MachError.localizedDescription"] = .computed { receiver in
             let recv: MachError = try unboxOpaque(receiver, as: MachError.self, typeName: "MachError")
             return .string(recv.localizedDescription)
         }
 
-        i.registerComputed(on: "MachError", name: "hashValue") { receiver in
+        i.bridges["MachError.hashValue"] = .computed { receiver in
             let recv: MachError = try unboxOpaque(receiver, as: MachError.self, typeName: "MachError")
             return .int(recv.hashValue)
         }
 
-        i.registerInit(on: "PersonNameComponents", labels: []) { args in
+        i.bridges["PersonNameComponents()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("PersonNameComponents(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(PersonNameComponents(), typeName: "PersonNameComponents")
         }
 
-        i.registerComputed(on: "PersonNameComponents", name: "namePrefix") { receiver in
+        i.bridges["PersonNameComponents.namePrefix"] = .computed { receiver in
             let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
             if let _v = recv.namePrefix {
             return .optional(.string(_v))
@@ -136,7 +136,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "PersonNameComponents", name: "givenName") { receiver in
+        i.bridges["PersonNameComponents.givenName"] = .computed { receiver in
             let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
             if let _v = recv.givenName {
             return .optional(.string(_v))
@@ -144,7 +144,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "PersonNameComponents", name: "middleName") { receiver in
+        i.bridges["PersonNameComponents.middleName"] = .computed { receiver in
             let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
             if let _v = recv.middleName {
             return .optional(.string(_v))
@@ -152,7 +152,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "PersonNameComponents", name: "familyName") { receiver in
+        i.bridges["PersonNameComponents.familyName"] = .computed { receiver in
             let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
             if let _v = recv.familyName {
             return .optional(.string(_v))
@@ -160,7 +160,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "PersonNameComponents", name: "nameSuffix") { receiver in
+        i.bridges["PersonNameComponents.nameSuffix"] = .computed { receiver in
             let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
             if let _v = recv.nameSuffix {
             return .optional(.string(_v))
@@ -168,7 +168,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "PersonNameComponents", name: "nickname") { receiver in
+        i.bridges["PersonNameComponents.nickname"] = .computed { receiver in
             let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
             if let _v = recv.nickname {
             return .optional(.string(_v))
@@ -176,7 +176,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "PersonNameComponents", name: "phoneticRepresentation") { receiver in
+        i.bridges["PersonNameComponents.phoneticRepresentation"] = .computed { receiver in
             let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
             if let _v = recv.phoneticRepresentation {
             return .optional(boxOpaque(_v, typeName: "PersonNameComponents"))
@@ -184,203 +184,203 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "PersonNameComponents", name: "hashValue") { receiver in
+        i.bridges["PersonNameComponents.hashValue"] = .computed { receiver in
             let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "PersonNameComponents", name: "description") { receiver in
+        i.bridges["PersonNameComponents.description"] = .computed { receiver in
             let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "PersonNameComponents", name: "debugDescription") { receiver in
+        i.bridges["PersonNameComponents.debugDescription"] = .computed { receiver in
             let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
             return .string(recv.debugDescription)
         }
 
-        i.registerInit(on: "Morphology", labels: []) { args in
+        i.bridges["Morphology()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("Morphology(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(Morphology(), typeName: "Morphology")
         }
 
-        i.registerComputed(on: "Morphology", name: "hashValue") { receiver in
+        i.bridges["Morphology.hashValue"] = .computed { receiver in
             let recv: Morphology = try unboxOpaque(receiver, as: Morphology.self, typeName: "Morphology")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "Morphology", name: "isUnspecified") { receiver in
+        i.bridges["Morphology.isUnspecified"] = .computed { receiver in
             let recv: Morphology = try unboxOpaque(receiver, as: Morphology.self, typeName: "Morphology")
             return .bool(recv.isUnspecified)
         }
 
-        i.registerStaticValue(on: "Morphology", name: "user", value: boxOpaque(Morphology.user, typeName: "Morphology"))
+        i.bridges["Morphology.Type.user"] = .staticValue(boxOpaque(Morphology.user, typeName: "Morphology"))
 
-        i.registerComputed(on: "IndexSet", name: "underestimatedCount") { receiver in
+        i.bridges["IndexSet.underestimatedCount"] = .computed { receiver in
             let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
             return .int(recv.underestimatedCount)
         }
 
-        i.registerInit(on: "IndexSet", labels: []) { args in
+        i.bridges["IndexSet()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("IndexSet(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(IndexSet(), typeName: "IndexSet")
         }
 
-        i.registerComputed(on: "IndexSet", name: "count") { receiver in
+        i.bridges["IndexSet.count"] = .computed { receiver in
             let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
             return .int(recv.count)
         }
 
-        i.registerComputed(on: "IndexSet", name: "rangeView") { receiver in
+        i.bridges["IndexSet.rangeView"] = .computed { receiver in
             let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
             return boxOpaque(recv.rangeView, typeName: "IndexSet.RangeView")
         }
 
-        i.registerComputed(on: "IndexSet", name: "startIndex") { receiver in
+        i.bridges["IndexSet.startIndex"] = .computed { receiver in
             let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
             return boxOpaque(recv.startIndex, typeName: "IndexSet.Index")
         }
 
-        i.registerComputed(on: "IndexSet", name: "endIndex") { receiver in
+        i.bridges["IndexSet.endIndex"] = .computed { receiver in
             let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
             return boxOpaque(recv.endIndex, typeName: "IndexSet.Index")
         }
 
-        i.registerComputed(on: "IndexSet", name: "isEmpty") { receiver in
+        i.bridges["IndexSet.isEmpty"] = .computed { receiver in
             let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
             return .bool(recv.isEmpty)
         }
 
-        i.registerComputed(on: "IndexSet", name: "hashValue") { receiver in
+        i.bridges["IndexSet.hashValue"] = .computed { receiver in
             let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "IndexSet", name: "description") { receiver in
+        i.bridges["IndexSet.description"] = .computed { receiver in
             let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "IndexSet", name: "debugDescription") { receiver in
+        i.bridges["IndexSet.debugDescription"] = .computed { receiver in
             let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
             return .string(recv.debugDescription)
         }
 
-        i.registerInit(on: "AttributeContainer", labels: []) { args in
+        i.bridges["AttributeContainer()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("AttributeContainer(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(AttributeContainer(), typeName: "AttributeContainer")
         }
 
-        i.registerComputed(on: "AttributeContainer", name: "hashValue") { receiver in
+        i.bridges["AttributeContainer.hashValue"] = .computed { receiver in
             let recv: AttributeContainer = try unboxOpaque(receiver, as: AttributeContainer.self, typeName: "AttributeContainer")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "AttributeContainer", name: "description") { receiver in
+        i.bridges["AttributeContainer.description"] = .computed { receiver in
             let recv: AttributeContainer = try unboxOpaque(receiver, as: AttributeContainer.self, typeName: "AttributeContainer")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "AttributedString", name: "description") { receiver in
+        i.bridges["AttributedString.description"] = .computed { receiver in
             let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
             return .string(recv.description)
         }
 
-        i.registerInit(on: "AttributedString", labels: []) { args in
+        i.bridges["AttributedString()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("AttributedString(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(AttributedString(), typeName: "AttributedString")
         }
 
-        i.registerComputed(on: "AttributedString", name: "startIndex") { receiver in
+        i.bridges["AttributedString.startIndex"] = .computed { receiver in
             let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
             return boxOpaque(recv.startIndex, typeName: "AttributedString.Index")
         }
 
-        i.registerComputed(on: "AttributedString", name: "endIndex") { receiver in
+        i.bridges["AttributedString.endIndex"] = .computed { receiver in
             let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
             return boxOpaque(recv.endIndex, typeName: "AttributedString.Index")
         }
 
-        i.registerComputed(on: "AttributedString", name: "hashValue") { receiver in
+        i.bridges["AttributedString.hashValue"] = .computed { receiver in
             let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "AttributedString", name: "runs") { receiver in
+        i.bridges["AttributedString.runs"] = .computed { receiver in
             let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
             return boxOpaque(recv.runs, typeName: "AttributedString.Runs")
         }
 
-        i.registerComputed(on: "AttributedSubstring", name: "description") { receiver in
+        i.bridges["AttributedSubstring.description"] = .computed { receiver in
             let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
             return .string(recv.description)
         }
 
-        i.registerInit(on: "AttributedSubstring", labels: []) { args in
+        i.bridges["AttributedSubstring()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("AttributedSubstring(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(AttributedSubstring(), typeName: "AttributedSubstring")
         }
 
-        i.registerComputed(on: "AttributedSubstring", name: "base") { receiver in
+        i.bridges["AttributedSubstring.base"] = .computed { receiver in
             let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
             return boxOpaque(recv.base, typeName: "AttributedString")
         }
 
-        i.registerComputed(on: "AttributedSubstring", name: "startIndex") { receiver in
+        i.bridges["AttributedSubstring.startIndex"] = .computed { receiver in
             let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
             return boxOpaque(recv.startIndex, typeName: "AttributedString.Index")
         }
 
-        i.registerComputed(on: "AttributedSubstring", name: "endIndex") { receiver in
+        i.bridges["AttributedSubstring.endIndex"] = .computed { receiver in
             let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
             return boxOpaque(recv.endIndex, typeName: "AttributedString.Index")
         }
 
-        i.registerComputed(on: "AttributedSubstring", name: "runs") { receiver in
+        i.bridges["AttributedSubstring.runs"] = .computed { receiver in
             let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
             return boxOpaque(recv.runs, typeName: "AttributedString.Runs")
         }
 
-        i.registerComputed(on: "AttributedSubstring", name: "hashValue") { receiver in
+        i.bridges["AttributedSubstring.hashValue"] = .computed { receiver in
             let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "DiscontiguousAttributedSubstring", name: "base") { receiver in
+        i.bridges["DiscontiguousAttributedSubstring.base"] = .computed { receiver in
             let recv: DiscontiguousAttributedSubstring = try unboxOpaque(receiver, as: DiscontiguousAttributedSubstring.self, typeName: "DiscontiguousAttributedSubstring")
             return boxOpaque(recv.base, typeName: "AttributedString")
         }
 
-        i.registerComputed(on: "DiscontiguousAttributedSubstring", name: "description") { receiver in
+        i.bridges["DiscontiguousAttributedSubstring.description"] = .computed { receiver in
             let recv: DiscontiguousAttributedSubstring = try unboxOpaque(receiver, as: DiscontiguousAttributedSubstring.self, typeName: "DiscontiguousAttributedSubstring")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "DiscontiguousAttributedSubstring", name: "hashValue") { receiver in
+        i.bridges["DiscontiguousAttributedSubstring.hashValue"] = .computed { receiver in
             let recv: DiscontiguousAttributedSubstring = try unboxOpaque(receiver, as: DiscontiguousAttributedSubstring.self, typeName: "DiscontiguousAttributedSubstring")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "DiscontiguousAttributedSubstring", name: "runs") { receiver in
+        i.bridges["DiscontiguousAttributedSubstring.runs"] = .computed { receiver in
             let recv: DiscontiguousAttributedSubstring = try unboxOpaque(receiver, as: DiscontiguousAttributedSubstring.self, typeName: "DiscontiguousAttributedSubstring")
             return boxOpaque(recv.runs, typeName: "AttributedString.Runs")
         }
 
-        i.registerStaticValue(on: "Calendar", name: "current", value: boxOpaque(Calendar.current, typeName: "Calendar"))
+        i.bridges["Calendar.Type.current"] = .staticValue(boxOpaque(Calendar.current, typeName: "Calendar"))
 
-        i.registerStaticValue(on: "Calendar", name: "autoupdatingCurrent", value: boxOpaque(Calendar.autoupdatingCurrent, typeName: "Calendar"))
+        i.bridges["Calendar.Type.autoupdatingCurrent"] = .staticValue(boxOpaque(Calendar.autoupdatingCurrent, typeName: "Calendar"))
 
-        i.registerComputed(on: "Calendar", name: "locale") { receiver in
+        i.bridges["Calendar.locale"] = .computed { receiver in
             let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
             if let _v = recv.locale {
             return .optional(boxOpaque(_v, typeName: "Locale"))
@@ -388,37 +388,37 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "Calendar", name: "timeZone") { receiver in
+        i.bridges["Calendar.timeZone"] = .computed { receiver in
             let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
             return boxOpaque(recv.timeZone, typeName: "TimeZone")
         }
 
-        i.registerComputed(on: "Calendar", name: "firstWeekday") { receiver in
+        i.bridges["Calendar.firstWeekday"] = .computed { receiver in
             let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
             return .int(recv.firstWeekday)
         }
 
-        i.registerComputed(on: "Calendar", name: "minimumDaysInFirstWeek") { receiver in
+        i.bridges["Calendar.minimumDaysInFirstWeek"] = .computed { receiver in
             let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
             return .int(recv.minimumDaysInFirstWeek)
         }
 
-        i.registerComputed(on: "Calendar", name: "hashValue") { receiver in
+        i.bridges["Calendar.hashValue"] = .computed { receiver in
             let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "Calendar", name: "description") { receiver in
+        i.bridges["Calendar.description"] = .computed { receiver in
             let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "Calendar", name: "debugDescription") { receiver in
+        i.bridges["Calendar.debugDescription"] = .computed { receiver in
             let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "DateComponents", name: "calendar") { receiver in
+        i.bridges["DateComponents.calendar"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.calendar {
             return .optional(boxOpaque(_v, typeName: "Calendar"))
@@ -426,7 +426,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "timeZone") { receiver in
+        i.bridges["DateComponents.timeZone"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.timeZone {
             return .optional(boxOpaque(_v, typeName: "TimeZone"))
@@ -434,7 +434,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "era") { receiver in
+        i.bridges["DateComponents.era"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.era {
             return .optional(.int(_v))
@@ -442,7 +442,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "year") { receiver in
+        i.bridges["DateComponents.year"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.year {
             return .optional(.int(_v))
@@ -450,7 +450,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "month") { receiver in
+        i.bridges["DateComponents.month"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.month {
             return .optional(.int(_v))
@@ -458,7 +458,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "day") { receiver in
+        i.bridges["DateComponents.day"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.day {
             return .optional(.int(_v))
@@ -466,7 +466,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "hour") { receiver in
+        i.bridges["DateComponents.hour"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.hour {
             return .optional(.int(_v))
@@ -474,7 +474,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "minute") { receiver in
+        i.bridges["DateComponents.minute"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.minute {
             return .optional(.int(_v))
@@ -482,7 +482,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "second") { receiver in
+        i.bridges["DateComponents.second"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.second {
             return .optional(.int(_v))
@@ -490,7 +490,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "nanosecond") { receiver in
+        i.bridges["DateComponents.nanosecond"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.nanosecond {
             return .optional(.int(_v))
@@ -498,7 +498,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "weekday") { receiver in
+        i.bridges["DateComponents.weekday"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.weekday {
             return .optional(.int(_v))
@@ -506,7 +506,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "weekdayOrdinal") { receiver in
+        i.bridges["DateComponents.weekdayOrdinal"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.weekdayOrdinal {
             return .optional(.int(_v))
@@ -514,7 +514,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "quarter") { receiver in
+        i.bridges["DateComponents.quarter"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.quarter {
             return .optional(.int(_v))
@@ -522,7 +522,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "weekOfMonth") { receiver in
+        i.bridges["DateComponents.weekOfMonth"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.weekOfMonth {
             return .optional(.int(_v))
@@ -530,7 +530,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "weekOfYear") { receiver in
+        i.bridges["DateComponents.weekOfYear"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.weekOfYear {
             return .optional(.int(_v))
@@ -538,7 +538,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "dayOfYear") { receiver in
+        i.bridges["DateComponents.dayOfYear"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.dayOfYear {
             return .optional(.int(_v))
@@ -546,7 +546,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "yearForWeekOfYear") { receiver in
+        i.bridges["DateComponents.yearForWeekOfYear"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.yearForWeekOfYear {
             return .optional(.int(_v))
@@ -554,7 +554,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "isLeapMonth") { receiver in
+        i.bridges["DateComponents.isLeapMonth"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.isLeapMonth {
             return .optional(.bool(_v))
@@ -562,7 +562,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "isRepeatedDay") { receiver in
+        i.bridges["DateComponents.isRepeatedDay"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.isRepeatedDay {
             return .optional(.bool(_v))
@@ -570,7 +570,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "date") { receiver in
+        i.bridges["DateComponents.date"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             if let _v = recv.date {
             return .optional(boxOpaque(_v, typeName: "Date"))
@@ -578,187 +578,187 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "DateComponents", name: "isValidDate") { receiver in
+        i.bridges["DateComponents.isValidDate"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             return .bool(recv.isValidDate)
         }
 
-        i.registerComputed(on: "DateComponents", name: "hashValue") { receiver in
+        i.bridges["DateComponents.hashValue"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "DateComponents", name: "description") { receiver in
+        i.bridges["DateComponents.description"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "DateComponents", name: "debugDescription") { receiver in
+        i.bridges["DateComponents.debugDescription"] = .computed { receiver in
             let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "Data", name: "isEmpty") { receiver in
+        i.bridges["Data.isEmpty"] = .computed { receiver in
             let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
             return .bool(recv.isEmpty)
         }
 
-        i.registerComputed(on: "Data", name: "underestimatedCount") { receiver in
+        i.bridges["Data.underestimatedCount"] = .computed { receiver in
             let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
             return .int(recv.underestimatedCount)
         }
 
-        i.registerInit(on: "Data", labels: []) { args in
+        i.bridges["Data()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("Data(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(Data(), typeName: "Data")
         }
 
-        i.registerComputed(on: "Data", name: "count") { receiver in
+        i.bridges["Data.count"] = .computed { receiver in
             let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
             return .int(recv.count)
         }
 
-        i.registerComputed(on: "Data", name: "hashValue") { receiver in
+        i.bridges["Data.hashValue"] = .computed { receiver in
             let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "Data", name: "description") { receiver in
+        i.bridges["Data.description"] = .computed { receiver in
             let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "Data", name: "debugDescription") { receiver in
+        i.bridges["Data.debugDescription"] = .computed { receiver in
             let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "Decimal", name: "description") { receiver in
+        i.bridges["Decimal.description"] = .computed { receiver in
             let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
             return .string(recv.description)
         }
 
-        i.registerStaticValue(on: "Decimal", name: "leastFiniteMagnitude", value: boxOpaque(Decimal.leastFiniteMagnitude, typeName: "Decimal"))
+        i.bridges["Decimal.Type.leastFiniteMagnitude"] = .staticValue(boxOpaque(Decimal.leastFiniteMagnitude, typeName: "Decimal"))
 
-        i.registerStaticValue(on: "Decimal", name: "greatestFiniteMagnitude", value: boxOpaque(Decimal.greatestFiniteMagnitude, typeName: "Decimal"))
+        i.bridges["Decimal.Type.greatestFiniteMagnitude"] = .staticValue(boxOpaque(Decimal.greatestFiniteMagnitude, typeName: "Decimal"))
 
-        i.registerStaticValue(on: "Decimal", name: "leastNormalMagnitude", value: boxOpaque(Decimal.leastNormalMagnitude, typeName: "Decimal"))
+        i.bridges["Decimal.Type.leastNormalMagnitude"] = .staticValue(boxOpaque(Decimal.leastNormalMagnitude, typeName: "Decimal"))
 
-        i.registerStaticValue(on: "Decimal", name: "leastNonzeroMagnitude", value: boxOpaque(Decimal.leastNonzeroMagnitude, typeName: "Decimal"))
+        i.bridges["Decimal.Type.leastNonzeroMagnitude"] = .staticValue(boxOpaque(Decimal.leastNonzeroMagnitude, typeName: "Decimal"))
 
-        i.registerStaticValue(on: "Decimal", name: "pi", value: boxOpaque(Decimal.pi, typeName: "Decimal"))
+        i.bridges["Decimal.Type.pi"] = .staticValue(boxOpaque(Decimal.pi, typeName: "Decimal"))
 
-        i.registerStaticValue(on: "Decimal", name: "quietNaN", value: boxOpaque(Decimal.quietNaN, typeName: "Decimal"))
+        i.bridges["Decimal.Type.quietNaN"] = .staticValue(boxOpaque(Decimal.quietNaN, typeName: "Decimal"))
 
-        i.registerStaticValue(on: "Decimal", name: "nan", value: boxOpaque(Decimal.nan, typeName: "Decimal"))
+        i.bridges["Decimal.Type.nan"] = .staticValue(boxOpaque(Decimal.nan, typeName: "Decimal"))
 
-        i.registerStaticValue(on: "Decimal", name: "radix", value: .int(Decimal.radix))
+        i.bridges["Decimal.Type.radix"] = .staticValue(.int(Decimal.radix))
 
-        i.registerComputed(on: "Decimal", name: "exponent") { receiver in
+        i.bridges["Decimal.exponent"] = .computed { receiver in
             let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
             return .int(recv.exponent)
         }
 
-        i.registerComputed(on: "Decimal", name: "significand") { receiver in
+        i.bridges["Decimal.significand"] = .computed { receiver in
             let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
             return boxOpaque(recv.significand, typeName: "Decimal")
         }
 
-        i.registerComputed(on: "Decimal", name: "ulp") { receiver in
+        i.bridges["Decimal.ulp"] = .computed { receiver in
             let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
             return boxOpaque(recv.ulp, typeName: "Decimal")
         }
 
-        i.registerComputed(on: "Decimal", name: "isCanonical") { receiver in
+        i.bridges["Decimal.isCanonical"] = .computed { receiver in
             let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
             return .bool(recv.isCanonical)
         }
 
-        i.registerComputed(on: "Decimal", name: "isSignMinus") { receiver in
+        i.bridges["Decimal.isSignMinus"] = .computed { receiver in
             let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
             return .bool(recv.isSignMinus)
         }
 
-        i.registerComputed(on: "Decimal", name: "isZero") { receiver in
+        i.bridges["Decimal.isZero"] = .computed { receiver in
             let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
             return .bool(recv.isZero)
         }
 
-        i.registerComputed(on: "Decimal", name: "isSubnormal") { receiver in
+        i.bridges["Decimal.isSubnormal"] = .computed { receiver in
             let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
             return .bool(recv.isSubnormal)
         }
 
-        i.registerComputed(on: "Decimal", name: "isNormal") { receiver in
+        i.bridges["Decimal.isNormal"] = .computed { receiver in
             let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
             return .bool(recv.isNormal)
         }
 
-        i.registerComputed(on: "Decimal", name: "isFinite") { receiver in
+        i.bridges["Decimal.isFinite"] = .computed { receiver in
             let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
             return .bool(recv.isFinite)
         }
 
-        i.registerComputed(on: "Decimal", name: "isInfinite") { receiver in
+        i.bridges["Decimal.isInfinite"] = .computed { receiver in
             let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
             return .bool(recv.isInfinite)
         }
 
-        i.registerComputed(on: "Decimal", name: "isNaN") { receiver in
+        i.bridges["Decimal.isNaN"] = .computed { receiver in
             let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
             return .bool(recv.isNaN)
         }
 
-        i.registerComputed(on: "Decimal", name: "isSignaling") { receiver in
+        i.bridges["Decimal.isSignaling"] = .computed { receiver in
             let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
             return .bool(recv.isSignaling)
         }
 
-        i.registerComputed(on: "Decimal", name: "isSignalingNaN") { receiver in
+        i.bridges["Decimal.isSignalingNaN"] = .computed { receiver in
             let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
             return .bool(recv.isSignalingNaN)
         }
 
-        i.registerComputed(on: "Decimal", name: "nextUp") { receiver in
+        i.bridges["Decimal.nextUp"] = .computed { receiver in
             let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
             return boxOpaque(recv.nextUp, typeName: "Decimal")
         }
 
-        i.registerComputed(on: "Decimal", name: "nextDown") { receiver in
+        i.bridges["Decimal.nextDown"] = .computed { receiver in
             let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
             return boxOpaque(recv.nextDown, typeName: "Decimal")
         }
 
-        i.registerComputed(on: "Decimal", name: "hashValue") { receiver in
+        i.bridges["Decimal.hashValue"] = .computed { receiver in
             let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "Decimal", name: "magnitude") { receiver in
+        i.bridges["Decimal.magnitude"] = .computed { receiver in
             let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
             return boxOpaque(recv.magnitude, typeName: "Decimal")
         }
 
-        i.registerComputed(on: "CocoaError", name: "errorCode") { receiver in
+        i.bridges["CocoaError.errorCode"] = .computed { receiver in
             let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
             return .int(recv.errorCode)
         }
 
-        i.registerStaticValue(on: "CocoaError", name: "errorDomain", value: .string(CocoaError.errorDomain))
+        i.bridges["CocoaError.Type.errorDomain"] = .staticValue(.string(CocoaError.errorDomain))
 
-        i.registerComputed(on: "CocoaError", name: "localizedDescription") { receiver in
+        i.bridges["CocoaError.localizedDescription"] = .computed { receiver in
             let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
             return .string(recv.localizedDescription)
         }
 
-        i.registerComputed(on: "CocoaError", name: "hashValue") { receiver in
+        i.bridges["CocoaError.hashValue"] = .computed { receiver in
             let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "CocoaError", name: "filePath") { receiver in
+        i.bridges["CocoaError.filePath"] = .computed { receiver in
             let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
             if let _v = recv.filePath {
             return .optional(.string(_v))
@@ -766,7 +766,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "CocoaError", name: "stringEncoding") { receiver in
+        i.bridges["CocoaError.stringEncoding"] = .computed { receiver in
             let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
             if let _v = recv.stringEncoding {
             return .optional(boxOpaque(_v, typeName: "String.Encoding"))
@@ -774,7 +774,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "CocoaError", name: "url") { receiver in
+        i.bridges["CocoaError.url"] = .computed { receiver in
             let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
             if let _v = recv.url {
             return .optional(boxOpaque(_v, typeName: "URL"))
@@ -782,170 +782,170 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerStaticValue(on: "CocoaError", name: "fileNoSuchFile", value: boxOpaque(CocoaError.fileNoSuchFile, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileNoSuchFile"] = .staticValue(boxOpaque(CocoaError.fileNoSuchFile, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "fileLocking", value: boxOpaque(CocoaError.fileLocking, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileLocking"] = .staticValue(boxOpaque(CocoaError.fileLocking, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "fileReadUnknown", value: boxOpaque(CocoaError.fileReadUnknown, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileReadUnknown"] = .staticValue(boxOpaque(CocoaError.fileReadUnknown, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "fileReadNoPermission", value: boxOpaque(CocoaError.fileReadNoPermission, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileReadNoPermission"] = .staticValue(boxOpaque(CocoaError.fileReadNoPermission, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "fileReadInvalidFileName", value: boxOpaque(CocoaError.fileReadInvalidFileName, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileReadInvalidFileName"] = .staticValue(boxOpaque(CocoaError.fileReadInvalidFileName, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "fileReadCorruptFile", value: boxOpaque(CocoaError.fileReadCorruptFile, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileReadCorruptFile"] = .staticValue(boxOpaque(CocoaError.fileReadCorruptFile, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "fileReadNoSuchFile", value: boxOpaque(CocoaError.fileReadNoSuchFile, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileReadNoSuchFile"] = .staticValue(boxOpaque(CocoaError.fileReadNoSuchFile, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "fileReadInapplicableStringEncoding", value: boxOpaque(CocoaError.fileReadInapplicableStringEncoding, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileReadInapplicableStringEncoding"] = .staticValue(boxOpaque(CocoaError.fileReadInapplicableStringEncoding, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "fileReadUnsupportedScheme", value: boxOpaque(CocoaError.fileReadUnsupportedScheme, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileReadUnsupportedScheme"] = .staticValue(boxOpaque(CocoaError.fileReadUnsupportedScheme, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "fileReadTooLarge", value: boxOpaque(CocoaError.fileReadTooLarge, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileReadTooLarge"] = .staticValue(boxOpaque(CocoaError.fileReadTooLarge, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "fileReadUnknownStringEncoding", value: boxOpaque(CocoaError.fileReadUnknownStringEncoding, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileReadUnknownStringEncoding"] = .staticValue(boxOpaque(CocoaError.fileReadUnknownStringEncoding, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "fileWriteUnknown", value: boxOpaque(CocoaError.fileWriteUnknown, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileWriteUnknown"] = .staticValue(boxOpaque(CocoaError.fileWriteUnknown, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "fileWriteNoPermission", value: boxOpaque(CocoaError.fileWriteNoPermission, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileWriteNoPermission"] = .staticValue(boxOpaque(CocoaError.fileWriteNoPermission, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "fileWriteInvalidFileName", value: boxOpaque(CocoaError.fileWriteInvalidFileName, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileWriteInvalidFileName"] = .staticValue(boxOpaque(CocoaError.fileWriteInvalidFileName, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "fileWriteFileExists", value: boxOpaque(CocoaError.fileWriteFileExists, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileWriteFileExists"] = .staticValue(boxOpaque(CocoaError.fileWriteFileExists, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "fileWriteInapplicableStringEncoding", value: boxOpaque(CocoaError.fileWriteInapplicableStringEncoding, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileWriteInapplicableStringEncoding"] = .staticValue(boxOpaque(CocoaError.fileWriteInapplicableStringEncoding, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "fileWriteUnsupportedScheme", value: boxOpaque(CocoaError.fileWriteUnsupportedScheme, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileWriteUnsupportedScheme"] = .staticValue(boxOpaque(CocoaError.fileWriteUnsupportedScheme, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "fileWriteOutOfSpace", value: boxOpaque(CocoaError.fileWriteOutOfSpace, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileWriteOutOfSpace"] = .staticValue(boxOpaque(CocoaError.fileWriteOutOfSpace, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "fileWriteVolumeReadOnly", value: boxOpaque(CocoaError.fileWriteVolumeReadOnly, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.fileWriteVolumeReadOnly"] = .staticValue(boxOpaque(CocoaError.fileWriteVolumeReadOnly, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "keyValueValidation", value: boxOpaque(CocoaError.keyValueValidation, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.keyValueValidation"] = .staticValue(boxOpaque(CocoaError.keyValueValidation, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "formatting", value: boxOpaque(CocoaError.formatting, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.formatting"] = .staticValue(boxOpaque(CocoaError.formatting, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "userCancelled", value: boxOpaque(CocoaError.userCancelled, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.userCancelled"] = .staticValue(boxOpaque(CocoaError.userCancelled, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "featureUnsupported", value: boxOpaque(CocoaError.featureUnsupported, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.featureUnsupported"] = .staticValue(boxOpaque(CocoaError.featureUnsupported, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "executableNotLoadable", value: boxOpaque(CocoaError.executableNotLoadable, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.executableNotLoadable"] = .staticValue(boxOpaque(CocoaError.executableNotLoadable, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "executableArchitectureMismatch", value: boxOpaque(CocoaError.executableArchitectureMismatch, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.executableArchitectureMismatch"] = .staticValue(boxOpaque(CocoaError.executableArchitectureMismatch, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "executableRuntimeMismatch", value: boxOpaque(CocoaError.executableRuntimeMismatch, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.executableRuntimeMismatch"] = .staticValue(boxOpaque(CocoaError.executableRuntimeMismatch, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "executableLoad", value: boxOpaque(CocoaError.executableLoad, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.executableLoad"] = .staticValue(boxOpaque(CocoaError.executableLoad, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "executableLink", value: boxOpaque(CocoaError.executableLink, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.executableLink"] = .staticValue(boxOpaque(CocoaError.executableLink, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "propertyListReadCorrupt", value: boxOpaque(CocoaError.propertyListReadCorrupt, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.propertyListReadCorrupt"] = .staticValue(boxOpaque(CocoaError.propertyListReadCorrupt, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "propertyListReadUnknownVersion", value: boxOpaque(CocoaError.propertyListReadUnknownVersion, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.propertyListReadUnknownVersion"] = .staticValue(boxOpaque(CocoaError.propertyListReadUnknownVersion, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "propertyListReadStream", value: boxOpaque(CocoaError.propertyListReadStream, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.propertyListReadStream"] = .staticValue(boxOpaque(CocoaError.propertyListReadStream, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "propertyListWriteStream", value: boxOpaque(CocoaError.propertyListWriteStream, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.propertyListWriteStream"] = .staticValue(boxOpaque(CocoaError.propertyListWriteStream, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "propertyListWriteInvalid", value: boxOpaque(CocoaError.propertyListWriteInvalid, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.propertyListWriteInvalid"] = .staticValue(boxOpaque(CocoaError.propertyListWriteInvalid, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "xpcConnectionInterrupted", value: boxOpaque(CocoaError.xpcConnectionInterrupted, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.xpcConnectionInterrupted"] = .staticValue(boxOpaque(CocoaError.xpcConnectionInterrupted, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "xpcConnectionInvalid", value: boxOpaque(CocoaError.xpcConnectionInvalid, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.xpcConnectionInvalid"] = .staticValue(boxOpaque(CocoaError.xpcConnectionInvalid, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "xpcConnectionReplyInvalid", value: boxOpaque(CocoaError.xpcConnectionReplyInvalid, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.xpcConnectionReplyInvalid"] = .staticValue(boxOpaque(CocoaError.xpcConnectionReplyInvalid, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "ubiquitousFileUnavailable", value: boxOpaque(CocoaError.ubiquitousFileUnavailable, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.ubiquitousFileUnavailable"] = .staticValue(boxOpaque(CocoaError.ubiquitousFileUnavailable, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "ubiquitousFileNotUploadedDueToQuota", value: boxOpaque(CocoaError.ubiquitousFileNotUploadedDueToQuota, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.ubiquitousFileNotUploadedDueToQuota"] = .staticValue(boxOpaque(CocoaError.ubiquitousFileNotUploadedDueToQuota, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "ubiquitousFileUbiquityServerNotAvailable", value: boxOpaque(CocoaError.ubiquitousFileUbiquityServerNotAvailable, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.ubiquitousFileUbiquityServerNotAvailable"] = .staticValue(boxOpaque(CocoaError.ubiquitousFileUbiquityServerNotAvailable, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "userActivityHandoffFailed", value: boxOpaque(CocoaError.userActivityHandoffFailed, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.userActivityHandoffFailed"] = .staticValue(boxOpaque(CocoaError.userActivityHandoffFailed, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "userActivityConnectionUnavailable", value: boxOpaque(CocoaError.userActivityConnectionUnavailable, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.userActivityConnectionUnavailable"] = .staticValue(boxOpaque(CocoaError.userActivityConnectionUnavailable, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "userActivityRemoteApplicationTimedOut", value: boxOpaque(CocoaError.userActivityRemoteApplicationTimedOut, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.userActivityRemoteApplicationTimedOut"] = .staticValue(boxOpaque(CocoaError.userActivityRemoteApplicationTimedOut, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "userActivityHandoffUserInfoTooLarge", value: boxOpaque(CocoaError.userActivityHandoffUserInfoTooLarge, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.userActivityHandoffUserInfoTooLarge"] = .staticValue(boxOpaque(CocoaError.userActivityHandoffUserInfoTooLarge, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "coderReadCorrupt", value: boxOpaque(CocoaError.coderReadCorrupt, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.coderReadCorrupt"] = .staticValue(boxOpaque(CocoaError.coderReadCorrupt, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "coderValueNotFound", value: boxOpaque(CocoaError.coderValueNotFound, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.coderValueNotFound"] = .staticValue(boxOpaque(CocoaError.coderValueNotFound, typeName: "CocoaError.Code"))
 
-        i.registerStaticValue(on: "CocoaError", name: "coderInvalidValue", value: boxOpaque(CocoaError.coderInvalidValue, typeName: "CocoaError.Code"))
+        i.bridges["CocoaError.Type.coderInvalidValue"] = .staticValue(boxOpaque(CocoaError.coderInvalidValue, typeName: "CocoaError.Code"))
 
-        i.registerComputed(on: "CocoaError", name: "isCoderError") { receiver in
+        i.bridges["CocoaError.isCoderError"] = .computed { receiver in
             let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
             return .bool(recv.isCoderError)
         }
 
-        i.registerComputed(on: "CocoaError", name: "isExecutableError") { receiver in
+        i.bridges["CocoaError.isExecutableError"] = .computed { receiver in
             let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
             return .bool(recv.isExecutableError)
         }
 
-        i.registerComputed(on: "CocoaError", name: "isFileError") { receiver in
+        i.bridges["CocoaError.isFileError"] = .computed { receiver in
             let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
             return .bool(recv.isFileError)
         }
 
-        i.registerComputed(on: "CocoaError", name: "isFormattingError") { receiver in
+        i.bridges["CocoaError.isFormattingError"] = .computed { receiver in
             let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
             return .bool(recv.isFormattingError)
         }
 
-        i.registerComputed(on: "CocoaError", name: "isPropertyListError") { receiver in
+        i.bridges["CocoaError.isPropertyListError"] = .computed { receiver in
             let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
             return .bool(recv.isPropertyListError)
         }
 
-        i.registerComputed(on: "CocoaError", name: "isValidationError") { receiver in
+        i.bridges["CocoaError.isValidationError"] = .computed { receiver in
             let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
             return .bool(recv.isValidationError)
         }
 
-        i.registerComputed(on: "CocoaError", name: "isUbiquitousFileError") { receiver in
+        i.bridges["CocoaError.isUbiquitousFileError"] = .computed { receiver in
             let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
             return .bool(recv.isUbiquitousFileError)
         }
 
-        i.registerComputed(on: "CocoaError", name: "isUserActivityError") { receiver in
+        i.bridges["CocoaError.isUserActivityError"] = .computed { receiver in
             let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
             return .bool(recv.isUserActivityError)
         }
 
-        i.registerComputed(on: "CocoaError", name: "isXPCConnectionError") { receiver in
+        i.bridges["CocoaError.isXPCConnectionError"] = .computed { receiver in
             let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
             return .bool(recv.isXPCConnectionError)
         }
 
-        i.registerComputed(on: "POSIXError", name: "errorCode") { receiver in
+        i.bridges["POSIXError.errorCode"] = .computed { receiver in
             let recv: POSIXError = try unboxOpaque(receiver, as: POSIXError.self, typeName: "POSIXError")
             return .int(recv.errorCode)
         }
 
-        i.registerStaticValue(on: "POSIXError", name: "errorDomain", value: .string(POSIXError.errorDomain))
+        i.bridges["POSIXError.Type.errorDomain"] = .staticValue(.string(POSIXError.errorDomain))
 
-        i.registerComputed(on: "POSIXError", name: "localizedDescription") { receiver in
+        i.bridges["POSIXError.localizedDescription"] = .computed { receiver in
             let recv: POSIXError = try unboxOpaque(receiver, as: POSIXError.self, typeName: "POSIXError")
             return .string(recv.localizedDescription)
         }
 
-        i.registerComputed(on: "POSIXError", name: "hashValue") { receiver in
+        i.bridges["POSIXError.hashValue"] = .computed { receiver in
             let recv: POSIXError = try unboxOpaque(receiver, as: POSIXError.self, typeName: "POSIXError")
             return .int(recv.hashValue)
         }
 
-        i.registerStaticValue(on: "Locale", name: "autoupdatingCurrent", value: boxOpaque(Locale.autoupdatingCurrent, typeName: "Locale"))
+        i.bridges["Locale.Type.autoupdatingCurrent"] = .staticValue(boxOpaque(Locale.autoupdatingCurrent, typeName: "Locale"))
 
-        i.registerStaticValue(on: "Locale", name: "current", value: boxOpaque(Locale.current, typeName: "Locale"))
+        i.bridges["Locale.Type.current"] = .staticValue(boxOpaque(Locale.current, typeName: "Locale"))
 
-        i.registerComputed(on: "Locale", name: "identifier") { receiver in
+        i.bridges["Locale.identifier"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             return .string(recv.identifier)
         }
 
-        i.registerComputed(on: "Locale", name: "exemplarCharacterSet") { receiver in
+        i.bridges["Locale.exemplarCharacterSet"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             if let _v = recv.exemplarCharacterSet {
             return .optional(boxOpaque(_v, typeName: "CharacterSet"))
@@ -953,12 +953,12 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "Locale", name: "calendar") { receiver in
+        i.bridges["Locale.calendar"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             return boxOpaque(recv.calendar, typeName: "Calendar")
         }
 
-        i.registerComputed(on: "Locale", name: "decimalSeparator") { receiver in
+        i.bridges["Locale.decimalSeparator"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             if let _v = recv.decimalSeparator {
             return .optional(.string(_v))
@@ -966,7 +966,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "Locale", name: "groupingSeparator") { receiver in
+        i.bridges["Locale.groupingSeparator"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             if let _v = recv.groupingSeparator {
             return .optional(.string(_v))
@@ -974,7 +974,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "Locale", name: "currencySymbol") { receiver in
+        i.bridges["Locale.currencySymbol"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             if let _v = recv.currencySymbol {
             return .optional(.string(_v))
@@ -982,7 +982,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "Locale", name: "collatorIdentifier") { receiver in
+        i.bridges["Locale.collatorIdentifier"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             if let _v = recv.collatorIdentifier {
             return .optional(.string(_v))
@@ -990,7 +990,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "Locale", name: "quotationBeginDelimiter") { receiver in
+        i.bridges["Locale.quotationBeginDelimiter"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             if let _v = recv.quotationBeginDelimiter {
             return .optional(.string(_v))
@@ -998,7 +998,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "Locale", name: "quotationEndDelimiter") { receiver in
+        i.bridges["Locale.quotationEndDelimiter"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             if let _v = recv.quotationEndDelimiter {
             return .optional(.string(_v))
@@ -1006,7 +1006,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "Locale", name: "alternateQuotationBeginDelimiter") { receiver in
+        i.bridges["Locale.alternateQuotationBeginDelimiter"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             if let _v = recv.alternateQuotationBeginDelimiter {
             return .optional(.string(_v))
@@ -1014,7 +1014,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "Locale", name: "alternateQuotationEndDelimiter") { receiver in
+        i.bridges["Locale.alternateQuotationEndDelimiter"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             if let _v = recv.alternateQuotationEndDelimiter {
             return .optional(.string(_v))
@@ -1022,12 +1022,12 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "Locale", name: "measurementSystem") { receiver in
+        i.bridges["Locale.measurementSystem"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             return boxOpaque(recv.measurementSystem, typeName: "Locale.MeasurementSystem")
         }
 
-        i.registerComputed(on: "Locale", name: "currency") { receiver in
+        i.bridges["Locale.currency"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             if let _v = recv.currency {
             return .optional(boxOpaque(_v, typeName: "Locale.Currency"))
@@ -1035,22 +1035,22 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "Locale", name: "numberingSystem") { receiver in
+        i.bridges["Locale.numberingSystem"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             return boxOpaque(recv.numberingSystem, typeName: "Locale.NumberingSystem")
         }
 
-        i.registerComputed(on: "Locale", name: "language") { receiver in
+        i.bridges["Locale.language"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             return boxOpaque(recv.language, typeName: "Locale.Language")
         }
 
-        i.registerComputed(on: "Locale", name: "collation") { receiver in
+        i.bridges["Locale.collation"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             return boxOpaque(recv.collation, typeName: "Locale.Collation")
         }
 
-        i.registerComputed(on: "Locale", name: "region") { receiver in
+        i.bridges["Locale.region"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             if let _v = recv.region {
             return .optional(boxOpaque(_v, typeName: "Locale.Region"))
@@ -1058,7 +1058,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "Locale", name: "timeZone") { receiver in
+        i.bridges["Locale.timeZone"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             if let _v = recv.timeZone {
             return .optional(boxOpaque(_v, typeName: "TimeZone"))
@@ -1066,7 +1066,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "Locale", name: "subdivision") { receiver in
+        i.bridges["Locale.subdivision"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             if let _v = recv.subdivision {
             return .optional(boxOpaque(_v, typeName: "Locale.Subdivision"))
@@ -1074,7 +1074,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "Locale", name: "variant") { receiver in
+        i.bridges["Locale.variant"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             if let _v = recv.variant {
             return .optional(boxOpaque(_v, typeName: "Locale.Variant"))
@@ -1082,55 +1082,55 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "Locale", name: "hashValue") { receiver in
+        i.bridges["Locale.hashValue"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "Locale", name: "description") { receiver in
+        i.bridges["Locale.description"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "Locale", name: "debugDescription") { receiver in
+        i.bridges["Locale.debugDescription"] = .computed { receiver in
             let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "PredicateError", name: "localizedDescription") { receiver in
+        i.bridges["PredicateError.localizedDescription"] = .computed { receiver in
             let recv: PredicateError = try unboxOpaque(receiver, as: PredicateError.self, typeName: "PredicateError")
             return .string(recv.localizedDescription)
         }
 
-        i.registerComputed(on: "PredicateError", name: "debugDescription") { receiver in
+        i.bridges["PredicateError.debugDescription"] = .computed { receiver in
             let recv: PredicateError = try unboxOpaque(receiver, as: PredicateError.self, typeName: "PredicateError")
             return .string(recv.debugDescription)
         }
 
-        i.registerStaticValue(on: "PredicateError", name: "undefinedVariable", value: boxOpaque(PredicateError.undefinedVariable, typeName: "PredicateError"))
+        i.bridges["PredicateError.Type.undefinedVariable"] = .staticValue(boxOpaque(PredicateError.undefinedVariable, typeName: "PredicateError"))
 
-        i.registerStaticValue(on: "PredicateError", name: "forceUnwrapFailure", value: boxOpaque(PredicateError.forceUnwrapFailure, typeName: "PredicateError"))
+        i.bridges["PredicateError.Type.forceUnwrapFailure"] = .staticValue(boxOpaque(PredicateError.forceUnwrapFailure, typeName: "PredicateError"))
 
-        i.registerStaticValue(on: "PredicateError", name: "forceCastFailure", value: boxOpaque(PredicateError.forceCastFailure, typeName: "PredicateError"))
+        i.bridges["PredicateError.Type.forceCastFailure"] = .staticValue(boxOpaque(PredicateError.forceCastFailure, typeName: "PredicateError"))
 
-        i.registerStaticValue(on: "PredicateError", name: "invalidInput", value: boxOpaque(PredicateError.invalidInput, typeName: "PredicateError"))
+        i.bridges["PredicateError.Type.invalidInput"] = .staticValue(boxOpaque(PredicateError.invalidInput, typeName: "PredicateError"))
 
-        i.registerComputed(on: "PredicateError", name: "hashValue") { receiver in
+        i.bridges["PredicateError.hashValue"] = .computed { receiver in
             let recv: PredicateError = try unboxOpaque(receiver, as: PredicateError.self, typeName: "PredicateError")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "Calendar", name: "amSymbol") { receiver in
+        i.bridges["Calendar.amSymbol"] = .computed { receiver in
             let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
             return .string(recv.amSymbol)
         }
 
-        i.registerComputed(on: "Calendar", name: "pmSymbol") { receiver in
+        i.bridges["Calendar.pmSymbol"] = .computed { receiver in
             let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
             return .string(recv.pmSymbol)
         }
 
-        i.registerMethod(on: "Date", name: "formatted") { receiver, args in
+        i.bridges["Date.formatted()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("Date.formatted: expected 0 argument(s), got \(args.count)")
             }
@@ -1138,7 +1138,7 @@ extension FoundationModule {
             return .string(recv.formatted())
         }
 
-        i.registerMethod(on: "Decimal", name: "formatted") { receiver, args in
+        i.bridges["Decimal.formatted()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("Decimal.formatted: expected 0 argument(s), got \(args.count)")
             }
@@ -1146,68 +1146,68 @@ extension FoundationModule {
             return .string(recv.formatted())
         }
 
-        i.registerStaticValue(on: "FormatStyleCapitalizationContext", name: "unknown", value: boxOpaque(FormatStyleCapitalizationContext.unknown, typeName: "FormatStyleCapitalizationContext"))
+        i.bridges["FormatStyleCapitalizationContext.Type.unknown"] = .staticValue(boxOpaque(FormatStyleCapitalizationContext.unknown, typeName: "FormatStyleCapitalizationContext"))
 
-        i.registerStaticValue(on: "FormatStyleCapitalizationContext", name: "standalone", value: boxOpaque(FormatStyleCapitalizationContext.standalone, typeName: "FormatStyleCapitalizationContext"))
+        i.bridges["FormatStyleCapitalizationContext.Type.standalone"] = .staticValue(boxOpaque(FormatStyleCapitalizationContext.standalone, typeName: "FormatStyleCapitalizationContext"))
 
-        i.registerStaticValue(on: "FormatStyleCapitalizationContext", name: "listItem", value: boxOpaque(FormatStyleCapitalizationContext.listItem, typeName: "FormatStyleCapitalizationContext"))
+        i.bridges["FormatStyleCapitalizationContext.Type.listItem"] = .staticValue(boxOpaque(FormatStyleCapitalizationContext.listItem, typeName: "FormatStyleCapitalizationContext"))
 
-        i.registerStaticValue(on: "FormatStyleCapitalizationContext", name: "beginningOfSentence", value: boxOpaque(FormatStyleCapitalizationContext.beginningOfSentence, typeName: "FormatStyleCapitalizationContext"))
+        i.bridges["FormatStyleCapitalizationContext.Type.beginningOfSentence"] = .staticValue(boxOpaque(FormatStyleCapitalizationContext.beginningOfSentence, typeName: "FormatStyleCapitalizationContext"))
 
-        i.registerStaticValue(on: "FormatStyleCapitalizationContext", name: "middleOfSentence", value: boxOpaque(FormatStyleCapitalizationContext.middleOfSentence, typeName: "FormatStyleCapitalizationContext"))
+        i.bridges["FormatStyleCapitalizationContext.Type.middleOfSentence"] = .staticValue(boxOpaque(FormatStyleCapitalizationContext.middleOfSentence, typeName: "FormatStyleCapitalizationContext"))
 
-        i.registerComputed(on: "FormatStyleCapitalizationContext", name: "hashValue") { receiver in
+        i.bridges["FormatStyleCapitalizationContext.hashValue"] = .computed { receiver in
             let recv: FormatStyleCapitalizationContext = try unboxOpaque(receiver, as: FormatStyleCapitalizationContext.self, typeName: "FormatStyleCapitalizationContext")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "ByteCountFormatStyle", name: "allowedUnits") { receiver in
+        i.bridges["ByteCountFormatStyle.allowedUnits"] = .computed { receiver in
             let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
             return boxOpaque(recv.allowedUnits, typeName: "ByteCountFormatStyle.Units")
         }
 
-        i.registerComputed(on: "ByteCountFormatStyle", name: "spellsOutZero") { receiver in
+        i.bridges["ByteCountFormatStyle.spellsOutZero"] = .computed { receiver in
             let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
             return .bool(recv.spellsOutZero)
         }
 
-        i.registerComputed(on: "ByteCountFormatStyle", name: "includesActualByteCount") { receiver in
+        i.bridges["ByteCountFormatStyle.includesActualByteCount"] = .computed { receiver in
             let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
             return .bool(recv.includesActualByteCount)
         }
 
-        i.registerComputed(on: "ByteCountFormatStyle", name: "locale") { receiver in
+        i.bridges["ByteCountFormatStyle.locale"] = .computed { receiver in
             let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
             return boxOpaque(recv.locale, typeName: "Locale")
         }
 
-        i.registerComputed(on: "ByteCountFormatStyle", name: "attributed") { receiver in
+        i.bridges["ByteCountFormatStyle.attributed"] = .computed { receiver in
             let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
             return boxOpaque(recv.attributed, typeName: "ByteCountFormatStyle.Attributed")
         }
 
-        i.registerComputed(on: "ByteCountFormatStyle", name: "hashValue") { receiver in
+        i.bridges["ByteCountFormatStyle.hashValue"] = .computed { receiver in
             let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "StringStyle", name: "hashValue") { receiver in
+        i.bridges["StringStyle.hashValue"] = .computed { receiver in
             let recv: StringStyle = try unboxOpaque(receiver, as: StringStyle.self, typeName: "StringStyle")
             return .int(recv.hashValue)
         }
 
-        i.registerStaticValue(on: "TimeZone", name: "timeZoneDataVersion", value: .string(TimeZone.timeZoneDataVersion))
+        i.bridges["TimeZone.Type.timeZoneDataVersion"] = .staticValue(.string(TimeZone.timeZoneDataVersion))
 
-        i.registerStaticValue(on: "TimeZone", name: "current", value: boxOpaque(TimeZone.current, typeName: "TimeZone"))
+        i.bridges["TimeZone.Type.current"] = .staticValue(boxOpaque(TimeZone.current, typeName: "TimeZone"))
 
-        i.registerStaticValue(on: "TimeZone", name: "autoupdatingCurrent", value: boxOpaque(TimeZone.autoupdatingCurrent, typeName: "TimeZone"))
+        i.bridges["TimeZone.Type.autoupdatingCurrent"] = .staticValue(boxOpaque(TimeZone.autoupdatingCurrent, typeName: "TimeZone"))
 
-        i.registerComputed(on: "TimeZone", name: "identifier") { receiver in
+        i.bridges["TimeZone.identifier"] = .computed { receiver in
             let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
             return .string(recv.identifier)
         }
 
-        i.registerComputed(on: "TimeZone", name: "nextDaylightSavingTimeTransition") { receiver in
+        i.bridges["TimeZone.nextDaylightSavingTimeTransition"] = .computed { receiver in
             let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
             if let _v = recv.nextDaylightSavingTimeTransition {
             return .optional(boxOpaque(_v, typeName: "Date"))
@@ -1215,39 +1215,39 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerStaticValue(on: "TimeZone", name: "gmt", value: boxOpaque(TimeZone.gmt, typeName: "TimeZone"))
+        i.bridges["TimeZone.Type.gmt"] = .staticValue(boxOpaque(TimeZone.gmt, typeName: "TimeZone"))
 
-        i.registerComputed(on: "TimeZone", name: "hashValue") { receiver in
+        i.bridges["TimeZone.hashValue"] = .computed { receiver in
             let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "TimeZone", name: "description") { receiver in
+        i.bridges["TimeZone.description"] = .computed { receiver in
             let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "TimeZone", name: "debugDescription") { receiver in
+        i.bridges["TimeZone.debugDescription"] = .computed { receiver in
             let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "URL", name: "dataRepresentation") { receiver in
+        i.bridges["URL.dataRepresentation"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             return boxOpaque(recv.dataRepresentation, typeName: "Data")
         }
 
-        i.registerComputed(on: "URL", name: "absoluteString") { receiver in
+        i.bridges["URL.absoluteString"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             return .string(recv.absoluteString)
         }
 
-        i.registerComputed(on: "URL", name: "relativeString") { receiver in
+        i.bridges["URL.relativeString"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             return .string(recv.relativeString)
         }
 
-        i.registerComputed(on: "URL", name: "baseURL") { receiver in
+        i.bridges["URL.baseURL"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             if let _v = recv.baseURL {
             return .optional(boxOpaque(_v, typeName: "URL"))
@@ -1255,12 +1255,12 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URL", name: "absoluteURL") { receiver in
+        i.bridges["URL.absoluteURL"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             return boxOpaque(recv.absoluteURL, typeName: "URL")
         }
 
-        i.registerComputed(on: "URL", name: "scheme") { receiver in
+        i.bridges["URL.scheme"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             if let _v = recv.scheme {
             return .optional(.string(_v))
@@ -1268,12 +1268,12 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URL", name: "isFileURL") { receiver in
+        i.bridges["URL.isFileURL"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             return .bool(recv.isFileURL)
         }
 
-        i.registerComputed(on: "URL", name: "host") { receiver in
+        i.bridges["URL.host"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             if let _v = recv.host {
             return .optional(.string(_v))
@@ -1281,7 +1281,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URL", name: "port") { receiver in
+        i.bridges["URL.port"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             if let _v = recv.port {
             return .optional(.int(_v))
@@ -1289,7 +1289,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URL", name: "user") { receiver in
+        i.bridges["URL.user"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             if let _v = recv.user {
             return .optional(.string(_v))
@@ -1297,7 +1297,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URL", name: "password") { receiver in
+        i.bridges["URL.password"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             if let _v = recv.password {
             return .optional(.string(_v))
@@ -1305,17 +1305,17 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URL", name: "path") { receiver in
+        i.bridges["URL.path"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             return .string(recv.path)
         }
 
-        i.registerComputed(on: "URL", name: "relativePath") { receiver in
+        i.bridges["URL.relativePath"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             return .string(recv.relativePath)
         }
 
-        i.registerComputed(on: "URL", name: "query") { receiver in
+        i.bridges["URL.query"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             if let _v = recv.query {
             return .optional(.string(_v))
@@ -1323,7 +1323,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URL", name: "fragment") { receiver in
+        i.bridges["URL.fragment"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             if let _v = recv.fragment {
             return .optional(.string(_v))
@@ -1331,22 +1331,22 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URL", name: "hasDirectoryPath") { receiver in
+        i.bridges["URL.hasDirectoryPath"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             return .bool(recv.hasDirectoryPath)
         }
 
-        i.registerComputed(on: "URL", name: "lastPathComponent") { receiver in
+        i.bridges["URL.lastPathComponent"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             return .string(recv.lastPathComponent)
         }
 
-        i.registerComputed(on: "URL", name: "pathExtension") { receiver in
+        i.bridges["URL.pathExtension"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             return .string(recv.pathExtension)
         }
 
-        i.registerMethod(on: "URL", name: "deletingLastPathComponent") { receiver, args in
+        i.bridges["URL.deletingLastPathComponent()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("URL.deletingLastPathComponent: expected 0 argument(s), got \(args.count)")
             }
@@ -1354,7 +1354,7 @@ extension FoundationModule {
             return boxOpaque(recv.deletingLastPathComponent(), typeName: "URL")
         }
 
-        i.registerMethod(on: "URL", name: "deletingPathExtension") { receiver, args in
+        i.bridges["URL.deletingPathExtension()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("URL.deletingPathExtension: expected 0 argument(s), got \(args.count)")
             }
@@ -1362,17 +1362,17 @@ extension FoundationModule {
             return boxOpaque(recv.deletingPathExtension(), typeName: "URL")
         }
 
-        i.registerComputed(on: "URL", name: "standardized") { receiver in
+        i.bridges["URL.standardized"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             return boxOpaque(recv.standardized, typeName: "URL")
         }
 
-        i.registerComputed(on: "URL", name: "standardizedFileURL") { receiver in
+        i.bridges["URL.standardizedFileURL"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             return boxOpaque(recv.standardizedFileURL, typeName: "URL")
         }
 
-        i.registerMethod(on: "URL", name: "resolvingSymlinksInPath") { receiver, args in
+        i.bridges["URL.resolvingSymlinksInPath()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("URL.resolvingSymlinksInPath: expected 0 argument(s), got \(args.count)")
             }
@@ -1380,7 +1380,7 @@ extension FoundationModule {
             return boxOpaque(recv.resolvingSymlinksInPath(), typeName: "URL")
         }
 
-        i.registerMethod(on: "URL", name: "checkResourceIsReachable") { receiver, args in
+        i.bridges["URL.checkResourceIsReachable()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("URL.checkResourceIsReachable: expected 0 argument(s), got \(args.count)")
             }
@@ -1392,7 +1392,7 @@ extension FoundationModule {
         }
         }
 
-        i.registerMethod(on: "URL", name: "checkPromisedItemIsReachable") { receiver, args in
+        i.bridges["URL.checkPromisedItemIsReachable()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("URL.checkPromisedItemIsReachable: expected 0 argument(s), got \(args.count)")
             }
@@ -1404,7 +1404,7 @@ extension FoundationModule {
         }
         }
 
-        i.registerMethod(on: "URL", name: "startAccessingSecurityScopedResource") { receiver, args in
+        i.bridges["URL.startAccessingSecurityScopedResource()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("URL.startAccessingSecurityScopedResource: expected 0 argument(s), got \(args.count)")
             }
@@ -1412,7 +1412,7 @@ extension FoundationModule {
             return .bool(recv.startAccessingSecurityScopedResource())
         }
 
-        i.registerMethod(on: "URL", name: "stopAccessingSecurityScopedResource") { receiver, args in
+        i.bridges["URL.stopAccessingSecurityScopedResource()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("URL.stopAccessingSecurityScopedResource: expected 0 argument(s), got \(args.count)")
             }
@@ -1421,64 +1421,64 @@ extension FoundationModule {
             return .void
         }
 
-        i.registerComputed(on: "URL", name: "hashValue") { receiver in
+        i.bridges["URL.hashValue"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             return .int(recv.hashValue)
         }
 
-        i.registerStaticMethod(on: "URL", name: "currentDirectory") { args in
+        i.bridges["URL.Type.currentDirectory()"] = .staticMethod { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("URL.currentDirectory: expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(URL.currentDirectory(), typeName: "URL")
         }
 
-        i.registerStaticValue(on: "URL", name: "homeDirectory", value: boxOpaque(URL.homeDirectory, typeName: "URL"))
+        i.bridges["URL.Type.homeDirectory"] = .staticValue(boxOpaque(URL.homeDirectory, typeName: "URL"))
 
-        i.registerStaticValue(on: "URL", name: "temporaryDirectory", value: boxOpaque(URL.temporaryDirectory, typeName: "URL"))
+        i.bridges["URL.Type.temporaryDirectory"] = .staticValue(boxOpaque(URL.temporaryDirectory, typeName: "URL"))
 
-        i.registerStaticValue(on: "URL", name: "cachesDirectory", value: boxOpaque(URL.cachesDirectory, typeName: "URL"))
+        i.bridges["URL.Type.cachesDirectory"] = .staticValue(boxOpaque(URL.cachesDirectory, typeName: "URL"))
 
-        i.registerStaticValue(on: "URL", name: "applicationDirectory", value: boxOpaque(URL.applicationDirectory, typeName: "URL"))
+        i.bridges["URL.Type.applicationDirectory"] = .staticValue(boxOpaque(URL.applicationDirectory, typeName: "URL"))
 
-        i.registerStaticValue(on: "URL", name: "libraryDirectory", value: boxOpaque(URL.libraryDirectory, typeName: "URL"))
+        i.bridges["URL.Type.libraryDirectory"] = .staticValue(boxOpaque(URL.libraryDirectory, typeName: "URL"))
 
-        i.registerStaticValue(on: "URL", name: "userDirectory", value: boxOpaque(URL.userDirectory, typeName: "URL"))
+        i.bridges["URL.Type.userDirectory"] = .staticValue(boxOpaque(URL.userDirectory, typeName: "URL"))
 
-        i.registerStaticValue(on: "URL", name: "documentsDirectory", value: boxOpaque(URL.documentsDirectory, typeName: "URL"))
+        i.bridges["URL.Type.documentsDirectory"] = .staticValue(boxOpaque(URL.documentsDirectory, typeName: "URL"))
 
-        i.registerStaticValue(on: "URL", name: "desktopDirectory", value: boxOpaque(URL.desktopDirectory, typeName: "URL"))
+        i.bridges["URL.Type.desktopDirectory"] = .staticValue(boxOpaque(URL.desktopDirectory, typeName: "URL"))
 
-        i.registerStaticValue(on: "URL", name: "applicationSupportDirectory", value: boxOpaque(URL.applicationSupportDirectory, typeName: "URL"))
+        i.bridges["URL.Type.applicationSupportDirectory"] = .staticValue(boxOpaque(URL.applicationSupportDirectory, typeName: "URL"))
 
-        i.registerStaticValue(on: "URL", name: "downloadsDirectory", value: boxOpaque(URL.downloadsDirectory, typeName: "URL"))
+        i.bridges["URL.Type.downloadsDirectory"] = .staticValue(boxOpaque(URL.downloadsDirectory, typeName: "URL"))
 
-        i.registerStaticValue(on: "URL", name: "moviesDirectory", value: boxOpaque(URL.moviesDirectory, typeName: "URL"))
+        i.bridges["URL.Type.moviesDirectory"] = .staticValue(boxOpaque(URL.moviesDirectory, typeName: "URL"))
 
-        i.registerStaticValue(on: "URL", name: "musicDirectory", value: boxOpaque(URL.musicDirectory, typeName: "URL"))
+        i.bridges["URL.Type.musicDirectory"] = .staticValue(boxOpaque(URL.musicDirectory, typeName: "URL"))
 
-        i.registerStaticValue(on: "URL", name: "picturesDirectory", value: boxOpaque(URL.picturesDirectory, typeName: "URL"))
+        i.bridges["URL.Type.picturesDirectory"] = .staticValue(boxOpaque(URL.picturesDirectory, typeName: "URL"))
 
-        i.registerStaticValue(on: "URL", name: "sharedPublicDirectory", value: boxOpaque(URL.sharedPublicDirectory, typeName: "URL"))
+        i.bridges["URL.Type.sharedPublicDirectory"] = .staticValue(boxOpaque(URL.sharedPublicDirectory, typeName: "URL"))
 
-        i.registerComputed(on: "URL", name: "description") { receiver in
+        i.bridges["URL.description"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "URL", name: "debugDescription") { receiver in
+        i.bridges["URL.debugDescription"] = .computed { receiver in
             let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
             return .string(recv.debugDescription)
         }
 
-        i.registerInit(on: "URLComponents", labels: []) { args in
+        i.bridges["URLComponents()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("URLComponents(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(URLComponents(), typeName: "URLComponents")
         }
 
-        i.registerComputed(on: "URLComponents", name: "url") { receiver in
+        i.bridges["URLComponents.url"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             if let _v = recv.url {
             return .optional(boxOpaque(_v, typeName: "URL"))
@@ -1486,7 +1486,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLComponents", name: "string") { receiver in
+        i.bridges["URLComponents.string"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             if let _v = recv.string {
             return .optional(.string(_v))
@@ -1494,7 +1494,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLComponents", name: "scheme") { receiver in
+        i.bridges["URLComponents.scheme"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             if let _v = recv.scheme {
             return .optional(.string(_v))
@@ -1502,7 +1502,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLComponents", name: "user") { receiver in
+        i.bridges["URLComponents.user"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             if let _v = recv.user {
             return .optional(.string(_v))
@@ -1510,7 +1510,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLComponents", name: "password") { receiver in
+        i.bridges["URLComponents.password"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             if let _v = recv.password {
             return .optional(.string(_v))
@@ -1518,7 +1518,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLComponents", name: "host") { receiver in
+        i.bridges["URLComponents.host"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             if let _v = recv.host {
             return .optional(.string(_v))
@@ -1526,7 +1526,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLComponents", name: "port") { receiver in
+        i.bridges["URLComponents.port"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             if let _v = recv.port {
             return .optional(.int(_v))
@@ -1534,12 +1534,12 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLComponents", name: "path") { receiver in
+        i.bridges["URLComponents.path"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             return .string(recv.path)
         }
 
-        i.registerComputed(on: "URLComponents", name: "query") { receiver in
+        i.bridges["URLComponents.query"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             if let _v = recv.query {
             return .optional(.string(_v))
@@ -1547,7 +1547,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLComponents", name: "fragment") { receiver in
+        i.bridges["URLComponents.fragment"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             if let _v = recv.fragment {
             return .optional(.string(_v))
@@ -1555,7 +1555,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLComponents", name: "percentEncodedUser") { receiver in
+        i.bridges["URLComponents.percentEncodedUser"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             if let _v = recv.percentEncodedUser {
             return .optional(.string(_v))
@@ -1563,7 +1563,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLComponents", name: "percentEncodedPassword") { receiver in
+        i.bridges["URLComponents.percentEncodedPassword"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             if let _v = recv.percentEncodedPassword {
             return .optional(.string(_v))
@@ -1571,7 +1571,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLComponents", name: "percentEncodedHost") { receiver in
+        i.bridges["URLComponents.percentEncodedHost"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             if let _v = recv.percentEncodedHost {
             return .optional(.string(_v))
@@ -1579,7 +1579,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLComponents", name: "encodedHost") { receiver in
+        i.bridges["URLComponents.encodedHost"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             if let _v = recv.encodedHost {
             return .optional(.string(_v))
@@ -1587,12 +1587,12 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLComponents", name: "percentEncodedPath") { receiver in
+        i.bridges["URLComponents.percentEncodedPath"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             return .string(recv.percentEncodedPath)
         }
 
-        i.registerComputed(on: "URLComponents", name: "percentEncodedQuery") { receiver in
+        i.bridges["URLComponents.percentEncodedQuery"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             if let _v = recv.percentEncodedQuery {
             return .optional(.string(_v))
@@ -1600,7 +1600,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLComponents", name: "percentEncodedFragment") { receiver in
+        i.bridges["URLComponents.percentEncodedFragment"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             if let _v = recv.percentEncodedFragment {
             return .optional(.string(_v))
@@ -1608,27 +1608,27 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLComponents", name: "hashValue") { receiver in
+        i.bridges["URLComponents.hashValue"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "URLComponents", name: "description") { receiver in
+        i.bridges["URLComponents.description"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "URLComponents", name: "debugDescription") { receiver in
+        i.bridges["URLComponents.debugDescription"] = .computed { receiver in
             let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "URLQueryItem", name: "name") { receiver in
+        i.bridges["URLQueryItem.name"] = .computed { receiver in
             let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
             return .string(recv.name)
         }
 
-        i.registerComputed(on: "URLQueryItem", name: "value") { receiver in
+        i.bridges["URLQueryItem.value"] = .computed { receiver in
             let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
             if let _v = recv.value {
             return .optional(.string(_v))
@@ -1636,118 +1636,118 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLQueryItem", name: "hashValue") { receiver in
+        i.bridges["URLQueryItem.hashValue"] = .computed { receiver in
             let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "URLQueryItem", name: "description") { receiver in
+        i.bridges["URLQueryItem.description"] = .computed { receiver in
             let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "URLQueryItem", name: "debugDescription") { receiver in
+        i.bridges["URLQueryItem.debugDescription"] = .computed { receiver in
             let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
             return .string(recv.debugDescription)
         }
 
-        i.registerStaticValue(on: "Date", name: "timeIntervalBetween1970AndReferenceDate", value: .double(Date.timeIntervalBetween1970AndReferenceDate))
+        i.bridges["Date.Type.timeIntervalBetween1970AndReferenceDate"] = .staticValue(.double(Date.timeIntervalBetween1970AndReferenceDate))
 
-        i.registerStaticValue(on: "Date", name: "timeIntervalSinceReferenceDate", value: .double(Date.timeIntervalSinceReferenceDate))
+        i.bridges["Date.Type.timeIntervalSinceReferenceDate"] = .staticValue(.double(Date.timeIntervalSinceReferenceDate))
 
-        i.registerInit(on: "Date", labels: []) { args in
+        i.bridges["Date()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("Date(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(Date(), typeName: "Date")
         }
 
-        i.registerComputed(on: "Date", name: "timeIntervalSinceReferenceDate") { receiver in
+        i.bridges["Date.timeIntervalSinceReferenceDate"] = .computed { receiver in
             let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
             return .double(recv.timeIntervalSinceReferenceDate)
         }
 
-        i.registerComputed(on: "Date", name: "timeIntervalSinceNow") { receiver in
+        i.bridges["Date.timeIntervalSinceNow"] = .computed { receiver in
             let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
             return .double(recv.timeIntervalSinceNow)
         }
 
-        i.registerComputed(on: "Date", name: "timeIntervalSince1970") { receiver in
+        i.bridges["Date.timeIntervalSince1970"] = .computed { receiver in
             let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
             return .double(recv.timeIntervalSince1970)
         }
 
-        i.registerStaticValue(on: "Date", name: "distantFuture", value: boxOpaque(Date.distantFuture, typeName: "Date"))
+        i.bridges["Date.Type.distantFuture"] = .staticValue(boxOpaque(Date.distantFuture, typeName: "Date"))
 
-        i.registerStaticValue(on: "Date", name: "distantPast", value: boxOpaque(Date.distantPast, typeName: "Date"))
+        i.bridges["Date.Type.distantPast"] = .staticValue(boxOpaque(Date.distantPast, typeName: "Date"))
 
-        i.registerStaticValue(on: "Date", name: "now", value: boxOpaque(Date.now, typeName: "Date"))
+        i.bridges["Date.Type.now"] = .staticValue(boxOpaque(Date.now, typeName: "Date"))
 
-        i.registerComputed(on: "Date", name: "hashValue") { receiver in
+        i.bridges["Date.hashValue"] = .computed { receiver in
             let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "Date", name: "debugDescription") { receiver in
+        i.bridges["Date.debugDescription"] = .computed { receiver in
             let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "DateInterval", name: "start") { receiver in
+        i.bridges["DateInterval.start"] = .computed { receiver in
             let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
             return boxOpaque(recv.start, typeName: "Date")
         }
 
-        i.registerComputed(on: "DateInterval", name: "end") { receiver in
+        i.bridges["DateInterval.end"] = .computed { receiver in
             let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
             return boxOpaque(recv.end, typeName: "Date")
         }
 
-        i.registerComputed(on: "DateInterval", name: "duration") { receiver in
+        i.bridges["DateInterval.duration"] = .computed { receiver in
             let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
             return .double(recv.duration)
         }
 
-        i.registerInit(on: "DateInterval", labels: []) { args in
+        i.bridges["DateInterval()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("DateInterval(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(DateInterval(), typeName: "DateInterval")
         }
 
-        i.registerComputed(on: "DateInterval", name: "hashValue") { receiver in
+        i.bridges["DateInterval.hashValue"] = .computed { receiver in
             let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "DateInterval", name: "description") { receiver in
+        i.bridges["DateInterval.description"] = .computed { receiver in
             let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "DateInterval", name: "debugDescription") { receiver in
+        i.bridges["DateInterval.debugDescription"] = .computed { receiver in
             let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "IndexPath", name: "isEmpty") { receiver in
+        i.bridges["IndexPath.isEmpty"] = .computed { receiver in
             let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
             return .bool(recv.isEmpty)
         }
 
-        i.registerComputed(on: "IndexPath", name: "underestimatedCount") { receiver in
+        i.bridges["IndexPath.underestimatedCount"] = .computed { receiver in
             let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
             return .int(recv.underestimatedCount)
         }
 
-        i.registerInit(on: "IndexPath", labels: []) { args in
+        i.bridges["IndexPath()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("IndexPath(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(IndexPath(), typeName: "IndexPath")
         }
 
-        i.registerMethod(on: "IndexPath", name: "dropLast") { receiver, args in
+        i.bridges["IndexPath.dropLast()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("IndexPath.dropLast: expected 0 argument(s), got \(args.count)")
             }
@@ -1755,54 +1755,54 @@ extension FoundationModule {
             return boxOpaque(recv.dropLast(), typeName: "IndexPath")
         }
 
-        i.registerComputed(on: "IndexPath", name: "count") { receiver in
+        i.bridges["IndexPath.count"] = .computed { receiver in
             let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
             return .int(recv.count)
         }
 
-        i.registerComputed(on: "IndexPath", name: "hashValue") { receiver in
+        i.bridges["IndexPath.hashValue"] = .computed { receiver in
             let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "IndexPath", name: "description") { receiver in
+        i.bridges["IndexPath.description"] = .computed { receiver in
             let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "IndexPath", name: "debugDescription") { receiver in
+        i.bridges["IndexPath.debugDescription"] = .computed { receiver in
             let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
             return .string(recv.debugDescription)
         }
 
-        i.registerInit(on: "UUID", labels: []) { args in
+        i.bridges["UUID()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("UUID(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(UUID(), typeName: "UUID")
         }
 
-        i.registerComputed(on: "UUID", name: "uuidString") { receiver in
+        i.bridges["UUID.uuidString"] = .computed { receiver in
             let recv: UUID = try unboxOpaque(receiver, as: UUID.self, typeName: "UUID")
             return .string(recv.uuidString)
         }
 
-        i.registerComputed(on: "UUID", name: "description") { receiver in
+        i.bridges["UUID.description"] = .computed { receiver in
             let recv: UUID = try unboxOpaque(receiver, as: UUID.self, typeName: "UUID")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "UUID", name: "debugDescription") { receiver in
+        i.bridges["UUID.debugDescription"] = .computed { receiver in
             let recv: UUID = try unboxOpaque(receiver, as: UUID.self, typeName: "UUID")
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "UUID", name: "hashValue") { receiver in
+        i.bridges["UUID.hashValue"] = .computed { receiver in
             let recv: UUID = try unboxOpaque(receiver, as: UUID.self, typeName: "UUID")
             return .int(recv.hashValue)
         }
 
-        i.registerMethod(on: "URL", name: "formatted") { receiver, args in
+        i.bridges["URL.formatted()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("URL.formatted: expected 0 argument(s), got \(args.count)")
             }
@@ -1810,16 +1810,16 @@ extension FoundationModule {
             return .string(recv.formatted())
         }
 
-        i.registerInit(on: "AffineTransform", labels: []) { args in
+        i.bridges["AffineTransform()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("AffineTransform(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(AffineTransform(), typeName: "AffineTransform")
         }
 
-        i.registerStaticValue(on: "AffineTransform", name: "identity", value: boxOpaque(AffineTransform.identity, typeName: "AffineTransform"))
+        i.bridges["AffineTransform.Type.identity"] = .staticValue(boxOpaque(AffineTransform.identity, typeName: "AffineTransform"))
 
-        i.registerMethod(on: "AffineTransform", name: "inverted") { receiver, args in
+        i.bridges["AffineTransform.inverted()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("AffineTransform.inverted: expected 0 argument(s), got \(args.count)")
             }
@@ -1830,72 +1830,72 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "AffineTransform", name: "description") { receiver in
+        i.bridges["AffineTransform.description"] = .computed { receiver in
             let recv: AffineTransform = try unboxOpaque(receiver, as: AffineTransform.self, typeName: "AffineTransform")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "AffineTransform", name: "debugDescription") { receiver in
+        i.bridges["AffineTransform.debugDescription"] = .computed { receiver in
             let recv: AffineTransform = try unboxOpaque(receiver, as: AffineTransform.self, typeName: "AffineTransform")
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "AffineTransform", name: "hashValue") { receiver in
+        i.bridges["AffineTransform.hashValue"] = .computed { receiver in
             let recv: AffineTransform = try unboxOpaque(receiver, as: AffineTransform.self, typeName: "AffineTransform")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "PresentationIntent", name: "count") { receiver in
+        i.bridges["PresentationIntent.count"] = .computed { receiver in
             let recv: PresentationIntent = try unboxOpaque(receiver, as: PresentationIntent.self, typeName: "PresentationIntent")
             return .int(recv.count)
         }
 
-        i.registerComputed(on: "PresentationIntent", name: "debugDescription") { receiver in
+        i.bridges["PresentationIntent.debugDescription"] = .computed { receiver in
             let recv: PresentationIntent = try unboxOpaque(receiver, as: PresentationIntent.self, typeName: "PresentationIntent")
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "PresentationIntent", name: "isValid") { receiver in
+        i.bridges["PresentationIntent.isValid"] = .computed { receiver in
             let recv: PresentationIntent = try unboxOpaque(receiver, as: PresentationIntent.self, typeName: "PresentationIntent")
             return .bool(recv.isValid)
         }
 
-        i.registerComputed(on: "PresentationIntent", name: "indentationLevel") { receiver in
+        i.bridges["PresentationIntent.indentationLevel"] = .computed { receiver in
             let recv: PresentationIntent = try unboxOpaque(receiver, as: PresentationIntent.self, typeName: "PresentationIntent")
             return .int(recv.indentationLevel)
         }
 
-        i.registerComputed(on: "PresentationIntent", name: "hashValue") { receiver in
+        i.bridges["PresentationIntent.hashValue"] = .computed { receiver in
             let recv: PresentationIntent = try unboxOpaque(receiver, as: PresentationIntent.self, typeName: "PresentationIntent")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "Notification", name: "description") { receiver in
+        i.bridges["Notification.description"] = .computed { receiver in
             let recv: Notification = try unboxOpaque(receiver, as: Notification.self, typeName: "Notification")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "Notification", name: "debugDescription") { receiver in
+        i.bridges["Notification.debugDescription"] = .computed { receiver in
             let recv: Notification = try unboxOpaque(receiver, as: Notification.self, typeName: "Notification")
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "Notification", name: "hashValue") { receiver in
+        i.bridges["Notification.hashValue"] = .computed { receiver in
             let recv: Notification = try unboxOpaque(receiver, as: Notification.self, typeName: "Notification")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "ErrorUserInfoKey", name: "hashValue") { receiver in
+        i.bridges["ErrorUserInfoKey.hashValue"] = .computed { receiver in
             let recv: ErrorUserInfoKey = try unboxOpaque(receiver, as: ErrorUserInfoKey.self, typeName: "ErrorUserInfoKey")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "ErrorUserInfoKey", name: "rawValue") { receiver in
+        i.bridges["ErrorUserInfoKey.rawValue"] = .computed { receiver in
             let recv: ErrorUserInfoKey = try unboxOpaque(receiver, as: ErrorUserInfoKey.self, typeName: "ErrorUserInfoKey")
             return .string(recv.rawValue)
         }
 
-        i.registerComputed(on: "URLRequest", name: "url") { receiver in
+        i.bridges["URLRequest.url"] = .computed { receiver in
             let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
             if let _v = recv.url {
             return .optional(boxOpaque(_v, typeName: "URL"))
@@ -1903,12 +1903,12 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLRequest", name: "timeoutInterval") { receiver in
+        i.bridges["URLRequest.timeoutInterval"] = .computed { receiver in
             let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
             return .double(recv.timeoutInterval)
         }
 
-        i.registerComputed(on: "URLRequest", name: "mainDocumentURL") { receiver in
+        i.bridges["URLRequest.mainDocumentURL"] = .computed { receiver in
             let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
             if let _v = recv.mainDocumentURL {
             return .optional(boxOpaque(_v, typeName: "URL"))
@@ -1916,37 +1916,37 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLRequest", name: "allowsCellularAccess") { receiver in
+        i.bridges["URLRequest.allowsCellularAccess"] = .computed { receiver in
             let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
             return .bool(recv.allowsCellularAccess)
         }
 
-        i.registerComputed(on: "URLRequest", name: "allowsExpensiveNetworkAccess") { receiver in
+        i.bridges["URLRequest.allowsExpensiveNetworkAccess"] = .computed { receiver in
             let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
             return .bool(recv.allowsExpensiveNetworkAccess)
         }
 
-        i.registerComputed(on: "URLRequest", name: "allowsConstrainedNetworkAccess") { receiver in
+        i.bridges["URLRequest.allowsConstrainedNetworkAccess"] = .computed { receiver in
             let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
             return .bool(recv.allowsConstrainedNetworkAccess)
         }
 
-        i.registerComputed(on: "URLRequest", name: "assumesHTTP3Capable") { receiver in
+        i.bridges["URLRequest.assumesHTTP3Capable"] = .computed { receiver in
             let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
             return .bool(recv.assumesHTTP3Capable)
         }
 
-        i.registerComputed(on: "URLRequest", name: "requiresDNSSECValidation") { receiver in
+        i.bridges["URLRequest.requiresDNSSECValidation"] = .computed { receiver in
             let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
             return .bool(recv.requiresDNSSECValidation)
         }
 
-        i.registerComputed(on: "URLRequest", name: "allowsPersistentDNS") { receiver in
+        i.bridges["URLRequest.allowsPersistentDNS"] = .computed { receiver in
             let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
             return .bool(recv.allowsPersistentDNS)
         }
 
-        i.registerComputed(on: "URLRequest", name: "httpMethod") { receiver in
+        i.bridges["URLRequest.httpMethod"] = .computed { receiver in
             let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
             if let _v = recv.httpMethod {
             return .optional(.string(_v))
@@ -1954,7 +1954,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLRequest", name: "httpBody") { receiver in
+        i.bridges["URLRequest.httpBody"] = .computed { receiver in
             let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
             if let _v = recv.httpBody {
             return .optional(boxOpaque(_v, typeName: "Data"))
@@ -1962,12 +1962,12 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLRequest", name: "httpShouldHandleCookies") { receiver in
+        i.bridges["URLRequest.httpShouldHandleCookies"] = .computed { receiver in
             let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
             return .bool(recv.httpShouldHandleCookies)
         }
 
-        i.registerComputed(on: "URLRequest", name: "cookiePartitionIdentifier") { receiver in
+        i.bridges["URLRequest.cookiePartitionIdentifier"] = .computed { receiver in
             let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
             if let _v = recv.cookiePartitionIdentifier {
             return .optional(.string(_v))
@@ -1975,39 +1975,39 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLRequest", name: "hashValue") { receiver in
+        i.bridges["URLRequest.hashValue"] = .computed { receiver in
             let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "URLRequest", name: "description") { receiver in
+        i.bridges["URLRequest.description"] = .computed { receiver in
             let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "URLRequest", name: "debugDescription") { receiver in
+        i.bridges["URLRequest.debugDescription"] = .computed { receiver in
             let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "URLError", name: "errorCode") { receiver in
+        i.bridges["URLError.errorCode"] = .computed { receiver in
             let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
             return .int(recv.errorCode)
         }
 
-        i.registerStaticValue(on: "URLError", name: "errorDomain", value: .string(URLError.errorDomain))
+        i.bridges["URLError.Type.errorDomain"] = .staticValue(.string(URLError.errorDomain))
 
-        i.registerComputed(on: "URLError", name: "localizedDescription") { receiver in
+        i.bridges["URLError.localizedDescription"] = .computed { receiver in
             let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
             return .string(recv.localizedDescription)
         }
 
-        i.registerComputed(on: "URLError", name: "hashValue") { receiver in
+        i.bridges["URLError.hashValue"] = .computed { receiver in
             let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "URLError", name: "failingURL") { receiver in
+        i.bridges["URLError.failingURL"] = .computed { receiver in
             let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
             if let _v = recv.failingURL {
             return .optional(boxOpaque(_v, typeName: "URL"))
@@ -2015,7 +2015,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLError", name: "downloadTaskResumeData") { receiver in
+        i.bridges["URLError.downloadTaskResumeData"] = .computed { receiver in
             let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
             if let _v = recv.downloadTaskResumeData {
             return .optional(boxOpaque(_v, typeName: "Data"))
@@ -2023,7 +2023,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLError", name: "uploadTaskResumeData") { receiver in
+        i.bridges["URLError.uploadTaskResumeData"] = .computed { receiver in
             let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
             if let _v = recv.uploadTaskResumeData {
             return .optional(boxOpaque(_v, typeName: "Data"))
@@ -2031,113 +2031,113 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerStaticValue(on: "URLError", name: "unknown", value: boxOpaque(URLError.unknown, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.unknown"] = .staticValue(boxOpaque(URLError.unknown, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "cancelled", value: boxOpaque(URLError.cancelled, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.cancelled"] = .staticValue(boxOpaque(URLError.cancelled, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "badURL", value: boxOpaque(URLError.badURL, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.badURL"] = .staticValue(boxOpaque(URLError.badURL, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "timedOut", value: boxOpaque(URLError.timedOut, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.timedOut"] = .staticValue(boxOpaque(URLError.timedOut, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "unsupportedURL", value: boxOpaque(URLError.unsupportedURL, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.unsupportedURL"] = .staticValue(boxOpaque(URLError.unsupportedURL, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "cannotFindHost", value: boxOpaque(URLError.cannotFindHost, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.cannotFindHost"] = .staticValue(boxOpaque(URLError.cannotFindHost, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "cannotConnectToHost", value: boxOpaque(URLError.cannotConnectToHost, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.cannotConnectToHost"] = .staticValue(boxOpaque(URLError.cannotConnectToHost, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "networkConnectionLost", value: boxOpaque(URLError.networkConnectionLost, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.networkConnectionLost"] = .staticValue(boxOpaque(URLError.networkConnectionLost, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "dnsLookupFailed", value: boxOpaque(URLError.dnsLookupFailed, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.dnsLookupFailed"] = .staticValue(boxOpaque(URLError.dnsLookupFailed, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "httpTooManyRedirects", value: boxOpaque(URLError.httpTooManyRedirects, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.httpTooManyRedirects"] = .staticValue(boxOpaque(URLError.httpTooManyRedirects, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "resourceUnavailable", value: boxOpaque(URLError.resourceUnavailable, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.resourceUnavailable"] = .staticValue(boxOpaque(URLError.resourceUnavailable, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "notConnectedToInternet", value: boxOpaque(URLError.notConnectedToInternet, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.notConnectedToInternet"] = .staticValue(boxOpaque(URLError.notConnectedToInternet, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "redirectToNonExistentLocation", value: boxOpaque(URLError.redirectToNonExistentLocation, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.redirectToNonExistentLocation"] = .staticValue(boxOpaque(URLError.redirectToNonExistentLocation, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "badServerResponse", value: boxOpaque(URLError.badServerResponse, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.badServerResponse"] = .staticValue(boxOpaque(URLError.badServerResponse, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "userCancelledAuthentication", value: boxOpaque(URLError.userCancelledAuthentication, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.userCancelledAuthentication"] = .staticValue(boxOpaque(URLError.userCancelledAuthentication, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "userAuthenticationRequired", value: boxOpaque(URLError.userAuthenticationRequired, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.userAuthenticationRequired"] = .staticValue(boxOpaque(URLError.userAuthenticationRequired, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "zeroByteResource", value: boxOpaque(URLError.zeroByteResource, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.zeroByteResource"] = .staticValue(boxOpaque(URLError.zeroByteResource, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "cannotDecodeRawData", value: boxOpaque(URLError.cannotDecodeRawData, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.cannotDecodeRawData"] = .staticValue(boxOpaque(URLError.cannotDecodeRawData, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "cannotDecodeContentData", value: boxOpaque(URLError.cannotDecodeContentData, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.cannotDecodeContentData"] = .staticValue(boxOpaque(URLError.cannotDecodeContentData, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "cannotParseResponse", value: boxOpaque(URLError.cannotParseResponse, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.cannotParseResponse"] = .staticValue(boxOpaque(URLError.cannotParseResponse, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "appTransportSecurityRequiresSecureConnection", value: boxOpaque(URLError.appTransportSecurityRequiresSecureConnection, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.appTransportSecurityRequiresSecureConnection"] = .staticValue(boxOpaque(URLError.appTransportSecurityRequiresSecureConnection, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "fileDoesNotExist", value: boxOpaque(URLError.fileDoesNotExist, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.fileDoesNotExist"] = .staticValue(boxOpaque(URLError.fileDoesNotExist, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "fileIsDirectory", value: boxOpaque(URLError.fileIsDirectory, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.fileIsDirectory"] = .staticValue(boxOpaque(URLError.fileIsDirectory, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "noPermissionsToReadFile", value: boxOpaque(URLError.noPermissionsToReadFile, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.noPermissionsToReadFile"] = .staticValue(boxOpaque(URLError.noPermissionsToReadFile, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "dataLengthExceedsMaximum", value: boxOpaque(URLError.dataLengthExceedsMaximum, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.dataLengthExceedsMaximum"] = .staticValue(boxOpaque(URLError.dataLengthExceedsMaximum, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "secureConnectionFailed", value: boxOpaque(URLError.secureConnectionFailed, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.secureConnectionFailed"] = .staticValue(boxOpaque(URLError.secureConnectionFailed, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "serverCertificateHasBadDate", value: boxOpaque(URLError.serverCertificateHasBadDate, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.serverCertificateHasBadDate"] = .staticValue(boxOpaque(URLError.serverCertificateHasBadDate, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "serverCertificateUntrusted", value: boxOpaque(URLError.serverCertificateUntrusted, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.serverCertificateUntrusted"] = .staticValue(boxOpaque(URLError.serverCertificateUntrusted, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "serverCertificateHasUnknownRoot", value: boxOpaque(URLError.serverCertificateHasUnknownRoot, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.serverCertificateHasUnknownRoot"] = .staticValue(boxOpaque(URLError.serverCertificateHasUnknownRoot, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "serverCertificateNotYetValid", value: boxOpaque(URLError.serverCertificateNotYetValid, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.serverCertificateNotYetValid"] = .staticValue(boxOpaque(URLError.serverCertificateNotYetValid, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "clientCertificateRejected", value: boxOpaque(URLError.clientCertificateRejected, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.clientCertificateRejected"] = .staticValue(boxOpaque(URLError.clientCertificateRejected, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "clientCertificateRequired", value: boxOpaque(URLError.clientCertificateRequired, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.clientCertificateRequired"] = .staticValue(boxOpaque(URLError.clientCertificateRequired, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "cannotLoadFromNetwork", value: boxOpaque(URLError.cannotLoadFromNetwork, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.cannotLoadFromNetwork"] = .staticValue(boxOpaque(URLError.cannotLoadFromNetwork, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "cannotCreateFile", value: boxOpaque(URLError.cannotCreateFile, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.cannotCreateFile"] = .staticValue(boxOpaque(URLError.cannotCreateFile, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "cannotOpenFile", value: boxOpaque(URLError.cannotOpenFile, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.cannotOpenFile"] = .staticValue(boxOpaque(URLError.cannotOpenFile, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "cannotCloseFile", value: boxOpaque(URLError.cannotCloseFile, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.cannotCloseFile"] = .staticValue(boxOpaque(URLError.cannotCloseFile, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "cannotWriteToFile", value: boxOpaque(URLError.cannotWriteToFile, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.cannotWriteToFile"] = .staticValue(boxOpaque(URLError.cannotWriteToFile, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "cannotRemoveFile", value: boxOpaque(URLError.cannotRemoveFile, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.cannotRemoveFile"] = .staticValue(boxOpaque(URLError.cannotRemoveFile, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "cannotMoveFile", value: boxOpaque(URLError.cannotMoveFile, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.cannotMoveFile"] = .staticValue(boxOpaque(URLError.cannotMoveFile, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "downloadDecodingFailedMidStream", value: boxOpaque(URLError.downloadDecodingFailedMidStream, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.downloadDecodingFailedMidStream"] = .staticValue(boxOpaque(URLError.downloadDecodingFailedMidStream, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "downloadDecodingFailedToComplete", value: boxOpaque(URLError.downloadDecodingFailedToComplete, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.downloadDecodingFailedToComplete"] = .staticValue(boxOpaque(URLError.downloadDecodingFailedToComplete, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "internationalRoamingOff", value: boxOpaque(URLError.internationalRoamingOff, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.internationalRoamingOff"] = .staticValue(boxOpaque(URLError.internationalRoamingOff, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "callIsActive", value: boxOpaque(URLError.callIsActive, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.callIsActive"] = .staticValue(boxOpaque(URLError.callIsActive, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "dataNotAllowed", value: boxOpaque(URLError.dataNotAllowed, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.dataNotAllowed"] = .staticValue(boxOpaque(URLError.dataNotAllowed, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "requestBodyStreamExhausted", value: boxOpaque(URLError.requestBodyStreamExhausted, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.requestBodyStreamExhausted"] = .staticValue(boxOpaque(URLError.requestBodyStreamExhausted, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "backgroundSessionRequiresSharedContainer", value: boxOpaque(URLError.backgroundSessionRequiresSharedContainer, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.backgroundSessionRequiresSharedContainer"] = .staticValue(boxOpaque(URLError.backgroundSessionRequiresSharedContainer, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "backgroundSessionInUseByAnotherProcess", value: boxOpaque(URLError.backgroundSessionInUseByAnotherProcess, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.backgroundSessionInUseByAnotherProcess"] = .staticValue(boxOpaque(URLError.backgroundSessionInUseByAnotherProcess, typeName: "URLError.Code"))
 
-        i.registerStaticValue(on: "URLError", name: "backgroundSessionWasDisconnected", value: boxOpaque(URLError.backgroundSessionWasDisconnected, typeName: "URLError.Code"))
+        i.bridges["URLError.Type.backgroundSessionWasDisconnected"] = .staticValue(boxOpaque(URLError.backgroundSessionWasDisconnected, typeName: "URLError.Code"))
 
-        i.registerComputed(on: "LocalizedStringResource", name: "key") { receiver in
+        i.bridges["LocalizedStringResource.key"] = .computed { receiver in
             let recv: LocalizedStringResource = try unboxOpaque(receiver, as: LocalizedStringResource.self, typeName: "LocalizedStringResource")
             return .string(recv.key)
         }
 
-        i.registerComputed(on: "LocalizedStringResource", name: "defaultValue") { receiver in
+        i.bridges["LocalizedStringResource.defaultValue"] = .computed { receiver in
             let recv: LocalizedStringResource = try unboxOpaque(receiver, as: LocalizedStringResource.self, typeName: "LocalizedStringResource")
             return boxOpaque(recv.defaultValue, typeName: "String.LocalizationValue")
         }
 
-        i.registerComputed(on: "LocalizedStringResource", name: "table") { receiver in
+        i.bridges["LocalizedStringResource.table"] = .computed { receiver in
             let recv: LocalizedStringResource = try unboxOpaque(receiver, as: LocalizedStringResource.self, typeName: "LocalizedStringResource")
             if let _v = recv.table {
             return .optional(.string(_v))
@@ -2145,27 +2145,27 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "LocalizedStringResource", name: "locale") { receiver in
+        i.bridges["LocalizedStringResource.locale"] = .computed { receiver in
             let recv: LocalizedStringResource = try unboxOpaque(receiver, as: LocalizedStringResource.self, typeName: "LocalizedStringResource")
             return boxOpaque(recv.locale, typeName: "Locale")
         }
 
-        i.registerComputed(on: "LocalizedStringResource", name: "localizedStringResource") { receiver in
+        i.bridges["LocalizedStringResource.localizedStringResource"] = .computed { receiver in
             let recv: LocalizedStringResource = try unboxOpaque(receiver, as: LocalizedStringResource.self, typeName: "LocalizedStringResource")
             return boxOpaque(recv.localizedStringResource, typeName: "LocalizedStringResource")
         }
 
-        i.registerComputed(on: "Date", name: "description") { receiver in
+        i.bridges["Date.description"] = .computed { receiver in
             let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "URLResource", name: "name") { receiver in
+        i.bridges["URLResource.name"] = .computed { receiver in
             let recv: URLResource = try unboxOpaque(receiver, as: URLResource.self, typeName: "URLResource")
             return .string(recv.name)
         }
 
-        i.registerComputed(on: "URLResource", name: "subdirectory") { receiver in
+        i.bridges["URLResource.subdirectory"] = .computed { receiver in
             let recv: URLResource = try unboxOpaque(receiver, as: URLResource.self, typeName: "URLResource")
             if let _v = recv.subdirectory {
             return .optional(.string(_v))
@@ -2173,17 +2173,17 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerComputed(on: "URLResource", name: "locale") { receiver in
+        i.bridges["URLResource.locale"] = .computed { receiver in
             let recv: URLResource = try unboxOpaque(receiver, as: URLResource.self, typeName: "URLResource")
             return boxOpaque(recv.locale, typeName: "Locale")
         }
 
-        i.registerComputed(on: "URLResource", name: "hashValue") { receiver in
+        i.bridges["URLResource.hashValue"] = .computed { receiver in
             let recv: URLResource = try unboxOpaque(receiver, as: URLResource.self, typeName: "URLResource")
             return .int(recv.hashValue)
         }
 
-        i.registerMethod(on: "AttributedString", name: "inflected") { receiver, args in
+        i.bridges["AttributedString.inflected()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("AttributedString.inflected: expected 0 argument(s), got \(args.count)")
             }
@@ -2191,7 +2191,7 @@ extension FoundationModule {
             return boxOpaque(recv.inflected(), typeName: "AttributedString")
         }
 
-        i.registerMethod(on: "PersonNameComponents", name: "formatted") { receiver, args in
+        i.bridges["PersonNameComponents.formatted()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("PersonNameComponents.formatted: expected 0 argument(s), got \(args.count)")
             }
@@ -2199,105 +2199,588 @@ extension FoundationModule {
             return .string(recv.formatted())
         }
 
-        i.registerStaticValue(on: "NSExceptionName", name: "fileHandleOperationException", value: boxOpaque(NSExceptionName.fileHandleOperationException, typeName: "NSExceptionName"))
+        i.bridges["NSLinguisticTag.hashValue"] = .computed { receiver in
+            let recv: NSLinguisticTag = try unboxOpaque(receiver, as: NSLinguisticTag.self, typeName: "NSLinguisticTag")
+            return .int(recv.hashValue)
+        }
 
-        i.registerInit(on: "InlinePresentationIntent", labels: []) { args in
+        i.bridges["NSLinguisticTagScheme.hashValue"] = .computed { receiver in
+            let recv: NSLinguisticTagScheme = try unboxOpaque(receiver, as: NSLinguisticTagScheme.self, typeName: "NSLinguisticTagScheme")
+            return .int(recv.hashValue)
+        }
+
+        i.bridges["NSLinguisticTag.Type.word"] = .staticValue(boxOpaque(NSLinguisticTag.word, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.punctuation"] = .staticValue(boxOpaque(NSLinguisticTag.punctuation, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.whitespace"] = .staticValue(boxOpaque(NSLinguisticTag.whitespace, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.other"] = .staticValue(boxOpaque(NSLinguisticTag.other, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.noun"] = .staticValue(boxOpaque(NSLinguisticTag.noun, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.verb"] = .staticValue(boxOpaque(NSLinguisticTag.verb, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.adjective"] = .staticValue(boxOpaque(NSLinguisticTag.adjective, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.adverb"] = .staticValue(boxOpaque(NSLinguisticTag.adverb, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.pronoun"] = .staticValue(boxOpaque(NSLinguisticTag.pronoun, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.determiner"] = .staticValue(boxOpaque(NSLinguisticTag.determiner, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.particle"] = .staticValue(boxOpaque(NSLinguisticTag.particle, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.preposition"] = .staticValue(boxOpaque(NSLinguisticTag.preposition, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.number"] = .staticValue(boxOpaque(NSLinguisticTag.number, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.conjunction"] = .staticValue(boxOpaque(NSLinguisticTag.conjunction, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.interjection"] = .staticValue(boxOpaque(NSLinguisticTag.interjection, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.classifier"] = .staticValue(boxOpaque(NSLinguisticTag.classifier, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.idiom"] = .staticValue(boxOpaque(NSLinguisticTag.idiom, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.otherWord"] = .staticValue(boxOpaque(NSLinguisticTag.otherWord, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.sentenceTerminator"] = .staticValue(boxOpaque(NSLinguisticTag.sentenceTerminator, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.openQuote"] = .staticValue(boxOpaque(NSLinguisticTag.openQuote, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.closeQuote"] = .staticValue(boxOpaque(NSLinguisticTag.closeQuote, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.openParenthesis"] = .staticValue(boxOpaque(NSLinguisticTag.openParenthesis, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.closeParenthesis"] = .staticValue(boxOpaque(NSLinguisticTag.closeParenthesis, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.wordJoiner"] = .staticValue(boxOpaque(NSLinguisticTag.wordJoiner, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.dash"] = .staticValue(boxOpaque(NSLinguisticTag.dash, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.otherPunctuation"] = .staticValue(boxOpaque(NSLinguisticTag.otherPunctuation, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.paragraphBreak"] = .staticValue(boxOpaque(NSLinguisticTag.paragraphBreak, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.otherWhitespace"] = .staticValue(boxOpaque(NSLinguisticTag.otherWhitespace, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.personalName"] = .staticValue(boxOpaque(NSLinguisticTag.personalName, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.placeName"] = .staticValue(boxOpaque(NSLinguisticTag.placeName, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTag.Type.organizationName"] = .staticValue(boxOpaque(NSLinguisticTag.organizationName, typeName: "NSLinguisticTag"))
+
+        i.bridges["NSLinguisticTagScheme.Type.tokenType"] = .staticValue(boxOpaque(NSLinguisticTagScheme.tokenType, typeName: "NSLinguisticTagScheme"))
+
+        i.bridges["NSLinguisticTagScheme.Type.lexicalClass"] = .staticValue(boxOpaque(NSLinguisticTagScheme.lexicalClass, typeName: "NSLinguisticTagScheme"))
+
+        i.bridges["NSLinguisticTagScheme.Type.nameType"] = .staticValue(boxOpaque(NSLinguisticTagScheme.nameType, typeName: "NSLinguisticTagScheme"))
+
+        i.bridges["NSLinguisticTagScheme.Type.nameTypeOrLexicalClass"] = .staticValue(boxOpaque(NSLinguisticTagScheme.nameTypeOrLexicalClass, typeName: "NSLinguisticTagScheme"))
+
+        i.bridges["NSLinguisticTagScheme.Type.lemma"] = .staticValue(boxOpaque(NSLinguisticTagScheme.lemma, typeName: "NSLinguisticTagScheme"))
+
+        i.bridges["NSLinguisticTagScheme.Type.language"] = .staticValue(boxOpaque(NSLinguisticTagScheme.language, typeName: "NSLinguisticTagScheme"))
+
+        i.bridges["NSLinguisticTagScheme.Type.script"] = .staticValue(boxOpaque(NSLinguisticTagScheme.script, typeName: "NSLinguisticTagScheme"))
+
+        i.bridges["NSExceptionName.Type.fileHandleOperationException"] = .staticValue(boxOpaque(NSExceptionName.fileHandleOperationException, typeName: "NSExceptionName"))
+
+        i.bridges["HTTPCookiePropertyKey.hashValue"] = .computed { receiver in
+            let recv: HTTPCookiePropertyKey = try unboxOpaque(receiver, as: HTTPCookiePropertyKey.self, typeName: "HTTPCookiePropertyKey")
+            return .int(recv.hashValue)
+        }
+
+        i.bridges["HTTPCookieStringPolicy.hashValue"] = .computed { receiver in
+            let recv: HTTPCookieStringPolicy = try unboxOpaque(receiver, as: HTTPCookieStringPolicy.self, typeName: "HTTPCookieStringPolicy")
+            return .int(recv.hashValue)
+        }
+
+        i.bridges["HTTPCookiePropertyKey.Type.name"] = .staticValue(boxOpaque(HTTPCookiePropertyKey.name, typeName: "HTTPCookiePropertyKey"))
+
+        i.bridges["HTTPCookiePropertyKey.Type.value"] = .staticValue(boxOpaque(HTTPCookiePropertyKey.value, typeName: "HTTPCookiePropertyKey"))
+
+        i.bridges["HTTPCookiePropertyKey.Type.originURL"] = .staticValue(boxOpaque(HTTPCookiePropertyKey.originURL, typeName: "HTTPCookiePropertyKey"))
+
+        i.bridges["HTTPCookiePropertyKey.Type.version"] = .staticValue(boxOpaque(HTTPCookiePropertyKey.version, typeName: "HTTPCookiePropertyKey"))
+
+        i.bridges["HTTPCookiePropertyKey.Type.domain"] = .staticValue(boxOpaque(HTTPCookiePropertyKey.domain, typeName: "HTTPCookiePropertyKey"))
+
+        i.bridges["HTTPCookiePropertyKey.Type.path"] = .staticValue(boxOpaque(HTTPCookiePropertyKey.path, typeName: "HTTPCookiePropertyKey"))
+
+        i.bridges["HTTPCookiePropertyKey.Type.secure"] = .staticValue(boxOpaque(HTTPCookiePropertyKey.secure, typeName: "HTTPCookiePropertyKey"))
+
+        i.bridges["HTTPCookiePropertyKey.Type.expires"] = .staticValue(boxOpaque(HTTPCookiePropertyKey.expires, typeName: "HTTPCookiePropertyKey"))
+
+        i.bridges["HTTPCookiePropertyKey.Type.comment"] = .staticValue(boxOpaque(HTTPCookiePropertyKey.comment, typeName: "HTTPCookiePropertyKey"))
+
+        i.bridges["HTTPCookiePropertyKey.Type.commentURL"] = .staticValue(boxOpaque(HTTPCookiePropertyKey.commentURL, typeName: "HTTPCookiePropertyKey"))
+
+        i.bridges["HTTPCookiePropertyKey.Type.discard"] = .staticValue(boxOpaque(HTTPCookiePropertyKey.discard, typeName: "HTTPCookiePropertyKey"))
+
+        i.bridges["HTTPCookiePropertyKey.Type.maximumAge"] = .staticValue(boxOpaque(HTTPCookiePropertyKey.maximumAge, typeName: "HTTPCookiePropertyKey"))
+
+        i.bridges["HTTPCookiePropertyKey.Type.port"] = .staticValue(boxOpaque(HTTPCookiePropertyKey.port, typeName: "HTTPCookiePropertyKey"))
+
+        i.bridges["HTTPCookiePropertyKey.Type.setByJavaScript"] = .staticValue(boxOpaque(HTTPCookiePropertyKey.setByJavaScript, typeName: "HTTPCookiePropertyKey"))
+
+        i.bridges["HTTPCookiePropertyKey.Type.sameSitePolicy"] = .staticValue(boxOpaque(HTTPCookiePropertyKey.sameSitePolicy, typeName: "HTTPCookiePropertyKey"))
+
+        i.bridges["HTTPCookieStringPolicy.Type.sameSiteLax"] = .staticValue(boxOpaque(HTTPCookieStringPolicy.sameSiteLax, typeName: "HTTPCookieStringPolicy"))
+
+        i.bridges["HTTPCookieStringPolicy.Type.sameSiteStrict"] = .staticValue(boxOpaque(HTTPCookieStringPolicy.sameSiteStrict, typeName: "HTTPCookieStringPolicy"))
+
+        i.bridges["AlignmentOptions()"] = .`init` { args in
+            guard args.count == 0 else {
+                throw RuntimeError.invalid("AlignmentOptions(): expected 0 argument(s), got \(args.count)")
+            }
+            return boxOpaque(AlignmentOptions(), typeName: "AlignmentOptions")
+        }
+
+        i.bridges["AlignmentOptions.isEmpty"] = .computed { receiver in
+            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
+            return .bool(recv.isEmpty)
+        }
+
+        i.bridges["AlignmentOptions.Type.alignMinXInward"] = .staticValue(boxOpaque(AlignmentOptions.alignMinXInward, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignMinYInward"] = .staticValue(boxOpaque(AlignmentOptions.alignMinYInward, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignMaxXInward"] = .staticValue(boxOpaque(AlignmentOptions.alignMaxXInward, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignMaxYInward"] = .staticValue(boxOpaque(AlignmentOptions.alignMaxYInward, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignWidthInward"] = .staticValue(boxOpaque(AlignmentOptions.alignWidthInward, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignHeightInward"] = .staticValue(boxOpaque(AlignmentOptions.alignHeightInward, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignMinXOutward"] = .staticValue(boxOpaque(AlignmentOptions.alignMinXOutward, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignMinYOutward"] = .staticValue(boxOpaque(AlignmentOptions.alignMinYOutward, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignMaxXOutward"] = .staticValue(boxOpaque(AlignmentOptions.alignMaxXOutward, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignMaxYOutward"] = .staticValue(boxOpaque(AlignmentOptions.alignMaxYOutward, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignWidthOutward"] = .staticValue(boxOpaque(AlignmentOptions.alignWidthOutward, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignHeightOutward"] = .staticValue(boxOpaque(AlignmentOptions.alignHeightOutward, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignMinXNearest"] = .staticValue(boxOpaque(AlignmentOptions.alignMinXNearest, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignMinYNearest"] = .staticValue(boxOpaque(AlignmentOptions.alignMinYNearest, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignMaxXNearest"] = .staticValue(boxOpaque(AlignmentOptions.alignMaxXNearest, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignMaxYNearest"] = .staticValue(boxOpaque(AlignmentOptions.alignMaxYNearest, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignWidthNearest"] = .staticValue(boxOpaque(AlignmentOptions.alignWidthNearest, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignHeightNearest"] = .staticValue(boxOpaque(AlignmentOptions.alignHeightNearest, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignRectFlipped"] = .staticValue(boxOpaque(AlignmentOptions.alignRectFlipped, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignAllEdgesInward"] = .staticValue(boxOpaque(AlignmentOptions.alignAllEdgesInward, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignAllEdgesOutward"] = .staticValue(boxOpaque(AlignmentOptions.alignAllEdgesOutward, typeName: "AlignmentOptions"))
+
+        i.bridges["AlignmentOptions.Type.alignAllEdgesNearest"] = .staticValue(boxOpaque(AlignmentOptions.alignAllEdgesNearest, typeName: "AlignmentOptions"))
+
+        i.bridges["NSBinarySearchingOptions()"] = .`init` { args in
+            guard args.count == 0 else {
+                throw RuntimeError.invalid("NSBinarySearchingOptions(): expected 0 argument(s), got \(args.count)")
+            }
+            return boxOpaque(NSBinarySearchingOptions(), typeName: "NSBinarySearchingOptions")
+        }
+
+        i.bridges["NSBinarySearchingOptions.isEmpty"] = .computed { receiver in
+            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+            return .bool(recv.isEmpty)
+        }
+
+        i.bridges["NSBinarySearchingOptions.Type.firstEqual"] = .staticValue(boxOpaque(NSBinarySearchingOptions.firstEqual, typeName: "NSBinarySearchingOptions"))
+
+        i.bridges["NSBinarySearchingOptions.Type.lastEqual"] = .staticValue(boxOpaque(NSBinarySearchingOptions.lastEqual, typeName: "NSBinarySearchingOptions"))
+
+        i.bridges["NSBinarySearchingOptions.Type.insertionIndex"] = .staticValue(boxOpaque(NSBinarySearchingOptions.insertionIndex, typeName: "NSBinarySearchingOptions"))
+
+        i.bridges["NSExceptionName.Type.invalidArchiveOperationException"] = .staticValue(boxOpaque(NSExceptionName.invalidArchiveOperationException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.invalidUnarchiveOperationException"] = .staticValue(boxOpaque(NSExceptionName.invalidUnarchiveOperationException, typeName: "NSExceptionName"))
+
+        i.bridges["NSTextCheckingKey.hashValue"] = .computed { receiver in
+            let recv: NSTextCheckingKey = try unboxOpaque(receiver, as: NSTextCheckingKey.self, typeName: "NSTextCheckingKey")
+            return .int(recv.hashValue)
+        }
+
+        i.bridges["NSTextCheckingKey.Type.name"] = .staticValue(boxOpaque(NSTextCheckingKey.name, typeName: "NSTextCheckingKey"))
+
+        i.bridges["NSTextCheckingKey.Type.jobTitle"] = .staticValue(boxOpaque(NSTextCheckingKey.jobTitle, typeName: "NSTextCheckingKey"))
+
+        i.bridges["NSTextCheckingKey.Type.organization"] = .staticValue(boxOpaque(NSTextCheckingKey.organization, typeName: "NSTextCheckingKey"))
+
+        i.bridges["NSTextCheckingKey.Type.street"] = .staticValue(boxOpaque(NSTextCheckingKey.street, typeName: "NSTextCheckingKey"))
+
+        i.bridges["NSTextCheckingKey.Type.city"] = .staticValue(boxOpaque(NSTextCheckingKey.city, typeName: "NSTextCheckingKey"))
+
+        i.bridges["NSTextCheckingKey.Type.state"] = .staticValue(boxOpaque(NSTextCheckingKey.state, typeName: "NSTextCheckingKey"))
+
+        i.bridges["NSTextCheckingKey.Type.zip"] = .staticValue(boxOpaque(NSTextCheckingKey.zip, typeName: "NSTextCheckingKey"))
+
+        i.bridges["NSTextCheckingKey.Type.country"] = .staticValue(boxOpaque(NSTextCheckingKey.country, typeName: "NSTextCheckingKey"))
+
+        i.bridges["NSTextCheckingKey.Type.phone"] = .staticValue(boxOpaque(NSTextCheckingKey.phone, typeName: "NSTextCheckingKey"))
+
+        i.bridges["NSTextCheckingKey.Type.airline"] = .staticValue(boxOpaque(NSTextCheckingKey.airline, typeName: "NSTextCheckingKey"))
+
+        i.bridges["NSTextCheckingKey.Type.flight"] = .staticValue(boxOpaque(NSTextCheckingKey.flight, typeName: "NSTextCheckingKey"))
+
+        i.bridges["NSExceptionName.Type.decimalNumberExactnessException"] = .staticValue(boxOpaque(NSExceptionName.decimalNumberExactnessException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.decimalNumberOverflowException"] = .staticValue(boxOpaque(NSExceptionName.decimalNumberOverflowException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.decimalNumberUnderflowException"] = .staticValue(boxOpaque(NSExceptionName.decimalNumberUnderflowException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.decimalNumberDivideByZeroException"] = .staticValue(boxOpaque(NSExceptionName.decimalNumberDivideByZeroException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.genericException"] = .staticValue(boxOpaque(NSExceptionName.genericException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.rangeException"] = .staticValue(boxOpaque(NSExceptionName.rangeException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.invalidArgumentException"] = .staticValue(boxOpaque(NSExceptionName.invalidArgumentException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.internalInconsistencyException"] = .staticValue(boxOpaque(NSExceptionName.internalInconsistencyException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.mallocException"] = .staticValue(boxOpaque(NSExceptionName.mallocException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.objectInaccessibleException"] = .staticValue(boxOpaque(NSExceptionName.objectInaccessibleException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.objectNotAvailableException"] = .staticValue(boxOpaque(NSExceptionName.objectNotAvailableException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.destinationInvalidException"] = .staticValue(boxOpaque(NSExceptionName.destinationInvalidException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.portTimeoutException"] = .staticValue(boxOpaque(NSExceptionName.portTimeoutException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.invalidSendPortException"] = .staticValue(boxOpaque(NSExceptionName.invalidSendPortException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.invalidReceivePortException"] = .staticValue(boxOpaque(NSExceptionName.invalidReceivePortException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.portSendException"] = .staticValue(boxOpaque(NSExceptionName.portSendException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.portReceiveException"] = .staticValue(boxOpaque(NSExceptionName.portReceiveException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.oldStyleException"] = .staticValue(boxOpaque(NSExceptionName.oldStyleException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.inconsistentArchiveException"] = .staticValue(boxOpaque(NSExceptionName.inconsistentArchiveException, typeName: "NSExceptionName"))
+
+        i.bridges["NSKeyValueChangeKey.hashValue"] = .computed { receiver in
+            let recv: NSKeyValueChangeKey = try unboxOpaque(receiver, as: NSKeyValueChangeKey.self, typeName: "NSKeyValueChangeKey")
+            return .int(recv.hashValue)
+        }
+
+        i.bridges["NSKeyValueObservingOptions()"] = .`init` { args in
+            guard args.count == 0 else {
+                throw RuntimeError.invalid("NSKeyValueObservingOptions(): expected 0 argument(s), got \(args.count)")
+            }
+            return boxOpaque(NSKeyValueObservingOptions(), typeName: "NSKeyValueObservingOptions")
+        }
+
+        i.bridges["NSKeyValueObservingOptions.isEmpty"] = .computed { receiver in
+            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
+            return .bool(recv.isEmpty)
+        }
+
+        i.bridges["NSKeyValueObservingOptions.Type.new"] = .staticValue(boxOpaque(NSKeyValueObservingOptions.new, typeName: "NSKeyValueObservingOptions"))
+
+        i.bridges["NSKeyValueObservingOptions.Type.old"] = .staticValue(boxOpaque(NSKeyValueObservingOptions.old, typeName: "NSKeyValueObservingOptions"))
+
+        i.bridges["NSKeyValueObservingOptions.Type.initial"] = .staticValue(boxOpaque(NSKeyValueObservingOptions.initial, typeName: "NSKeyValueObservingOptions"))
+
+        i.bridges["NSKeyValueObservingOptions.Type.prior"] = .staticValue(boxOpaque(NSKeyValueObservingOptions.prior, typeName: "NSKeyValueObservingOptions"))
+
+        i.bridges["NSKeyValueChangeKey.Type.kindKey"] = .staticValue(boxOpaque(NSKeyValueChangeKey.kindKey, typeName: "NSKeyValueChangeKey"))
+
+        i.bridges["NSKeyValueChangeKey.Type.newKey"] = .staticValue(boxOpaque(NSKeyValueChangeKey.newKey, typeName: "NSKeyValueChangeKey"))
+
+        i.bridges["NSKeyValueChangeKey.Type.oldKey"] = .staticValue(boxOpaque(NSKeyValueChangeKey.oldKey, typeName: "NSKeyValueChangeKey"))
+
+        i.bridges["NSKeyValueChangeKey.Type.indexesKey"] = .staticValue(boxOpaque(NSKeyValueChangeKey.indexesKey, typeName: "NSKeyValueChangeKey"))
+
+        i.bridges["NSKeyValueChangeKey.Type.notificationIsPriorKey"] = .staticValue(boxOpaque(NSKeyValueChangeKey.notificationIsPriorKey, typeName: "NSKeyValueChangeKey"))
+
+        i.bridges["StreamNetworkServiceTypeValue.hashValue"] = .computed { receiver in
+            let recv: StreamNetworkServiceTypeValue = try unboxOpaque(receiver, as: StreamNetworkServiceTypeValue.self, typeName: "StreamNetworkServiceTypeValue")
+            return .int(recv.hashValue)
+        }
+
+        i.bridges["StreamSOCKSProxyConfiguration.hashValue"] = .computed { receiver in
+            let recv: StreamSOCKSProxyConfiguration = try unboxOpaque(receiver, as: StreamSOCKSProxyConfiguration.self, typeName: "StreamSOCKSProxyConfiguration")
+            return .int(recv.hashValue)
+        }
+
+        i.bridges["StreamSOCKSProxyVersion.hashValue"] = .computed { receiver in
+            let recv: StreamSOCKSProxyVersion = try unboxOpaque(receiver, as: StreamSOCKSProxyVersion.self, typeName: "StreamSOCKSProxyVersion")
+            return .int(recv.hashValue)
+        }
+
+        i.bridges["StreamSocketSecurityLevel.hashValue"] = .computed { receiver in
+            let recv: StreamSocketSecurityLevel = try unboxOpaque(receiver, as: StreamSocketSecurityLevel.self, typeName: "StreamSocketSecurityLevel")
+            return .int(recv.hashValue)
+        }
+
+        i.bridges["StreamNetworkServiceTypeValue.Type.voIP"] = .staticValue(boxOpaque(StreamNetworkServiceTypeValue.voIP, typeName: "StreamNetworkServiceTypeValue"))
+
+        i.bridges["StreamNetworkServiceTypeValue.Type.video"] = .staticValue(boxOpaque(StreamNetworkServiceTypeValue.video, typeName: "StreamNetworkServiceTypeValue"))
+
+        i.bridges["StreamNetworkServiceTypeValue.Type.background"] = .staticValue(boxOpaque(StreamNetworkServiceTypeValue.background, typeName: "StreamNetworkServiceTypeValue"))
+
+        i.bridges["StreamNetworkServiceTypeValue.Type.voice"] = .staticValue(boxOpaque(StreamNetworkServiceTypeValue.voice, typeName: "StreamNetworkServiceTypeValue"))
+
+        i.bridges["StreamNetworkServiceTypeValue.Type.callSignaling"] = .staticValue(boxOpaque(StreamNetworkServiceTypeValue.callSignaling, typeName: "StreamNetworkServiceTypeValue"))
+
+        i.bridges["StreamSOCKSProxyConfiguration.Type.hostKey"] = .staticValue(boxOpaque(StreamSOCKSProxyConfiguration.hostKey, typeName: "StreamSOCKSProxyConfiguration"))
+
+        i.bridges["StreamSOCKSProxyConfiguration.Type.portKey"] = .staticValue(boxOpaque(StreamSOCKSProxyConfiguration.portKey, typeName: "StreamSOCKSProxyConfiguration"))
+
+        i.bridges["StreamSOCKSProxyConfiguration.Type.versionKey"] = .staticValue(boxOpaque(StreamSOCKSProxyConfiguration.versionKey, typeName: "StreamSOCKSProxyConfiguration"))
+
+        i.bridges["StreamSOCKSProxyConfiguration.Type.userKey"] = .staticValue(boxOpaque(StreamSOCKSProxyConfiguration.userKey, typeName: "StreamSOCKSProxyConfiguration"))
+
+        i.bridges["StreamSOCKSProxyConfiguration.Type.passwordKey"] = .staticValue(boxOpaque(StreamSOCKSProxyConfiguration.passwordKey, typeName: "StreamSOCKSProxyConfiguration"))
+
+        i.bridges["StreamSOCKSProxyVersion.Type.version4"] = .staticValue(boxOpaque(StreamSOCKSProxyVersion.version4, typeName: "StreamSOCKSProxyVersion"))
+
+        i.bridges["StreamSOCKSProxyVersion.Type.version5"] = .staticValue(boxOpaque(StreamSOCKSProxyVersion.version5, typeName: "StreamSOCKSProxyVersion"))
+
+        i.bridges["StreamSocketSecurityLevel.Type.none"] = .staticValue(boxOpaque(StreamSocketSecurityLevel.none, typeName: "StreamSocketSecurityLevel"))
+
+        i.bridges["StreamSocketSecurityLevel.Type.ssLv2"] = .staticValue(boxOpaque(StreamSocketSecurityLevel.ssLv2, typeName: "StreamSocketSecurityLevel"))
+
+        i.bridges["StreamSocketSecurityLevel.Type.ssLv3"] = .staticValue(boxOpaque(StreamSocketSecurityLevel.ssLv3, typeName: "StreamSocketSecurityLevel"))
+
+        i.bridges["StreamSocketSecurityLevel.Type.tlSv1"] = .staticValue(boxOpaque(StreamSocketSecurityLevel.tlSv1, typeName: "StreamSocketSecurityLevel"))
+
+        i.bridges["StreamSocketSecurityLevel.Type.negotiatedSSL"] = .staticValue(boxOpaque(StreamSocketSecurityLevel.negotiatedSSL, typeName: "StreamSocketSecurityLevel"))
+
+        i.bridges["NSExceptionName.Type.invocationOperationVoidResultException"] = .staticValue(boxOpaque(NSExceptionName.invocationOperationVoidResultException, typeName: "NSExceptionName"))
+
+        i.bridges["NSExceptionName.Type.invocationOperationCancelledException"] = .staticValue(boxOpaque(NSExceptionName.invocationOperationCancelledException, typeName: "NSExceptionName"))
+
+        i.bridges["ProgressKind.hashValue"] = .computed { receiver in
+            let recv: ProgressKind = try unboxOpaque(receiver, as: ProgressKind.self, typeName: "ProgressKind")
+            return .int(recv.hashValue)
+        }
+
+        i.bridges["ProgressUserInfoKey.hashValue"] = .computed { receiver in
+            let recv: ProgressUserInfoKey = try unboxOpaque(receiver, as: ProgressUserInfoKey.self, typeName: "ProgressUserInfoKey")
+            return .int(recv.hashValue)
+        }
+
+        i.bridges["ProgressKind.Type.file"] = .staticValue(boxOpaque(ProgressKind.file, typeName: "ProgressKind"))
+
+        i.bridges["ProgressUserInfoKey.Type.estimatedTimeRemainingKey"] = .staticValue(boxOpaque(ProgressUserInfoKey.estimatedTimeRemainingKey, typeName: "ProgressUserInfoKey"))
+
+        i.bridges["ProgressUserInfoKey.Type.throughputKey"] = .staticValue(boxOpaque(ProgressUserInfoKey.throughputKey, typeName: "ProgressUserInfoKey"))
+
+        i.bridges["ProgressUserInfoKey.Type.fileOperationKindKey"] = .staticValue(boxOpaque(ProgressUserInfoKey.fileOperationKindKey, typeName: "ProgressUserInfoKey"))
+
+        i.bridges["ProgressUserInfoKey.Type.fileURLKey"] = .staticValue(boxOpaque(ProgressUserInfoKey.fileURLKey, typeName: "ProgressUserInfoKey"))
+
+        i.bridges["ProgressUserInfoKey.Type.fileTotalCountKey"] = .staticValue(boxOpaque(ProgressUserInfoKey.fileTotalCountKey, typeName: "ProgressUserInfoKey"))
+
+        i.bridges["ProgressUserInfoKey.Type.fileCompletedCountKey"] = .staticValue(boxOpaque(ProgressUserInfoKey.fileCompletedCountKey, typeName: "ProgressUserInfoKey"))
+
+        i.bridges["ProgressUserInfoKey.Type.fileAnimationImageKey"] = .staticValue(boxOpaque(ProgressUserInfoKey.fileAnimationImageKey, typeName: "ProgressUserInfoKey"))
+
+        i.bridges["ProgressUserInfoKey.Type.fileAnimationImageOriginalRectKey"] = .staticValue(boxOpaque(ProgressUserInfoKey.fileAnimationImageOriginalRectKey, typeName: "ProgressUserInfoKey"))
+
+        i.bridges["ProgressUserInfoKey.Type.fileIconKey"] = .staticValue(boxOpaque(ProgressUserInfoKey.fileIconKey, typeName: "ProgressUserInfoKey"))
+
+        i.bridges["FileAttributeKey.hashValue"] = .computed { receiver in
+            let recv: FileAttributeKey = try unboxOpaque(receiver, as: FileAttributeKey.self, typeName: "FileAttributeKey")
+            return .int(recv.hashValue)
+        }
+
+        i.bridges["FileAttributeType.hashValue"] = .computed { receiver in
+            let recv: FileAttributeType = try unboxOpaque(receiver, as: FileAttributeType.self, typeName: "FileAttributeType")
+            return .int(recv.hashValue)
+        }
+
+        i.bridges["FileProtectionType.hashValue"] = .computed { receiver in
+            let recv: FileProtectionType = try unboxOpaque(receiver, as: FileProtectionType.self, typeName: "FileProtectionType")
+            return .int(recv.hashValue)
+        }
+
+        i.bridges["NSFileManagerSupportedSyncControls()"] = .`init` { args in
+            guard args.count == 0 else {
+                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls(): expected 0 argument(s), got \(args.count)")
+            }
+            return boxOpaque(NSFileManagerSupportedSyncControls(), typeName: "NSFileManagerSupportedSyncControls")
+        }
+
+        i.bridges["NSFileManagerSupportedSyncControls.isEmpty"] = .computed { receiver in
+            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
+            return .bool(recv.isEmpty)
+        }
+
+        i.bridges["NSFileManagerSupportedSyncControls.Type.pauseSync"] = .staticValue(boxOpaque(NSFileManagerSupportedSyncControls.pauseSync, typeName: "NSFileManagerSupportedSyncControls"))
+
+        i.bridges["NSFileManagerSupportedSyncControls.Type.failUploadOnConflict"] = .staticValue(boxOpaque(NSFileManagerSupportedSyncControls.failUploadOnConflict, typeName: "NSFileManagerSupportedSyncControls"))
+
+        i.bridges["NSFileProviderServiceName.hashValue"] = .computed { receiver in
+            let recv: NSFileProviderServiceName = try unboxOpaque(receiver, as: NSFileProviderServiceName.self, typeName: "NSFileProviderServiceName")
+            return .int(recv.hashValue)
+        }
+
+        i.bridges["FileAttributeKey.Type.type"] = .staticValue(boxOpaque(FileAttributeKey.type, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.size"] = .staticValue(boxOpaque(FileAttributeKey.size, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.modificationDate"] = .staticValue(boxOpaque(FileAttributeKey.modificationDate, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.referenceCount"] = .staticValue(boxOpaque(FileAttributeKey.referenceCount, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.deviceIdentifier"] = .staticValue(boxOpaque(FileAttributeKey.deviceIdentifier, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.ownerAccountName"] = .staticValue(boxOpaque(FileAttributeKey.ownerAccountName, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.groupOwnerAccountName"] = .staticValue(boxOpaque(FileAttributeKey.groupOwnerAccountName, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.posixPermissions"] = .staticValue(boxOpaque(FileAttributeKey.posixPermissions, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.systemNumber"] = .staticValue(boxOpaque(FileAttributeKey.systemNumber, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.systemFileNumber"] = .staticValue(boxOpaque(FileAttributeKey.systemFileNumber, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.extensionHidden"] = .staticValue(boxOpaque(FileAttributeKey.extensionHidden, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.hfsCreatorCode"] = .staticValue(boxOpaque(FileAttributeKey.hfsCreatorCode, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.hfsTypeCode"] = .staticValue(boxOpaque(FileAttributeKey.hfsTypeCode, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.immutable"] = .staticValue(boxOpaque(FileAttributeKey.immutable, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.appendOnly"] = .staticValue(boxOpaque(FileAttributeKey.appendOnly, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.creationDate"] = .staticValue(boxOpaque(FileAttributeKey.creationDate, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.ownerAccountID"] = .staticValue(boxOpaque(FileAttributeKey.ownerAccountID, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.groupOwnerAccountID"] = .staticValue(boxOpaque(FileAttributeKey.groupOwnerAccountID, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.busy"] = .staticValue(boxOpaque(FileAttributeKey.busy, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.protectionKey"] = .staticValue(boxOpaque(FileAttributeKey.protectionKey, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.systemSize"] = .staticValue(boxOpaque(FileAttributeKey.systemSize, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.systemFreeSize"] = .staticValue(boxOpaque(FileAttributeKey.systemFreeSize, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.systemNodes"] = .staticValue(boxOpaque(FileAttributeKey.systemNodes, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeKey.Type.systemFreeNodes"] = .staticValue(boxOpaque(FileAttributeKey.systemFreeNodes, typeName: "FileAttributeKey"))
+
+        i.bridges["FileAttributeType.Type.typeDirectory"] = .staticValue(boxOpaque(FileAttributeType.typeDirectory, typeName: "FileAttributeType"))
+
+        i.bridges["FileAttributeType.Type.typeRegular"] = .staticValue(boxOpaque(FileAttributeType.typeRegular, typeName: "FileAttributeType"))
+
+        i.bridges["FileAttributeType.Type.typeSymbolicLink"] = .staticValue(boxOpaque(FileAttributeType.typeSymbolicLink, typeName: "FileAttributeType"))
+
+        i.bridges["FileAttributeType.Type.typeSocket"] = .staticValue(boxOpaque(FileAttributeType.typeSocket, typeName: "FileAttributeType"))
+
+        i.bridges["FileAttributeType.Type.typeCharacterSpecial"] = .staticValue(boxOpaque(FileAttributeType.typeCharacterSpecial, typeName: "FileAttributeType"))
+
+        i.bridges["FileAttributeType.Type.typeBlockSpecial"] = .staticValue(boxOpaque(FileAttributeType.typeBlockSpecial, typeName: "FileAttributeType"))
+
+        i.bridges["FileAttributeType.Type.typeUnknown"] = .staticValue(boxOpaque(FileAttributeType.typeUnknown, typeName: "FileAttributeType"))
+
+        i.bridges["FileProtectionType.Type.none"] = .staticValue(boxOpaque(FileProtectionType.none, typeName: "FileProtectionType"))
+
+        i.bridges["FileProtectionType.Type.complete"] = .staticValue(boxOpaque(FileProtectionType.complete, typeName: "FileProtectionType"))
+
+        i.bridges["FileProtectionType.Type.completeUnlessOpen"] = .staticValue(boxOpaque(FileProtectionType.completeUnlessOpen, typeName: "FileProtectionType"))
+
+        i.bridges["FileProtectionType.Type.completeUntilFirstUserAuthentication"] = .staticValue(boxOpaque(FileProtectionType.completeUntilFirstUserAuthentication, typeName: "FileProtectionType"))
+
+        i.registerGlobal(name: "NSHostByteOrder") { args in
+            guard args.count == 0 else {
+                throw RuntimeError.invalid("NSHostByteOrder: expected 0 argument(s), got \(args.count)")
+            }
+            return .int(NSHostByteOrder())
+        }
+
+        i.bridges["NSOrderedCollectionDifferenceCalculationOptions()"] = .`init` { args in
+            guard args.count == 0 else {
+                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions(): expected 0 argument(s), got \(args.count)")
+            }
+            return boxOpaque(NSOrderedCollectionDifferenceCalculationOptions(), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        }
+
+        i.bridges["NSOrderedCollectionDifferenceCalculationOptions.isEmpty"] = .computed { receiver in
+            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+            return .bool(recv.isEmpty)
+        }
+
+        i.bridges["NSOrderedCollectionDifferenceCalculationOptions.Type.omitInsertedObjects"] = .staticValue(boxOpaque(NSOrderedCollectionDifferenceCalculationOptions.omitInsertedObjects, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+
+        i.bridges["NSOrderedCollectionDifferenceCalculationOptions.Type.omitRemovedObjects"] = .staticValue(boxOpaque(NSOrderedCollectionDifferenceCalculationOptions.omitRemovedObjects, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+
+        i.bridges["NSOrderedCollectionDifferenceCalculationOptions.Type.inferMoves"] = .staticValue(boxOpaque(NSOrderedCollectionDifferenceCalculationOptions.inferMoves, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+
+        i.bridges["InlinePresentationIntent()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("InlinePresentationIntent(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(InlinePresentationIntent(), typeName: "InlinePresentationIntent")
         }
 
-        i.registerComputed(on: "InlinePresentationIntent", name: "hashValue") { receiver in
+        i.bridges["InlinePresentationIntent.hashValue"] = .computed { receiver in
             let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "InlinePresentationIntent", name: "isEmpty") { receiver in
+        i.bridges["InlinePresentationIntent.isEmpty"] = .computed { receiver in
             let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
             return .bool(recv.isEmpty)
         }
 
-        i.registerStaticValue(on: "InlinePresentationIntent", name: "emphasized", value: boxOpaque(InlinePresentationIntent.emphasized, typeName: "InlinePresentationIntent"))
+        i.bridges["InlinePresentationIntent.Type.emphasized"] = .staticValue(boxOpaque(InlinePresentationIntent.emphasized, typeName: "InlinePresentationIntent"))
 
-        i.registerStaticValue(on: "InlinePresentationIntent", name: "stronglyEmphasized", value: boxOpaque(InlinePresentationIntent.stronglyEmphasized, typeName: "InlinePresentationIntent"))
+        i.bridges["InlinePresentationIntent.Type.stronglyEmphasized"] = .staticValue(boxOpaque(InlinePresentationIntent.stronglyEmphasized, typeName: "InlinePresentationIntent"))
 
-        i.registerStaticValue(on: "InlinePresentationIntent", name: "code", value: boxOpaque(InlinePresentationIntent.code, typeName: "InlinePresentationIntent"))
+        i.bridges["InlinePresentationIntent.Type.code"] = .staticValue(boxOpaque(InlinePresentationIntent.code, typeName: "InlinePresentationIntent"))
 
-        i.registerStaticValue(on: "InlinePresentationIntent", name: "strikethrough", value: boxOpaque(InlinePresentationIntent.strikethrough, typeName: "InlinePresentationIntent"))
+        i.bridges["InlinePresentationIntent.Type.strikethrough"] = .staticValue(boxOpaque(InlinePresentationIntent.strikethrough, typeName: "InlinePresentationIntent"))
 
-        i.registerStaticValue(on: "InlinePresentationIntent", name: "softBreak", value: boxOpaque(InlinePresentationIntent.softBreak, typeName: "InlinePresentationIntent"))
+        i.bridges["InlinePresentationIntent.Type.softBreak"] = .staticValue(boxOpaque(InlinePresentationIntent.softBreak, typeName: "InlinePresentationIntent"))
 
-        i.registerStaticValue(on: "InlinePresentationIntent", name: "lineBreak", value: boxOpaque(InlinePresentationIntent.lineBreak, typeName: "InlinePresentationIntent"))
+        i.bridges["InlinePresentationIntent.Type.lineBreak"] = .staticValue(boxOpaque(InlinePresentationIntent.lineBreak, typeName: "InlinePresentationIntent"))
 
-        i.registerStaticValue(on: "InlinePresentationIntent", name: "inlineHTML", value: boxOpaque(InlinePresentationIntent.inlineHTML, typeName: "InlinePresentationIntent"))
+        i.bridges["InlinePresentationIntent.Type.inlineHTML"] = .staticValue(boxOpaque(InlinePresentationIntent.inlineHTML, typeName: "InlinePresentationIntent"))
 
-        i.registerStaticValue(on: "InlinePresentationIntent", name: "blockHTML", value: boxOpaque(InlinePresentationIntent.blockHTML, typeName: "InlinePresentationIntent"))
+        i.bridges["InlinePresentationIntent.Type.blockHTML"] = .staticValue(boxOpaque(InlinePresentationIntent.blockHTML, typeName: "InlinePresentationIntent"))
 
-        i.registerComputed(on: "NSAttributedStringFormattingContextKey", name: "hashValue") { receiver in
+        i.bridges["NSAttributedStringFormattingContextKey.hashValue"] = .computed { receiver in
             let recv: NSAttributedStringFormattingContextKey = try unboxOpaque(receiver, as: NSAttributedStringFormattingContextKey.self, typeName: "NSAttributedStringFormattingContextKey")
             return .int(recv.hashValue)
         }
 
-        i.registerStaticValue(on: "NSAttributedStringFormattingContextKey", name: "inflectionConceptsKey", value: boxOpaque(NSAttributedStringFormattingContextKey.inflectionConceptsKey, typeName: "NSAttributedStringFormattingContextKey"))
+        i.bridges["NSAttributedStringFormattingContextKey.Type.inflectionConceptsKey"] = .staticValue(boxOpaque(NSAttributedStringFormattingContextKey.inflectionConceptsKey, typeName: "NSAttributedStringFormattingContextKey"))
 
-        i.registerInit(on: "NSItemProviderFileOptions", labels: []) { args in
+        i.bridges["NSItemProviderFileOptions()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("NSItemProviderFileOptions(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(NSItemProviderFileOptions(), typeName: "NSItemProviderFileOptions")
         }
 
-        i.registerComputed(on: "NSItemProviderFileOptions", name: "isEmpty") { receiver in
+        i.bridges["NSItemProviderFileOptions.isEmpty"] = .computed { receiver in
             let recv: NSItemProviderFileOptions = try unboxOpaque(receiver, as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")
             return .bool(recv.isEmpty)
         }
 
-        i.registerStaticValue(on: "NSItemProviderFileOptions", name: "openInPlace", value: boxOpaque(NSItemProviderFileOptions.openInPlace, typeName: "NSItemProviderFileOptions"))
-
-        i.registerComputed(on: "HTTPCookiePropertyKey", name: "hashValue") { receiver in
-            let recv: HTTPCookiePropertyKey = try unboxOpaque(receiver, as: HTTPCookiePropertyKey.self, typeName: "HTTPCookiePropertyKey")
-            return .int(recv.hashValue)
-        }
-
-        i.registerComputed(on: "HTTPCookieStringPolicy", name: "hashValue") { receiver in
-            let recv: HTTPCookieStringPolicy = try unboxOpaque(receiver, as: HTTPCookieStringPolicy.self, typeName: "HTTPCookieStringPolicy")
-            return .int(recv.hashValue)
-        }
-
-        i.registerStaticValue(on: "HTTPCookiePropertyKey", name: "name", value: boxOpaque(HTTPCookiePropertyKey.name, typeName: "HTTPCookiePropertyKey"))
-
-        i.registerStaticValue(on: "HTTPCookiePropertyKey", name: "value", value: boxOpaque(HTTPCookiePropertyKey.value, typeName: "HTTPCookiePropertyKey"))
-
-        i.registerStaticValue(on: "HTTPCookiePropertyKey", name: "originURL", value: boxOpaque(HTTPCookiePropertyKey.originURL, typeName: "HTTPCookiePropertyKey"))
-
-        i.registerStaticValue(on: "HTTPCookiePropertyKey", name: "version", value: boxOpaque(HTTPCookiePropertyKey.version, typeName: "HTTPCookiePropertyKey"))
-
-        i.registerStaticValue(on: "HTTPCookiePropertyKey", name: "domain", value: boxOpaque(HTTPCookiePropertyKey.domain, typeName: "HTTPCookiePropertyKey"))
-
-        i.registerStaticValue(on: "HTTPCookiePropertyKey", name: "path", value: boxOpaque(HTTPCookiePropertyKey.path, typeName: "HTTPCookiePropertyKey"))
-
-        i.registerStaticValue(on: "HTTPCookiePropertyKey", name: "secure", value: boxOpaque(HTTPCookiePropertyKey.secure, typeName: "HTTPCookiePropertyKey"))
-
-        i.registerStaticValue(on: "HTTPCookiePropertyKey", name: "expires", value: boxOpaque(HTTPCookiePropertyKey.expires, typeName: "HTTPCookiePropertyKey"))
-
-        i.registerStaticValue(on: "HTTPCookiePropertyKey", name: "comment", value: boxOpaque(HTTPCookiePropertyKey.comment, typeName: "HTTPCookiePropertyKey"))
-
-        i.registerStaticValue(on: "HTTPCookiePropertyKey", name: "commentURL", value: boxOpaque(HTTPCookiePropertyKey.commentURL, typeName: "HTTPCookiePropertyKey"))
-
-        i.registerStaticValue(on: "HTTPCookiePropertyKey", name: "discard", value: boxOpaque(HTTPCookiePropertyKey.discard, typeName: "HTTPCookiePropertyKey"))
-
-        i.registerStaticValue(on: "HTTPCookiePropertyKey", name: "maximumAge", value: boxOpaque(HTTPCookiePropertyKey.maximumAge, typeName: "HTTPCookiePropertyKey"))
-
-        i.registerStaticValue(on: "HTTPCookiePropertyKey", name: "port", value: boxOpaque(HTTPCookiePropertyKey.port, typeName: "HTTPCookiePropertyKey"))
-
-        i.registerStaticValue(on: "HTTPCookiePropertyKey", name: "setByJavaScript", value: boxOpaque(HTTPCookiePropertyKey.setByJavaScript, typeName: "HTTPCookiePropertyKey"))
-
-        i.registerStaticValue(on: "HTTPCookiePropertyKey", name: "sameSitePolicy", value: boxOpaque(HTTPCookiePropertyKey.sameSitePolicy, typeName: "HTTPCookiePropertyKey"))
-
-        i.registerStaticValue(on: "HTTPCookieStringPolicy", name: "sameSiteLax", value: boxOpaque(HTTPCookieStringPolicy.sameSiteLax, typeName: "HTTPCookieStringPolicy"))
-
-        i.registerStaticValue(on: "HTTPCookieStringPolicy", name: "sameSiteStrict", value: boxOpaque(HTTPCookieStringPolicy.sameSiteStrict, typeName: "HTTPCookieStringPolicy"))
+        i.bridges["NSItemProviderFileOptions.Type.openInPlace"] = .staticValue(boxOpaque(NSItemProviderFileOptions.openInPlace, typeName: "NSItemProviderFileOptions"))
 
         i.registerGlobal(name: "NSLogPageSize") { args in
             guard args.count == 0 else {
@@ -2313,804 +2796,372 @@ extension FoundationModule {
             return .int(NSPageSize())
         }
 
-        i.registerComputed(on: "URLFileProtection", name: "hashValue") { receiver in
+        i.bridges["URLFileProtection.hashValue"] = .computed { receiver in
             let recv: URLFileProtection = try unboxOpaque(receiver, as: URLFileProtection.self, typeName: "URLFileProtection")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "URLFileResourceType", name: "hashValue") { receiver in
+        i.bridges["URLFileResourceType.hashValue"] = .computed { receiver in
             let recv: URLFileResourceType = try unboxOpaque(receiver, as: URLFileResourceType.self, typeName: "URLFileResourceType")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "URLResourceKey", name: "hashValue") { receiver in
+        i.bridges["URLResourceKey.hashValue"] = .computed { receiver in
             let recv: URLResourceKey = try unboxOpaque(receiver, as: URLResourceKey.self, typeName: "URLResourceKey")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "URLThumbnailDictionaryItem", name: "hashValue") { receiver in
+        i.bridges["URLThumbnailDictionaryItem.hashValue"] = .computed { receiver in
             let recv: URLThumbnailDictionaryItem = try unboxOpaque(receiver, as: URLThumbnailDictionaryItem.self, typeName: "URLThumbnailDictionaryItem")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "URLUbiquitousItemDownloadingStatus", name: "hashValue") { receiver in
+        i.bridges["URLUbiquitousItemDownloadingStatus.hashValue"] = .computed { receiver in
             let recv: URLUbiquitousItemDownloadingStatus = try unboxOpaque(receiver, as: URLUbiquitousItemDownloadingStatus.self, typeName: "URLUbiquitousItemDownloadingStatus")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "URLUbiquitousSharedItemPermissions", name: "hashValue") { receiver in
+        i.bridges["URLUbiquitousSharedItemPermissions.hashValue"] = .computed { receiver in
             let recv: URLUbiquitousSharedItemPermissions = try unboxOpaque(receiver, as: URLUbiquitousSharedItemPermissions.self, typeName: "URLUbiquitousSharedItemPermissions")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "URLUbiquitousSharedItemRole", name: "hashValue") { receiver in
+        i.bridges["URLUbiquitousSharedItemRole.hashValue"] = .computed { receiver in
             let recv: URLUbiquitousSharedItemRole = try unboxOpaque(receiver, as: URLUbiquitousSharedItemRole.self, typeName: "URLUbiquitousSharedItemRole")
             return .int(recv.hashValue)
         }
 
-        i.registerStaticValue(on: "URLFileProtection", name: "none", value: boxOpaque(URLFileProtection.none, typeName: "URLFileProtection"))
+        i.bridges["URLFileProtection.Type.none"] = .staticValue(boxOpaque(URLFileProtection.none, typeName: "URLFileProtection"))
 
-        i.registerStaticValue(on: "URLFileProtection", name: "complete", value: boxOpaque(URLFileProtection.complete, typeName: "URLFileProtection"))
+        i.bridges["URLFileProtection.Type.complete"] = .staticValue(boxOpaque(URLFileProtection.complete, typeName: "URLFileProtection"))
 
-        i.registerStaticValue(on: "URLFileProtection", name: "completeUnlessOpen", value: boxOpaque(URLFileProtection.completeUnlessOpen, typeName: "URLFileProtection"))
+        i.bridges["URLFileProtection.Type.completeUnlessOpen"] = .staticValue(boxOpaque(URLFileProtection.completeUnlessOpen, typeName: "URLFileProtection"))
 
-        i.registerStaticValue(on: "URLFileProtection", name: "completeUntilFirstUserAuthentication", value: boxOpaque(URLFileProtection.completeUntilFirstUserAuthentication, typeName: "URLFileProtection"))
+        i.bridges["URLFileProtection.Type.completeUntilFirstUserAuthentication"] = .staticValue(boxOpaque(URLFileProtection.completeUntilFirstUserAuthentication, typeName: "URLFileProtection"))
 
-        i.registerStaticValue(on: "URLFileResourceType", name: "namedPipe", value: boxOpaque(URLFileResourceType.namedPipe, typeName: "URLFileResourceType"))
+        i.bridges["URLFileResourceType.Type.namedPipe"] = .staticValue(boxOpaque(URLFileResourceType.namedPipe, typeName: "URLFileResourceType"))
 
-        i.registerStaticValue(on: "URLFileResourceType", name: "characterSpecial", value: boxOpaque(URLFileResourceType.characterSpecial, typeName: "URLFileResourceType"))
+        i.bridges["URLFileResourceType.Type.characterSpecial"] = .staticValue(boxOpaque(URLFileResourceType.characterSpecial, typeName: "URLFileResourceType"))
 
-        i.registerStaticValue(on: "URLFileResourceType", name: "directory", value: boxOpaque(URLFileResourceType.directory, typeName: "URLFileResourceType"))
+        i.bridges["URLFileResourceType.Type.directory"] = .staticValue(boxOpaque(URLFileResourceType.directory, typeName: "URLFileResourceType"))
 
-        i.registerStaticValue(on: "URLFileResourceType", name: "blockSpecial", value: boxOpaque(URLFileResourceType.blockSpecial, typeName: "URLFileResourceType"))
+        i.bridges["URLFileResourceType.Type.blockSpecial"] = .staticValue(boxOpaque(URLFileResourceType.blockSpecial, typeName: "URLFileResourceType"))
 
-        i.registerStaticValue(on: "URLFileResourceType", name: "regular", value: boxOpaque(URLFileResourceType.regular, typeName: "URLFileResourceType"))
+        i.bridges["URLFileResourceType.Type.regular"] = .staticValue(boxOpaque(URLFileResourceType.regular, typeName: "URLFileResourceType"))
 
-        i.registerStaticValue(on: "URLFileResourceType", name: "symbolicLink", value: boxOpaque(URLFileResourceType.symbolicLink, typeName: "URLFileResourceType"))
+        i.bridges["URLFileResourceType.Type.symbolicLink"] = .staticValue(boxOpaque(URLFileResourceType.symbolicLink, typeName: "URLFileResourceType"))
 
-        i.registerStaticValue(on: "URLFileResourceType", name: "socket", value: boxOpaque(URLFileResourceType.socket, typeName: "URLFileResourceType"))
+        i.bridges["URLFileResourceType.Type.socket"] = .staticValue(boxOpaque(URLFileResourceType.socket, typeName: "URLFileResourceType"))
 
-        i.registerStaticValue(on: "URLFileResourceType", name: "unknown", value: boxOpaque(URLFileResourceType.unknown, typeName: "URLFileResourceType"))
+        i.bridges["URLFileResourceType.Type.unknown"] = .staticValue(boxOpaque(URLFileResourceType.unknown, typeName: "URLFileResourceType"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "keysOfUnsetValuesKey", value: boxOpaque(URLResourceKey.keysOfUnsetValuesKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.keysOfUnsetValuesKey"] = .staticValue(boxOpaque(URLResourceKey.keysOfUnsetValuesKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "nameKey", value: boxOpaque(URLResourceKey.nameKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.nameKey"] = .staticValue(boxOpaque(URLResourceKey.nameKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "localizedNameKey", value: boxOpaque(URLResourceKey.localizedNameKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.localizedNameKey"] = .staticValue(boxOpaque(URLResourceKey.localizedNameKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "isRegularFileKey", value: boxOpaque(URLResourceKey.isRegularFileKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.isRegularFileKey"] = .staticValue(boxOpaque(URLResourceKey.isRegularFileKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "isDirectoryKey", value: boxOpaque(URLResourceKey.isDirectoryKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.isDirectoryKey"] = .staticValue(boxOpaque(URLResourceKey.isDirectoryKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "isSymbolicLinkKey", value: boxOpaque(URLResourceKey.isSymbolicLinkKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.isSymbolicLinkKey"] = .staticValue(boxOpaque(URLResourceKey.isSymbolicLinkKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "isVolumeKey", value: boxOpaque(URLResourceKey.isVolumeKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.isVolumeKey"] = .staticValue(boxOpaque(URLResourceKey.isVolumeKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "isPackageKey", value: boxOpaque(URLResourceKey.isPackageKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.isPackageKey"] = .staticValue(boxOpaque(URLResourceKey.isPackageKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "isApplicationKey", value: boxOpaque(URLResourceKey.isApplicationKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.isApplicationKey"] = .staticValue(boxOpaque(URLResourceKey.isApplicationKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "applicationIsScriptableKey", value: boxOpaque(URLResourceKey.applicationIsScriptableKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.applicationIsScriptableKey"] = .staticValue(boxOpaque(URLResourceKey.applicationIsScriptableKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "isSystemImmutableKey", value: boxOpaque(URLResourceKey.isSystemImmutableKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.isSystemImmutableKey"] = .staticValue(boxOpaque(URLResourceKey.isSystemImmutableKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "isUserImmutableKey", value: boxOpaque(URLResourceKey.isUserImmutableKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.isUserImmutableKey"] = .staticValue(boxOpaque(URLResourceKey.isUserImmutableKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "isHiddenKey", value: boxOpaque(URLResourceKey.isHiddenKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.isHiddenKey"] = .staticValue(boxOpaque(URLResourceKey.isHiddenKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "hasHiddenExtensionKey", value: boxOpaque(URLResourceKey.hasHiddenExtensionKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.hasHiddenExtensionKey"] = .staticValue(boxOpaque(URLResourceKey.hasHiddenExtensionKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "creationDateKey", value: boxOpaque(URLResourceKey.creationDateKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.creationDateKey"] = .staticValue(boxOpaque(URLResourceKey.creationDateKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "contentAccessDateKey", value: boxOpaque(URLResourceKey.contentAccessDateKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.contentAccessDateKey"] = .staticValue(boxOpaque(URLResourceKey.contentAccessDateKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "contentModificationDateKey", value: boxOpaque(URLResourceKey.contentModificationDateKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.contentModificationDateKey"] = .staticValue(boxOpaque(URLResourceKey.contentModificationDateKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "attributeModificationDateKey", value: boxOpaque(URLResourceKey.attributeModificationDateKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.attributeModificationDateKey"] = .staticValue(boxOpaque(URLResourceKey.attributeModificationDateKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "linkCountKey", value: boxOpaque(URLResourceKey.linkCountKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.linkCountKey"] = .staticValue(boxOpaque(URLResourceKey.linkCountKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "parentDirectoryURLKey", value: boxOpaque(URLResourceKey.parentDirectoryURLKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.parentDirectoryURLKey"] = .staticValue(boxOpaque(URLResourceKey.parentDirectoryURLKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeURLKey", value: boxOpaque(URLResourceKey.volumeURLKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeURLKey"] = .staticValue(boxOpaque(URLResourceKey.volumeURLKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "typeIdentifierKey", value: boxOpaque(URLResourceKey.typeIdentifierKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.typeIdentifierKey"] = .staticValue(boxOpaque(URLResourceKey.typeIdentifierKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "contentTypeKey", value: boxOpaque(URLResourceKey.contentTypeKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.contentTypeKey"] = .staticValue(boxOpaque(URLResourceKey.contentTypeKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "localizedTypeDescriptionKey", value: boxOpaque(URLResourceKey.localizedTypeDescriptionKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.localizedTypeDescriptionKey"] = .staticValue(boxOpaque(URLResourceKey.localizedTypeDescriptionKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "labelNumberKey", value: boxOpaque(URLResourceKey.labelNumberKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.labelNumberKey"] = .staticValue(boxOpaque(URLResourceKey.labelNumberKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "labelColorKey", value: boxOpaque(URLResourceKey.labelColorKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.labelColorKey"] = .staticValue(boxOpaque(URLResourceKey.labelColorKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "localizedLabelKey", value: boxOpaque(URLResourceKey.localizedLabelKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.localizedLabelKey"] = .staticValue(boxOpaque(URLResourceKey.localizedLabelKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "effectiveIconKey", value: boxOpaque(URLResourceKey.effectiveIconKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.effectiveIconKey"] = .staticValue(boxOpaque(URLResourceKey.effectiveIconKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "customIconKey", value: boxOpaque(URLResourceKey.customIconKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.customIconKey"] = .staticValue(boxOpaque(URLResourceKey.customIconKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "fileResourceIdentifierKey", value: boxOpaque(URLResourceKey.fileResourceIdentifierKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.fileResourceIdentifierKey"] = .staticValue(boxOpaque(URLResourceKey.fileResourceIdentifierKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeIdentifierKey", value: boxOpaque(URLResourceKey.volumeIdentifierKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeIdentifierKey"] = .staticValue(boxOpaque(URLResourceKey.volumeIdentifierKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "preferredIOBlockSizeKey", value: boxOpaque(URLResourceKey.preferredIOBlockSizeKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.preferredIOBlockSizeKey"] = .staticValue(boxOpaque(URLResourceKey.preferredIOBlockSizeKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "isReadableKey", value: boxOpaque(URLResourceKey.isReadableKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.isReadableKey"] = .staticValue(boxOpaque(URLResourceKey.isReadableKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "isWritableKey", value: boxOpaque(URLResourceKey.isWritableKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.isWritableKey"] = .staticValue(boxOpaque(URLResourceKey.isWritableKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "isExecutableKey", value: boxOpaque(URLResourceKey.isExecutableKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.isExecutableKey"] = .staticValue(boxOpaque(URLResourceKey.isExecutableKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "fileSecurityKey", value: boxOpaque(URLResourceKey.fileSecurityKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.fileSecurityKey"] = .staticValue(boxOpaque(URLResourceKey.fileSecurityKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "isExcludedFromBackupKey", value: boxOpaque(URLResourceKey.isExcludedFromBackupKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.isExcludedFromBackupKey"] = .staticValue(boxOpaque(URLResourceKey.isExcludedFromBackupKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "tagNamesKey", value: boxOpaque(URLResourceKey.tagNamesKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.tagNamesKey"] = .staticValue(boxOpaque(URLResourceKey.tagNamesKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "pathKey", value: boxOpaque(URLResourceKey.pathKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.pathKey"] = .staticValue(boxOpaque(URLResourceKey.pathKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "canonicalPathKey", value: boxOpaque(URLResourceKey.canonicalPathKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.canonicalPathKey"] = .staticValue(boxOpaque(URLResourceKey.canonicalPathKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "isMountTriggerKey", value: boxOpaque(URLResourceKey.isMountTriggerKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.isMountTriggerKey"] = .staticValue(boxOpaque(URLResourceKey.isMountTriggerKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "generationIdentifierKey", value: boxOpaque(URLResourceKey.generationIdentifierKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.generationIdentifierKey"] = .staticValue(boxOpaque(URLResourceKey.generationIdentifierKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "documentIdentifierKey", value: boxOpaque(URLResourceKey.documentIdentifierKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.documentIdentifierKey"] = .staticValue(boxOpaque(URLResourceKey.documentIdentifierKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "addedToDirectoryDateKey", value: boxOpaque(URLResourceKey.addedToDirectoryDateKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.addedToDirectoryDateKey"] = .staticValue(boxOpaque(URLResourceKey.addedToDirectoryDateKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "quarantinePropertiesKey", value: boxOpaque(URLResourceKey.quarantinePropertiesKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.quarantinePropertiesKey"] = .staticValue(boxOpaque(URLResourceKey.quarantinePropertiesKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "fileResourceTypeKey", value: boxOpaque(URLResourceKey.fileResourceTypeKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.fileResourceTypeKey"] = .staticValue(boxOpaque(URLResourceKey.fileResourceTypeKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "fileIdentifierKey", value: boxOpaque(URLResourceKey.fileIdentifierKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.fileIdentifierKey"] = .staticValue(boxOpaque(URLResourceKey.fileIdentifierKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "fileContentIdentifierKey", value: boxOpaque(URLResourceKey.fileContentIdentifierKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.fileContentIdentifierKey"] = .staticValue(boxOpaque(URLResourceKey.fileContentIdentifierKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "mayShareFileContentKey", value: boxOpaque(URLResourceKey.mayShareFileContentKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.mayShareFileContentKey"] = .staticValue(boxOpaque(URLResourceKey.mayShareFileContentKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "mayHaveExtendedAttributesKey", value: boxOpaque(URLResourceKey.mayHaveExtendedAttributesKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.mayHaveExtendedAttributesKey"] = .staticValue(boxOpaque(URLResourceKey.mayHaveExtendedAttributesKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "isPurgeableKey", value: boxOpaque(URLResourceKey.isPurgeableKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.isPurgeableKey"] = .staticValue(boxOpaque(URLResourceKey.isPurgeableKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "isSparseKey", value: boxOpaque(URLResourceKey.isSparseKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.isSparseKey"] = .staticValue(boxOpaque(URLResourceKey.isSparseKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "fileSizeKey", value: boxOpaque(URLResourceKey.fileSizeKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.fileSizeKey"] = .staticValue(boxOpaque(URLResourceKey.fileSizeKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "fileAllocatedSizeKey", value: boxOpaque(URLResourceKey.fileAllocatedSizeKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.fileAllocatedSizeKey"] = .staticValue(boxOpaque(URLResourceKey.fileAllocatedSizeKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "totalFileSizeKey", value: boxOpaque(URLResourceKey.totalFileSizeKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.totalFileSizeKey"] = .staticValue(boxOpaque(URLResourceKey.totalFileSizeKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "totalFileAllocatedSizeKey", value: boxOpaque(URLResourceKey.totalFileAllocatedSizeKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.totalFileAllocatedSizeKey"] = .staticValue(boxOpaque(URLResourceKey.totalFileAllocatedSizeKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "isAliasFileKey", value: boxOpaque(URLResourceKey.isAliasFileKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.isAliasFileKey"] = .staticValue(boxOpaque(URLResourceKey.isAliasFileKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "fileProtectionKey", value: boxOpaque(URLResourceKey.fileProtectionKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.fileProtectionKey"] = .staticValue(boxOpaque(URLResourceKey.fileProtectionKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "directoryEntryCountKey", value: boxOpaque(URLResourceKey.directoryEntryCountKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.directoryEntryCountKey"] = .staticValue(boxOpaque(URLResourceKey.directoryEntryCountKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeLocalizedFormatDescriptionKey", value: boxOpaque(URLResourceKey.volumeLocalizedFormatDescriptionKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeLocalizedFormatDescriptionKey"] = .staticValue(boxOpaque(URLResourceKey.volumeLocalizedFormatDescriptionKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeTotalCapacityKey", value: boxOpaque(URLResourceKey.volumeTotalCapacityKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeTotalCapacityKey"] = .staticValue(boxOpaque(URLResourceKey.volumeTotalCapacityKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeAvailableCapacityKey", value: boxOpaque(URLResourceKey.volumeAvailableCapacityKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeAvailableCapacityKey"] = .staticValue(boxOpaque(URLResourceKey.volumeAvailableCapacityKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeResourceCountKey", value: boxOpaque(URLResourceKey.volumeResourceCountKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeResourceCountKey"] = .staticValue(boxOpaque(URLResourceKey.volumeResourceCountKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsPersistentIDsKey", value: boxOpaque(URLResourceKey.volumeSupportsPersistentIDsKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsPersistentIDsKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsPersistentIDsKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsSymbolicLinksKey", value: boxOpaque(URLResourceKey.volumeSupportsSymbolicLinksKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsSymbolicLinksKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsSymbolicLinksKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsHardLinksKey", value: boxOpaque(URLResourceKey.volumeSupportsHardLinksKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsHardLinksKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsHardLinksKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsJournalingKey", value: boxOpaque(URLResourceKey.volumeSupportsJournalingKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsJournalingKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsJournalingKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeIsJournalingKey", value: boxOpaque(URLResourceKey.volumeIsJournalingKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeIsJournalingKey"] = .staticValue(boxOpaque(URLResourceKey.volumeIsJournalingKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsSparseFilesKey", value: boxOpaque(URLResourceKey.volumeSupportsSparseFilesKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsSparseFilesKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsSparseFilesKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsZeroRunsKey", value: boxOpaque(URLResourceKey.volumeSupportsZeroRunsKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsZeroRunsKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsZeroRunsKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsCaseSensitiveNamesKey", value: boxOpaque(URLResourceKey.volumeSupportsCaseSensitiveNamesKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsCaseSensitiveNamesKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsCaseSensitiveNamesKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsCasePreservedNamesKey", value: boxOpaque(URLResourceKey.volumeSupportsCasePreservedNamesKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsCasePreservedNamesKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsCasePreservedNamesKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsRootDirectoryDatesKey", value: boxOpaque(URLResourceKey.volumeSupportsRootDirectoryDatesKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsRootDirectoryDatesKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsRootDirectoryDatesKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsVolumeSizesKey", value: boxOpaque(URLResourceKey.volumeSupportsVolumeSizesKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsVolumeSizesKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsVolumeSizesKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsRenamingKey", value: boxOpaque(URLResourceKey.volumeSupportsRenamingKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsRenamingKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsRenamingKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsAdvisoryFileLockingKey", value: boxOpaque(URLResourceKey.volumeSupportsAdvisoryFileLockingKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsAdvisoryFileLockingKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsAdvisoryFileLockingKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsExtendedSecurityKey", value: boxOpaque(URLResourceKey.volumeSupportsExtendedSecurityKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsExtendedSecurityKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsExtendedSecurityKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeIsBrowsableKey", value: boxOpaque(URLResourceKey.volumeIsBrowsableKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeIsBrowsableKey"] = .staticValue(boxOpaque(URLResourceKey.volumeIsBrowsableKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeMaximumFileSizeKey", value: boxOpaque(URLResourceKey.volumeMaximumFileSizeKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeMaximumFileSizeKey"] = .staticValue(boxOpaque(URLResourceKey.volumeMaximumFileSizeKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeIsEjectableKey", value: boxOpaque(URLResourceKey.volumeIsEjectableKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeIsEjectableKey"] = .staticValue(boxOpaque(URLResourceKey.volumeIsEjectableKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeIsRemovableKey", value: boxOpaque(URLResourceKey.volumeIsRemovableKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeIsRemovableKey"] = .staticValue(boxOpaque(URLResourceKey.volumeIsRemovableKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeIsInternalKey", value: boxOpaque(URLResourceKey.volumeIsInternalKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeIsInternalKey"] = .staticValue(boxOpaque(URLResourceKey.volumeIsInternalKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeIsAutomountedKey", value: boxOpaque(URLResourceKey.volumeIsAutomountedKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeIsAutomountedKey"] = .staticValue(boxOpaque(URLResourceKey.volumeIsAutomountedKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeIsLocalKey", value: boxOpaque(URLResourceKey.volumeIsLocalKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeIsLocalKey"] = .staticValue(boxOpaque(URLResourceKey.volumeIsLocalKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeIsReadOnlyKey", value: boxOpaque(URLResourceKey.volumeIsReadOnlyKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeIsReadOnlyKey"] = .staticValue(boxOpaque(URLResourceKey.volumeIsReadOnlyKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeCreationDateKey", value: boxOpaque(URLResourceKey.volumeCreationDateKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeCreationDateKey"] = .staticValue(boxOpaque(URLResourceKey.volumeCreationDateKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeURLForRemountingKey", value: boxOpaque(URLResourceKey.volumeURLForRemountingKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeURLForRemountingKey"] = .staticValue(boxOpaque(URLResourceKey.volumeURLForRemountingKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeUUIDStringKey", value: boxOpaque(URLResourceKey.volumeUUIDStringKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeUUIDStringKey"] = .staticValue(boxOpaque(URLResourceKey.volumeUUIDStringKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeNameKey", value: boxOpaque(URLResourceKey.volumeNameKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeNameKey"] = .staticValue(boxOpaque(URLResourceKey.volumeNameKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeLocalizedNameKey", value: boxOpaque(URLResourceKey.volumeLocalizedNameKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeLocalizedNameKey"] = .staticValue(boxOpaque(URLResourceKey.volumeLocalizedNameKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeIsEncryptedKey", value: boxOpaque(URLResourceKey.volumeIsEncryptedKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeIsEncryptedKey"] = .staticValue(boxOpaque(URLResourceKey.volumeIsEncryptedKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeIsRootFileSystemKey", value: boxOpaque(URLResourceKey.volumeIsRootFileSystemKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeIsRootFileSystemKey"] = .staticValue(boxOpaque(URLResourceKey.volumeIsRootFileSystemKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsCompressionKey", value: boxOpaque(URLResourceKey.volumeSupportsCompressionKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsCompressionKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsCompressionKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsFileCloningKey", value: boxOpaque(URLResourceKey.volumeSupportsFileCloningKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsFileCloningKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsFileCloningKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsSwapRenamingKey", value: boxOpaque(URLResourceKey.volumeSupportsSwapRenamingKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsSwapRenamingKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsSwapRenamingKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsExclusiveRenamingKey", value: boxOpaque(URLResourceKey.volumeSupportsExclusiveRenamingKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsExclusiveRenamingKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsExclusiveRenamingKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsImmutableFilesKey", value: boxOpaque(URLResourceKey.volumeSupportsImmutableFilesKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsImmutableFilesKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsImmutableFilesKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsAccessPermissionsKey", value: boxOpaque(URLResourceKey.volumeSupportsAccessPermissionsKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsAccessPermissionsKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsAccessPermissionsKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSupportsFileProtectionKey", value: boxOpaque(URLResourceKey.volumeSupportsFileProtectionKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSupportsFileProtectionKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSupportsFileProtectionKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeAvailableCapacityForImportantUsageKey", value: boxOpaque(URLResourceKey.volumeAvailableCapacityForImportantUsageKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeAvailableCapacityForImportantUsageKey"] = .staticValue(boxOpaque(URLResourceKey.volumeAvailableCapacityForImportantUsageKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeAvailableCapacityForOpportunisticUsageKey", value: boxOpaque(URLResourceKey.volumeAvailableCapacityForOpportunisticUsageKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeAvailableCapacityForOpportunisticUsageKey"] = .staticValue(boxOpaque(URLResourceKey.volumeAvailableCapacityForOpportunisticUsageKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeTypeNameKey", value: boxOpaque(URLResourceKey.volumeTypeNameKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeTypeNameKey"] = .staticValue(boxOpaque(URLResourceKey.volumeTypeNameKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeSubtypeKey", value: boxOpaque(URLResourceKey.volumeSubtypeKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeSubtypeKey"] = .staticValue(boxOpaque(URLResourceKey.volumeSubtypeKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "volumeMountFromLocationKey", value: boxOpaque(URLResourceKey.volumeMountFromLocationKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.volumeMountFromLocationKey"] = .staticValue(boxOpaque(URLResourceKey.volumeMountFromLocationKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "isUbiquitousItemKey", value: boxOpaque(URLResourceKey.isUbiquitousItemKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.isUbiquitousItemKey"] = .staticValue(boxOpaque(URLResourceKey.isUbiquitousItemKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "ubiquitousItemHasUnresolvedConflictsKey", value: boxOpaque(URLResourceKey.ubiquitousItemHasUnresolvedConflictsKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.ubiquitousItemHasUnresolvedConflictsKey"] = .staticValue(boxOpaque(URLResourceKey.ubiquitousItemHasUnresolvedConflictsKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "ubiquitousItemIsDownloadingKey", value: boxOpaque(URLResourceKey.ubiquitousItemIsDownloadingKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.ubiquitousItemIsDownloadingKey"] = .staticValue(boxOpaque(URLResourceKey.ubiquitousItemIsDownloadingKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "ubiquitousItemIsUploadedKey", value: boxOpaque(URLResourceKey.ubiquitousItemIsUploadedKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.ubiquitousItemIsUploadedKey"] = .staticValue(boxOpaque(URLResourceKey.ubiquitousItemIsUploadedKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "ubiquitousItemIsUploadingKey", value: boxOpaque(URLResourceKey.ubiquitousItemIsUploadingKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.ubiquitousItemIsUploadingKey"] = .staticValue(boxOpaque(URLResourceKey.ubiquitousItemIsUploadingKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "ubiquitousItemDownloadingStatusKey", value: boxOpaque(URLResourceKey.ubiquitousItemDownloadingStatusKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.ubiquitousItemDownloadingStatusKey"] = .staticValue(boxOpaque(URLResourceKey.ubiquitousItemDownloadingStatusKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "ubiquitousItemDownloadingErrorKey", value: boxOpaque(URLResourceKey.ubiquitousItemDownloadingErrorKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.ubiquitousItemDownloadingErrorKey"] = .staticValue(boxOpaque(URLResourceKey.ubiquitousItemDownloadingErrorKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "ubiquitousItemUploadingErrorKey", value: boxOpaque(URLResourceKey.ubiquitousItemUploadingErrorKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.ubiquitousItemUploadingErrorKey"] = .staticValue(boxOpaque(URLResourceKey.ubiquitousItemUploadingErrorKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "ubiquitousItemDownloadRequestedKey", value: boxOpaque(URLResourceKey.ubiquitousItemDownloadRequestedKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.ubiquitousItemDownloadRequestedKey"] = .staticValue(boxOpaque(URLResourceKey.ubiquitousItemDownloadRequestedKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "ubiquitousItemContainerDisplayNameKey", value: boxOpaque(URLResourceKey.ubiquitousItemContainerDisplayNameKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.ubiquitousItemContainerDisplayNameKey"] = .staticValue(boxOpaque(URLResourceKey.ubiquitousItemContainerDisplayNameKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "ubiquitousItemIsExcludedFromSyncKey", value: boxOpaque(URLResourceKey.ubiquitousItemIsExcludedFromSyncKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.ubiquitousItemIsExcludedFromSyncKey"] = .staticValue(boxOpaque(URLResourceKey.ubiquitousItemIsExcludedFromSyncKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "ubiquitousItemIsSharedKey", value: boxOpaque(URLResourceKey.ubiquitousItemIsSharedKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.ubiquitousItemIsSharedKey"] = .staticValue(boxOpaque(URLResourceKey.ubiquitousItemIsSharedKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "ubiquitousSharedItemCurrentUserRoleKey", value: boxOpaque(URLResourceKey.ubiquitousSharedItemCurrentUserRoleKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.ubiquitousSharedItemCurrentUserRoleKey"] = .staticValue(boxOpaque(URLResourceKey.ubiquitousSharedItemCurrentUserRoleKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "ubiquitousSharedItemCurrentUserPermissionsKey", value: boxOpaque(URLResourceKey.ubiquitousSharedItemCurrentUserPermissionsKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.ubiquitousSharedItemCurrentUserPermissionsKey"] = .staticValue(boxOpaque(URLResourceKey.ubiquitousSharedItemCurrentUserPermissionsKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "ubiquitousSharedItemOwnerNameComponentsKey", value: boxOpaque(URLResourceKey.ubiquitousSharedItemOwnerNameComponentsKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.ubiquitousSharedItemOwnerNameComponentsKey"] = .staticValue(boxOpaque(URLResourceKey.ubiquitousSharedItemOwnerNameComponentsKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "ubiquitousSharedItemMostRecentEditorNameComponentsKey", value: boxOpaque(URLResourceKey.ubiquitousSharedItemMostRecentEditorNameComponentsKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.ubiquitousSharedItemMostRecentEditorNameComponentsKey"] = .staticValue(boxOpaque(URLResourceKey.ubiquitousSharedItemMostRecentEditorNameComponentsKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "ubiquitousItemSupportedSyncControlsKey", value: boxOpaque(URLResourceKey.ubiquitousItemSupportedSyncControlsKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.ubiquitousItemSupportedSyncControlsKey"] = .staticValue(boxOpaque(URLResourceKey.ubiquitousItemSupportedSyncControlsKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLResourceKey", name: "ubiquitousItemIsSyncPausedKey", value: boxOpaque(URLResourceKey.ubiquitousItemIsSyncPausedKey, typeName: "URLResourceKey"))
+        i.bridges["URLResourceKey.Type.ubiquitousItemIsSyncPausedKey"] = .staticValue(boxOpaque(URLResourceKey.ubiquitousItemIsSyncPausedKey, typeName: "URLResourceKey"))
 
-        i.registerStaticValue(on: "URLUbiquitousItemDownloadingStatus", name: "notDownloaded", value: boxOpaque(URLUbiquitousItemDownloadingStatus.notDownloaded, typeName: "URLUbiquitousItemDownloadingStatus"))
+        i.bridges["URLUbiquitousItemDownloadingStatus.Type.notDownloaded"] = .staticValue(boxOpaque(URLUbiquitousItemDownloadingStatus.notDownloaded, typeName: "URLUbiquitousItemDownloadingStatus"))
 
-        i.registerStaticValue(on: "URLUbiquitousItemDownloadingStatus", name: "downloaded", value: boxOpaque(URLUbiquitousItemDownloadingStatus.downloaded, typeName: "URLUbiquitousItemDownloadingStatus"))
+        i.bridges["URLUbiquitousItemDownloadingStatus.Type.downloaded"] = .staticValue(boxOpaque(URLUbiquitousItemDownloadingStatus.downloaded, typeName: "URLUbiquitousItemDownloadingStatus"))
 
-        i.registerStaticValue(on: "URLUbiquitousItemDownloadingStatus", name: "current", value: boxOpaque(URLUbiquitousItemDownloadingStatus.current, typeName: "URLUbiquitousItemDownloadingStatus"))
+        i.bridges["URLUbiquitousItemDownloadingStatus.Type.current"] = .staticValue(boxOpaque(URLUbiquitousItemDownloadingStatus.current, typeName: "URLUbiquitousItemDownloadingStatus"))
 
-        i.registerStaticValue(on: "URLUbiquitousSharedItemPermissions", name: "readOnly", value: boxOpaque(URLUbiquitousSharedItemPermissions.readOnly, typeName: "URLUbiquitousSharedItemPermissions"))
+        i.bridges["URLUbiquitousSharedItemPermissions.Type.readOnly"] = .staticValue(boxOpaque(URLUbiquitousSharedItemPermissions.readOnly, typeName: "URLUbiquitousSharedItemPermissions"))
 
-        i.registerStaticValue(on: "URLUbiquitousSharedItemPermissions", name: "readWrite", value: boxOpaque(URLUbiquitousSharedItemPermissions.readWrite, typeName: "URLUbiquitousSharedItemPermissions"))
+        i.bridges["URLUbiquitousSharedItemPermissions.Type.readWrite"] = .staticValue(boxOpaque(URLUbiquitousSharedItemPermissions.readWrite, typeName: "URLUbiquitousSharedItemPermissions"))
 
-        i.registerStaticValue(on: "URLUbiquitousSharedItemRole", name: "owner", value: boxOpaque(URLUbiquitousSharedItemRole.owner, typeName: "URLUbiquitousSharedItemRole"))
+        i.bridges["URLUbiquitousSharedItemRole.Type.owner"] = .staticValue(boxOpaque(URLUbiquitousSharedItemRole.owner, typeName: "URLUbiquitousSharedItemRole"))
 
-        i.registerStaticValue(on: "URLUbiquitousSharedItemRole", name: "participant", value: boxOpaque(URLUbiquitousSharedItemRole.participant, typeName: "URLUbiquitousSharedItemRole"))
+        i.bridges["URLUbiquitousSharedItemRole.Type.participant"] = .staticValue(boxOpaque(URLUbiquitousSharedItemRole.participant, typeName: "URLUbiquitousSharedItemRole"))
 
-        i.registerInit(on: "NSBinarySearchingOptions", labels: []) { args in
-            guard args.count == 0 else {
-                throw RuntimeError.invalid("NSBinarySearchingOptions(): expected 0 argument(s), got \(args.count)")
-            }
-            return boxOpaque(NSBinarySearchingOptions(), typeName: "NSBinarySearchingOptions")
-        }
-
-        i.registerComputed(on: "NSBinarySearchingOptions", name: "isEmpty") { receiver in
-            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
-            return .bool(recv.isEmpty)
-        }
-
-        i.registerStaticValue(on: "NSBinarySearchingOptions", name: "firstEqual", value: boxOpaque(NSBinarySearchingOptions.firstEqual, typeName: "NSBinarySearchingOptions"))
-
-        i.registerStaticValue(on: "NSBinarySearchingOptions", name: "lastEqual", value: boxOpaque(NSBinarySearchingOptions.lastEqual, typeName: "NSBinarySearchingOptions"))
-
-        i.registerStaticValue(on: "NSBinarySearchingOptions", name: "insertionIndex", value: boxOpaque(NSBinarySearchingOptions.insertionIndex, typeName: "NSBinarySearchingOptions"))
-
-        i.registerComputed(on: "NSValueTransformerName", name: "hashValue") { receiver in
-            let recv: NSValueTransformerName = try unboxOpaque(receiver, as: NSValueTransformerName.self, typeName: "NSValueTransformerName")
-            return .int(recv.hashValue)
-        }
-
-        i.registerStaticValue(on: "NSValueTransformerName", name: "negateBooleanTransformerName", value: boxOpaque(NSValueTransformerName.negateBooleanTransformerName, typeName: "NSValueTransformerName"))
-
-        i.registerStaticValue(on: "NSValueTransformerName", name: "isNilTransformerName", value: boxOpaque(NSValueTransformerName.isNilTransformerName, typeName: "NSValueTransformerName"))
-
-        i.registerStaticValue(on: "NSValueTransformerName", name: "isNotNilTransformerName", value: boxOpaque(NSValueTransformerName.isNotNilTransformerName, typeName: "NSValueTransformerName"))
-
-        i.registerStaticValue(on: "NSValueTransformerName", name: "secureUnarchiveFromDataTransformerName", value: boxOpaque(NSValueTransformerName.secureUnarchiveFromDataTransformerName, typeName: "NSValueTransformerName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "invalidArchiveOperationException", value: boxOpaque(NSExceptionName.invalidArchiveOperationException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "invalidUnarchiveOperationException", value: boxOpaque(NSExceptionName.invalidUnarchiveOperationException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "decimalNumberExactnessException", value: boxOpaque(NSExceptionName.decimalNumberExactnessException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "decimalNumberOverflowException", value: boxOpaque(NSExceptionName.decimalNumberOverflowException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "decimalNumberUnderflowException", value: boxOpaque(NSExceptionName.decimalNumberUnderflowException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "decimalNumberDivideByZeroException", value: boxOpaque(NSExceptionName.decimalNumberDivideByZeroException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "genericException", value: boxOpaque(NSExceptionName.genericException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "rangeException", value: boxOpaque(NSExceptionName.rangeException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "invalidArgumentException", value: boxOpaque(NSExceptionName.invalidArgumentException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "internalInconsistencyException", value: boxOpaque(NSExceptionName.internalInconsistencyException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "mallocException", value: boxOpaque(NSExceptionName.mallocException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "objectInaccessibleException", value: boxOpaque(NSExceptionName.objectInaccessibleException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "objectNotAvailableException", value: boxOpaque(NSExceptionName.objectNotAvailableException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "destinationInvalidException", value: boxOpaque(NSExceptionName.destinationInvalidException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "portTimeoutException", value: boxOpaque(NSExceptionName.portTimeoutException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "invalidSendPortException", value: boxOpaque(NSExceptionName.invalidSendPortException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "invalidReceivePortException", value: boxOpaque(NSExceptionName.invalidReceivePortException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "portSendException", value: boxOpaque(NSExceptionName.portSendException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "portReceiveException", value: boxOpaque(NSExceptionName.portReceiveException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "oldStyleException", value: boxOpaque(NSExceptionName.oldStyleException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "inconsistentArchiveException", value: boxOpaque(NSExceptionName.inconsistentArchiveException, typeName: "NSExceptionName"))
-
-        i.registerComputed(on: "StringEncodingDetectionOptionsKey", name: "hashValue") { receiver in
-            let recv: StringEncodingDetectionOptionsKey = try unboxOpaque(receiver, as: StringEncodingDetectionOptionsKey.self, typeName: "StringEncodingDetectionOptionsKey")
-            return .int(recv.hashValue)
-        }
-
-        i.registerComputed(on: "StringTransform", name: "hashValue") { receiver in
-            let recv: StringTransform = try unboxOpaque(receiver, as: StringTransform.self, typeName: "StringTransform")
-            return .int(recv.hashValue)
-        }
-
-        i.registerStaticValue(on: "NSExceptionName", name: "characterConversionException", value: boxOpaque(NSExceptionName.characterConversionException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "parseErrorException", value: boxOpaque(NSExceptionName.parseErrorException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "StringEncodingDetectionOptionsKey", name: "suggestedEncodingsKey", value: boxOpaque(StringEncodingDetectionOptionsKey.suggestedEncodingsKey, typeName: "StringEncodingDetectionOptionsKey"))
-
-        i.registerStaticValue(on: "StringEncodingDetectionOptionsKey", name: "disallowedEncodingsKey", value: boxOpaque(StringEncodingDetectionOptionsKey.disallowedEncodingsKey, typeName: "StringEncodingDetectionOptionsKey"))
-
-        i.registerStaticValue(on: "StringEncodingDetectionOptionsKey", name: "useOnlySuggestedEncodingsKey", value: boxOpaque(StringEncodingDetectionOptionsKey.useOnlySuggestedEncodingsKey, typeName: "StringEncodingDetectionOptionsKey"))
-
-        i.registerStaticValue(on: "StringEncodingDetectionOptionsKey", name: "allowLossyKey", value: boxOpaque(StringEncodingDetectionOptionsKey.allowLossyKey, typeName: "StringEncodingDetectionOptionsKey"))
-
-        i.registerStaticValue(on: "StringEncodingDetectionOptionsKey", name: "fromWindowsKey", value: boxOpaque(StringEncodingDetectionOptionsKey.fromWindowsKey, typeName: "StringEncodingDetectionOptionsKey"))
-
-        i.registerStaticValue(on: "StringEncodingDetectionOptionsKey", name: "lossySubstitutionKey", value: boxOpaque(StringEncodingDetectionOptionsKey.lossySubstitutionKey, typeName: "StringEncodingDetectionOptionsKey"))
-
-        i.registerStaticValue(on: "StringEncodingDetectionOptionsKey", name: "likelyLanguageKey", value: boxOpaque(StringEncodingDetectionOptionsKey.likelyLanguageKey, typeName: "StringEncodingDetectionOptionsKey"))
-
-        i.registerStaticValue(on: "StringTransform", name: "latinToKatakana", value: boxOpaque(StringTransform.latinToKatakana, typeName: "StringTransform"))
-
-        i.registerStaticValue(on: "StringTransform", name: "latinToHiragana", value: boxOpaque(StringTransform.latinToHiragana, typeName: "StringTransform"))
-
-        i.registerStaticValue(on: "StringTransform", name: "latinToHangul", value: boxOpaque(StringTransform.latinToHangul, typeName: "StringTransform"))
-
-        i.registerStaticValue(on: "StringTransform", name: "latinToArabic", value: boxOpaque(StringTransform.latinToArabic, typeName: "StringTransform"))
-
-        i.registerStaticValue(on: "StringTransform", name: "latinToHebrew", value: boxOpaque(StringTransform.latinToHebrew, typeName: "StringTransform"))
-
-        i.registerStaticValue(on: "StringTransform", name: "latinToThai", value: boxOpaque(StringTransform.latinToThai, typeName: "StringTransform"))
-
-        i.registerStaticValue(on: "StringTransform", name: "latinToCyrillic", value: boxOpaque(StringTransform.latinToCyrillic, typeName: "StringTransform"))
-
-        i.registerStaticValue(on: "StringTransform", name: "latinToGreek", value: boxOpaque(StringTransform.latinToGreek, typeName: "StringTransform"))
-
-        i.registerStaticValue(on: "StringTransform", name: "toLatin", value: boxOpaque(StringTransform.toLatin, typeName: "StringTransform"))
-
-        i.registerStaticValue(on: "StringTransform", name: "mandarinToLatin", value: boxOpaque(StringTransform.mandarinToLatin, typeName: "StringTransform"))
-
-        i.registerStaticValue(on: "StringTransform", name: "hiraganaToKatakana", value: boxOpaque(StringTransform.hiraganaToKatakana, typeName: "StringTransform"))
-
-        i.registerStaticValue(on: "StringTransform", name: "fullwidthToHalfwidth", value: boxOpaque(StringTransform.fullwidthToHalfwidth, typeName: "StringTransform"))
-
-        i.registerStaticValue(on: "StringTransform", name: "toXMLHex", value: boxOpaque(StringTransform.toXMLHex, typeName: "StringTransform"))
-
-        i.registerStaticValue(on: "StringTransform", name: "toUnicodeName", value: boxOpaque(StringTransform.toUnicodeName, typeName: "StringTransform"))
-
-        i.registerStaticValue(on: "StringTransform", name: "stripCombiningMarks", value: boxOpaque(StringTransform.stripCombiningMarks, typeName: "StringTransform"))
-
-        i.registerStaticValue(on: "StringTransform", name: "stripDiacritics", value: boxOpaque(StringTransform.stripDiacritics, typeName: "StringTransform"))
-
-        i.registerComputed(on: "NSKeyValueChangeKey", name: "hashValue") { receiver in
-            let recv: NSKeyValueChangeKey = try unboxOpaque(receiver, as: NSKeyValueChangeKey.self, typeName: "NSKeyValueChangeKey")
-            return .int(recv.hashValue)
-        }
-
-        i.registerInit(on: "NSKeyValueObservingOptions", labels: []) { args in
-            guard args.count == 0 else {
-                throw RuntimeError.invalid("NSKeyValueObservingOptions(): expected 0 argument(s), got \(args.count)")
-            }
-            return boxOpaque(NSKeyValueObservingOptions(), typeName: "NSKeyValueObservingOptions")
-        }
-
-        i.registerComputed(on: "NSKeyValueObservingOptions", name: "isEmpty") { receiver in
-            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
-            return .bool(recv.isEmpty)
-        }
-
-        i.registerStaticValue(on: "NSKeyValueObservingOptions", name: "new", value: boxOpaque(NSKeyValueObservingOptions.new, typeName: "NSKeyValueObservingOptions"))
-
-        i.registerStaticValue(on: "NSKeyValueObservingOptions", name: "old", value: boxOpaque(NSKeyValueObservingOptions.old, typeName: "NSKeyValueObservingOptions"))
-
-        i.registerStaticValue(on: "NSKeyValueObservingOptions", name: "initial", value: boxOpaque(NSKeyValueObservingOptions.initial, typeName: "NSKeyValueObservingOptions"))
-
-        i.registerStaticValue(on: "NSKeyValueObservingOptions", name: "prior", value: boxOpaque(NSKeyValueObservingOptions.prior, typeName: "NSKeyValueObservingOptions"))
-
-        i.registerStaticValue(on: "NSKeyValueChangeKey", name: "kindKey", value: boxOpaque(NSKeyValueChangeKey.kindKey, typeName: "NSKeyValueChangeKey"))
-
-        i.registerStaticValue(on: "NSKeyValueChangeKey", name: "newKey", value: boxOpaque(NSKeyValueChangeKey.newKey, typeName: "NSKeyValueChangeKey"))
-
-        i.registerStaticValue(on: "NSKeyValueChangeKey", name: "oldKey", value: boxOpaque(NSKeyValueChangeKey.oldKey, typeName: "NSKeyValueChangeKey"))
-
-        i.registerStaticValue(on: "NSKeyValueChangeKey", name: "indexesKey", value: boxOpaque(NSKeyValueChangeKey.indexesKey, typeName: "NSKeyValueChangeKey"))
-
-        i.registerStaticValue(on: "NSKeyValueChangeKey", name: "notificationIsPriorKey", value: boxOpaque(NSKeyValueChangeKey.notificationIsPriorKey, typeName: "NSKeyValueChangeKey"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "invocationOperationVoidResultException", value: boxOpaque(NSExceptionName.invocationOperationVoidResultException, typeName: "NSExceptionName"))
-
-        i.registerStaticValue(on: "NSExceptionName", name: "invocationOperationCancelledException", value: boxOpaque(NSExceptionName.invocationOperationCancelledException, typeName: "NSExceptionName"))
-
-        i.registerComputed(on: "FileAttributeKey", name: "hashValue") { receiver in
-            let recv: FileAttributeKey = try unboxOpaque(receiver, as: FileAttributeKey.self, typeName: "FileAttributeKey")
-            return .int(recv.hashValue)
-        }
-
-        i.registerComputed(on: "FileAttributeType", name: "hashValue") { receiver in
-            let recv: FileAttributeType = try unboxOpaque(receiver, as: FileAttributeType.self, typeName: "FileAttributeType")
-            return .int(recv.hashValue)
-        }
-
-        i.registerComputed(on: "FileProtectionType", name: "hashValue") { receiver in
-            let recv: FileProtectionType = try unboxOpaque(receiver, as: FileProtectionType.self, typeName: "FileProtectionType")
-            return .int(recv.hashValue)
-        }
-
-        i.registerInit(on: "NSFileManagerSupportedSyncControls", labels: []) { args in
-            guard args.count == 0 else {
-                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls(): expected 0 argument(s), got \(args.count)")
-            }
-            return boxOpaque(NSFileManagerSupportedSyncControls(), typeName: "NSFileManagerSupportedSyncControls")
-        }
-
-        i.registerComputed(on: "NSFileManagerSupportedSyncControls", name: "isEmpty") { receiver in
-            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
-            return .bool(recv.isEmpty)
-        }
-
-        i.registerStaticValue(on: "NSFileManagerSupportedSyncControls", name: "pauseSync", value: boxOpaque(NSFileManagerSupportedSyncControls.pauseSync, typeName: "NSFileManagerSupportedSyncControls"))
-
-        i.registerStaticValue(on: "NSFileManagerSupportedSyncControls", name: "failUploadOnConflict", value: boxOpaque(NSFileManagerSupportedSyncControls.failUploadOnConflict, typeName: "NSFileManagerSupportedSyncControls"))
-
-        i.registerComputed(on: "NSFileProviderServiceName", name: "hashValue") { receiver in
-            let recv: NSFileProviderServiceName = try unboxOpaque(receiver, as: NSFileProviderServiceName.self, typeName: "NSFileProviderServiceName")
-            return .int(recv.hashValue)
-        }
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "type", value: boxOpaque(FileAttributeKey.type, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "size", value: boxOpaque(FileAttributeKey.size, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "modificationDate", value: boxOpaque(FileAttributeKey.modificationDate, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "referenceCount", value: boxOpaque(FileAttributeKey.referenceCount, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "deviceIdentifier", value: boxOpaque(FileAttributeKey.deviceIdentifier, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "ownerAccountName", value: boxOpaque(FileAttributeKey.ownerAccountName, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "groupOwnerAccountName", value: boxOpaque(FileAttributeKey.groupOwnerAccountName, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "posixPermissions", value: boxOpaque(FileAttributeKey.posixPermissions, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "systemNumber", value: boxOpaque(FileAttributeKey.systemNumber, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "systemFileNumber", value: boxOpaque(FileAttributeKey.systemFileNumber, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "extensionHidden", value: boxOpaque(FileAttributeKey.extensionHidden, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "hfsCreatorCode", value: boxOpaque(FileAttributeKey.hfsCreatorCode, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "hfsTypeCode", value: boxOpaque(FileAttributeKey.hfsTypeCode, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "immutable", value: boxOpaque(FileAttributeKey.immutable, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "appendOnly", value: boxOpaque(FileAttributeKey.appendOnly, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "creationDate", value: boxOpaque(FileAttributeKey.creationDate, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "ownerAccountID", value: boxOpaque(FileAttributeKey.ownerAccountID, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "groupOwnerAccountID", value: boxOpaque(FileAttributeKey.groupOwnerAccountID, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "busy", value: boxOpaque(FileAttributeKey.busy, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "protectionKey", value: boxOpaque(FileAttributeKey.protectionKey, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "systemSize", value: boxOpaque(FileAttributeKey.systemSize, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "systemFreeSize", value: boxOpaque(FileAttributeKey.systemFreeSize, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "systemNodes", value: boxOpaque(FileAttributeKey.systemNodes, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeKey", name: "systemFreeNodes", value: boxOpaque(FileAttributeKey.systemFreeNodes, typeName: "FileAttributeKey"))
-
-        i.registerStaticValue(on: "FileAttributeType", name: "typeDirectory", value: boxOpaque(FileAttributeType.typeDirectory, typeName: "FileAttributeType"))
-
-        i.registerStaticValue(on: "FileAttributeType", name: "typeRegular", value: boxOpaque(FileAttributeType.typeRegular, typeName: "FileAttributeType"))
-
-        i.registerStaticValue(on: "FileAttributeType", name: "typeSymbolicLink", value: boxOpaque(FileAttributeType.typeSymbolicLink, typeName: "FileAttributeType"))
-
-        i.registerStaticValue(on: "FileAttributeType", name: "typeSocket", value: boxOpaque(FileAttributeType.typeSocket, typeName: "FileAttributeType"))
-
-        i.registerStaticValue(on: "FileAttributeType", name: "typeCharacterSpecial", value: boxOpaque(FileAttributeType.typeCharacterSpecial, typeName: "FileAttributeType"))
-
-        i.registerStaticValue(on: "FileAttributeType", name: "typeBlockSpecial", value: boxOpaque(FileAttributeType.typeBlockSpecial, typeName: "FileAttributeType"))
-
-        i.registerStaticValue(on: "FileAttributeType", name: "typeUnknown", value: boxOpaque(FileAttributeType.typeUnknown, typeName: "FileAttributeType"))
-
-        i.registerStaticValue(on: "FileProtectionType", name: "none", value: boxOpaque(FileProtectionType.none, typeName: "FileProtectionType"))
-
-        i.registerStaticValue(on: "FileProtectionType", name: "complete", value: boxOpaque(FileProtectionType.complete, typeName: "FileProtectionType"))
-
-        i.registerStaticValue(on: "FileProtectionType", name: "completeUnlessOpen", value: boxOpaque(FileProtectionType.completeUnlessOpen, typeName: "FileProtectionType"))
-
-        i.registerStaticValue(on: "FileProtectionType", name: "completeUntilFirstUserAuthentication", value: boxOpaque(FileProtectionType.completeUntilFirstUserAuthentication, typeName: "FileProtectionType"))
-
-        i.registerComputed(on: "NSLinguisticTag", name: "hashValue") { receiver in
-            let recv: NSLinguisticTag = try unboxOpaque(receiver, as: NSLinguisticTag.self, typeName: "NSLinguisticTag")
-            return .int(recv.hashValue)
-        }
-
-        i.registerComputed(on: "NSLinguisticTagScheme", name: "hashValue") { receiver in
-            let recv: NSLinguisticTagScheme = try unboxOpaque(receiver, as: NSLinguisticTagScheme.self, typeName: "NSLinguisticTagScheme")
-            return .int(recv.hashValue)
-        }
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "word", value: boxOpaque(NSLinguisticTag.word, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "punctuation", value: boxOpaque(NSLinguisticTag.punctuation, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "whitespace", value: boxOpaque(NSLinguisticTag.whitespace, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "other", value: boxOpaque(NSLinguisticTag.other, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "noun", value: boxOpaque(NSLinguisticTag.noun, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "verb", value: boxOpaque(NSLinguisticTag.verb, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "adjective", value: boxOpaque(NSLinguisticTag.adjective, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "adverb", value: boxOpaque(NSLinguisticTag.adverb, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "pronoun", value: boxOpaque(NSLinguisticTag.pronoun, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "determiner", value: boxOpaque(NSLinguisticTag.determiner, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "particle", value: boxOpaque(NSLinguisticTag.particle, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "preposition", value: boxOpaque(NSLinguisticTag.preposition, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "number", value: boxOpaque(NSLinguisticTag.number, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "conjunction", value: boxOpaque(NSLinguisticTag.conjunction, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "interjection", value: boxOpaque(NSLinguisticTag.interjection, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "classifier", value: boxOpaque(NSLinguisticTag.classifier, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "idiom", value: boxOpaque(NSLinguisticTag.idiom, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "otherWord", value: boxOpaque(NSLinguisticTag.otherWord, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "sentenceTerminator", value: boxOpaque(NSLinguisticTag.sentenceTerminator, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "openQuote", value: boxOpaque(NSLinguisticTag.openQuote, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "closeQuote", value: boxOpaque(NSLinguisticTag.closeQuote, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "openParenthesis", value: boxOpaque(NSLinguisticTag.openParenthesis, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "closeParenthesis", value: boxOpaque(NSLinguisticTag.closeParenthesis, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "wordJoiner", value: boxOpaque(NSLinguisticTag.wordJoiner, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "dash", value: boxOpaque(NSLinguisticTag.dash, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "otherPunctuation", value: boxOpaque(NSLinguisticTag.otherPunctuation, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "paragraphBreak", value: boxOpaque(NSLinguisticTag.paragraphBreak, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "otherWhitespace", value: boxOpaque(NSLinguisticTag.otherWhitespace, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "personalName", value: boxOpaque(NSLinguisticTag.personalName, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "placeName", value: boxOpaque(NSLinguisticTag.placeName, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTag", name: "organizationName", value: boxOpaque(NSLinguisticTag.organizationName, typeName: "NSLinguisticTag"))
-
-        i.registerStaticValue(on: "NSLinguisticTagScheme", name: "tokenType", value: boxOpaque(NSLinguisticTagScheme.tokenType, typeName: "NSLinguisticTagScheme"))
-
-        i.registerStaticValue(on: "NSLinguisticTagScheme", name: "lexicalClass", value: boxOpaque(NSLinguisticTagScheme.lexicalClass, typeName: "NSLinguisticTagScheme"))
-
-        i.registerStaticValue(on: "NSLinguisticTagScheme", name: "nameType", value: boxOpaque(NSLinguisticTagScheme.nameType, typeName: "NSLinguisticTagScheme"))
-
-        i.registerStaticValue(on: "NSLinguisticTagScheme", name: "nameTypeOrLexicalClass", value: boxOpaque(NSLinguisticTagScheme.nameTypeOrLexicalClass, typeName: "NSLinguisticTagScheme"))
-
-        i.registerStaticValue(on: "NSLinguisticTagScheme", name: "lemma", value: boxOpaque(NSLinguisticTagScheme.lemma, typeName: "NSLinguisticTagScheme"))
-
-        i.registerStaticValue(on: "NSLinguisticTagScheme", name: "language", value: boxOpaque(NSLinguisticTagScheme.language, typeName: "NSLinguisticTagScheme"))
-
-        i.registerStaticValue(on: "NSLinguisticTagScheme", name: "script", value: boxOpaque(NSLinguisticTagScheme.script, typeName: "NSLinguisticTagScheme"))
-
-        i.registerGlobal(name: "NSHostByteOrder") { args in
-            guard args.count == 0 else {
-                throw RuntimeError.invalid("NSHostByteOrder: expected 0 argument(s), got \(args.count)")
-            }
-            return .int(NSHostByteOrder())
-        }
-
-        i.registerInit(on: "NSOrderedCollectionDifferenceCalculationOptions", labels: []) { args in
-            guard args.count == 0 else {
-                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions(): expected 0 argument(s), got \(args.count)")
-            }
-            return boxOpaque(NSOrderedCollectionDifferenceCalculationOptions(), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
-        }
-
-        i.registerComputed(on: "NSOrderedCollectionDifferenceCalculationOptions", name: "isEmpty") { receiver in
-            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
-            return .bool(recv.isEmpty)
-        }
-
-        i.registerStaticValue(on: "NSOrderedCollectionDifferenceCalculationOptions", name: "omitInsertedObjects", value: boxOpaque(NSOrderedCollectionDifferenceCalculationOptions.omitInsertedObjects, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
-
-        i.registerStaticValue(on: "NSOrderedCollectionDifferenceCalculationOptions", name: "omitRemovedObjects", value: boxOpaque(NSOrderedCollectionDifferenceCalculationOptions.omitRemovedObjects, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
-
-        i.registerStaticValue(on: "NSOrderedCollectionDifferenceCalculationOptions", name: "inferMoves", value: boxOpaque(NSOrderedCollectionDifferenceCalculationOptions.inferMoves, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
-
-        i.registerInit(on: "AlignmentOptions", labels: []) { args in
-            guard args.count == 0 else {
-                throw RuntimeError.invalid("AlignmentOptions(): expected 0 argument(s), got \(args.count)")
-            }
-            return boxOpaque(AlignmentOptions(), typeName: "AlignmentOptions")
-        }
-
-        i.registerComputed(on: "AlignmentOptions", name: "isEmpty") { receiver in
-            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
-            return .bool(recv.isEmpty)
-        }
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignMinXInward", value: boxOpaque(AlignmentOptions.alignMinXInward, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignMinYInward", value: boxOpaque(AlignmentOptions.alignMinYInward, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignMaxXInward", value: boxOpaque(AlignmentOptions.alignMaxXInward, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignMaxYInward", value: boxOpaque(AlignmentOptions.alignMaxYInward, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignWidthInward", value: boxOpaque(AlignmentOptions.alignWidthInward, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignHeightInward", value: boxOpaque(AlignmentOptions.alignHeightInward, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignMinXOutward", value: boxOpaque(AlignmentOptions.alignMinXOutward, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignMinYOutward", value: boxOpaque(AlignmentOptions.alignMinYOutward, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignMaxXOutward", value: boxOpaque(AlignmentOptions.alignMaxXOutward, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignMaxYOutward", value: boxOpaque(AlignmentOptions.alignMaxYOutward, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignWidthOutward", value: boxOpaque(AlignmentOptions.alignWidthOutward, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignHeightOutward", value: boxOpaque(AlignmentOptions.alignHeightOutward, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignMinXNearest", value: boxOpaque(AlignmentOptions.alignMinXNearest, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignMinYNearest", value: boxOpaque(AlignmentOptions.alignMinYNearest, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignMaxXNearest", value: boxOpaque(AlignmentOptions.alignMaxXNearest, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignMaxYNearest", value: boxOpaque(AlignmentOptions.alignMaxYNearest, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignWidthNearest", value: boxOpaque(AlignmentOptions.alignWidthNearest, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignHeightNearest", value: boxOpaque(AlignmentOptions.alignHeightNearest, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignRectFlipped", value: boxOpaque(AlignmentOptions.alignRectFlipped, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignAllEdgesInward", value: boxOpaque(AlignmentOptions.alignAllEdgesInward, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignAllEdgesOutward", value: boxOpaque(AlignmentOptions.alignAllEdgesOutward, typeName: "AlignmentOptions"))
-
-        i.registerStaticValue(on: "AlignmentOptions", name: "alignAllEdgesNearest", value: boxOpaque(AlignmentOptions.alignAllEdgesNearest, typeName: "AlignmentOptions"))
-
-        i.registerInit(on: "NSEnumerationOptions", labels: []) { args in
+        i.bridges["NSEnumerationOptions()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("NSEnumerationOptions(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(NSEnumerationOptions(), typeName: "NSEnumerationOptions")
         }
 
-        i.registerComputed(on: "NSEnumerationOptions", name: "isEmpty") { receiver in
+        i.bridges["NSEnumerationOptions.isEmpty"] = .computed { receiver in
             let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
             return .bool(recv.isEmpty)
         }
 
-        i.registerStaticValue(on: "NSEnumerationOptions", name: "concurrent", value: boxOpaque(NSEnumerationOptions.concurrent, typeName: "NSEnumerationOptions"))
+        i.bridges["NSEnumerationOptions.Type.concurrent"] = .staticValue(boxOpaque(NSEnumerationOptions.concurrent, typeName: "NSEnumerationOptions"))
 
-        i.registerStaticValue(on: "NSEnumerationOptions", name: "reverse", value: boxOpaque(NSEnumerationOptions.reverse, typeName: "NSEnumerationOptions"))
+        i.bridges["NSEnumerationOptions.Type.reverse"] = .staticValue(boxOpaque(NSEnumerationOptions.reverse, typeName: "NSEnumerationOptions"))
 
-        i.registerComputed(on: "NSExceptionName", name: "hashValue") { receiver in
+        i.bridges["NSExceptionName.hashValue"] = .computed { receiver in
             let recv: NSExceptionName = try unboxOpaque(receiver, as: NSExceptionName.self, typeName: "NSExceptionName")
             return .int(recv.hashValue)
         }
 
-        i.registerInit(on: "NSSortOptions", labels: []) { args in
+        i.bridges["NSSortOptions()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("NSSortOptions(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(NSSortOptions(), typeName: "NSSortOptions")
         }
 
-        i.registerComputed(on: "NSSortOptions", name: "isEmpty") { receiver in
+        i.bridges["NSSortOptions.isEmpty"] = .computed { receiver in
             let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
             return .bool(recv.isEmpty)
         }
 
-        i.registerStaticValue(on: "NSSortOptions", name: "concurrent", value: boxOpaque(NSSortOptions.concurrent, typeName: "NSSortOptions"))
+        i.bridges["NSSortOptions.Type.concurrent"] = .staticValue(boxOpaque(NSSortOptions.concurrent, typeName: "NSSortOptions"))
 
-        i.registerStaticValue(on: "NSSortOptions", name: "stable", value: boxOpaque(NSSortOptions.stable, typeName: "NSSortOptions"))
+        i.bridges["NSSortOptions.Type.stable"] = .staticValue(boxOpaque(NSSortOptions.stable, typeName: "NSSortOptions"))
+
+        i.bridges["NSValueTransformerName.hashValue"] = .computed { receiver in
+            let recv: NSValueTransformerName = try unboxOpaque(receiver, as: NSValueTransformerName.self, typeName: "NSValueTransformerName")
+            return .int(recv.hashValue)
+        }
+
+        i.bridges["NSValueTransformerName.Type.negateBooleanTransformerName"] = .staticValue(boxOpaque(NSValueTransformerName.negateBooleanTransformerName, typeName: "NSValueTransformerName"))
+
+        i.bridges["NSValueTransformerName.Type.isNilTransformerName"] = .staticValue(boxOpaque(NSValueTransformerName.isNilTransformerName, typeName: "NSValueTransformerName"))
+
+        i.bridges["NSValueTransformerName.Type.isNotNilTransformerName"] = .staticValue(boxOpaque(NSValueTransformerName.isNotNilTransformerName, typeName: "NSValueTransformerName"))
+
+        i.bridges["NSValueTransformerName.Type.secureUnarchiveFromDataTransformerName"] = .staticValue(boxOpaque(NSValueTransformerName.secureUnarchiveFromDataTransformerName, typeName: "NSValueTransformerName"))
 
         i.registerGlobal(name: "NSFullUserName") { args in
             guard args.count == 0 else {
@@ -3147,156 +3198,105 @@ extension FoundationModule {
             return .string(NSUserName())
         }
 
-        i.registerComputed(on: "NSTextCheckingKey", name: "hashValue") { receiver in
-            let recv: NSTextCheckingKey = try unboxOpaque(receiver, as: NSTextCheckingKey.self, typeName: "NSTextCheckingKey")
-            return .int(recv.hashValue)
-        }
+        i.bridges["Decimal.Type.zero"] = .staticValue(boxOpaque(Decimal.zero, typeName: "Decimal"))
 
-        i.registerStaticValue(on: "NSTextCheckingKey", name: "name", value: boxOpaque(NSTextCheckingKey.name, typeName: "NSTextCheckingKey"))
-
-        i.registerStaticValue(on: "NSTextCheckingKey", name: "jobTitle", value: boxOpaque(NSTextCheckingKey.jobTitle, typeName: "NSTextCheckingKey"))
-
-        i.registerStaticValue(on: "NSTextCheckingKey", name: "organization", value: boxOpaque(NSTextCheckingKey.organization, typeName: "NSTextCheckingKey"))
-
-        i.registerStaticValue(on: "NSTextCheckingKey", name: "street", value: boxOpaque(NSTextCheckingKey.street, typeName: "NSTextCheckingKey"))
-
-        i.registerStaticValue(on: "NSTextCheckingKey", name: "city", value: boxOpaque(NSTextCheckingKey.city, typeName: "NSTextCheckingKey"))
-
-        i.registerStaticValue(on: "NSTextCheckingKey", name: "state", value: boxOpaque(NSTextCheckingKey.state, typeName: "NSTextCheckingKey"))
-
-        i.registerStaticValue(on: "NSTextCheckingKey", name: "zip", value: boxOpaque(NSTextCheckingKey.zip, typeName: "NSTextCheckingKey"))
-
-        i.registerStaticValue(on: "NSTextCheckingKey", name: "country", value: boxOpaque(NSTextCheckingKey.country, typeName: "NSTextCheckingKey"))
-
-        i.registerStaticValue(on: "NSTextCheckingKey", name: "phone", value: boxOpaque(NSTextCheckingKey.phone, typeName: "NSTextCheckingKey"))
-
-        i.registerStaticValue(on: "NSTextCheckingKey", name: "airline", value: boxOpaque(NSTextCheckingKey.airline, typeName: "NSTextCheckingKey"))
-
-        i.registerStaticValue(on: "NSTextCheckingKey", name: "flight", value: boxOpaque(NSTextCheckingKey.flight, typeName: "NSTextCheckingKey"))
-
-        i.registerStaticValue(on: "Decimal", name: "zero", value: boxOpaque(Decimal.zero, typeName: "Decimal"))
-
-        i.registerInit(on: "Decimal", labels: []) { args in
+        i.bridges["Decimal()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("Decimal(): expected 0 argument(s), got \(args.count)")
             }
             return boxOpaque(Decimal(), typeName: "Decimal")
         }
 
-        i.registerComputed(on: "StreamNetworkServiceTypeValue", name: "hashValue") { receiver in
-            let recv: StreamNetworkServiceTypeValue = try unboxOpaque(receiver, as: StreamNetworkServiceTypeValue.self, typeName: "StreamNetworkServiceTypeValue")
+        i.bridges["StringEncodingDetectionOptionsKey.hashValue"] = .computed { receiver in
+            let recv: StringEncodingDetectionOptionsKey = try unboxOpaque(receiver, as: StringEncodingDetectionOptionsKey.self, typeName: "StringEncodingDetectionOptionsKey")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "StreamSOCKSProxyConfiguration", name: "hashValue") { receiver in
-            let recv: StreamSOCKSProxyConfiguration = try unboxOpaque(receiver, as: StreamSOCKSProxyConfiguration.self, typeName: "StreamSOCKSProxyConfiguration")
+        i.bridges["StringTransform.hashValue"] = .computed { receiver in
+            let recv: StringTransform = try unboxOpaque(receiver, as: StringTransform.self, typeName: "StringTransform")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "StreamSOCKSProxyVersion", name: "hashValue") { receiver in
-            let recv: StreamSOCKSProxyVersion = try unboxOpaque(receiver, as: StreamSOCKSProxyVersion.self, typeName: "StreamSOCKSProxyVersion")
-            return .int(recv.hashValue)
-        }
+        i.bridges["NSExceptionName.Type.characterConversionException"] = .staticValue(boxOpaque(NSExceptionName.characterConversionException, typeName: "NSExceptionName"))
 
-        i.registerComputed(on: "StreamSocketSecurityLevel", name: "hashValue") { receiver in
-            let recv: StreamSocketSecurityLevel = try unboxOpaque(receiver, as: StreamSocketSecurityLevel.self, typeName: "StreamSocketSecurityLevel")
-            return .int(recv.hashValue)
-        }
+        i.bridges["NSExceptionName.Type.parseErrorException"] = .staticValue(boxOpaque(NSExceptionName.parseErrorException, typeName: "NSExceptionName"))
 
-        i.registerStaticValue(on: "StreamNetworkServiceTypeValue", name: "voIP", value: boxOpaque(StreamNetworkServiceTypeValue.voIP, typeName: "StreamNetworkServiceTypeValue"))
+        i.bridges["StringEncodingDetectionOptionsKey.Type.suggestedEncodingsKey"] = .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.suggestedEncodingsKey, typeName: "StringEncodingDetectionOptionsKey"))
 
-        i.registerStaticValue(on: "StreamNetworkServiceTypeValue", name: "video", value: boxOpaque(StreamNetworkServiceTypeValue.video, typeName: "StreamNetworkServiceTypeValue"))
+        i.bridges["StringEncodingDetectionOptionsKey.Type.disallowedEncodingsKey"] = .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.disallowedEncodingsKey, typeName: "StringEncodingDetectionOptionsKey"))
 
-        i.registerStaticValue(on: "StreamNetworkServiceTypeValue", name: "background", value: boxOpaque(StreamNetworkServiceTypeValue.background, typeName: "StreamNetworkServiceTypeValue"))
+        i.bridges["StringEncodingDetectionOptionsKey.Type.useOnlySuggestedEncodingsKey"] = .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.useOnlySuggestedEncodingsKey, typeName: "StringEncodingDetectionOptionsKey"))
 
-        i.registerStaticValue(on: "StreamNetworkServiceTypeValue", name: "voice", value: boxOpaque(StreamNetworkServiceTypeValue.voice, typeName: "StreamNetworkServiceTypeValue"))
+        i.bridges["StringEncodingDetectionOptionsKey.Type.allowLossyKey"] = .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.allowLossyKey, typeName: "StringEncodingDetectionOptionsKey"))
 
-        i.registerStaticValue(on: "StreamNetworkServiceTypeValue", name: "callSignaling", value: boxOpaque(StreamNetworkServiceTypeValue.callSignaling, typeName: "StreamNetworkServiceTypeValue"))
+        i.bridges["StringEncodingDetectionOptionsKey.Type.fromWindowsKey"] = .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.fromWindowsKey, typeName: "StringEncodingDetectionOptionsKey"))
 
-        i.registerStaticValue(on: "StreamSOCKSProxyConfiguration", name: "hostKey", value: boxOpaque(StreamSOCKSProxyConfiguration.hostKey, typeName: "StreamSOCKSProxyConfiguration"))
+        i.bridges["StringEncodingDetectionOptionsKey.Type.lossySubstitutionKey"] = .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.lossySubstitutionKey, typeName: "StringEncodingDetectionOptionsKey"))
 
-        i.registerStaticValue(on: "StreamSOCKSProxyConfiguration", name: "portKey", value: boxOpaque(StreamSOCKSProxyConfiguration.portKey, typeName: "StreamSOCKSProxyConfiguration"))
+        i.bridges["StringEncodingDetectionOptionsKey.Type.likelyLanguageKey"] = .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.likelyLanguageKey, typeName: "StringEncodingDetectionOptionsKey"))
 
-        i.registerStaticValue(on: "StreamSOCKSProxyConfiguration", name: "versionKey", value: boxOpaque(StreamSOCKSProxyConfiguration.versionKey, typeName: "StreamSOCKSProxyConfiguration"))
+        i.bridges["StringTransform.Type.latinToKatakana"] = .staticValue(boxOpaque(StringTransform.latinToKatakana, typeName: "StringTransform"))
 
-        i.registerStaticValue(on: "StreamSOCKSProxyConfiguration", name: "userKey", value: boxOpaque(StreamSOCKSProxyConfiguration.userKey, typeName: "StreamSOCKSProxyConfiguration"))
+        i.bridges["StringTransform.Type.latinToHiragana"] = .staticValue(boxOpaque(StringTransform.latinToHiragana, typeName: "StringTransform"))
 
-        i.registerStaticValue(on: "StreamSOCKSProxyConfiguration", name: "passwordKey", value: boxOpaque(StreamSOCKSProxyConfiguration.passwordKey, typeName: "StreamSOCKSProxyConfiguration"))
+        i.bridges["StringTransform.Type.latinToHangul"] = .staticValue(boxOpaque(StringTransform.latinToHangul, typeName: "StringTransform"))
 
-        i.registerStaticValue(on: "StreamSOCKSProxyVersion", name: "version4", value: boxOpaque(StreamSOCKSProxyVersion.version4, typeName: "StreamSOCKSProxyVersion"))
+        i.bridges["StringTransform.Type.latinToArabic"] = .staticValue(boxOpaque(StringTransform.latinToArabic, typeName: "StringTransform"))
 
-        i.registerStaticValue(on: "StreamSOCKSProxyVersion", name: "version5", value: boxOpaque(StreamSOCKSProxyVersion.version5, typeName: "StreamSOCKSProxyVersion"))
+        i.bridges["StringTransform.Type.latinToHebrew"] = .staticValue(boxOpaque(StringTransform.latinToHebrew, typeName: "StringTransform"))
 
-        i.registerStaticValue(on: "StreamSocketSecurityLevel", name: "none", value: boxOpaque(StreamSocketSecurityLevel.none, typeName: "StreamSocketSecurityLevel"))
+        i.bridges["StringTransform.Type.latinToThai"] = .staticValue(boxOpaque(StringTransform.latinToThai, typeName: "StringTransform"))
 
-        i.registerStaticValue(on: "StreamSocketSecurityLevel", name: "ssLv2", value: boxOpaque(StreamSocketSecurityLevel.ssLv2, typeName: "StreamSocketSecurityLevel"))
+        i.bridges["StringTransform.Type.latinToCyrillic"] = .staticValue(boxOpaque(StringTransform.latinToCyrillic, typeName: "StringTransform"))
 
-        i.registerStaticValue(on: "StreamSocketSecurityLevel", name: "ssLv3", value: boxOpaque(StreamSocketSecurityLevel.ssLv3, typeName: "StreamSocketSecurityLevel"))
+        i.bridges["StringTransform.Type.latinToGreek"] = .staticValue(boxOpaque(StringTransform.latinToGreek, typeName: "StringTransform"))
 
-        i.registerStaticValue(on: "StreamSocketSecurityLevel", name: "tlSv1", value: boxOpaque(StreamSocketSecurityLevel.tlSv1, typeName: "StreamSocketSecurityLevel"))
+        i.bridges["StringTransform.Type.toLatin"] = .staticValue(boxOpaque(StringTransform.toLatin, typeName: "StringTransform"))
 
-        i.registerStaticValue(on: "StreamSocketSecurityLevel", name: "negotiatedSSL", value: boxOpaque(StreamSocketSecurityLevel.negotiatedSSL, typeName: "StreamSocketSecurityLevel"))
+        i.bridges["StringTransform.Type.mandarinToLatin"] = .staticValue(boxOpaque(StringTransform.mandarinToLatin, typeName: "StringTransform"))
 
-        i.registerComputed(on: "NSKeyValueOperator", name: "hashValue") { receiver in
+        i.bridges["StringTransform.Type.hiraganaToKatakana"] = .staticValue(boxOpaque(StringTransform.hiraganaToKatakana, typeName: "StringTransform"))
+
+        i.bridges["StringTransform.Type.fullwidthToHalfwidth"] = .staticValue(boxOpaque(StringTransform.fullwidthToHalfwidth, typeName: "StringTransform"))
+
+        i.bridges["StringTransform.Type.toXMLHex"] = .staticValue(boxOpaque(StringTransform.toXMLHex, typeName: "StringTransform"))
+
+        i.bridges["StringTransform.Type.toUnicodeName"] = .staticValue(boxOpaque(StringTransform.toUnicodeName, typeName: "StringTransform"))
+
+        i.bridges["StringTransform.Type.stripCombiningMarks"] = .staticValue(boxOpaque(StringTransform.stripCombiningMarks, typeName: "StringTransform"))
+
+        i.bridges["StringTransform.Type.stripDiacritics"] = .staticValue(boxOpaque(StringTransform.stripDiacritics, typeName: "StringTransform"))
+
+        i.bridges["NSKeyValueOperator.hashValue"] = .computed { receiver in
             let recv: NSKeyValueOperator = try unboxOpaque(receiver, as: NSKeyValueOperator.self, typeName: "NSKeyValueOperator")
             return .int(recv.hashValue)
         }
 
-        i.registerStaticValue(on: "NSExceptionName", name: "undefinedKeyException", value: boxOpaque(NSExceptionName.undefinedKeyException, typeName: "NSExceptionName"))
+        i.bridges["NSExceptionName.Type.undefinedKeyException"] = .staticValue(boxOpaque(NSExceptionName.undefinedKeyException, typeName: "NSExceptionName"))
 
-        i.registerStaticValue(on: "NSKeyValueOperator", name: "averageKeyValueOperator", value: boxOpaque(NSKeyValueOperator.averageKeyValueOperator, typeName: "NSKeyValueOperator"))
+        i.bridges["NSKeyValueOperator.Type.averageKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.averageKeyValueOperator, typeName: "NSKeyValueOperator"))
 
-        i.registerStaticValue(on: "NSKeyValueOperator", name: "countKeyValueOperator", value: boxOpaque(NSKeyValueOperator.countKeyValueOperator, typeName: "NSKeyValueOperator"))
+        i.bridges["NSKeyValueOperator.Type.countKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.countKeyValueOperator, typeName: "NSKeyValueOperator"))
 
-        i.registerStaticValue(on: "NSKeyValueOperator", name: "distinctUnionOfArraysKeyValueOperator", value: boxOpaque(NSKeyValueOperator.distinctUnionOfArraysKeyValueOperator, typeName: "NSKeyValueOperator"))
+        i.bridges["NSKeyValueOperator.Type.distinctUnionOfArraysKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.distinctUnionOfArraysKeyValueOperator, typeName: "NSKeyValueOperator"))
 
-        i.registerStaticValue(on: "NSKeyValueOperator", name: "distinctUnionOfObjectsKeyValueOperator", value: boxOpaque(NSKeyValueOperator.distinctUnionOfObjectsKeyValueOperator, typeName: "NSKeyValueOperator"))
+        i.bridges["NSKeyValueOperator.Type.distinctUnionOfObjectsKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.distinctUnionOfObjectsKeyValueOperator, typeName: "NSKeyValueOperator"))
 
-        i.registerStaticValue(on: "NSKeyValueOperator", name: "distinctUnionOfSetsKeyValueOperator", value: boxOpaque(NSKeyValueOperator.distinctUnionOfSetsKeyValueOperator, typeName: "NSKeyValueOperator"))
+        i.bridges["NSKeyValueOperator.Type.distinctUnionOfSetsKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.distinctUnionOfSetsKeyValueOperator, typeName: "NSKeyValueOperator"))
 
-        i.registerStaticValue(on: "NSKeyValueOperator", name: "maximumKeyValueOperator", value: boxOpaque(NSKeyValueOperator.maximumKeyValueOperator, typeName: "NSKeyValueOperator"))
+        i.bridges["NSKeyValueOperator.Type.maximumKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.maximumKeyValueOperator, typeName: "NSKeyValueOperator"))
 
-        i.registerStaticValue(on: "NSKeyValueOperator", name: "minimumKeyValueOperator", value: boxOpaque(NSKeyValueOperator.minimumKeyValueOperator, typeName: "NSKeyValueOperator"))
+        i.bridges["NSKeyValueOperator.Type.minimumKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.minimumKeyValueOperator, typeName: "NSKeyValueOperator"))
 
-        i.registerStaticValue(on: "NSKeyValueOperator", name: "sumKeyValueOperator", value: boxOpaque(NSKeyValueOperator.sumKeyValueOperator, typeName: "NSKeyValueOperator"))
+        i.bridges["NSKeyValueOperator.Type.sumKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.sumKeyValueOperator, typeName: "NSKeyValueOperator"))
 
-        i.registerStaticValue(on: "NSKeyValueOperator", name: "unionOfArraysKeyValueOperator", value: boxOpaque(NSKeyValueOperator.unionOfArraysKeyValueOperator, typeName: "NSKeyValueOperator"))
+        i.bridges["NSKeyValueOperator.Type.unionOfArraysKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.unionOfArraysKeyValueOperator, typeName: "NSKeyValueOperator"))
 
-        i.registerStaticValue(on: "NSKeyValueOperator", name: "unionOfObjectsKeyValueOperator", value: boxOpaque(NSKeyValueOperator.unionOfObjectsKeyValueOperator, typeName: "NSKeyValueOperator"))
+        i.bridges["NSKeyValueOperator.Type.unionOfObjectsKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.unionOfObjectsKeyValueOperator, typeName: "NSKeyValueOperator"))
 
-        i.registerStaticValue(on: "NSKeyValueOperator", name: "unionOfSetsKeyValueOperator", value: boxOpaque(NSKeyValueOperator.unionOfSetsKeyValueOperator, typeName: "NSKeyValueOperator"))
+        i.bridges["NSKeyValueOperator.Type.unionOfSetsKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.unionOfSetsKeyValueOperator, typeName: "NSKeyValueOperator"))
 
-        i.registerComputed(on: "ProgressKind", name: "hashValue") { receiver in
-            let recv: ProgressKind = try unboxOpaque(receiver, as: ProgressKind.self, typeName: "ProgressKind")
-            return .int(recv.hashValue)
-        }
-
-        i.registerComputed(on: "ProgressUserInfoKey", name: "hashValue") { receiver in
-            let recv: ProgressUserInfoKey = try unboxOpaque(receiver, as: ProgressUserInfoKey.self, typeName: "ProgressUserInfoKey")
-            return .int(recv.hashValue)
-        }
-
-        i.registerStaticValue(on: "ProgressKind", name: "file", value: boxOpaque(ProgressKind.file, typeName: "ProgressKind"))
-
-        i.registerStaticValue(on: "ProgressUserInfoKey", name: "estimatedTimeRemainingKey", value: boxOpaque(ProgressUserInfoKey.estimatedTimeRemainingKey, typeName: "ProgressUserInfoKey"))
-
-        i.registerStaticValue(on: "ProgressUserInfoKey", name: "throughputKey", value: boxOpaque(ProgressUserInfoKey.throughputKey, typeName: "ProgressUserInfoKey"))
-
-        i.registerStaticValue(on: "ProgressUserInfoKey", name: "fileOperationKindKey", value: boxOpaque(ProgressUserInfoKey.fileOperationKindKey, typeName: "ProgressUserInfoKey"))
-
-        i.registerStaticValue(on: "ProgressUserInfoKey", name: "fileURLKey", value: boxOpaque(ProgressUserInfoKey.fileURLKey, typeName: "ProgressUserInfoKey"))
-
-        i.registerStaticValue(on: "ProgressUserInfoKey", name: "fileTotalCountKey", value: boxOpaque(ProgressUserInfoKey.fileTotalCountKey, typeName: "ProgressUserInfoKey"))
-
-        i.registerStaticValue(on: "ProgressUserInfoKey", name: "fileCompletedCountKey", value: boxOpaque(ProgressUserInfoKey.fileCompletedCountKey, typeName: "ProgressUserInfoKey"))
-
-        i.registerStaticValue(on: "ProgressUserInfoKey", name: "fileAnimationImageKey", value: boxOpaque(ProgressUserInfoKey.fileAnimationImageKey, typeName: "ProgressUserInfoKey"))
-
-        i.registerStaticValue(on: "ProgressUserInfoKey", name: "fileAnimationImageOriginalRectKey", value: boxOpaque(ProgressUserInfoKey.fileAnimationImageOriginalRectKey, typeName: "ProgressUserInfoKey"))
-
-        i.registerStaticValue(on: "ProgressUserInfoKey", name: "fileIconKey", value: boxOpaque(ProgressUserInfoKey.fileIconKey, typeName: "ProgressUserInfoKey"))
-
-        i.registerMethod(on: "Duration", name: "formatted") { receiver, args in
+        i.bridges["Duration.formatted()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("Duration.formatted: expected 0 argument(s), got \(args.count)")
             }
@@ -3304,7 +3304,7 @@ extension FoundationModule {
             return .string(recv.formatted())
         }
 
-        i.registerMethod(on: "CharacterSet", name: "isSubset") { receiver, args in
+        i.bridges["CharacterSet.isSubset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("CharacterSet.isSubset: expected 1 argument(s), got \(args.count)")
             }
@@ -3312,7 +3312,7 @@ extension FoundationModule {
             return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")))
         }
 
-        i.registerMethod(on: "CharacterSet", name: "isDisjoint") { receiver, args in
+        i.bridges["CharacterSet.isDisjoint()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("CharacterSet.isDisjoint: expected 1 argument(s), got \(args.count)")
             }
@@ -3320,7 +3320,7 @@ extension FoundationModule {
             return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")))
         }
 
-        i.registerMethod(on: "CharacterSet", name: "isStrictSuperset") { receiver, args in
+        i.bridges["CharacterSet.isStrictSuperset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("CharacterSet.isStrictSuperset: expected 1 argument(s), got \(args.count)")
             }
@@ -3328,7 +3328,7 @@ extension FoundationModule {
             return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")))
         }
 
-        i.registerMethod(on: "CharacterSet", name: "isStrictSubset") { receiver, args in
+        i.bridges["CharacterSet.isStrictSubset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("CharacterSet.isStrictSubset: expected 1 argument(s), got \(args.count)")
             }
@@ -3336,21 +3336,21 @@ extension FoundationModule {
             return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")))
         }
 
-        i.registerInit(on: "CharacterSet", labels: ["charactersIn"]) { args in
+        i.bridges["CharacterSet(charactersIn:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("CharacterSet(charactersIn:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(CharacterSet(charactersIn: try unboxString(args[0])), typeName: "CharacterSet")
         }
 
-        i.registerInit(on: "CharacterSet", labels: ["bitmapRepresentation"]) { args in
+        i.bridges["CharacterSet(bitmapRepresentation:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("CharacterSet(bitmapRepresentation:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(CharacterSet(bitmapRepresentation: try unboxOpaque(args[0], as: Data.self, typeName: "Data")), typeName: "CharacterSet")
         }
 
-        i.registerInit(on: "CharacterSet", labels: ["contentsOfFile"]) { args in
+        i.bridges["CharacterSet(contentsOfFile:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("CharacterSet(contentsOfFile:): expected 1 argument(s), got \(args.count)")
             }
@@ -3360,7 +3360,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "CharacterSet", name: "union") { receiver, args in
+        i.bridges["CharacterSet.union()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("CharacterSet.union: expected 1 argument(s), got \(args.count)")
             }
@@ -3368,7 +3368,7 @@ extension FoundationModule {
             return boxOpaque(recv.union(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")), typeName: "CharacterSet")
         }
 
-        i.registerMethod(on: "CharacterSet", name: "intersection") { receiver, args in
+        i.bridges["CharacterSet.intersection()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("CharacterSet.intersection: expected 1 argument(s), got \(args.count)")
             }
@@ -3376,7 +3376,7 @@ extension FoundationModule {
             return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")), typeName: "CharacterSet")
         }
 
-        i.registerMethod(on: "CharacterSet", name: "subtracting") { receiver, args in
+        i.bridges["CharacterSet.subtracting()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("CharacterSet.subtracting: expected 1 argument(s), got \(args.count)")
             }
@@ -3384,7 +3384,7 @@ extension FoundationModule {
             return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")), typeName: "CharacterSet")
         }
 
-        i.registerMethod(on: "CharacterSet", name: "symmetricDifference") { receiver, args in
+        i.bridges["CharacterSet.symmetricDifference()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("CharacterSet.symmetricDifference: expected 1 argument(s), got \(args.count)")
             }
@@ -3392,7 +3392,7 @@ extension FoundationModule {
             return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")), typeName: "CharacterSet")
         }
 
-        i.registerMethod(on: "CharacterSet", name: "isSuperset") { receiver, args in
+        i.bridges["CharacterSet.isSuperset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("CharacterSet.isSuperset: expected 1 argument(s), got \(args.count)")
             }
@@ -3400,7 +3400,7 @@ extension FoundationModule {
             return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")))
         }
 
-        i.registerMethod(on: "IndexSet", name: "isSubset") { receiver, args in
+        i.bridges["IndexSet.isSubset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("IndexSet.isSubset: expected 1 argument(s), got \(args.count)")
             }
@@ -3408,7 +3408,7 @@ extension FoundationModule {
             return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")))
         }
 
-        i.registerMethod(on: "IndexSet", name: "isSuperset") { receiver, args in
+        i.bridges["IndexSet.isSuperset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("IndexSet.isSuperset: expected 1 argument(s), got \(args.count)")
             }
@@ -3416,7 +3416,7 @@ extension FoundationModule {
             return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")))
         }
 
-        i.registerMethod(on: "IndexSet", name: "isDisjoint") { receiver, args in
+        i.bridges["IndexSet.isDisjoint()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("IndexSet.isDisjoint: expected 1 argument(s), got \(args.count)")
             }
@@ -3424,7 +3424,7 @@ extension FoundationModule {
             return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")))
         }
 
-        i.registerMethod(on: "IndexSet", name: "subtracting") { receiver, args in
+        i.bridges["IndexSet.subtracting()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("IndexSet.subtracting: expected 1 argument(s), got \(args.count)")
             }
@@ -3432,7 +3432,7 @@ extension FoundationModule {
             return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")), typeName: "IndexSet")
         }
 
-        i.registerMethod(on: "IndexSet", name: "isStrictSuperset") { receiver, args in
+        i.bridges["IndexSet.isStrictSuperset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("IndexSet.isStrictSuperset: expected 1 argument(s), got \(args.count)")
             }
@@ -3440,7 +3440,7 @@ extension FoundationModule {
             return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")))
         }
 
-        i.registerMethod(on: "IndexSet", name: "isStrictSubset") { receiver, args in
+        i.bridges["IndexSet.isStrictSubset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("IndexSet.isStrictSubset: expected 1 argument(s), got \(args.count)")
             }
@@ -3448,7 +3448,7 @@ extension FoundationModule {
             return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")))
         }
 
-        i.registerMethod(on: "IndexSet", name: "contains") { receiver, args in
+        i.bridges["IndexSet.contains()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("IndexSet.contains: expected 1 argument(s), got \(args.count)")
             }
@@ -3456,7 +3456,7 @@ extension FoundationModule {
             return .bool(recv.contains(integersIn: try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")))
         }
 
-        i.registerMethod(on: "IndexSet", name: "index") { receiver, args in
+        i.bridges["IndexSet.index()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("IndexSet.index: expected 1 argument(s), got \(args.count)")
             }
@@ -3464,7 +3464,7 @@ extension FoundationModule {
             return boxOpaque(recv.index(after: try unboxOpaque(args[0], as: IndexSet.Index.self, typeName: "IndexSet.Index")), typeName: "IndexSet.Index")
         }
 
-        i.registerMethod(on: "IndexSet", name: "union") { receiver, args in
+        i.bridges["IndexSet.union()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("IndexSet.union: expected 1 argument(s), got \(args.count)")
             }
@@ -3472,7 +3472,7 @@ extension FoundationModule {
             return boxOpaque(recv.union(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")), typeName: "IndexSet")
         }
 
-        i.registerMethod(on: "IndexSet", name: "symmetricDifference") { receiver, args in
+        i.bridges["IndexSet.symmetricDifference()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("IndexSet.symmetricDifference: expected 1 argument(s), got \(args.count)")
             }
@@ -3480,7 +3480,7 @@ extension FoundationModule {
             return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")), typeName: "IndexSet")
         }
 
-        i.registerMethod(on: "IndexSet", name: "intersection") { receiver, args in
+        i.bridges["IndexSet.intersection()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("IndexSet.intersection: expected 1 argument(s), got \(args.count)")
             }
@@ -3488,7 +3488,7 @@ extension FoundationModule {
             return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")), typeName: "IndexSet")
         }
 
-        i.registerMethod(on: "AttributeContainer", name: "filter") { receiver, args in
+        i.bridges["AttributeContainer.filter()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("AttributeContainer.filter: expected 1 argument(s), got \(args.count)")
             }
@@ -3496,7 +3496,7 @@ extension FoundationModule {
             return boxOpaque(recv.filter(inheritedByAddedText: try unboxBool(args[0])), typeName: "AttributeContainer")
         }
 
-        i.registerMethod(on: "AttributedString", name: "settingAttributes") { receiver, args in
+        i.bridges["AttributedString.settingAttributes()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("AttributedString.settingAttributes: expected 1 argument(s), got \(args.count)")
             }
@@ -3504,7 +3504,7 @@ extension FoundationModule {
             return boxOpaque(recv.settingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
         }
 
-        i.registerMethod(on: "AttributedString", name: "index") { receiver, args in
+        i.bridges["AttributedString.index()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("AttributedString.index: expected 1 argument(s), got \(args.count)")
             }
@@ -3512,21 +3512,21 @@ extension FoundationModule {
             return boxOpaque(recv.index(afterCharacter: try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index")), typeName: "AttributedString.Index")
         }
 
-        i.registerInit(on: "AttributedString", labels: ["_"]) { args in
+        i.bridges["AttributedString(_:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("AttributedString(_:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(AttributedString(try unboxOpaque(args[0], as: AttributedSubstring.self, typeName: "AttributedSubstring")), typeName: "AttributedString")
         }
 
-        i.registerInit(on: "AttributedString", labels: ["stringLiteral"]) { args in
+        i.bridges["AttributedString(stringLiteral:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("AttributedString(stringLiteral:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(AttributedString(stringLiteral: try unboxString(args[0])), typeName: "AttributedString")
         }
 
-        i.registerMethod(on: "AttributedSubstring", name: "settingAttributes") { receiver, args in
+        i.bridges["AttributedSubstring.settingAttributes()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("AttributedSubstring.settingAttributes: expected 1 argument(s), got \(args.count)")
             }
@@ -3534,7 +3534,7 @@ extension FoundationModule {
             return boxOpaque(recv.settingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
         }
 
-        i.registerMethod(on: "AttributedSubstring", name: "index") { receiver, args in
+        i.bridges["AttributedSubstring.index()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("AttributedSubstring.index: expected 1 argument(s), got \(args.count)")
             }
@@ -3542,7 +3542,7 @@ extension FoundationModule {
             return boxOpaque(recv.index(afterCharacter: try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index")), typeName: "AttributedString.Index")
         }
 
-        i.registerMethod(on: "Calendar", name: "date") { receiver, args in
+        i.bridges["Calendar.date()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Calendar.date: expected 1 argument(s), got \(args.count)")
             }
@@ -3553,7 +3553,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "Calendar", name: "startOfDay") { receiver, args in
+        i.bridges["Calendar.startOfDay()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Calendar.startOfDay: expected 1 argument(s), got \(args.count)")
             }
@@ -3561,7 +3561,7 @@ extension FoundationModule {
             return boxOpaque(recv.startOfDay(for: try unboxOpaque(args[0], as: Date.self, typeName: "Date")), typeName: "Date")
         }
 
-        i.registerMethod(on: "Calendar", name: "isDateInToday") { receiver, args in
+        i.bridges["Calendar.isDateInToday()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Calendar.isDateInToday: expected 1 argument(s), got \(args.count)")
             }
@@ -3569,7 +3569,7 @@ extension FoundationModule {
             return .bool(recv.isDateInToday(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
         }
 
-        i.registerMethod(on: "Calendar", name: "isDateInYesterday") { receiver, args in
+        i.bridges["Calendar.isDateInYesterday()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Calendar.isDateInYesterday: expected 1 argument(s), got \(args.count)")
             }
@@ -3577,7 +3577,7 @@ extension FoundationModule {
             return .bool(recv.isDateInYesterday(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
         }
 
-        i.registerMethod(on: "Calendar", name: "isDateInTomorrow") { receiver, args in
+        i.bridges["Calendar.isDateInTomorrow()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Calendar.isDateInTomorrow: expected 1 argument(s), got \(args.count)")
             }
@@ -3585,7 +3585,7 @@ extension FoundationModule {
             return .bool(recv.isDateInTomorrow(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
         }
 
-        i.registerMethod(on: "Calendar", name: "isDateInWeekend") { receiver, args in
+        i.bridges["Calendar.isDateInWeekend()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Calendar.isDateInWeekend: expected 1 argument(s), got \(args.count)")
             }
@@ -3593,7 +3593,7 @@ extension FoundationModule {
             return .bool(recv.isDateInWeekend(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
         }
 
-        i.registerMethod(on: "Calendar", name: "dateIntervalOfWeekend") { receiver, args in
+        i.bridges["Calendar.dateIntervalOfWeekend()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Calendar.dateIntervalOfWeekend: expected 1 argument(s), got \(args.count)")
             }
@@ -3604,7 +3604,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "DateComponents", name: "isValidDate") { receiver, args in
+        i.bridges["DateComponents.isValidDate()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("DateComponents.isValidDate: expected 1 argument(s), got \(args.count)")
             }
@@ -3612,21 +3612,21 @@ extension FoundationModule {
             return .bool(recv.isValidDate(in: try unboxOpaque(args[0], as: Calendar.self, typeName: "Calendar")))
         }
 
-        i.registerInit(on: "Data", labels: ["capacity"]) { args in
+        i.bridges["Data(capacity:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Data(capacity:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(Data(capacity: try unboxInt(args[0])), typeName: "Data")
         }
 
-        i.registerInit(on: "Data", labels: ["count"]) { args in
+        i.bridges["Data(count:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Data(count:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(Data(count: try unboxInt(args[0])), typeName: "Data")
         }
 
-        i.registerMethod(on: "Data", name: "advanced") { receiver, args in
+        i.bridges["Data.advanced()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Data.advanced: expected 1 argument(s), got \(args.count)")
             }
@@ -3634,7 +3634,7 @@ extension FoundationModule {
             return boxOpaque(recv.advanced(by: try unboxInt(args[0])), typeName: "Data")
         }
 
-        i.registerMethod(on: "Data", name: "base64EncodedString") { receiver, args in
+        i.bridges["Data.base64EncodedString()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("Data.base64EncodedString: expected 0 argument(s), got \(args.count)")
             }
@@ -3642,7 +3642,7 @@ extension FoundationModule {
             return .string(recv.base64EncodedString())
         }
 
-        i.registerMethod(on: "Data", name: "base64EncodedData") { receiver, args in
+        i.bridges["Data.base64EncodedData()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("Data.base64EncodedData: expected 0 argument(s), got \(args.count)")
             }
@@ -3650,14 +3650,14 @@ extension FoundationModule {
             return boxOpaque(recv.base64EncodedData(), typeName: "Data")
         }
 
-        i.registerInit(on: "Decimal", labels: ["_"]) { args in
+        i.bridges["Decimal(_:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Decimal(_:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(Decimal(try unboxInt(args[0])), typeName: "Decimal")
         }
 
-        i.registerMethod(on: "Decimal", name: "isEqual") { receiver, args in
+        i.bridges["Decimal.isEqual()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Decimal.isEqual: expected 1 argument(s), got \(args.count)")
             }
@@ -3665,7 +3665,7 @@ extension FoundationModule {
             return .bool(recv.isEqual(to: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")))
         }
 
-        i.registerMethod(on: "Decimal", name: "isLess") { receiver, args in
+        i.bridges["Decimal.isLess()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Decimal.isLess: expected 1 argument(s), got \(args.count)")
             }
@@ -3673,7 +3673,7 @@ extension FoundationModule {
             return .bool(recv.isLess(than: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")))
         }
 
-        i.registerMethod(on: "Decimal", name: "isLessThanOrEqualTo") { receiver, args in
+        i.bridges["Decimal.isLessThanOrEqualTo()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Decimal.isLessThanOrEqualTo: expected 1 argument(s), got \(args.count)")
             }
@@ -3681,7 +3681,7 @@ extension FoundationModule {
             return .bool(recv.isLessThanOrEqualTo(try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")))
         }
 
-        i.registerMethod(on: "Decimal", name: "isTotallyOrdered") { receiver, args in
+        i.bridges["Decimal.isTotallyOrdered()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Decimal.isTotallyOrdered: expected 1 argument(s), got \(args.count)")
             }
@@ -3689,21 +3689,21 @@ extension FoundationModule {
             return .bool(recv.isTotallyOrdered(belowOrEqualTo: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")))
         }
 
-        i.registerInit(on: "Decimal", labels: ["floatLiteral"]) { args in
+        i.bridges["Decimal(floatLiteral:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Decimal(floatLiteral:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(Decimal(floatLiteral: try toDouble(args[0])), typeName: "Decimal")
         }
 
-        i.registerInit(on: "Decimal", labels: ["integerLiteral"]) { args in
+        i.bridges["Decimal(integerLiteral:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Decimal(integerLiteral:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(Decimal(integerLiteral: try unboxInt(args[0])), typeName: "Decimal")
         }
 
-        i.registerMethod(on: "Decimal", name: "distance") { receiver, args in
+        i.bridges["Decimal.distance()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Decimal.distance: expected 1 argument(s), got \(args.count)")
             }
@@ -3711,7 +3711,7 @@ extension FoundationModule {
             return boxOpaque(recv.distance(to: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")), typeName: "Decimal")
         }
 
-        i.registerMethod(on: "Decimal", name: "advanced") { receiver, args in
+        i.bridges["Decimal.advanced()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Decimal.advanced: expected 1 argument(s), got \(args.count)")
             }
@@ -3719,7 +3719,7 @@ extension FoundationModule {
             return boxOpaque(recv.advanced(by: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")), typeName: "Decimal")
         }
 
-        i.registerMethod(on: "Date", name: "ISO8601Format") { receiver, args in
+        i.bridges["Date.ISO8601Format()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Date.ISO8601Format: expected 1 argument(s), got \(args.count)")
             }
@@ -3727,21 +3727,21 @@ extension FoundationModule {
             return .string(recv.ISO8601Format(try unboxOpaque(args[0], as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")))
         }
 
-        i.registerInit(on: "Locale", labels: ["identifier"]) { args in
+        i.bridges["Locale(identifier:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Locale(identifier:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(Locale(identifier: try unboxString(args[0])), typeName: "Locale")
         }
 
-        i.registerInit(on: "Locale", labels: ["components"]) { args in
+        i.bridges["Locale(components:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Locale(components:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(Locale(components: try unboxOpaque(args[0], as: Locale.Components.self, typeName: "Locale.Components")), typeName: "Locale")
         }
 
-        i.registerMethod(on: "Locale", name: "localizedString") { receiver, args in
+        i.bridges["Locale.localizedString()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Locale.localizedString: expected 1 argument(s), got \(args.count)")
             }
@@ -3752,14 +3752,14 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerStaticMethod(on: "Locale", name: "canonicalLanguageIdentifier") { args in
+        i.bridges["Locale.Type.canonicalLanguageIdentifier()"] = .staticMethod { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Locale.canonicalLanguageIdentifier: expected 1 argument(s), got \(args.count)")
             }
             return .string(Locale.canonicalLanguageIdentifier(from: try unboxString(args[0])))
         }
 
-        i.registerMethod(on: "ByteCountFormatStyle", name: "locale") { receiver, args in
+        i.bridges["ByteCountFormatStyle.locale()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("ByteCountFormatStyle.locale: expected 1 argument(s), got \(args.count)")
             }
@@ -3767,7 +3767,7 @@ extension FoundationModule {
             return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "ByteCountFormatStyle")
         }
 
-        i.registerMethod(on: "StringStyle", name: "locale") { receiver, args in
+        i.bridges["StringStyle.locale()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("StringStyle.locale: expected 1 argument(s), got \(args.count)")
             }
@@ -3775,7 +3775,7 @@ extension FoundationModule {
             return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "StringStyle")
         }
 
-        i.registerMethod(on: "StringStyle", name: "format") { receiver, args in
+        i.bridges["StringStyle.format()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("StringStyle.format: expected 1 argument(s), got \(args.count)")
             }
@@ -3783,7 +3783,7 @@ extension FoundationModule {
             return .string(recv.format(try unboxString(args[0])))
         }
 
-        i.registerStaticMethod(on: "Locale", name: "identifier") { args in
+        i.bridges["Locale.Type.identifier()"] = .staticMethod { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Locale.identifier: expected 1 argument(s), got \(args.count)")
             }
@@ -3793,7 +3793,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerStaticMethod(on: "Locale", name: "windowsLocaleCode") { args in
+        i.bridges["Locale.Type.windowsLocaleCode()"] = .staticMethod { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Locale.windowsLocaleCode: expected 1 argument(s), got \(args.count)")
             }
@@ -3803,7 +3803,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerInit(on: "TimeZone", labels: ["identifier"]) { args in
+        i.bridges["TimeZone(identifier:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("TimeZone(identifier:): expected 1 argument(s), got \(args.count)")
             }
@@ -3813,7 +3813,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerInit(on: "TimeZone", labels: ["secondsFromGMT"]) { args in
+        i.bridges["TimeZone(secondsFromGMT:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("TimeZone(secondsFromGMT:): expected 1 argument(s), got \(args.count)")
             }
@@ -3823,7 +3823,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerInit(on: "TimeZone", labels: ["abbreviation"]) { args in
+        i.bridges["TimeZone(abbreviation:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("TimeZone(abbreviation:): expected 1 argument(s), got \(args.count)")
             }
@@ -3833,7 +3833,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "TimeZone", name: "secondsFromGMT") { receiver, args in
+        i.bridges["TimeZone.secondsFromGMT()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("TimeZone.secondsFromGMT: expected 1 argument(s), got \(args.count)")
             }
@@ -3841,7 +3841,7 @@ extension FoundationModule {
             return .int(recv.secondsFromGMT(for: try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
         }
 
-        i.registerMethod(on: "TimeZone", name: "abbreviation") { receiver, args in
+        i.bridges["TimeZone.abbreviation()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("TimeZone.abbreviation: expected 1 argument(s), got \(args.count)")
             }
@@ -3852,7 +3852,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "TimeZone", name: "isDaylightSavingTime") { receiver, args in
+        i.bridges["TimeZone.isDaylightSavingTime()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("TimeZone.isDaylightSavingTime: expected 1 argument(s), got \(args.count)")
             }
@@ -3860,7 +3860,7 @@ extension FoundationModule {
             return .bool(recv.isDaylightSavingTime(for: try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
         }
 
-        i.registerMethod(on: "TimeZone", name: "daylightSavingTimeOffset") { receiver, args in
+        i.bridges["TimeZone.daylightSavingTimeOffset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("TimeZone.daylightSavingTimeOffset: expected 1 argument(s), got \(args.count)")
             }
@@ -3868,7 +3868,7 @@ extension FoundationModule {
             return .double(recv.daylightSavingTimeOffset(for: try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
         }
 
-        i.registerMethod(on: "TimeZone", name: "nextDaylightSavingTimeTransition") { receiver, args in
+        i.bridges["TimeZone.nextDaylightSavingTimeTransition()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("TimeZone.nextDaylightSavingTimeTransition: expected 1 argument(s), got \(args.count)")
             }
@@ -3879,7 +3879,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerInit(on: "URL", labels: ["string"]) { args in
+        i.bridges["URL(string:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URL(string:): expected 1 argument(s), got \(args.count)")
             }
@@ -3889,14 +3889,14 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerInit(on: "URL", labels: ["fileURLWithPath"]) { args in
+        i.bridges["URL(fileURLWithPath:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URL(fileURLWithPath:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(URL(fileURLWithPath: try unboxString(args[0])), typeName: "URL")
         }
 
-        i.registerMethod(on: "URL", name: "host") { receiver, args in
+        i.bridges["URL.host()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URL.host: expected 1 argument(s), got \(args.count)")
             }
@@ -3907,7 +3907,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "URL", name: "user") { receiver, args in
+        i.bridges["URL.user()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URL.user: expected 1 argument(s), got \(args.count)")
             }
@@ -3918,7 +3918,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "URL", name: "password") { receiver, args in
+        i.bridges["URL.password()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URL.password: expected 1 argument(s), got \(args.count)")
             }
@@ -3929,7 +3929,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "URL", name: "path") { receiver, args in
+        i.bridges["URL.path()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URL.path: expected 1 argument(s), got \(args.count)")
             }
@@ -3937,7 +3937,7 @@ extension FoundationModule {
             return .string(recv.path(percentEncoded: try unboxBool(args[0])))
         }
 
-        i.registerMethod(on: "URL", name: "query") { receiver, args in
+        i.bridges["URL.query()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URL.query: expected 1 argument(s), got \(args.count)")
             }
@@ -3948,7 +3948,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "URL", name: "fragment") { receiver, args in
+        i.bridges["URL.fragment()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URL.fragment: expected 1 argument(s), got \(args.count)")
             }
@@ -3959,7 +3959,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "URL", name: "appendingPathComponent") { receiver, args in
+        i.bridges["URL.appendingPathComponent()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URL.appendingPathComponent: expected 1 argument(s), got \(args.count)")
             }
@@ -3967,7 +3967,7 @@ extension FoundationModule {
             return boxOpaque(recv.appendingPathComponent(try unboxString(args[0])), typeName: "URL")
         }
 
-        i.registerMethod(on: "URL", name: "appendingPathExtension") { receiver, args in
+        i.bridges["URL.appendingPathExtension()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URL.appendingPathExtension: expected 1 argument(s), got \(args.count)")
             }
@@ -3975,7 +3975,7 @@ extension FoundationModule {
             return boxOpaque(recv.appendingPathExtension(try unboxString(args[0])), typeName: "URL")
         }
 
-        i.registerStaticMethod(on: "URL", name: "bookmarkData") { args in
+        i.bridges["URL.Type.bookmarkData()"] = .staticMethod { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URL.bookmarkData: expected 1 argument(s), got \(args.count)")
             }
@@ -3986,7 +3986,7 @@ extension FoundationModule {
         }
         }
 
-        i.registerStaticMethod(on: "URL", name: "homeDirectory") { args in
+        i.bridges["URL.Type.homeDirectory()"] = .staticMethod { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URL.homeDirectory: expected 1 argument(s), got \(args.count)")
             }
@@ -3996,14 +3996,14 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerInit(on: "URL", labels: ["fileReferenceLiteralResourceName"]) { args in
+        i.bridges["URL(fileReferenceLiteralResourceName:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URL(fileReferenceLiteralResourceName:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(URL(fileReferenceLiteralResourceName: try unboxString(args[0])), typeName: "URL")
         }
 
-        i.registerInit(on: "URLComponents", labels: ["string"]) { args in
+        i.bridges["URLComponents(string:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URLComponents(string:): expected 1 argument(s), got \(args.count)")
             }
@@ -4013,28 +4013,28 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerInit(on: "Date", labels: ["timeIntervalSinceNow"]) { args in
+        i.bridges["Date(timeIntervalSinceNow:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Date(timeIntervalSinceNow:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(Date(timeIntervalSinceNow: try toDouble(args[0])), typeName: "Date")
         }
 
-        i.registerInit(on: "Date", labels: ["timeIntervalSince1970"]) { args in
+        i.bridges["Date(timeIntervalSince1970:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Date(timeIntervalSince1970:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(Date(timeIntervalSince1970: try toDouble(args[0])), typeName: "Date")
         }
 
-        i.registerInit(on: "Date", labels: ["timeIntervalSinceReferenceDate"]) { args in
+        i.bridges["Date(timeIntervalSinceReferenceDate:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Date(timeIntervalSinceReferenceDate:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(Date(timeIntervalSinceReferenceDate: try toDouble(args[0])), typeName: "Date")
         }
 
-        i.registerMethod(on: "Date", name: "timeIntervalSince") { receiver, args in
+        i.bridges["Date.timeIntervalSince()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Date.timeIntervalSince: expected 1 argument(s), got \(args.count)")
             }
@@ -4042,7 +4042,7 @@ extension FoundationModule {
             return .double(recv.timeIntervalSince(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
         }
 
-        i.registerMethod(on: "Date", name: "addingTimeInterval") { receiver, args in
+        i.bridges["Date.addingTimeInterval()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Date.addingTimeInterval: expected 1 argument(s), got \(args.count)")
             }
@@ -4050,7 +4050,7 @@ extension FoundationModule {
             return boxOpaque(recv.addingTimeInterval(try toDouble(args[0])), typeName: "Date")
         }
 
-        i.registerMethod(on: "Date", name: "distance") { receiver, args in
+        i.bridges["Date.distance()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Date.distance: expected 1 argument(s), got \(args.count)")
             }
@@ -4058,7 +4058,7 @@ extension FoundationModule {
             return .double(recv.distance(to: try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
         }
 
-        i.registerMethod(on: "Date", name: "advanced") { receiver, args in
+        i.bridges["Date.advanced()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Date.advanced: expected 1 argument(s), got \(args.count)")
             }
@@ -4066,7 +4066,7 @@ extension FoundationModule {
             return boxOpaque(recv.advanced(by: try toDouble(args[0])), typeName: "Date")
         }
 
-        i.registerMethod(on: "DateInterval", name: "intersects") { receiver, args in
+        i.bridges["DateInterval.intersects()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("DateInterval.intersects: expected 1 argument(s), got \(args.count)")
             }
@@ -4074,7 +4074,7 @@ extension FoundationModule {
             return .bool(recv.intersects(try unboxOpaque(args[0], as: DateInterval.self, typeName: "DateInterval")))
         }
 
-        i.registerMethod(on: "DateInterval", name: "intersection") { receiver, args in
+        i.bridges["DateInterval.intersection()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("DateInterval.intersection: expected 1 argument(s), got \(args.count)")
             }
@@ -4085,7 +4085,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "DateInterval", name: "contains") { receiver, args in
+        i.bridges["DateInterval.contains()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("DateInterval.contains: expected 1 argument(s), got \(args.count)")
             }
@@ -4093,7 +4093,7 @@ extension FoundationModule {
             return .bool(recv.contains(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
         }
 
-        i.registerMethod(on: "IndexPath", name: "appending") { receiver, args in
+        i.bridges["IndexPath.appending()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("IndexPath.appending: expected 1 argument(s), got \(args.count)")
             }
@@ -4101,7 +4101,7 @@ extension FoundationModule {
             return boxOpaque(recv.appending(try unboxOpaque(args[0], as: IndexPath.self, typeName: "IndexPath")), typeName: "IndexPath")
         }
 
-        i.registerInit(on: "UUID", labels: ["uuidString"]) { args in
+        i.bridges["UUID(uuidString:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("UUID(uuidString:): expected 1 argument(s), got \(args.count)")
             }
@@ -4111,14 +4111,14 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerInit(on: "ErrorUserInfoKey", labels: ["rawValue"]) { args in
+        i.bridges["ErrorUserInfoKey(rawValue:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("ErrorUserInfoKey(rawValue:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(ErrorUserInfoKey(rawValue: try unboxString(args[0])), typeName: "ErrorUserInfoKey")
         }
 
-        i.registerMethod(on: "URLRequest", name: "value") { receiver, args in
+        i.bridges["URLRequest.value()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URLRequest.value: expected 1 argument(s), got \(args.count)")
             }
@@ -4129,21 +4129,21 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerInit(on: "LocalizedStringResource", labels: ["stringLiteral"]) { args in
+        i.bridges["LocalizedStringResource(stringLiteral:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("LocalizedStringResource(stringLiteral:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(LocalizedStringResource(stringLiteral: try unboxString(args[0])), typeName: "LocalizedStringResource")
         }
 
-        i.registerInit(on: "AttributedString", labels: ["localized"]) { args in
+        i.bridges["AttributedString(localized:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("AttributedString(localized:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(AttributedString(localized: try unboxOpaque(args[0], as: LocalizedStringResource.self, typeName: "LocalizedStringResource")), typeName: "AttributedString")
         }
 
-        i.registerInit(on: "URL", labels: ["resource"]) { args in
+        i.bridges["URL(resource:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URL(resource:): expected 1 argument(s), got \(args.count)")
             }
@@ -4153,7 +4153,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerInit(on: "PersonNameComponents", labels: ["_"]) { args in
+        i.bridges["PersonNameComponents(_:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("PersonNameComponents(_:): expected 1 argument(s), got \(args.count)")
             }
@@ -4164,7 +4164,585 @@ extension FoundationModule {
         }
         }
 
-        i.registerMethod(on: "InlinePresentationIntent", name: "union") { receiver, args in
+        i.bridges["NSLinguisticTag(_:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSLinguisticTag(_:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(NSLinguisticTag(try unboxString(args[0])), typeName: "NSLinguisticTag")
+        }
+
+        i.bridges["NSLinguisticTag(rawValue:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSLinguisticTag(rawValue:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(NSLinguisticTag(rawValue: try unboxString(args[0])), typeName: "NSLinguisticTag")
+        }
+
+        i.bridges["NSLinguisticTagScheme(_:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSLinguisticTagScheme(_:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(NSLinguisticTagScheme(try unboxString(args[0])), typeName: "NSLinguisticTagScheme")
+        }
+
+        i.bridges["NSLinguisticTagScheme(rawValue:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSLinguisticTagScheme(rawValue:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(NSLinguisticTagScheme(rawValue: try unboxString(args[0])), typeName: "NSLinguisticTagScheme")
+        }
+
+        i.bridges["HTTPCookiePropertyKey(_:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("HTTPCookiePropertyKey(_:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(HTTPCookiePropertyKey(try unboxString(args[0])), typeName: "HTTPCookiePropertyKey")
+        }
+
+        i.bridges["HTTPCookiePropertyKey(rawValue:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("HTTPCookiePropertyKey(rawValue:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(HTTPCookiePropertyKey(rawValue: try unboxString(args[0])), typeName: "HTTPCookiePropertyKey")
+        }
+
+        i.bridges["HTTPCookieStringPolicy(rawValue:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("HTTPCookieStringPolicy(rawValue:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(HTTPCookieStringPolicy(rawValue: try unboxString(args[0])), typeName: "HTTPCookieStringPolicy")
+        }
+
+        i.bridges["AlignmentOptions.union()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("AlignmentOptions.union: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
+            return boxOpaque(recv.union(try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")), typeName: "AlignmentOptions")
+        }
+
+        i.bridges["AlignmentOptions.intersection()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("AlignmentOptions.intersection: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
+            return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")), typeName: "AlignmentOptions")
+        }
+
+        i.bridges["AlignmentOptions.symmetricDifference()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("AlignmentOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
+            return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")), typeName: "AlignmentOptions")
+        }
+
+        i.bridges["AlignmentOptions.contains()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("AlignmentOptions.contains: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
+            return .bool(recv.contains(try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")))
+        }
+
+        i.bridges["AlignmentOptions.isSubset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("AlignmentOptions.isSubset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
+            return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")))
+        }
+
+        i.bridges["AlignmentOptions.isSuperset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("AlignmentOptions.isSuperset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
+            return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")))
+        }
+
+        i.bridges["AlignmentOptions.isDisjoint()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("AlignmentOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
+            return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")))
+        }
+
+        i.bridges["AlignmentOptions.subtracting()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("AlignmentOptions.subtracting: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
+            return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")), typeName: "AlignmentOptions")
+        }
+
+        i.bridges["AlignmentOptions.isStrictSuperset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("AlignmentOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
+            return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")))
+        }
+
+        i.bridges["AlignmentOptions.isStrictSubset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("AlignmentOptions.isStrictSubset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
+            return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")))
+        }
+
+        i.bridges["NSBinarySearchingOptions.union()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSBinarySearchingOptions.union: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+            return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")), typeName: "NSBinarySearchingOptions")
+        }
+
+        i.bridges["NSBinarySearchingOptions.intersection()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSBinarySearchingOptions.intersection: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+            return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")), typeName: "NSBinarySearchingOptions")
+        }
+
+        i.bridges["NSBinarySearchingOptions.symmetricDifference()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSBinarySearchingOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+            return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")), typeName: "NSBinarySearchingOptions")
+        }
+
+        i.bridges["NSBinarySearchingOptions.contains()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSBinarySearchingOptions.contains: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+            return .bool(recv.contains(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
+        }
+
+        i.bridges["NSBinarySearchingOptions.isSubset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSBinarySearchingOptions.isSubset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+            return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
+        }
+
+        i.bridges["NSBinarySearchingOptions.isSuperset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSBinarySearchingOptions.isSuperset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+            return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
+        }
+
+        i.bridges["NSBinarySearchingOptions.isDisjoint()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSBinarySearchingOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+            return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
+        }
+
+        i.bridges["NSBinarySearchingOptions.subtracting()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSBinarySearchingOptions.subtracting: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+            return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")), typeName: "NSBinarySearchingOptions")
+        }
+
+        i.bridges["NSBinarySearchingOptions.isStrictSuperset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSBinarySearchingOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+            return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
+        }
+
+        i.bridges["NSBinarySearchingOptions.isStrictSubset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSBinarySearchingOptions.isStrictSubset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+            return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
+        }
+
+        i.bridges["NSTextCheckingKey(_:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSTextCheckingKey(_:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(NSTextCheckingKey(try unboxString(args[0])), typeName: "NSTextCheckingKey")
+        }
+
+        i.bridges["NSTextCheckingKey(rawValue:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSTextCheckingKey(rawValue:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(NSTextCheckingKey(rawValue: try unboxString(args[0])), typeName: "NSTextCheckingKey")
+        }
+
+        i.registerGlobal(name: "NSHFSTypeOfFile") { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSHFSTypeOfFile: expected 1 argument(s), got \(args.count)")
+            }
+            if let _v = NSHFSTypeOfFile(try unboxString(args[0])) {
+            return .optional(.string(_v))
+        }
+        return .optional(nil)
+        }
+
+        i.bridges["NSKeyValueChangeKey(rawValue:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSKeyValueChangeKey(rawValue:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(NSKeyValueChangeKey(rawValue: try unboxString(args[0])), typeName: "NSKeyValueChangeKey")
+        }
+
+        i.bridges["NSKeyValueObservingOptions.union()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSKeyValueObservingOptions.union: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
+            return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")), typeName: "NSKeyValueObservingOptions")
+        }
+
+        i.bridges["NSKeyValueObservingOptions.intersection()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSKeyValueObservingOptions.intersection: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
+            return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")), typeName: "NSKeyValueObservingOptions")
+        }
+
+        i.bridges["NSKeyValueObservingOptions.symmetricDifference()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSKeyValueObservingOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
+            return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")), typeName: "NSKeyValueObservingOptions")
+        }
+
+        i.bridges["NSKeyValueObservingOptions.contains()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSKeyValueObservingOptions.contains: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
+            return .bool(recv.contains(try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
+        }
+
+        i.bridges["NSKeyValueObservingOptions.isSubset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSKeyValueObservingOptions.isSubset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
+            return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
+        }
+
+        i.bridges["NSKeyValueObservingOptions.isSuperset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSKeyValueObservingOptions.isSuperset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
+            return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
+        }
+
+        i.bridges["NSKeyValueObservingOptions.isDisjoint()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSKeyValueObservingOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
+            return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
+        }
+
+        i.bridges["NSKeyValueObservingOptions.subtracting()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSKeyValueObservingOptions.subtracting: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
+            return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")), typeName: "NSKeyValueObservingOptions")
+        }
+
+        i.bridges["NSKeyValueObservingOptions.isStrictSuperset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSKeyValueObservingOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
+            return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
+        }
+
+        i.bridges["NSKeyValueObservingOptions.isStrictSubset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSKeyValueObservingOptions.isStrictSubset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
+            return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
+        }
+
+        i.bridges["StreamNetworkServiceTypeValue(rawValue:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("StreamNetworkServiceTypeValue(rawValue:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(StreamNetworkServiceTypeValue(rawValue: try unboxString(args[0])), typeName: "StreamNetworkServiceTypeValue")
+        }
+
+        i.bridges["StreamSOCKSProxyConfiguration(rawValue:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("StreamSOCKSProxyConfiguration(rawValue:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(StreamSOCKSProxyConfiguration(rawValue: try unboxString(args[0])), typeName: "StreamSOCKSProxyConfiguration")
+        }
+
+        i.bridges["StreamSOCKSProxyVersion(rawValue:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("StreamSOCKSProxyVersion(rawValue:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(StreamSOCKSProxyVersion(rawValue: try unboxString(args[0])), typeName: "StreamSOCKSProxyVersion")
+        }
+
+        i.bridges["StreamSocketSecurityLevel(rawValue:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("StreamSocketSecurityLevel(rawValue:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(StreamSocketSecurityLevel(rawValue: try unboxString(args[0])), typeName: "StreamSocketSecurityLevel")
+        }
+
+        i.bridges["ProgressKind(_:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("ProgressKind(_:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(ProgressKind(try unboxString(args[0])), typeName: "ProgressKind")
+        }
+
+        i.bridges["ProgressKind(rawValue:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("ProgressKind(rawValue:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(ProgressKind(rawValue: try unboxString(args[0])), typeName: "ProgressKind")
+        }
+
+        i.bridges["ProgressUserInfoKey(_:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("ProgressUserInfoKey(_:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(ProgressUserInfoKey(try unboxString(args[0])), typeName: "ProgressUserInfoKey")
+        }
+
+        i.bridges["ProgressUserInfoKey(rawValue:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("ProgressUserInfoKey(rawValue:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(ProgressUserInfoKey(rawValue: try unboxString(args[0])), typeName: "ProgressUserInfoKey")
+        }
+
+        i.bridges["FileAttributeKey(_:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("FileAttributeKey(_:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(FileAttributeKey(try unboxString(args[0])), typeName: "FileAttributeKey")
+        }
+
+        i.bridges["FileAttributeKey(rawValue:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("FileAttributeKey(rawValue:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(FileAttributeKey(rawValue: try unboxString(args[0])), typeName: "FileAttributeKey")
+        }
+
+        i.bridges["FileAttributeType(rawValue:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("FileAttributeType(rawValue:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(FileAttributeType(rawValue: try unboxString(args[0])), typeName: "FileAttributeType")
+        }
+
+        i.bridges["FileProtectionType(rawValue:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("FileProtectionType(rawValue:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(FileProtectionType(rawValue: try unboxString(args[0])), typeName: "FileProtectionType")
+        }
+
+        i.bridges["NSFileManagerSupportedSyncControls.union()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.union: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
+            return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")), typeName: "NSFileManagerSupportedSyncControls")
+        }
+
+        i.bridges["NSFileManagerSupportedSyncControls.intersection()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.intersection: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
+            return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")), typeName: "NSFileManagerSupportedSyncControls")
+        }
+
+        i.bridges["NSFileManagerSupportedSyncControls.symmetricDifference()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.symmetricDifference: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
+            return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")), typeName: "NSFileManagerSupportedSyncControls")
+        }
+
+        i.bridges["NSFileManagerSupportedSyncControls.contains()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.contains: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
+            return .bool(recv.contains(try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")))
+        }
+
+        i.bridges["NSFileManagerSupportedSyncControls.isSubset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.isSubset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
+            return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")))
+        }
+
+        i.bridges["NSFileManagerSupportedSyncControls.isSuperset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.isSuperset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
+            return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")))
+        }
+
+        i.bridges["NSFileManagerSupportedSyncControls.isDisjoint()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.isDisjoint: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
+            return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")))
+        }
+
+        i.bridges["NSFileManagerSupportedSyncControls.subtracting()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.subtracting: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
+            return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")), typeName: "NSFileManagerSupportedSyncControls")
+        }
+
+        i.bridges["NSFileManagerSupportedSyncControls.isStrictSuperset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.isStrictSuperset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
+            return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")))
+        }
+
+        i.bridges["NSFileManagerSupportedSyncControls.isStrictSubset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.isStrictSubset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
+            return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")))
+        }
+
+        i.bridges["NSFileProviderServiceName(_:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSFileProviderServiceName(_:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(NSFileProviderServiceName(try unboxString(args[0])), typeName: "NSFileProviderServiceName")
+        }
+
+        i.bridges["NSFileProviderServiceName(rawValue:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSFileProviderServiceName(rawValue:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(NSFileProviderServiceName(rawValue: try unboxString(args[0])), typeName: "NSFileProviderServiceName")
+        }
+
+        i.bridges["NSOrderedCollectionDifferenceCalculationOptions.union()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.union: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+            return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        }
+
+        i.bridges["NSOrderedCollectionDifferenceCalculationOptions.intersection()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.intersection: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+            return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        }
+
+        i.bridges["NSOrderedCollectionDifferenceCalculationOptions.symmetricDifference()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+            return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        }
+
+        i.bridges["NSOrderedCollectionDifferenceCalculationOptions.contains()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.contains: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+            return .bool(recv.contains(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
+        }
+
+        i.bridges["NSOrderedCollectionDifferenceCalculationOptions.isSubset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isSubset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+            return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
+        }
+
+        i.bridges["NSOrderedCollectionDifferenceCalculationOptions.isSuperset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isSuperset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+            return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
+        }
+
+        i.bridges["NSOrderedCollectionDifferenceCalculationOptions.isDisjoint()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+            return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
+        }
+
+        i.bridges["NSOrderedCollectionDifferenceCalculationOptions.subtracting()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.subtracting: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+            return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        }
+
+        i.bridges["NSOrderedCollectionDifferenceCalculationOptions.isStrictSuperset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+            return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
+        }
+
+        i.bridges["NSOrderedCollectionDifferenceCalculationOptions.isStrictSubset()"] = .method { receiver, args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isStrictSubset: expected 1 argument(s), got \(args.count)")
+            }
+            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+            return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
+        }
+
+        i.bridges["InlinePresentationIntent.union()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("InlinePresentationIntent.union: expected 1 argument(s), got \(args.count)")
             }
@@ -4172,7 +4750,7 @@ extension FoundationModule {
             return boxOpaque(recv.union(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")), typeName: "InlinePresentationIntent")
         }
 
-        i.registerMethod(on: "InlinePresentationIntent", name: "intersection") { receiver, args in
+        i.bridges["InlinePresentationIntent.intersection()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("InlinePresentationIntent.intersection: expected 1 argument(s), got \(args.count)")
             }
@@ -4180,7 +4758,7 @@ extension FoundationModule {
             return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")), typeName: "InlinePresentationIntent")
         }
 
-        i.registerMethod(on: "InlinePresentationIntent", name: "symmetricDifference") { receiver, args in
+        i.bridges["InlinePresentationIntent.symmetricDifference()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("InlinePresentationIntent.symmetricDifference: expected 1 argument(s), got \(args.count)")
             }
@@ -4188,7 +4766,7 @@ extension FoundationModule {
             return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")), typeName: "InlinePresentationIntent")
         }
 
-        i.registerMethod(on: "InlinePresentationIntent", name: "contains") { receiver, args in
+        i.bridges["InlinePresentationIntent.contains()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("InlinePresentationIntent.contains: expected 1 argument(s), got \(args.count)")
             }
@@ -4196,7 +4774,7 @@ extension FoundationModule {
             return .bool(recv.contains(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
         }
 
-        i.registerMethod(on: "InlinePresentationIntent", name: "isSubset") { receiver, args in
+        i.bridges["InlinePresentationIntent.isSubset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("InlinePresentationIntent.isSubset: expected 1 argument(s), got \(args.count)")
             }
@@ -4204,7 +4782,7 @@ extension FoundationModule {
             return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
         }
 
-        i.registerMethod(on: "InlinePresentationIntent", name: "isSuperset") { receiver, args in
+        i.bridges["InlinePresentationIntent.isSuperset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("InlinePresentationIntent.isSuperset: expected 1 argument(s), got \(args.count)")
             }
@@ -4212,7 +4790,7 @@ extension FoundationModule {
             return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
         }
 
-        i.registerMethod(on: "InlinePresentationIntent", name: "isDisjoint") { receiver, args in
+        i.bridges["InlinePresentationIntent.isDisjoint()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("InlinePresentationIntent.isDisjoint: expected 1 argument(s), got \(args.count)")
             }
@@ -4220,7 +4798,7 @@ extension FoundationModule {
             return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
         }
 
-        i.registerMethod(on: "InlinePresentationIntent", name: "subtracting") { receiver, args in
+        i.bridges["InlinePresentationIntent.subtracting()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("InlinePresentationIntent.subtracting: expected 1 argument(s), got \(args.count)")
             }
@@ -4228,7 +4806,7 @@ extension FoundationModule {
             return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")), typeName: "InlinePresentationIntent")
         }
 
-        i.registerMethod(on: "InlinePresentationIntent", name: "isStrictSuperset") { receiver, args in
+        i.bridges["InlinePresentationIntent.isStrictSuperset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("InlinePresentationIntent.isStrictSuperset: expected 1 argument(s), got \(args.count)")
             }
@@ -4236,7 +4814,7 @@ extension FoundationModule {
             return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
         }
 
-        i.registerMethod(on: "InlinePresentationIntent", name: "isStrictSubset") { receiver, args in
+        i.bridges["InlinePresentationIntent.isStrictSubset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("InlinePresentationIntent.isStrictSubset: expected 1 argument(s), got \(args.count)")
             }
@@ -4244,21 +4822,21 @@ extension FoundationModule {
             return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
         }
 
-        i.registerInit(on: "NSAttributedStringFormattingContextKey", labels: ["_"]) { args in
+        i.bridges["NSAttributedStringFormattingContextKey(_:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSAttributedStringFormattingContextKey(_:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(NSAttributedStringFormattingContextKey(try unboxString(args[0])), typeName: "NSAttributedStringFormattingContextKey")
         }
 
-        i.registerInit(on: "NSAttributedStringFormattingContextKey", labels: ["rawValue"]) { args in
+        i.bridges["NSAttributedStringFormattingContextKey(rawValue:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSAttributedStringFormattingContextKey(rawValue:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(NSAttributedStringFormattingContextKey(rawValue: try unboxString(args[0])), typeName: "NSAttributedStringFormattingContextKey")
         }
 
-        i.registerMethod(on: "NSItemProviderFileOptions", name: "union") { receiver, args in
+        i.bridges["NSItemProviderFileOptions.union()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSItemProviderFileOptions.union: expected 1 argument(s), got \(args.count)")
             }
@@ -4266,7 +4844,7 @@ extension FoundationModule {
             return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")), typeName: "NSItemProviderFileOptions")
         }
 
-        i.registerMethod(on: "NSItemProviderFileOptions", name: "intersection") { receiver, args in
+        i.bridges["NSItemProviderFileOptions.intersection()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSItemProviderFileOptions.intersection: expected 1 argument(s), got \(args.count)")
             }
@@ -4274,7 +4852,7 @@ extension FoundationModule {
             return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")), typeName: "NSItemProviderFileOptions")
         }
 
-        i.registerMethod(on: "NSItemProviderFileOptions", name: "symmetricDifference") { receiver, args in
+        i.bridges["NSItemProviderFileOptions.symmetricDifference()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSItemProviderFileOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
             }
@@ -4282,7 +4860,7 @@ extension FoundationModule {
             return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")), typeName: "NSItemProviderFileOptions")
         }
 
-        i.registerMethod(on: "NSItemProviderFileOptions", name: "contains") { receiver, args in
+        i.bridges["NSItemProviderFileOptions.contains()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSItemProviderFileOptions.contains: expected 1 argument(s), got \(args.count)")
             }
@@ -4290,7 +4868,7 @@ extension FoundationModule {
             return .bool(recv.contains(try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")))
         }
 
-        i.registerMethod(on: "NSItemProviderFileOptions", name: "isSubset") { receiver, args in
+        i.bridges["NSItemProviderFileOptions.isSubset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSItemProviderFileOptions.isSubset: expected 1 argument(s), got \(args.count)")
             }
@@ -4298,7 +4876,7 @@ extension FoundationModule {
             return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")))
         }
 
-        i.registerMethod(on: "NSItemProviderFileOptions", name: "isSuperset") { receiver, args in
+        i.bridges["NSItemProviderFileOptions.isSuperset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSItemProviderFileOptions.isSuperset: expected 1 argument(s), got \(args.count)")
             }
@@ -4306,7 +4884,7 @@ extension FoundationModule {
             return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")))
         }
 
-        i.registerMethod(on: "NSItemProviderFileOptions", name: "isDisjoint") { receiver, args in
+        i.bridges["NSItemProviderFileOptions.isDisjoint()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSItemProviderFileOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
             }
@@ -4314,7 +4892,7 @@ extension FoundationModule {
             return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")))
         }
 
-        i.registerMethod(on: "NSItemProviderFileOptions", name: "subtracting") { receiver, args in
+        i.bridges["NSItemProviderFileOptions.subtracting()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSItemProviderFileOptions.subtracting: expected 1 argument(s), got \(args.count)")
             }
@@ -4322,7 +4900,7 @@ extension FoundationModule {
             return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")), typeName: "NSItemProviderFileOptions")
         }
 
-        i.registerMethod(on: "NSItemProviderFileOptions", name: "isStrictSuperset") { receiver, args in
+        i.bridges["NSItemProviderFileOptions.isStrictSuperset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSItemProviderFileOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
             }
@@ -4330,7 +4908,7 @@ extension FoundationModule {
             return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")))
         }
 
-        i.registerMethod(on: "NSItemProviderFileOptions", name: "isStrictSubset") { receiver, args in
+        i.bridges["NSItemProviderFileOptions.isStrictSubset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSItemProviderFileOptions.isStrictSubset: expected 1 argument(s), got \(args.count)")
             }
@@ -4338,32 +4916,11 @@ extension FoundationModule {
             return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")))
         }
 
-        i.registerInit(on: "NSItemProviderFileOptions", labels: ["rawValue"]) { args in
+        i.bridges["NSItemProviderFileOptions(rawValue:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSItemProviderFileOptions(rawValue:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(NSItemProviderFileOptions(rawValue: try unboxInt(args[0])), typeName: "NSItemProviderFileOptions")
-        }
-
-        i.registerInit(on: "HTTPCookiePropertyKey", labels: ["_"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("HTTPCookiePropertyKey(_:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(HTTPCookiePropertyKey(try unboxString(args[0])), typeName: "HTTPCookiePropertyKey")
-        }
-
-        i.registerInit(on: "HTTPCookiePropertyKey", labels: ["rawValue"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("HTTPCookiePropertyKey(rawValue:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(HTTPCookiePropertyKey(rawValue: try unboxString(args[0])), typeName: "HTTPCookiePropertyKey")
-        }
-
-        i.registerInit(on: "HTTPCookieStringPolicy", labels: ["rawValue"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("HTTPCookieStringPolicy(rawValue:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(HTTPCookieStringPolicy(rawValue: try unboxString(args[0])), typeName: "HTTPCookieStringPolicy")
         }
 
         i.registerGlobal(name: "NSAllocateMemoryPages") { args in
@@ -4387,582 +4944,70 @@ extension FoundationModule {
             return .int(NSRoundUpToMultipleOfPageSize(try unboxInt(args[0])))
         }
 
-        i.registerInit(on: "URLFileProtection", labels: ["rawValue"]) { args in
+        i.bridges["URLFileProtection(rawValue:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URLFileProtection(rawValue:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(URLFileProtection(rawValue: try unboxString(args[0])), typeName: "URLFileProtection")
         }
 
-        i.registerInit(on: "URLFileResourceType", labels: ["rawValue"]) { args in
+        i.bridges["URLFileResourceType(rawValue:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URLFileResourceType(rawValue:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(URLFileResourceType(rawValue: try unboxString(args[0])), typeName: "URLFileResourceType")
         }
 
-        i.registerInit(on: "URLResourceKey", labels: ["_"]) { args in
+        i.bridges["URLResourceKey(_:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URLResourceKey(_:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(URLResourceKey(try unboxString(args[0])), typeName: "URLResourceKey")
         }
 
-        i.registerInit(on: "URLResourceKey", labels: ["rawValue"]) { args in
+        i.bridges["URLResourceKey(rawValue:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URLResourceKey(rawValue:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(URLResourceKey(rawValue: try unboxString(args[0])), typeName: "URLResourceKey")
         }
 
-        i.registerInit(on: "URLThumbnailDictionaryItem", labels: ["_"]) { args in
+        i.bridges["URLThumbnailDictionaryItem(_:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URLThumbnailDictionaryItem(_:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(URLThumbnailDictionaryItem(try unboxString(args[0])), typeName: "URLThumbnailDictionaryItem")
         }
 
-        i.registerInit(on: "URLThumbnailDictionaryItem", labels: ["rawValue"]) { args in
+        i.bridges["URLThumbnailDictionaryItem(rawValue:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URLThumbnailDictionaryItem(rawValue:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(URLThumbnailDictionaryItem(rawValue: try unboxString(args[0])), typeName: "URLThumbnailDictionaryItem")
         }
 
-        i.registerInit(on: "URLUbiquitousItemDownloadingStatus", labels: ["rawValue"]) { args in
+        i.bridges["URLUbiquitousItemDownloadingStatus(rawValue:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URLUbiquitousItemDownloadingStatus(rawValue:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(URLUbiquitousItemDownloadingStatus(rawValue: try unboxString(args[0])), typeName: "URLUbiquitousItemDownloadingStatus")
         }
 
-        i.registerInit(on: "URLUbiquitousSharedItemPermissions", labels: ["rawValue"]) { args in
+        i.bridges["URLUbiquitousSharedItemPermissions(rawValue:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URLUbiquitousSharedItemPermissions(rawValue:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(URLUbiquitousSharedItemPermissions(rawValue: try unboxString(args[0])), typeName: "URLUbiquitousSharedItemPermissions")
         }
 
-        i.registerInit(on: "URLUbiquitousSharedItemRole", labels: ["rawValue"]) { args in
+        i.bridges["URLUbiquitousSharedItemRole(rawValue:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URLUbiquitousSharedItemRole(rawValue:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(URLUbiquitousSharedItemRole(rawValue: try unboxString(args[0])), typeName: "URLUbiquitousSharedItemRole")
         }
 
-        i.registerMethod(on: "NSBinarySearchingOptions", name: "union") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSBinarySearchingOptions.union: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
-            return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")), typeName: "NSBinarySearchingOptions")
-        }
-
-        i.registerMethod(on: "NSBinarySearchingOptions", name: "intersection") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSBinarySearchingOptions.intersection: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
-            return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")), typeName: "NSBinarySearchingOptions")
-        }
-
-        i.registerMethod(on: "NSBinarySearchingOptions", name: "symmetricDifference") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSBinarySearchingOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
-            return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")), typeName: "NSBinarySearchingOptions")
-        }
-
-        i.registerMethod(on: "NSBinarySearchingOptions", name: "contains") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSBinarySearchingOptions.contains: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
-            return .bool(recv.contains(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
-        }
-
-        i.registerMethod(on: "NSBinarySearchingOptions", name: "isSubset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSBinarySearchingOptions.isSubset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
-            return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
-        }
-
-        i.registerMethod(on: "NSBinarySearchingOptions", name: "isSuperset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSBinarySearchingOptions.isSuperset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
-            return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
-        }
-
-        i.registerMethod(on: "NSBinarySearchingOptions", name: "isDisjoint") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSBinarySearchingOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
-            return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
-        }
-
-        i.registerMethod(on: "NSBinarySearchingOptions", name: "subtracting") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSBinarySearchingOptions.subtracting: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
-            return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")), typeName: "NSBinarySearchingOptions")
-        }
-
-        i.registerMethod(on: "NSBinarySearchingOptions", name: "isStrictSuperset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSBinarySearchingOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
-            return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
-        }
-
-        i.registerMethod(on: "NSBinarySearchingOptions", name: "isStrictSubset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSBinarySearchingOptions.isStrictSubset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
-            return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
-        }
-
-        i.registerInit(on: "NSValueTransformerName", labels: ["_"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSValueTransformerName(_:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(NSValueTransformerName(try unboxString(args[0])), typeName: "NSValueTransformerName")
-        }
-
-        i.registerInit(on: "NSValueTransformerName", labels: ["rawValue"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSValueTransformerName(rawValue:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(NSValueTransformerName(rawValue: try unboxString(args[0])), typeName: "NSValueTransformerName")
-        }
-
-        i.registerInit(on: "StringEncodingDetectionOptionsKey", labels: ["rawValue"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("StringEncodingDetectionOptionsKey(rawValue:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(StringEncodingDetectionOptionsKey(rawValue: try unboxString(args[0])), typeName: "StringEncodingDetectionOptionsKey")
-        }
-
-        i.registerInit(on: "StringTransform", labels: ["_"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("StringTransform(_:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(StringTransform(try unboxString(args[0])), typeName: "StringTransform")
-        }
-
-        i.registerInit(on: "StringTransform", labels: ["rawValue"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("StringTransform(rawValue:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(StringTransform(rawValue: try unboxString(args[0])), typeName: "StringTransform")
-        }
-
-        i.registerInit(on: "NSKeyValueChangeKey", labels: ["rawValue"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSKeyValueChangeKey(rawValue:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(NSKeyValueChangeKey(rawValue: try unboxString(args[0])), typeName: "NSKeyValueChangeKey")
-        }
-
-        i.registerMethod(on: "NSKeyValueObservingOptions", name: "union") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSKeyValueObservingOptions.union: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
-            return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")), typeName: "NSKeyValueObservingOptions")
-        }
-
-        i.registerMethod(on: "NSKeyValueObservingOptions", name: "intersection") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSKeyValueObservingOptions.intersection: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
-            return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")), typeName: "NSKeyValueObservingOptions")
-        }
-
-        i.registerMethod(on: "NSKeyValueObservingOptions", name: "symmetricDifference") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSKeyValueObservingOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
-            return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")), typeName: "NSKeyValueObservingOptions")
-        }
-
-        i.registerMethod(on: "NSKeyValueObservingOptions", name: "contains") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSKeyValueObservingOptions.contains: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
-            return .bool(recv.contains(try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
-        }
-
-        i.registerMethod(on: "NSKeyValueObservingOptions", name: "isSubset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSKeyValueObservingOptions.isSubset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
-            return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
-        }
-
-        i.registerMethod(on: "NSKeyValueObservingOptions", name: "isSuperset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSKeyValueObservingOptions.isSuperset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
-            return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
-        }
-
-        i.registerMethod(on: "NSKeyValueObservingOptions", name: "isDisjoint") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSKeyValueObservingOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
-            return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
-        }
-
-        i.registerMethod(on: "NSKeyValueObservingOptions", name: "subtracting") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSKeyValueObservingOptions.subtracting: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
-            return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")), typeName: "NSKeyValueObservingOptions")
-        }
-
-        i.registerMethod(on: "NSKeyValueObservingOptions", name: "isStrictSuperset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSKeyValueObservingOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
-            return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
-        }
-
-        i.registerMethod(on: "NSKeyValueObservingOptions", name: "isStrictSubset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSKeyValueObservingOptions.isStrictSubset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
-            return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
-        }
-
-        i.registerInit(on: "FileAttributeKey", labels: ["_"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("FileAttributeKey(_:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(FileAttributeKey(try unboxString(args[0])), typeName: "FileAttributeKey")
-        }
-
-        i.registerInit(on: "FileAttributeKey", labels: ["rawValue"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("FileAttributeKey(rawValue:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(FileAttributeKey(rawValue: try unboxString(args[0])), typeName: "FileAttributeKey")
-        }
-
-        i.registerInit(on: "FileAttributeType", labels: ["rawValue"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("FileAttributeType(rawValue:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(FileAttributeType(rawValue: try unboxString(args[0])), typeName: "FileAttributeType")
-        }
-
-        i.registerInit(on: "FileProtectionType", labels: ["rawValue"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("FileProtectionType(rawValue:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(FileProtectionType(rawValue: try unboxString(args[0])), typeName: "FileProtectionType")
-        }
-
-        i.registerMethod(on: "NSFileManagerSupportedSyncControls", name: "union") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.union: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
-            return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")), typeName: "NSFileManagerSupportedSyncControls")
-        }
-
-        i.registerMethod(on: "NSFileManagerSupportedSyncControls", name: "intersection") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.intersection: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
-            return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")), typeName: "NSFileManagerSupportedSyncControls")
-        }
-
-        i.registerMethod(on: "NSFileManagerSupportedSyncControls", name: "symmetricDifference") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.symmetricDifference: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
-            return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")), typeName: "NSFileManagerSupportedSyncControls")
-        }
-
-        i.registerMethod(on: "NSFileManagerSupportedSyncControls", name: "contains") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.contains: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
-            return .bool(recv.contains(try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")))
-        }
-
-        i.registerMethod(on: "NSFileManagerSupportedSyncControls", name: "isSubset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.isSubset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
-            return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")))
-        }
-
-        i.registerMethod(on: "NSFileManagerSupportedSyncControls", name: "isSuperset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.isSuperset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
-            return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")))
-        }
-
-        i.registerMethod(on: "NSFileManagerSupportedSyncControls", name: "isDisjoint") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.isDisjoint: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
-            return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")))
-        }
-
-        i.registerMethod(on: "NSFileManagerSupportedSyncControls", name: "subtracting") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.subtracting: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
-            return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")), typeName: "NSFileManagerSupportedSyncControls")
-        }
-
-        i.registerMethod(on: "NSFileManagerSupportedSyncControls", name: "isStrictSuperset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.isStrictSuperset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
-            return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")))
-        }
-
-        i.registerMethod(on: "NSFileManagerSupportedSyncControls", name: "isStrictSubset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls.isStrictSubset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
-            return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")))
-        }
-
-        i.registerInit(on: "NSFileProviderServiceName", labels: ["_"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSFileProviderServiceName(_:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(NSFileProviderServiceName(try unboxString(args[0])), typeName: "NSFileProviderServiceName")
-        }
-
-        i.registerInit(on: "NSFileProviderServiceName", labels: ["rawValue"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSFileProviderServiceName(rawValue:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(NSFileProviderServiceName(rawValue: try unboxString(args[0])), typeName: "NSFileProviderServiceName")
-        }
-
-        i.registerInit(on: "NSLinguisticTag", labels: ["_"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSLinguisticTag(_:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(NSLinguisticTag(try unboxString(args[0])), typeName: "NSLinguisticTag")
-        }
-
-        i.registerInit(on: "NSLinguisticTag", labels: ["rawValue"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSLinguisticTag(rawValue:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(NSLinguisticTag(rawValue: try unboxString(args[0])), typeName: "NSLinguisticTag")
-        }
-
-        i.registerInit(on: "NSLinguisticTagScheme", labels: ["_"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSLinguisticTagScheme(_:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(NSLinguisticTagScheme(try unboxString(args[0])), typeName: "NSLinguisticTagScheme")
-        }
-
-        i.registerInit(on: "NSLinguisticTagScheme", labels: ["rawValue"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSLinguisticTagScheme(rawValue:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(NSLinguisticTagScheme(rawValue: try unboxString(args[0])), typeName: "NSLinguisticTagScheme")
-        }
-
-        i.registerMethod(on: "NSOrderedCollectionDifferenceCalculationOptions", name: "union") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.union: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
-            return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
-        }
-
-        i.registerMethod(on: "NSOrderedCollectionDifferenceCalculationOptions", name: "intersection") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.intersection: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
-            return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
-        }
-
-        i.registerMethod(on: "NSOrderedCollectionDifferenceCalculationOptions", name: "symmetricDifference") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
-            return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
-        }
-
-        i.registerMethod(on: "NSOrderedCollectionDifferenceCalculationOptions", name: "contains") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.contains: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
-            return .bool(recv.contains(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
-        }
-
-        i.registerMethod(on: "NSOrderedCollectionDifferenceCalculationOptions", name: "isSubset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isSubset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
-            return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
-        }
-
-        i.registerMethod(on: "NSOrderedCollectionDifferenceCalculationOptions", name: "isSuperset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isSuperset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
-            return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
-        }
-
-        i.registerMethod(on: "NSOrderedCollectionDifferenceCalculationOptions", name: "isDisjoint") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
-            return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
-        }
-
-        i.registerMethod(on: "NSOrderedCollectionDifferenceCalculationOptions", name: "subtracting") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.subtracting: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
-            return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
-        }
-
-        i.registerMethod(on: "NSOrderedCollectionDifferenceCalculationOptions", name: "isStrictSuperset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
-            return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
-        }
-
-        i.registerMethod(on: "NSOrderedCollectionDifferenceCalculationOptions", name: "isStrictSubset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isStrictSubset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
-            return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
-        }
-
-        i.registerMethod(on: "AlignmentOptions", name: "union") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("AlignmentOptions.union: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
-            return boxOpaque(recv.union(try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")), typeName: "AlignmentOptions")
-        }
-
-        i.registerMethod(on: "AlignmentOptions", name: "intersection") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("AlignmentOptions.intersection: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
-            return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")), typeName: "AlignmentOptions")
-        }
-
-        i.registerMethod(on: "AlignmentOptions", name: "symmetricDifference") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("AlignmentOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
-            return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")), typeName: "AlignmentOptions")
-        }
-
-        i.registerMethod(on: "AlignmentOptions", name: "contains") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("AlignmentOptions.contains: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
-            return .bool(recv.contains(try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")))
-        }
-
-        i.registerMethod(on: "AlignmentOptions", name: "isSubset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("AlignmentOptions.isSubset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
-            return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")))
-        }
-
-        i.registerMethod(on: "AlignmentOptions", name: "isSuperset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("AlignmentOptions.isSuperset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
-            return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")))
-        }
-
-        i.registerMethod(on: "AlignmentOptions", name: "isDisjoint") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("AlignmentOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
-            return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")))
-        }
-
-        i.registerMethod(on: "AlignmentOptions", name: "subtracting") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("AlignmentOptions.subtracting: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
-            return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")), typeName: "AlignmentOptions")
-        }
-
-        i.registerMethod(on: "AlignmentOptions", name: "isStrictSuperset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("AlignmentOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
-            return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")))
-        }
-
-        i.registerMethod(on: "AlignmentOptions", name: "isStrictSubset") { receiver, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("AlignmentOptions.isStrictSubset: expected 1 argument(s), got \(args.count)")
-            }
-            let recv: AlignmentOptions = try unboxOpaque(receiver, as: AlignmentOptions.self, typeName: "AlignmentOptions")
-            return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: AlignmentOptions.self, typeName: "AlignmentOptions")))
-        }
-
-        i.registerMethod(on: "NSEnumerationOptions", name: "union") { receiver, args in
+        i.bridges["NSEnumerationOptions.union()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSEnumerationOptions.union: expected 1 argument(s), got \(args.count)")
             }
@@ -4970,7 +5015,7 @@ extension FoundationModule {
             return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")), typeName: "NSEnumerationOptions")
         }
 
-        i.registerMethod(on: "NSEnumerationOptions", name: "intersection") { receiver, args in
+        i.bridges["NSEnumerationOptions.intersection()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSEnumerationOptions.intersection: expected 1 argument(s), got \(args.count)")
             }
@@ -4978,7 +5023,7 @@ extension FoundationModule {
             return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")), typeName: "NSEnumerationOptions")
         }
 
-        i.registerMethod(on: "NSEnumerationOptions", name: "symmetricDifference") { receiver, args in
+        i.bridges["NSEnumerationOptions.symmetricDifference()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSEnumerationOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
             }
@@ -4986,7 +5031,7 @@ extension FoundationModule {
             return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")), typeName: "NSEnumerationOptions")
         }
 
-        i.registerMethod(on: "NSEnumerationOptions", name: "contains") { receiver, args in
+        i.bridges["NSEnumerationOptions.contains()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSEnumerationOptions.contains: expected 1 argument(s), got \(args.count)")
             }
@@ -4994,7 +5039,7 @@ extension FoundationModule {
             return .bool(recv.contains(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")))
         }
 
-        i.registerMethod(on: "NSEnumerationOptions", name: "isSubset") { receiver, args in
+        i.bridges["NSEnumerationOptions.isSubset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSEnumerationOptions.isSubset: expected 1 argument(s), got \(args.count)")
             }
@@ -5002,7 +5047,7 @@ extension FoundationModule {
             return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")))
         }
 
-        i.registerMethod(on: "NSEnumerationOptions", name: "isSuperset") { receiver, args in
+        i.bridges["NSEnumerationOptions.isSuperset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSEnumerationOptions.isSuperset: expected 1 argument(s), got \(args.count)")
             }
@@ -5010,7 +5055,7 @@ extension FoundationModule {
             return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")))
         }
 
-        i.registerMethod(on: "NSEnumerationOptions", name: "isDisjoint") { receiver, args in
+        i.bridges["NSEnumerationOptions.isDisjoint()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSEnumerationOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
             }
@@ -5018,7 +5063,7 @@ extension FoundationModule {
             return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")))
         }
 
-        i.registerMethod(on: "NSEnumerationOptions", name: "subtracting") { receiver, args in
+        i.bridges["NSEnumerationOptions.subtracting()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSEnumerationOptions.subtracting: expected 1 argument(s), got \(args.count)")
             }
@@ -5026,7 +5071,7 @@ extension FoundationModule {
             return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")), typeName: "NSEnumerationOptions")
         }
 
-        i.registerMethod(on: "NSEnumerationOptions", name: "isStrictSuperset") { receiver, args in
+        i.bridges["NSEnumerationOptions.isStrictSuperset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSEnumerationOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
             }
@@ -5034,7 +5079,7 @@ extension FoundationModule {
             return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")))
         }
 
-        i.registerMethod(on: "NSEnumerationOptions", name: "isStrictSubset") { receiver, args in
+        i.bridges["NSEnumerationOptions.isStrictSubset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSEnumerationOptions.isStrictSubset: expected 1 argument(s), got \(args.count)")
             }
@@ -5042,21 +5087,21 @@ extension FoundationModule {
             return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")))
         }
 
-        i.registerInit(on: "NSExceptionName", labels: ["_"]) { args in
+        i.bridges["NSExceptionName(_:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSExceptionName(_:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(NSExceptionName(try unboxString(args[0])), typeName: "NSExceptionName")
         }
 
-        i.registerInit(on: "NSExceptionName", labels: ["rawValue"]) { args in
+        i.bridges["NSExceptionName(rawValue:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSExceptionName(rawValue:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(NSExceptionName(rawValue: try unboxString(args[0])), typeName: "NSExceptionName")
         }
 
-        i.registerMethod(on: "NSSortOptions", name: "union") { receiver, args in
+        i.bridges["NSSortOptions.union()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSSortOptions.union: expected 1 argument(s), got \(args.count)")
             }
@@ -5064,7 +5109,7 @@ extension FoundationModule {
             return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")), typeName: "NSSortOptions")
         }
 
-        i.registerMethod(on: "NSSortOptions", name: "intersection") { receiver, args in
+        i.bridges["NSSortOptions.intersection()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSSortOptions.intersection: expected 1 argument(s), got \(args.count)")
             }
@@ -5072,7 +5117,7 @@ extension FoundationModule {
             return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")), typeName: "NSSortOptions")
         }
 
-        i.registerMethod(on: "NSSortOptions", name: "symmetricDifference") { receiver, args in
+        i.bridges["NSSortOptions.symmetricDifference()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSSortOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
             }
@@ -5080,7 +5125,7 @@ extension FoundationModule {
             return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")), typeName: "NSSortOptions")
         }
 
-        i.registerMethod(on: "NSSortOptions", name: "contains") { receiver, args in
+        i.bridges["NSSortOptions.contains()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSSortOptions.contains: expected 1 argument(s), got \(args.count)")
             }
@@ -5088,7 +5133,7 @@ extension FoundationModule {
             return .bool(recv.contains(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")))
         }
 
-        i.registerMethod(on: "NSSortOptions", name: "isSubset") { receiver, args in
+        i.bridges["NSSortOptions.isSubset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSSortOptions.isSubset: expected 1 argument(s), got \(args.count)")
             }
@@ -5096,7 +5141,7 @@ extension FoundationModule {
             return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")))
         }
 
-        i.registerMethod(on: "NSSortOptions", name: "isSuperset") { receiver, args in
+        i.bridges["NSSortOptions.isSuperset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSSortOptions.isSuperset: expected 1 argument(s), got \(args.count)")
             }
@@ -5104,7 +5149,7 @@ extension FoundationModule {
             return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")))
         }
 
-        i.registerMethod(on: "NSSortOptions", name: "isDisjoint") { receiver, args in
+        i.bridges["NSSortOptions.isDisjoint()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSSortOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
             }
@@ -5112,7 +5157,7 @@ extension FoundationModule {
             return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")))
         }
 
-        i.registerMethod(on: "NSSortOptions", name: "subtracting") { receiver, args in
+        i.bridges["NSSortOptions.subtracting()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSSortOptions.subtracting: expected 1 argument(s), got \(args.count)")
             }
@@ -5120,7 +5165,7 @@ extension FoundationModule {
             return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")), typeName: "NSSortOptions")
         }
 
-        i.registerMethod(on: "NSSortOptions", name: "isStrictSuperset") { receiver, args in
+        i.bridges["NSSortOptions.isStrictSuperset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSSortOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
             }
@@ -5128,7 +5173,7 @@ extension FoundationModule {
             return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")))
         }
 
-        i.registerMethod(on: "NSSortOptions", name: "isStrictSubset") { receiver, args in
+        i.bridges["NSSortOptions.isStrictSubset()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSSortOptions.isStrictSubset: expected 1 argument(s), got \(args.count)")
             }
@@ -5136,94 +5181,49 @@ extension FoundationModule {
             return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")))
         }
 
-        i.registerInit(on: "NSTextCheckingKey", labels: ["_"]) { args in
+        i.bridges["NSValueTransformerName(_:)"] = .`init` { args in
             guard args.count == 1 else {
-                throw RuntimeError.invalid("NSTextCheckingKey(_:): expected 1 argument(s), got \(args.count)")
+                throw RuntimeError.invalid("NSValueTransformerName(_:): expected 1 argument(s), got \(args.count)")
             }
-            return boxOpaque(NSTextCheckingKey(try unboxString(args[0])), typeName: "NSTextCheckingKey")
+            return boxOpaque(NSValueTransformerName(try unboxString(args[0])), typeName: "NSValueTransformerName")
         }
 
-        i.registerInit(on: "NSTextCheckingKey", labels: ["rawValue"]) { args in
+        i.bridges["NSValueTransformerName(rawValue:)"] = .`init` { args in
             guard args.count == 1 else {
-                throw RuntimeError.invalid("NSTextCheckingKey(rawValue:): expected 1 argument(s), got \(args.count)")
+                throw RuntimeError.invalid("NSValueTransformerName(rawValue:): expected 1 argument(s), got \(args.count)")
             }
-            return boxOpaque(NSTextCheckingKey(rawValue: try unboxString(args[0])), typeName: "NSTextCheckingKey")
+            return boxOpaque(NSValueTransformerName(rawValue: try unboxString(args[0])), typeName: "NSValueTransformerName")
         }
 
-        i.registerGlobal(name: "NSHFSTypeOfFile") { args in
+        i.bridges["StringEncodingDetectionOptionsKey(rawValue:)"] = .`init` { args in
             guard args.count == 1 else {
-                throw RuntimeError.invalid("NSHFSTypeOfFile: expected 1 argument(s), got \(args.count)")
+                throw RuntimeError.invalid("StringEncodingDetectionOptionsKey(rawValue:): expected 1 argument(s), got \(args.count)")
             }
-            if let _v = NSHFSTypeOfFile(try unboxString(args[0])) {
-            return .optional(.string(_v))
-        }
-        return .optional(nil)
+            return boxOpaque(StringEncodingDetectionOptionsKey(rawValue: try unboxString(args[0])), typeName: "StringEncodingDetectionOptionsKey")
         }
 
-        i.registerInit(on: "StreamNetworkServiceTypeValue", labels: ["rawValue"]) { args in
+        i.bridges["StringTransform(_:)"] = .`init` { args in
             guard args.count == 1 else {
-                throw RuntimeError.invalid("StreamNetworkServiceTypeValue(rawValue:): expected 1 argument(s), got \(args.count)")
+                throw RuntimeError.invalid("StringTransform(_:): expected 1 argument(s), got \(args.count)")
             }
-            return boxOpaque(StreamNetworkServiceTypeValue(rawValue: try unboxString(args[0])), typeName: "StreamNetworkServiceTypeValue")
+            return boxOpaque(StringTransform(try unboxString(args[0])), typeName: "StringTransform")
         }
 
-        i.registerInit(on: "StreamSOCKSProxyConfiguration", labels: ["rawValue"]) { args in
+        i.bridges["StringTransform(rawValue:)"] = .`init` { args in
             guard args.count == 1 else {
-                throw RuntimeError.invalid("StreamSOCKSProxyConfiguration(rawValue:): expected 1 argument(s), got \(args.count)")
+                throw RuntimeError.invalid("StringTransform(rawValue:): expected 1 argument(s), got \(args.count)")
             }
-            return boxOpaque(StreamSOCKSProxyConfiguration(rawValue: try unboxString(args[0])), typeName: "StreamSOCKSProxyConfiguration")
+            return boxOpaque(StringTransform(rawValue: try unboxString(args[0])), typeName: "StringTransform")
         }
 
-        i.registerInit(on: "StreamSOCKSProxyVersion", labels: ["rawValue"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("StreamSOCKSProxyVersion(rawValue:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(StreamSOCKSProxyVersion(rawValue: try unboxString(args[0])), typeName: "StreamSOCKSProxyVersion")
-        }
-
-        i.registerInit(on: "StreamSocketSecurityLevel", labels: ["rawValue"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("StreamSocketSecurityLevel(rawValue:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(StreamSocketSecurityLevel(rawValue: try unboxString(args[0])), typeName: "StreamSocketSecurityLevel")
-        }
-
-        i.registerInit(on: "NSKeyValueOperator", labels: ["rawValue"]) { args in
+        i.bridges["NSKeyValueOperator(rawValue:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("NSKeyValueOperator(rawValue:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(NSKeyValueOperator(rawValue: try unboxString(args[0])), typeName: "NSKeyValueOperator")
         }
 
-        i.registerInit(on: "ProgressKind", labels: ["_"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("ProgressKind(_:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(ProgressKind(try unboxString(args[0])), typeName: "ProgressKind")
-        }
-
-        i.registerInit(on: "ProgressKind", labels: ["rawValue"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("ProgressKind(rawValue:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(ProgressKind(rawValue: try unboxString(args[0])), typeName: "ProgressKind")
-        }
-
-        i.registerInit(on: "ProgressUserInfoKey", labels: ["_"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("ProgressUserInfoKey(_:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(ProgressUserInfoKey(try unboxString(args[0])), typeName: "ProgressUserInfoKey")
-        }
-
-        i.registerInit(on: "ProgressUserInfoKey", labels: ["rawValue"]) { args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("ProgressUserInfoKey(rawValue:): expected 1 argument(s), got \(args.count)")
-            }
-            return boxOpaque(ProgressUserInfoKey(rawValue: try unboxString(args[0])), typeName: "ProgressUserInfoKey")
-        }
-
-        i.registerMethod(on: "AttributeContainer", name: "merging") { receiver, args in
+        i.bridges["AttributeContainer.merging()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("AttributeContainer.merging: expected 1 argument(s), got \(args.count)")
             }
@@ -5231,7 +5231,7 @@ extension FoundationModule {
             return boxOpaque(recv.merging(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributeContainer")
         }
 
-        i.registerMethod(on: "AttributedString", name: "mergingAttributes") { receiver, args in
+        i.bridges["AttributedString.mergingAttributes()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("AttributedString.mergingAttributes: expected 1 argument(s), got \(args.count)")
             }
@@ -5239,7 +5239,7 @@ extension FoundationModule {
             return boxOpaque(recv.mergingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
         }
 
-        i.registerMethod(on: "AttributedString", name: "replacingAttributes") { receiver, args in
+        i.bridges["AttributedString.replacingAttributes()"] = .method { receiver, args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("AttributedString.replacingAttributes: expected 2 argument(s), got \(args.count)")
             }
@@ -5247,14 +5247,14 @@ extension FoundationModule {
             return boxOpaque(recv.replacingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"), with: try unboxOpaque(args[1], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
         }
 
-        i.registerInit(on: "AttributedString", labels: ["_", "attributes"]) { args in
+        i.bridges["AttributedString(_:attributes:)"] = .`init` { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("AttributedString(_:attributes:): expected 2 argument(s), got \(args.count)")
             }
             return boxOpaque(AttributedString(try unboxString(args[0]), attributes: try unboxOpaque(args[1], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
         }
 
-        i.registerMethod(on: "AttributedSubstring", name: "mergingAttributes") { receiver, args in
+        i.bridges["AttributedSubstring.mergingAttributes()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("AttributedSubstring.mergingAttributes: expected 1 argument(s), got \(args.count)")
             }
@@ -5262,7 +5262,7 @@ extension FoundationModule {
             return boxOpaque(recv.mergingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
         }
 
-        i.registerMethod(on: "AttributedSubstring", name: "replacingAttributes") { receiver, args in
+        i.bridges["AttributedSubstring.replacingAttributes()"] = .method { receiver, args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("AttributedSubstring.replacingAttributes: expected 2 argument(s), got \(args.count)")
             }
@@ -5270,7 +5270,7 @@ extension FoundationModule {
             return boxOpaque(recv.replacingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"), with: try unboxOpaque(args[1], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
         }
 
-        i.registerMethod(on: "Calendar", name: "dateComponents") { receiver, args in
+        i.bridges["Calendar.dateComponents()"] = .method { receiver, args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("Calendar.dateComponents: expected 2 argument(s), got \(args.count)")
             }
@@ -5278,7 +5278,7 @@ extension FoundationModule {
             return boxOpaque(recv.dateComponents(in: try unboxOpaque(args[0], as: TimeZone.self, typeName: "TimeZone"), from: try unboxOpaque(args[1], as: Date.self, typeName: "Date")), typeName: "DateComponents")
         }
 
-        i.registerMethod(on: "Calendar", name: "isDate") { receiver, args in
+        i.bridges["Calendar.isDate()"] = .method { receiver, args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("Calendar.isDate: expected 2 argument(s), got \(args.count)")
             }
@@ -5286,7 +5286,7 @@ extension FoundationModule {
             return .bool(recv.isDate(try unboxOpaque(args[0], as: Date.self, typeName: "Date"), inSameDayAs: try unboxOpaque(args[1], as: Date.self, typeName: "Date")))
         }
 
-        i.registerMethod(on: "Calendar", name: "nextWeekend") { receiver, args in
+        i.bridges["Calendar.nextWeekend()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Calendar.nextWeekend: expected 1 argument(s), got \(args.count)")
             }
@@ -5297,14 +5297,14 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerInit(on: "Data", labels: ["bytes", "count"]) { args in
+        i.bridges["Data(bytes:count:)"] = .`init` { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("Data(bytes:count:): expected 2 argument(s), got \(args.count)")
             }
             return boxOpaque(Data(bytes: try unboxOpaque(args[0], as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer"), count: try unboxInt(args[1])), typeName: "Data")
         }
 
-        i.registerInit(on: "Data", labels: ["contentsOf"]) { args in
+        i.bridges["Data(contentsOf:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Data(contentsOf:): expected 1 argument(s), got \(args.count)")
             }
@@ -5315,7 +5315,7 @@ extension FoundationModule {
         }
         }
 
-        i.registerMethod(on: "Data", name: "write") { receiver, args in
+        i.bridges["Data.write()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Data.write: expected 1 argument(s), got \(args.count)")
             }
@@ -5328,7 +5328,7 @@ extension FoundationModule {
         }
         }
 
-        i.registerInit(on: "Data", labels: ["base64Encoded"]) { args in
+        i.bridges["Data(base64Encoded:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Data(base64Encoded:): expected 1 argument(s), got \(args.count)")
             }
@@ -5338,14 +5338,14 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerInit(on: "Decimal", labels: ["signOf", "magnitudeOf"]) { args in
+        i.bridges["Decimal(signOf:magnitudeOf:)"] = .`init` { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("Decimal(signOf:magnitudeOf:): expected 2 argument(s), got \(args.count)")
             }
             return boxOpaque(Decimal(signOf: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal"), magnitudeOf: try unboxOpaque(args[1], as: Decimal.self, typeName: "Decimal")), typeName: "Decimal")
         }
 
-        i.registerInit(on: "URL", labels: ["string", "encodingInvalidCharacters"]) { args in
+        i.bridges["URL(string:encodingInvalidCharacters:)"] = .`init` { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("URL(string:encodingInvalidCharacters:): expected 2 argument(s), got \(args.count)")
             }
@@ -5355,14 +5355,14 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerInit(on: "URL", labels: ["fileURLWithPath", "isDirectory"]) { args in
+        i.bridges["URL(fileURLWithPath:isDirectory:)"] = .`init` { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("URL(fileURLWithPath:isDirectory:): expected 2 argument(s), got \(args.count)")
             }
             return boxOpaque(URL(fileURLWithPath: try unboxString(args[0]), isDirectory: try unboxBool(args[1])), typeName: "URL")
         }
 
-        i.registerInit(on: "URL", labels: ["resolvingAliasFileAt"]) { args in
+        i.bridges["URL(resolvingAliasFileAt:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("URL(resolvingAliasFileAt:): expected 1 argument(s), got \(args.count)")
             }
@@ -5373,7 +5373,7 @@ extension FoundationModule {
         }
         }
 
-        i.registerStaticMethod(on: "URL", name: "writeBookmarkData") { args in
+        i.bridges["URL.Type.writeBookmarkData()"] = .staticMethod { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("URL.writeBookmarkData: expected 2 argument(s), got \(args.count)")
             }
@@ -5385,7 +5385,7 @@ extension FoundationModule {
         }
         }
 
-        i.registerInit(on: "URLComponents", labels: ["url", "resolvingAgainstBaseURL"]) { args in
+        i.bridges["URLComponents(url:resolvingAgainstBaseURL:)"] = .`init` { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("URLComponents(url:resolvingAgainstBaseURL:): expected 2 argument(s), got \(args.count)")
             }
@@ -5395,7 +5395,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerInit(on: "URLComponents", labels: ["string", "encodingInvalidCharacters"]) { args in
+        i.bridges["URLComponents(string:encodingInvalidCharacters:)"] = .`init` { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("URLComponents(string:encodingInvalidCharacters:): expected 2 argument(s), got \(args.count)")
             }
@@ -5405,28 +5405,28 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerInit(on: "Date", labels: ["timeInterval", "since"]) { args in
+        i.bridges["Date(timeInterval:since:)"] = .`init` { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("Date(timeInterval:since:): expected 2 argument(s), got \(args.count)")
             }
             return boxOpaque(Date(timeInterval: try toDouble(args[0]), since: try unboxOpaque(args[1], as: Date.self, typeName: "Date")), typeName: "Date")
         }
 
-        i.registerInit(on: "DateInterval", labels: ["start", "end"]) { args in
+        i.bridges["DateInterval(start:end:)"] = .`init` { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("DateInterval(start:end:): expected 2 argument(s), got \(args.count)")
             }
             return boxOpaque(DateInterval(start: try unboxOpaque(args[0], as: Date.self, typeName: "Date"), end: try unboxOpaque(args[1], as: Date.self, typeName: "Date")), typeName: "DateInterval")
         }
 
-        i.registerInit(on: "DateInterval", labels: ["start", "duration"]) { args in
+        i.bridges["DateInterval(start:duration:)"] = .`init` { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("DateInterval(start:duration:): expected 2 argument(s), got \(args.count)")
             }
             return boxOpaque(DateInterval(start: try unboxOpaque(args[0], as: Date.self, typeName: "Date"), duration: try toDouble(args[1])), typeName: "DateInterval")
         }
 
-        i.registerInit(on: "Decimal", labels: ["_", "format", "lenient"]) { args in
+        i.bridges["Decimal(_:format:lenient:)"] = .`init` { args in
             guard args.count == 3 else {
                 throw RuntimeError.invalid("Decimal(_:format:lenient:): expected 3 argument(s), got \(args.count)")
             }
@@ -5437,51 +5437,51 @@ extension FoundationModule {
         }
         }
 
-        i.registerInit(on: "URLRequest", labels: ["url", "timeoutInterval"]) { args in
+        i.bridges["URLRequest(url:timeoutInterval:)"] = .`init` { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("URLRequest(url:timeoutInterval:): expected 2 argument(s), got \(args.count)")
             }
             return boxOpaque(URLRequest(url: try unboxOpaque(args[0], as: URL.self, typeName: "URL"), timeoutInterval: try toDouble(args[1])), typeName: "URLRequest")
         }
 
-        i.registerInit(on: "ByteCountFormatStyle", labels: ["allowedUnits", "spellsOutZero", "includesActualByteCount", "locale"]) { args in
+        i.bridges["ByteCountFormatStyle(allowedUnits:spellsOutZero:includesActualByteCount:locale:)"] = .`init` { args in
             guard args.count == 4 else {
                 throw RuntimeError.invalid("ByteCountFormatStyle(allowedUnits:spellsOutZero:includesActualByteCount:locale:): expected 4 argument(s), got \(args.count)")
             }
             return boxOpaque(ByteCountFormatStyle(allowedUnits: try unboxOpaque(args[0], as: ByteCountFormatStyle.Units.self, typeName: "ByteCountFormatStyle.Units"), spellsOutZero: try unboxBool(args[1]), includesActualByteCount: try unboxBool(args[2]), locale: try unboxOpaque(args[3], as: Locale.self, typeName: "Locale")), typeName: "ByteCountFormatStyle")
         }
 
-        i.registerComputed(on: "CodingUserInfoKey", name: "rawValue") { receiver in
+        i.bridges["CodingUserInfoKey.rawValue"] = .computed { receiver in
             let recv: CodingUserInfoKey = try unboxOpaque(receiver, as: CodingUserInfoKey.self, typeName: "CodingUserInfoKey")
             return .string(recv.rawValue)
         }
 
-        i.registerComputed(on: "CodingUserInfoKey", name: "hashValue") { receiver in
+        i.bridges["CodingUserInfoKey.hashValue"] = .computed { receiver in
             let recv: CodingUserInfoKey = try unboxOpaque(receiver, as: CodingUserInfoKey.self, typeName: "CodingUserInfoKey")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "OpaquePointer", name: "hashValue") { receiver in
+        i.bridges["OpaquePointer.hashValue"] = .computed { receiver in
             let recv: OpaquePointer = try unboxOpaque(receiver, as: OpaquePointer.self, typeName: "OpaquePointer")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "OpaquePointer", name: "debugDescription") { receiver in
+        i.bridges["OpaquePointer.debugDescription"] = .computed { receiver in
             let recv: OpaquePointer = try unboxOpaque(receiver, as: OpaquePointer.self, typeName: "OpaquePointer")
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "ObjectIdentifier", name: "debugDescription") { receiver in
+        i.bridges["ObjectIdentifier.debugDescription"] = .computed { receiver in
             let recv: ObjectIdentifier = try unboxOpaque(receiver, as: ObjectIdentifier.self, typeName: "ObjectIdentifier")
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "ObjectIdentifier", name: "hashValue") { receiver in
+        i.bridges["ObjectIdentifier.hashValue"] = .computed { receiver in
             let recv: ObjectIdentifier = try unboxOpaque(receiver, as: ObjectIdentifier.self, typeName: "ObjectIdentifier")
             return .int(recv.hashValue)
         }
 
-        i.registerMethod(on: "UnsafeRawPointer", name: "successor") { receiver, args in
+        i.bridges["UnsafeRawPointer.successor()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("UnsafeRawPointer.successor: expected 0 argument(s), got \(args.count)")
             }
@@ -5489,7 +5489,7 @@ extension FoundationModule {
             return boxOpaque(recv.successor(), typeName: "UnsafeRawPointer")
         }
 
-        i.registerMethod(on: "UnsafeRawPointer", name: "predecessor") { receiver, args in
+        i.bridges["UnsafeRawPointer.predecessor()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("UnsafeRawPointer.predecessor: expected 0 argument(s), got \(args.count)")
             }
@@ -5497,17 +5497,17 @@ extension FoundationModule {
             return boxOpaque(recv.predecessor(), typeName: "UnsafeRawPointer")
         }
 
-        i.registerComputed(on: "UnsafeRawPointer", name: "debugDescription") { receiver in
+        i.bridges["UnsafeRawPointer.debugDescription"] = .computed { receiver in
             let recv: UnsafeRawPointer = try unboxOpaque(receiver, as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer")
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "UnsafeRawPointer", name: "hashValue") { receiver in
+        i.bridges["UnsafeRawPointer.hashValue"] = .computed { receiver in
             let recv: UnsafeRawPointer = try unboxOpaque(receiver, as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer")
             return .int(recv.hashValue)
         }
 
-        i.registerMethod(on: "UnsafeRawPointer", name: "deallocate") { receiver, args in
+        i.bridges["UnsafeRawPointer.deallocate()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("UnsafeRawPointer.deallocate: expected 0 argument(s), got \(args.count)")
             }
@@ -5516,7 +5516,7 @@ extension FoundationModule {
             return .void
         }
 
-        i.registerMethod(on: "UnsafeMutableRawPointer", name: "successor") { receiver, args in
+        i.bridges["UnsafeMutableRawPointer.successor()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("UnsafeMutableRawPointer.successor: expected 0 argument(s), got \(args.count)")
             }
@@ -5524,7 +5524,7 @@ extension FoundationModule {
             return boxOpaque(recv.successor(), typeName: "UnsafeMutableRawPointer")
         }
 
-        i.registerMethod(on: "UnsafeMutableRawPointer", name: "predecessor") { receiver, args in
+        i.bridges["UnsafeMutableRawPointer.predecessor()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("UnsafeMutableRawPointer.predecessor: expected 0 argument(s), got \(args.count)")
             }
@@ -5532,17 +5532,17 @@ extension FoundationModule {
             return boxOpaque(recv.predecessor(), typeName: "UnsafeMutableRawPointer")
         }
 
-        i.registerComputed(on: "UnsafeMutableRawPointer", name: "debugDescription") { receiver in
+        i.bridges["UnsafeMutableRawPointer.debugDescription"] = .computed { receiver in
             let recv: UnsafeMutableRawPointer = try unboxOpaque(receiver, as: UnsafeMutableRawPointer.self, typeName: "UnsafeMutableRawPointer")
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "UnsafeMutableRawPointer", name: "hashValue") { receiver in
+        i.bridges["UnsafeMutableRawPointer.hashValue"] = .computed { receiver in
             let recv: UnsafeMutableRawPointer = try unboxOpaque(receiver, as: UnsafeMutableRawPointer.self, typeName: "UnsafeMutableRawPointer")
             return .int(recv.hashValue)
         }
 
-        i.registerMethod(on: "UnsafeMutableRawPointer", name: "deallocate") { receiver, args in
+        i.bridges["UnsafeMutableRawPointer.deallocate()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("UnsafeMutableRawPointer.deallocate: expected 0 argument(s), got \(args.count)")
             }
@@ -5551,51 +5551,51 @@ extension FoundationModule {
             return .void
         }
 
-        i.registerComputed(on: "Duration", name: "hashValue") { receiver in
+        i.bridges["Duration.hashValue"] = .computed { receiver in
             let recv: Duration = try unboxOpaque(receiver, as: Duration.self, typeName: "Duration")
             return .int(recv.hashValue)
         }
 
-        i.registerStaticValue(on: "Duration", name: "zero", value: boxOpaque(Duration.zero, typeName: "Duration"))
+        i.bridges["Duration.Type.zero"] = .staticValue(boxOpaque(Duration.zero, typeName: "Duration"))
 
-        i.registerComputed(on: "Duration", name: "description") { receiver in
+        i.bridges["Duration.description"] = .computed { receiver in
             let recv: Duration = try unboxOpaque(receiver, as: Duration.self, typeName: "Duration")
             return .string(recv.description)
         }
 
-        i.registerStaticValue(on: "TaskPriority", name: "high", value: boxOpaque(TaskPriority.high, typeName: "TaskPriority"))
+        i.bridges["TaskPriority.Type.high"] = .staticValue(boxOpaque(TaskPriority.high, typeName: "TaskPriority"))
 
-        i.registerStaticValue(on: "TaskPriority", name: "medium", value: boxOpaque(TaskPriority.medium, typeName: "TaskPriority"))
+        i.bridges["TaskPriority.Type.medium"] = .staticValue(boxOpaque(TaskPriority.medium, typeName: "TaskPriority"))
 
-        i.registerStaticValue(on: "TaskPriority", name: "low", value: boxOpaque(TaskPriority.low, typeName: "TaskPriority"))
+        i.bridges["TaskPriority.Type.low"] = .staticValue(boxOpaque(TaskPriority.low, typeName: "TaskPriority"))
 
-        i.registerStaticValue(on: "TaskPriority", name: "userInitiated", value: boxOpaque(TaskPriority.userInitiated, typeName: "TaskPriority"))
+        i.bridges["TaskPriority.Type.userInitiated"] = .staticValue(boxOpaque(TaskPriority.userInitiated, typeName: "TaskPriority"))
 
-        i.registerStaticValue(on: "TaskPriority", name: "utility", value: boxOpaque(TaskPriority.utility, typeName: "TaskPriority"))
+        i.bridges["TaskPriority.Type.utility"] = .staticValue(boxOpaque(TaskPriority.utility, typeName: "TaskPriority"))
 
-        i.registerStaticValue(on: "TaskPriority", name: "background", value: boxOpaque(TaskPriority.background, typeName: "TaskPriority"))
+        i.bridges["TaskPriority.Type.background"] = .staticValue(boxOpaque(TaskPriority.background, typeName: "TaskPriority"))
 
-        i.registerComputed(on: "TaskPriority", name: "description") { receiver in
+        i.bridges["TaskPriority.description"] = .computed { receiver in
             let recv: TaskPriority = try unboxOpaque(receiver, as: TaskPriority.self, typeName: "TaskPriority")
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "UnsafeCurrentTask", name: "isCancelled") { receiver in
+        i.bridges["UnsafeCurrentTask.isCancelled"] = .computed { receiver in
             let recv: UnsafeCurrentTask = try unboxOpaque(receiver, as: UnsafeCurrentTask.self, typeName: "UnsafeCurrentTask")
             return .bool(recv.isCancelled)
         }
 
-        i.registerComputed(on: "UnsafeCurrentTask", name: "priority") { receiver in
+        i.bridges["UnsafeCurrentTask.priority"] = .computed { receiver in
             let recv: UnsafeCurrentTask = try unboxOpaque(receiver, as: UnsafeCurrentTask.self, typeName: "UnsafeCurrentTask")
             return boxOpaque(recv.priority, typeName: "TaskPriority")
         }
 
-        i.registerComputed(on: "UnsafeCurrentTask", name: "basePriority") { receiver in
+        i.bridges["UnsafeCurrentTask.basePriority"] = .computed { receiver in
             let recv: UnsafeCurrentTask = try unboxOpaque(receiver, as: UnsafeCurrentTask.self, typeName: "UnsafeCurrentTask")
             return boxOpaque(recv.basePriority, typeName: "TaskPriority")
         }
 
-        i.registerMethod(on: "UnsafeCurrentTask", name: "cancel") { receiver, args in
+        i.bridges["UnsafeCurrentTask.cancel()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("UnsafeCurrentTask.cancel: expected 0 argument(s), got \(args.count)")
             }
@@ -5604,12 +5604,12 @@ extension FoundationModule {
             return .void
         }
 
-        i.registerComputed(on: "UnsafeCurrentTask", name: "hashValue") { receiver in
+        i.bridges["UnsafeCurrentTask.hashValue"] = .computed { receiver in
             let recv: UnsafeCurrentTask = try unboxOpaque(receiver, as: UnsafeCurrentTask.self, typeName: "UnsafeCurrentTask")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "UnsafeCurrentTask", name: "unownedTaskExecutor") { receiver in
+        i.bridges["UnsafeCurrentTask.unownedTaskExecutor"] = .computed { receiver in
             let recv: UnsafeCurrentTask = try unboxOpaque(receiver, as: UnsafeCurrentTask.self, typeName: "UnsafeCurrentTask")
             if let _v = recv.unownedTaskExecutor {
             return .optional(boxOpaque(_v, typeName: "UnownedTaskExecutor"))
@@ -5617,36 +5617,36 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerStaticValue(on: "RegexSemanticLevel", name: "graphemeCluster", value: boxOpaque(RegexSemanticLevel.graphemeCluster, typeName: "RegexSemanticLevel"))
+        i.bridges["RegexSemanticLevel.Type.graphemeCluster"] = .staticValue(boxOpaque(RegexSemanticLevel.graphemeCluster, typeName: "RegexSemanticLevel"))
 
-        i.registerStaticValue(on: "RegexSemanticLevel", name: "unicodeScalar", value: boxOpaque(RegexSemanticLevel.unicodeScalar, typeName: "RegexSemanticLevel"))
+        i.bridges["RegexSemanticLevel.Type.unicodeScalar"] = .staticValue(boxOpaque(RegexSemanticLevel.unicodeScalar, typeName: "RegexSemanticLevel"))
 
-        i.registerComputed(on: "RegexSemanticLevel", name: "hashValue") { receiver in
+        i.bridges["RegexSemanticLevel.hashValue"] = .computed { receiver in
             let recv: RegexSemanticLevel = try unboxOpaque(receiver, as: RegexSemanticLevel.self, typeName: "RegexSemanticLevel")
             return .int(recv.hashValue)
         }
 
-        i.registerStaticValue(on: "RegexWordBoundaryKind", name: "simple", value: boxOpaque(RegexWordBoundaryKind.simple, typeName: "RegexWordBoundaryKind"))
+        i.bridges["RegexWordBoundaryKind.Type.simple"] = .staticValue(boxOpaque(RegexWordBoundaryKind.simple, typeName: "RegexWordBoundaryKind"))
 
-        i.registerStaticValue(on: "RegexWordBoundaryKind", name: "default", value: boxOpaque(RegexWordBoundaryKind.default, typeName: "RegexWordBoundaryKind"))
+        i.bridges["RegexWordBoundaryKind.Type.default"] = .staticValue(boxOpaque(RegexWordBoundaryKind.default, typeName: "RegexWordBoundaryKind"))
 
-        i.registerComputed(on: "RegexWordBoundaryKind", name: "hashValue") { receiver in
+        i.bridges["RegexWordBoundaryKind.hashValue"] = .computed { receiver in
             let recv: RegexWordBoundaryKind = try unboxOpaque(receiver, as: RegexWordBoundaryKind.self, typeName: "RegexWordBoundaryKind")
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "RegexRepetitionBehavior", name: "hashValue") { receiver in
+        i.bridges["RegexRepetitionBehavior.hashValue"] = .computed { receiver in
             let recv: RegexRepetitionBehavior = try unboxOpaque(receiver, as: RegexRepetitionBehavior.self, typeName: "RegexRepetitionBehavior")
             return .int(recv.hashValue)
         }
 
-        i.registerStaticValue(on: "RegexRepetitionBehavior", name: "eager", value: boxOpaque(RegexRepetitionBehavior.eager, typeName: "RegexRepetitionBehavior"))
+        i.bridges["RegexRepetitionBehavior.Type.eager"] = .staticValue(boxOpaque(RegexRepetitionBehavior.eager, typeName: "RegexRepetitionBehavior"))
 
-        i.registerStaticValue(on: "RegexRepetitionBehavior", name: "reluctant", value: boxOpaque(RegexRepetitionBehavior.reluctant, typeName: "RegexRepetitionBehavior"))
+        i.bridges["RegexRepetitionBehavior.Type.reluctant"] = .staticValue(boxOpaque(RegexRepetitionBehavior.reluctant, typeName: "RegexRepetitionBehavior"))
 
-        i.registerStaticValue(on: "RegexRepetitionBehavior", name: "possessive", value: boxOpaque(RegexRepetitionBehavior.possessive, typeName: "RegexRepetitionBehavior"))
+        i.bridges["RegexRepetitionBehavior.Type.possessive"] = .staticValue(boxOpaque(RegexRepetitionBehavior.possessive, typeName: "RegexRepetitionBehavior"))
 
-        i.registerInit(on: "CodingUserInfoKey", labels: ["rawValue"]) { args in
+        i.bridges["CodingUserInfoKey(rawValue:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("CodingUserInfoKey(rawValue:): expected 1 argument(s), got \(args.count)")
             }
@@ -5656,7 +5656,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerInit(on: "OpaquePointer", labels: ["bitPattern"]) { args in
+        i.bridges["OpaquePointer(bitPattern:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("OpaquePointer(bitPattern:): expected 1 argument(s), got \(args.count)")
             }
@@ -5666,14 +5666,14 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerInit(on: "UnsafeRawPointer", labels: ["_"]) { args in
+        i.bridges["UnsafeRawPointer(_:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("UnsafeRawPointer(_:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(UnsafeRawPointer(try unboxOpaque(args[0], as: OpaquePointer.self, typeName: "OpaquePointer")), typeName: "UnsafeRawPointer")
         }
 
-        i.registerInit(on: "UnsafeRawPointer", labels: ["bitPattern"]) { args in
+        i.bridges["UnsafeRawPointer(bitPattern:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("UnsafeRawPointer(bitPattern:): expected 1 argument(s), got \(args.count)")
             }
@@ -5683,7 +5683,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "UnsafeRawPointer", name: "distance") { receiver, args in
+        i.bridges["UnsafeRawPointer.distance()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("UnsafeRawPointer.distance: expected 1 argument(s), got \(args.count)")
             }
@@ -5691,7 +5691,7 @@ extension FoundationModule {
             return .int(recv.distance(to: try unboxOpaque(args[0], as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer")))
         }
 
-        i.registerMethod(on: "UnsafeRawPointer", name: "advanced") { receiver, args in
+        i.bridges["UnsafeRawPointer.advanced()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("UnsafeRawPointer.advanced: expected 1 argument(s), got \(args.count)")
             }
@@ -5699,7 +5699,7 @@ extension FoundationModule {
             return boxOpaque(recv.advanced(by: try unboxInt(args[0])), typeName: "UnsafeRawPointer")
         }
 
-        i.registerMethod(on: "UnsafeRawPointer", name: "alignedUp") { receiver, args in
+        i.bridges["UnsafeRawPointer.alignedUp()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("UnsafeRawPointer.alignedUp: expected 1 argument(s), got \(args.count)")
             }
@@ -5707,7 +5707,7 @@ extension FoundationModule {
             return boxOpaque(recv.alignedUp(toMultipleOf: try unboxInt(args[0])), typeName: "UnsafeRawPointer")
         }
 
-        i.registerMethod(on: "UnsafeRawPointer", name: "alignedDown") { receiver, args in
+        i.bridges["UnsafeRawPointer.alignedDown()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("UnsafeRawPointer.alignedDown: expected 1 argument(s), got \(args.count)")
             }
@@ -5715,14 +5715,14 @@ extension FoundationModule {
             return boxOpaque(recv.alignedDown(toMultipleOf: try unboxInt(args[0])), typeName: "UnsafeRawPointer")
         }
 
-        i.registerInit(on: "UnsafeMutableRawPointer", labels: ["_"]) { args in
+        i.bridges["UnsafeMutableRawPointer(_:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("UnsafeMutableRawPointer(_:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(UnsafeMutableRawPointer(try unboxOpaque(args[0], as: OpaquePointer.self, typeName: "OpaquePointer")), typeName: "UnsafeMutableRawPointer")
         }
 
-        i.registerInit(on: "UnsafeMutableRawPointer", labels: ["bitPattern"]) { args in
+        i.bridges["UnsafeMutableRawPointer(bitPattern:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("UnsafeMutableRawPointer(bitPattern:): expected 1 argument(s), got \(args.count)")
             }
@@ -5732,7 +5732,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "UnsafeMutableRawPointer", name: "distance") { receiver, args in
+        i.bridges["UnsafeMutableRawPointer.distance()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("UnsafeMutableRawPointer.distance: expected 1 argument(s), got \(args.count)")
             }
@@ -5740,14 +5740,14 @@ extension FoundationModule {
             return .int(recv.distance(to: try unboxOpaque(args[0], as: UnsafeMutableRawPointer.self, typeName: "UnsafeMutableRawPointer")))
         }
 
-        i.registerInit(on: "UnsafeMutableRawPointer", labels: ["mutating"]) { args in
+        i.bridges["UnsafeMutableRawPointer(mutating:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("UnsafeMutableRawPointer(mutating:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(UnsafeMutableRawPointer(mutating: try unboxOpaque(args[0], as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer")), typeName: "UnsafeMutableRawPointer")
         }
 
-        i.registerMethod(on: "UnsafeMutableRawPointer", name: "advanced") { receiver, args in
+        i.bridges["UnsafeMutableRawPointer.advanced()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("UnsafeMutableRawPointer.advanced: expected 1 argument(s), got \(args.count)")
             }
@@ -5755,7 +5755,7 @@ extension FoundationModule {
             return boxOpaque(recv.advanced(by: try unboxInt(args[0])), typeName: "UnsafeMutableRawPointer")
         }
 
-        i.registerMethod(on: "UnsafeMutableRawPointer", name: "alignedUp") { receiver, args in
+        i.bridges["UnsafeMutableRawPointer.alignedUp()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("UnsafeMutableRawPointer.alignedUp: expected 1 argument(s), got \(args.count)")
             }
@@ -5763,7 +5763,7 @@ extension FoundationModule {
             return boxOpaque(recv.alignedUp(toMultipleOf: try unboxInt(args[0])), typeName: "UnsafeMutableRawPointer")
         }
 
-        i.registerMethod(on: "UnsafeMutableRawPointer", name: "alignedDown") { receiver, args in
+        i.bridges["UnsafeMutableRawPointer.alignedDown()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("UnsafeMutableRawPointer.alignedDown: expected 1 argument(s), got \(args.count)")
             }
@@ -5771,49 +5771,49 @@ extension FoundationModule {
             return boxOpaque(recv.alignedDown(toMultipleOf: try unboxInt(args[0])), typeName: "UnsafeMutableRawPointer")
         }
 
-        i.registerInit(on: "OpaquePointer", labels: ["_"]) { args in
+        i.bridges["OpaquePointer(_:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("OpaquePointer(_:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(OpaquePointer(try unboxOpaque(args[0], as: UnsafeMutableRawPointer.self, typeName: "UnsafeMutableRawPointer")), typeName: "OpaquePointer")
         }
 
-        i.registerStaticMethod(on: "Duration", name: "seconds") { args in
+        i.bridges["Duration.Type.seconds()"] = .staticMethod { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Duration.seconds: expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(Duration.seconds(try toDouble(args[0])), typeName: "Duration")
         }
 
-        i.registerStaticMethod(on: "Duration", name: "milliseconds") { args in
+        i.bridges["Duration.Type.milliseconds()"] = .staticMethod { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Duration.milliseconds: expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(Duration.milliseconds(try toDouble(args[0])), typeName: "Duration")
         }
 
-        i.registerStaticMethod(on: "Duration", name: "microseconds") { args in
+        i.bridges["Duration.Type.microseconds()"] = .staticMethod { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Duration.microseconds: expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(Duration.microseconds(try toDouble(args[0])), typeName: "Duration")
         }
 
-        i.registerStaticMethod(on: "Duration", name: "nanoseconds") { args in
+        i.bridges["Duration.Type.nanoseconds()"] = .staticMethod { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Duration.nanoseconds: expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(Duration.nanoseconds(try toDouble(args[0])), typeName: "Duration")
         }
 
-        i.registerInit(on: "JobPriority", labels: ["_"]) { args in
+        i.bridges["JobPriority(_:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("JobPriority(_:): expected 1 argument(s), got \(args.count)")
             }
             return boxOpaque(JobPriority(try unboxOpaque(args[0], as: TaskPriority.self, typeName: "TaskPriority")), typeName: "JobPriority")
         }
 
-        i.registerInit(on: "TaskPriority", labels: ["_"]) { args in
+        i.bridges["TaskPriority(_:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("TaskPriority(_:): expected 1 argument(s), got \(args.count)")
             }
@@ -5823,7 +5823,7 @@ extension FoundationModule {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "UnsafeCurrentTask", name: "escalatePriority") { receiver, args in
+        i.bridges["UnsafeCurrentTask.escalatePriority()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("UnsafeCurrentTask.escalatePriority: expected 1 argument(s), got \(args.count)")
             }
@@ -5832,419 +5832,20 @@ extension FoundationModule {
             return .void
         }
 
-        i.registerStaticMethod(on: "UnsafeMutableRawPointer", name: "allocate") { args in
+        i.bridges["UnsafeMutableRawPointer.Type.allocate()"] = .staticMethod { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("UnsafeMutableRawPointer.allocate: expected 2 argument(s), got \(args.count)")
             }
             return boxOpaque(UnsafeMutableRawPointer.allocate(byteCount: try unboxInt(args[0]), alignment: try unboxInt(args[1])), typeName: "UnsafeMutableRawPointer")
         }
 
-        i.registerMethod(on: "UnsafeMutableRawPointer", name: "copyMemory") { receiver, args in
+        i.bridges["UnsafeMutableRawPointer.copyMemory()"] = .method { receiver, args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("UnsafeMutableRawPointer.copyMemory: expected 2 argument(s), got \(args.count)")
             }
             let recv: UnsafeMutableRawPointer = try unboxOpaque(receiver, as: UnsafeMutableRawPointer.self, typeName: "UnsafeMutableRawPointer")
             _ = recv.copyMemory(from: try unboxOpaque(args[0], as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer"), byteCount: try unboxInt(args[1]))
             return .void
-        }
-
-        i.registerComparator(on: "NSAppleEventDescriptor.SendOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSAppleEventDescriptor.SendOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSAppleEventDescriptor.SendOptions
-        else { throw RuntimeError.invalid("NSAppleEventDescriptor.SendOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "AttributedString.Runs") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.Runs,
-              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.Runs
-        else { throw RuntimeError.invalid("AttributedString.Runs comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "ProgressKind") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ProgressKind,
-              case .opaque(_, let b) = rhs, let lb = b as? ProgressKind
-        else { throw RuntimeError.invalid("ProgressKind comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "AttributeContainer") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? AttributeContainer,
-              case .opaque(_, let b) = rhs, let lb = b as? AttributeContainer
-        else { throw RuntimeError.invalid("AttributeContainer comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "URL.ParseStrategy") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URL.ParseStrategy,
-              case .opaque(_, let b) = rhs, let lb = b as? URL.ParseStrategy
-        else { throw RuntimeError.invalid("URL.ParseStrategy comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSKeyValueOperator") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSKeyValueOperator,
-              case .opaque(_, let b) = rhs, let lb = b as? NSKeyValueOperator
-        else { throw RuntimeError.invalid("NSKeyValueOperator comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Locale.Variant") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Variant,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.Variant
-        else { throw RuntimeError.invalid("Locale.Variant comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSFileVersion.AddingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSFileVersion.AddingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSFileVersion.AddingOptions
-        else { throw RuntimeError.invalid("NSFileVersion.AddingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Notification") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Notification,
-              case .opaque(_, let b) = rhs, let lb = b as? Notification
-        else { throw RuntimeError.invalid("Notification comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSData.Base64DecodingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSData.Base64DecodingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSData.Base64DecodingOptions
-        else { throw RuntimeError.invalid("NSData.Base64DecodingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "PropertyListSerialization.MutabilityOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PropertyListSerialization.MutabilityOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? PropertyListSerialization.MutabilityOptions
-        else { throw RuntimeError.invalid("PropertyListSerialization.MutabilityOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "FileManager.SearchPathDomainMask") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileManager.SearchPathDomainMask,
-              case .opaque(_, let b) = rhs, let lb = b as? FileManager.SearchPathDomainMask
-        else { throw RuntimeError.invalid("FileManager.SearchPathDomainMask comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "URLError") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLError,
-              case .opaque(_, let b) = rhs, let lb = b as? URLError
-        else { throw RuntimeError.invalid("URLError comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSLinguisticTagger.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSLinguisticTagger.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? NSLinguisticTagger.Options
-        else { throw RuntimeError.invalid("NSLinguisticTagger.Options comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "RunLoop.Mode") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? RunLoop.Mode,
-              case .opaque(_, let b) = rhs, let lb = b as? RunLoop.Mode
-        else { throw RuntimeError.invalid("RunLoop.Mode comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSFileCoordinator.WritingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSFileCoordinator.WritingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSFileCoordinator.WritingOptions
-        else { throw RuntimeError.invalid("NSFileCoordinator.WritingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "StreamSOCKSProxyConfiguration") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? StreamSOCKSProxyConfiguration,
-              case .opaque(_, let b) = rhs, let lb = b as? StreamSOCKSProxyConfiguration
-        else { throw RuntimeError.invalid("StreamSOCKSProxyConfiguration comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSCalendar.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSCalendar.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? NSCalendar.Options
-        else { throw RuntimeError.invalid("NSCalendar.Options comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "AffineTransform") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? AffineTransform,
-              case .opaque(_, let b) = rhs, let lb = b as? AffineTransform
-        else { throw RuntimeError.invalid("AffineTransform comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "FileWrapper.ReadingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileWrapper.ReadingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? FileWrapper.ReadingOptions
-        else { throw RuntimeError.invalid("FileWrapper.ReadingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Date.AnchoredRelativeFormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date.AnchoredRelativeFormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Date.AnchoredRelativeFormatStyle
-        else { throw RuntimeError.invalid("Date.AnchoredRelativeFormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSPointerFunctions.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSPointerFunctions.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? NSPointerFunctions.Options
-        else { throw RuntimeError.invalid("NSPointerFunctions.Options comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "PresentationIntent") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PresentationIntent,
-              case .opaque(_, let b) = rhs, let lb = b as? PresentationIntent
-        else { throw RuntimeError.invalid("PresentationIntent comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSCalendar.Identifier") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSCalendar.Identifier,
-              case .opaque(_, let b) = rhs, let lb = b as? NSCalendar.Identifier
-        else { throw RuntimeError.invalid("NSCalendar.Identifier comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "DateInterval") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? DateInterval,
-              case .opaque(_, let b) = rhs, let lb = b as? DateInterval
-        else { throw RuntimeError.invalid("DateInterval comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-
-        i.registerComparator(on: "DistributedNotificationCenter.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? DistributedNotificationCenter.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? DistributedNotificationCenter.Options
-        else { throw RuntimeError.invalid("DistributedNotificationCenter.Options comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NetService.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NetService.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? NetService.Options
-        else { throw RuntimeError.invalid("NetService.Options comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "FileWrapper.WritingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileWrapper.WritingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? FileWrapper.WritingOptions
-        else { throw RuntimeError.invalid("FileWrapper.WritingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "URLUbiquitousSharedItemPermissions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLUbiquitousSharedItemPermissions,
-              case .opaque(_, let b) = rhs, let lb = b as? URLUbiquitousSharedItemPermissions
-        else { throw RuntimeError.invalid("URLUbiquitousSharedItemPermissions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSAttributedStringFormattingContextKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSAttributedStringFormattingContextKey,
-              case .opaque(_, let b) = rhs, let lb = b as? NSAttributedStringFormattingContextKey
-        else { throw RuntimeError.invalid("NSAttributedStringFormattingContextKey comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "ProcessInfo.ActivityOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ProcessInfo.ActivityOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? ProcessInfo.ActivityOptions
-        else { throw RuntimeError.invalid("ProcessInfo.ActivityOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSLinguisticTagScheme") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSLinguisticTagScheme,
-              case .opaque(_, let b) = rhs, let lb = b as? NSLinguisticTagScheme
-        else { throw RuntimeError.invalid("NSLinguisticTagScheme comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "MachError") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? MachError,
-              case .opaque(_, let b) = rhs, let lb = b as? MachError
-        else { throw RuntimeError.invalid("MachError comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Date.FormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date.FormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Date.FormatStyle
-        else { throw RuntimeError.invalid("Date.FormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "AttributedSubstring") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? AttributedSubstring,
-              case .opaque(_, let b) = rhs, let lb = b as? AttributedSubstring
-        else { throw RuntimeError.invalid("AttributedSubstring comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "AttributedString") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString,
-              case .opaque(_, let b) = rhs, let lb = b as? AttributedString
-        else { throw RuntimeError.invalid("AttributedString comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSData.Base64EncodingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSData.Base64EncodingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSData.Base64EncodingOptions
-        else { throw RuntimeError.invalid("NSData.Base64EncodingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "PersonNameComponents.ParseStrategy") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PersonNameComponents.ParseStrategy,
-              case .opaque(_, let b) = rhs, let lb = b as? PersonNameComponents.ParseStrategy
-        else { throw RuntimeError.invalid("PersonNameComponents.ParseStrategy comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Locale.MeasurementSystem") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.MeasurementSystem,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.MeasurementSystem
-        else { throw RuntimeError.invalid("Locale.MeasurementSystem comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Locale") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale
-        else { throw RuntimeError.invalid("Locale comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "TermOfAddress") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? TermOfAddress,
-              case .opaque(_, let b) = rhs, let lb = b as? TermOfAddress
-        else { throw RuntimeError.invalid("TermOfAddress comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Locale.LanguageCode") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.LanguageCode,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.LanguageCode
-        else { throw RuntimeError.invalid("Locale.LanguageCode comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "LocalizedStringResource") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? LocalizedStringResource,
-              case .opaque(_, let b) = rhs, let lb = b as? LocalizedStringResource
-        else { throw RuntimeError.invalid("LocalizedStringResource comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSCalendar.Unit") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSCalendar.Unit,
-              case .opaque(_, let b) = rhs, let lb = b as? NSCalendar.Unit
-        else { throw RuntimeError.invalid("NSCalendar.Unit comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "URLRequest") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLRequest,
-              case .opaque(_, let b) = rhs, let lb = b as? URLRequest
-        else { throw RuntimeError.invalid("URLRequest comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "PersonNameComponents.FormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PersonNameComponents.FormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? PersonNameComponents.FormatStyle
-        else { throw RuntimeError.invalid("PersonNameComponents.FormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "URLFileProtection") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLFileProtection,
-              case .opaque(_, let b) = rhs, let lb = b as? URLFileProtection
-        else { throw RuntimeError.invalid("URLFileProtection comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSString.CompareOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSString.CompareOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSString.CompareOptions
-        else { throw RuntimeError.invalid("NSString.CompareOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "FileManager.UnmountOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileManager.UnmountOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? FileManager.UnmountOptions
-        else { throw RuntimeError.invalid("FileManager.UnmountOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "StringStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? StringStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? StringStyle
-        else { throw RuntimeError.invalid("StringStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Data") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Data,
-              case .opaque(_, let b) = rhs, let lb = b as? Data
-        else { throw RuntimeError.invalid("Data comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSData.SearchOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSData.SearchOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSData.SearchOptions
-        else { throw RuntimeError.invalid("NSData.SearchOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "StringEncodingDetectionOptionsKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? StringEncodingDetectionOptionsKey,
-              case .opaque(_, let b) = rhs, let lb = b as? StringEncodingDetectionOptionsKey
-        else { throw RuntimeError.invalid("StringEncodingDetectionOptionsKey comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Date.AttributedStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date.AttributedStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Date.AttributedStyle
-        else { throw RuntimeError.invalid("Date.AttributedStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "JSONSerialization.WritingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? JSONSerialization.WritingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? JSONSerialization.WritingOptions
-        else { throw RuntimeError.invalid("JSONSerialization.WritingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSFileCoordinator.ReadingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSFileCoordinator.ReadingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSFileCoordinator.ReadingOptions
-        else { throw RuntimeError.invalid("NSFileCoordinator.ReadingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "URL.FormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URL.FormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? URL.FormatStyle
-        else { throw RuntimeError.invalid("URL.FormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
         }
 
         i.registerComparator(on: "Date") { lhs, rhs in
@@ -6254,234 +5855,10 @@ extension FoundationModule {
         return la < lb ? -1 : (la > lb ? 1 : 0)
         }
 
-        i.registerComparator(on: "NSString.EncodingConversionOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSString.EncodingConversionOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSString.EncodingConversionOptions
-        else { throw RuntimeError.invalid("NSString.EncodingConversionOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSMachPort.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSMachPort.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? NSMachPort.Options
-        else { throw RuntimeError.invalid("NSMachPort.Options comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSComparisonPredicate.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSComparisonPredicate.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? NSComparisonPredicate.Options
-        else { throw RuntimeError.invalid("NSComparisonPredicate.Options comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSFileManagerSupportedSyncControls") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSFileManagerSupportedSyncControls,
-              case .opaque(_, let b) = rhs, let lb = b as? NSFileManagerSupportedSyncControls
-        else { throw RuntimeError.invalid("NSFileManagerSupportedSyncControls comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "AttributedString.MarkdownSourcePosition") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.MarkdownSourcePosition,
-              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.MarkdownSourcePosition
-        else { throw RuntimeError.invalid("AttributedString.MarkdownSourcePosition comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "IndexPath") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? IndexPath,
-              case .opaque(_, let b) = rhs, let lb = b as? IndexPath
-        else { throw RuntimeError.invalid("IndexPath comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-
-        i.registerComparator(on: "NSData.ReadingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSData.ReadingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSData.ReadingOptions
-        else { throw RuntimeError.invalid("NSData.ReadingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "JSONSerialization.ReadingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? JSONSerialization.ReadingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? JSONSerialization.ReadingOptions
-        else { throw RuntimeError.invalid("JSONSerialization.ReadingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Calendar") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Calendar,
-              case .opaque(_, let b) = rhs, let lb = b as? Calendar
-        else { throw RuntimeError.invalid("Calendar comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "PersonNameComponents") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PersonNameComponents,
-              case .opaque(_, let b) = rhs, let lb = b as? PersonNameComponents
-        else { throw RuntimeError.invalid("PersonNameComponents comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "PersonNameComponents.AttributedStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PersonNameComponents.AttributedStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? PersonNameComponents.AttributedStyle
-        else { throw RuntimeError.invalid("PersonNameComponents.AttributedStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSString.EnumerationOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSString.EnumerationOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSString.EnumerationOptions
-        else { throw RuntimeError.invalid("NSString.EnumerationOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Locale.Subdivision") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Subdivision,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.Subdivision
-        else { throw RuntimeError.invalid("Locale.Subdivision comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSAttributedString.Key") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSAttributedString.Key,
-              case .opaque(_, let b) = rhs, let lb = b as? NSAttributedString.Key
-        else { throw RuntimeError.invalid("NSAttributedString.Key comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Date.IntervalFormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date.IntervalFormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Date.IntervalFormatStyle
-        else { throw RuntimeError.invalid("Date.IntervalFormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "PredicateError") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PredicateError,
-              case .opaque(_, let b) = rhs, let lb = b as? PredicateError
-        else { throw RuntimeError.invalid("PredicateError comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "IndexSet.Index") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? IndexSet.Index,
-              case .opaque(_, let b) = rhs, let lb = b as? IndexSet.Index
-        else { throw RuntimeError.invalid("IndexSet.Index comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-
-        i.registerComparator(on: "DiscontiguousAttributedSubstring") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? DiscontiguousAttributedSubstring,
-              case .opaque(_, let b) = rhs, let lb = b as? DiscontiguousAttributedSubstring
-        else { throw RuntimeError.invalid("DiscontiguousAttributedSubstring comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Locale.Script") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Script,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.Script
-        else { throw RuntimeError.invalid("Locale.Script comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NumberFormatStyleConfiguration.Notation") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NumberFormatStyleConfiguration.Notation,
-              case .opaque(_, let b) = rhs, let lb = b as? NumberFormatStyleConfiguration.Notation
-        else { throw RuntimeError.invalid("NumberFormatStyleConfiguration.Notation comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "POSIXError") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? POSIXError,
-              case .opaque(_, let b) = rhs, let lb = b as? POSIXError
-        else { throw RuntimeError.invalid("POSIXError comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "AttributedString.Index") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.Index,
-              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.Index
-        else { throw RuntimeError.invalid("AttributedString.Index comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-
-        i.registerComparator(on: "NSLinguisticTag") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSLinguisticTag,
-              case .opaque(_, let b) = rhs, let lb = b as? NSLinguisticTag
-        else { throw RuntimeError.invalid("NSLinguisticTag comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NotificationQueue.NotificationCoalescing") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NotificationQueue.NotificationCoalescing,
-              case .opaque(_, let b) = rhs, let lb = b as? NotificationQueue.NotificationCoalescing
-        else { throw RuntimeError.invalid("NotificationQueue.NotificationCoalescing comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "CharacterSet") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? CharacterSet,
-              case .opaque(_, let b) = rhs, let lb = b as? CharacterSet
-        else { throw RuntimeError.invalid("CharacterSet comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "ByteCountFormatter.Units") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ByteCountFormatter.Units,
-              case .opaque(_, let b) = rhs, let lb = b as? ByteCountFormatter.Units
-        else { throw RuntimeError.invalid("ByteCountFormatter.Units comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Locale.Region") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Region,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.Region
-        else { throw RuntimeError.invalid("Locale.Region comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "CurrencyFormatStyleConfiguration.Presentation") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? CurrencyFormatStyleConfiguration.Presentation,
-              case .opaque(_, let b) = rhs, let lb = b as? CurrencyFormatStyleConfiguration.Presentation
-        else { throw RuntimeError.invalid("CurrencyFormatStyleConfiguration.Presentation comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
         i.registerComparator(on: "NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy") { lhs, rhs in
             guard case .opaque(_, let a) = lhs, let la = a as? NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy,
               case .opaque(_, let b) = rhs, let lb = b as? NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy
         else { throw RuntimeError.invalid("NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "URLComponents") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLComponents,
-              case .opaque(_, let b) = rhs, let lb = b as? URLComponents
-        else { throw RuntimeError.invalid("URLComponents comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "AttributedString.FormattingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.FormattingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.FormattingOptions
-        else { throw RuntimeError.invalid("AttributedString.FormattingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Morphology") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Morphology,
-              case .opaque(_, let b) = rhs, let lb = b as? Morphology
-        else { throw RuntimeError.invalid("Morphology comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSExceptionName") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSExceptionName,
-              case .opaque(_, let b) = rhs, let lb = b as? NSExceptionName
-        else { throw RuntimeError.invalid("NSExceptionName comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
@@ -6492,409 +5869,10 @@ extension FoundationModule {
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "NumberFormatStyleConfiguration.Precision") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NumberFormatStyleConfiguration.Precision,
-              case .opaque(_, let b) = rhs, let lb = b as? NumberFormatStyleConfiguration.Precision
-        else { throw RuntimeError.invalid("NumberFormatStyleConfiguration.Precision comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSNotification.Name") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSNotification.Name,
-              case .opaque(_, let b) = rhs, let lb = b as? NSNotification.Name
-        else { throw RuntimeError.invalid("NSNotification.Name comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "CurrencyFormatStyleConfiguration.SignDisplayStrategy") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? CurrencyFormatStyleConfiguration.SignDisplayStrategy,
-              case .opaque(_, let b) = rhs, let lb = b as? CurrencyFormatStyleConfiguration.SignDisplayStrategy
-        else { throw RuntimeError.invalid("CurrencyFormatStyleConfiguration.SignDisplayStrategy comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "IndexSet") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? IndexSet,
-              case .opaque(_, let b) = rhs, let lb = b as? IndexSet
-        else { throw RuntimeError.invalid("IndexSet comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSItemProviderFileOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSItemProviderFileOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSItemProviderFileOptions
-        else { throw RuntimeError.invalid("NSItemProviderFileOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "CocoaError.Code") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? CocoaError.Code,
-              case .opaque(_, let b) = rhs, let lb = b as? CocoaError.Code
-        else { throw RuntimeError.invalid("CocoaError.Code comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSTextCheckingKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSTextCheckingKey,
-              case .opaque(_, let b) = rhs, let lb = b as? NSTextCheckingKey
-        else { throw RuntimeError.invalid("NSTextCheckingKey comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "URLResource") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLResource,
-              case .opaque(_, let b) = rhs, let lb = b as? URLResource
-        else { throw RuntimeError.invalid("URLResource comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Date.ISO8601FormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date.ISO8601FormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Date.ISO8601FormatStyle
-        else { throw RuntimeError.invalid("Date.ISO8601FormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "CocoaError") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? CocoaError,
-              case .opaque(_, let b) = rhs, let lb = b as? CocoaError
-        else { throw RuntimeError.invalid("CocoaError comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "JSONEncoder.OutputFormatting") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? JSONEncoder.OutputFormatting,
-              case .opaque(_, let b) = rhs, let lb = b as? JSONEncoder.OutputFormatting
-        else { throw RuntimeError.invalid("JSONEncoder.OutputFormatting comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Date.ParseStrategy") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date.ParseStrategy,
-              case .opaque(_, let b) = rhs, let lb = b as? Date.ParseStrategy
-        else { throw RuntimeError.invalid("Date.ParseStrategy comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "URLQueryItem") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLQueryItem,
-              case .opaque(_, let b) = rhs, let lb = b as? URLQueryItem
-        else { throw RuntimeError.invalid("URLQueryItem comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "URLFileResourceType") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLFileResourceType,
-              case .opaque(_, let b) = rhs, let lb = b as? URLFileResourceType
-        else { throw RuntimeError.invalid("URLFileResourceType comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Date.VerbatimFormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date.VerbatimFormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Date.VerbatimFormatStyle
-        else { throw RuntimeError.invalid("Date.VerbatimFormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSEnumerationOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSEnumerationOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSEnumerationOptions
-        else { throw RuntimeError.invalid("NSEnumerationOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "StreamSocketSecurityLevel") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? StreamSocketSecurityLevel,
-              case .opaque(_, let b) = rhs, let lb = b as? StreamSocketSecurityLevel
-        else { throw RuntimeError.invalid("StreamSocketSecurityLevel comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "URL") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URL,
-              case .opaque(_, let b) = rhs, let lb = b as? URL
-        else { throw RuntimeError.invalid("URL comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "FileManager.DirectoryEnumerationOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileManager.DirectoryEnumerationOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? FileManager.DirectoryEnumerationOptions
-        else { throw RuntimeError.invalid("FileManager.DirectoryEnumerationOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSValueTransformerName") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSValueTransformerName,
-              case .opaque(_, let b) = rhs, let lb = b as? NSValueTransformerName
-        else { throw RuntimeError.invalid("NSValueTransformerName comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Morphology.CustomPronoun") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Morphology.CustomPronoun,
-              case .opaque(_, let b) = rhs, let lb = b as? Morphology.CustomPronoun
-        else { throw RuntimeError.invalid("Morphology.CustomPronoun comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Calendar.RecurrenceRule") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Calendar.RecurrenceRule,
-              case .opaque(_, let b) = rhs, let lb = b as? Calendar.RecurrenceRule
-        else { throw RuntimeError.invalid("Calendar.RecurrenceRule comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Stream.Event") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Stream.Event,
-              case .opaque(_, let b) = rhs, let lb = b as? Stream.Event
-        else { throw RuntimeError.invalid("Stream.Event comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "PresentationIntent.IntentType") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PresentationIntent.IntentType,
-              case .opaque(_, let b) = rhs, let lb = b as? PresentationIntent.IntentType
-        else { throw RuntimeError.invalid("PresentationIntent.IntentType comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSFileVersion.ReplacingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSFileVersion.ReplacingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSFileVersion.ReplacingOptions
-        else { throw RuntimeError.invalid("NSFileVersion.ReplacingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Locale.Collation") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Collation,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.Collation
-        else { throw RuntimeError.invalid("Locale.Collation comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NumberFormatStyleConfiguration.Grouping") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NumberFormatStyleConfiguration.Grouping,
-              case .opaque(_, let b) = rhs, let lb = b as? NumberFormatStyleConfiguration.Grouping
-        else { throw RuntimeError.invalid("NumberFormatStyleConfiguration.Grouping comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "PersonNameComponentsFormatter.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PersonNameComponentsFormatter.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? PersonNameComponentsFormatter.Options
-        else { throw RuntimeError.invalid("PersonNameComponentsFormatter.Options comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "UUID") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? UUID,
-              case .opaque(_, let b) = rhs, let lb = b as? UUID
-        else { throw RuntimeError.invalid("UUID comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-
-        i.registerComparator(on: "DateComponents") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? DateComponents,
-              case .opaque(_, let b) = rhs, let lb = b as? DateComponents
-        else { throw RuntimeError.invalid("DateComponents comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "DateComponents.HTTPFormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? DateComponents.HTTPFormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? DateComponents.HTTPFormatStyle
-        else { throw RuntimeError.invalid("DateComponents.HTTPFormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Locale.NumberingSystem") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.NumberingSystem,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.NumberingSystem
-        else { throw RuntimeError.invalid("Locale.NumberingSystem comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSRegularExpression.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSRegularExpression.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? NSRegularExpression.Options
-        else { throw RuntimeError.invalid("NSRegularExpression.Options comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "PredicateExpressions.VariableID") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PredicateExpressions.VariableID,
-              case .opaque(_, let b) = rhs, let lb = b as? PredicateExpressions.VariableID
-        else { throw RuntimeError.invalid("PredicateExpressions.VariableID comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Date.FormatString") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date.FormatString,
-              case .opaque(_, let b) = rhs, let lb = b as? Date.FormatString
-        else { throw RuntimeError.invalid("Date.FormatString comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "DescriptiveNumberFormatConfiguration.Presentation") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? DescriptiveNumberFormatConfiguration.Presentation,
-              case .opaque(_, let b) = rhs, let lb = b as? DescriptiveNumberFormatConfiguration.Presentation
-        else { throw RuntimeError.invalid("DescriptiveNumberFormatConfiguration.Presentation comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Locale.Currency") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Currency,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.Currency
-        else { throw RuntimeError.invalid("Locale.Currency comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "AttributedString.InterpolationOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.InterpolationOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.InterpolationOptions
-        else { throw RuntimeError.invalid("AttributedString.InterpolationOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "URLUbiquitousSharedItemRole") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLUbiquitousSharedItemRole,
-              case .opaque(_, let b) = rhs, let lb = b as? URLUbiquitousSharedItemRole
-        else { throw RuntimeError.invalid("URLUbiquitousSharedItemRole comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSRegularExpression.MatchingFlags") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSRegularExpression.MatchingFlags,
-              case .opaque(_, let b) = rhs, let lb = b as? NSRegularExpression.MatchingFlags
-        else { throw RuntimeError.invalid("NSRegularExpression.MatchingFlags comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "ISO8601DateFormatter.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ISO8601DateFormatter.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? ISO8601DateFormatter.Options
-        else { throw RuntimeError.invalid("ISO8601DateFormatter.Options comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "AlignmentOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? AlignmentOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? AlignmentOptions
-        else { throw RuntimeError.invalid("AlignmentOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "AttributedString.AttributeInvalidationCondition") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.AttributeInvalidationCondition,
-              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.AttributeInvalidationCondition
-        else { throw RuntimeError.invalid("AttributedString.AttributeInvalidationCondition comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "URL.Template") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URL.Template,
-              case .opaque(_, let b) = rhs, let lb = b as? URL.Template
-        else { throw RuntimeError.invalid("URL.Template comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSLocale.Key") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSLocale.Key,
-              case .opaque(_, let b) = rhs, let lb = b as? NSLocale.Key
-        else { throw RuntimeError.invalid("NSLocale.Key comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "MeasurementFormatter.UnitOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? MeasurementFormatter.UnitOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? MeasurementFormatter.UnitOptions
-        else { throw RuntimeError.invalid("MeasurementFormatter.UnitOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Date.ComponentsFormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date.ComponentsFormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Date.ComponentsFormatStyle
-        else { throw RuntimeError.invalid("Date.ComponentsFormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSURL.BookmarkResolutionOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSURL.BookmarkResolutionOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSURL.BookmarkResolutionOptions
-        else { throw RuntimeError.invalid("NSURL.BookmarkResolutionOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSSortOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSSortOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSSortOptions
-        else { throw RuntimeError.invalid("NSSortOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "ByteCountFormatStyle.Attributed") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ByteCountFormatStyle.Attributed,
-              case .opaque(_, let b) = rhs, let lb = b as? ByteCountFormatStyle.Attributed
-        else { throw RuntimeError.invalid("ByteCountFormatStyle.Attributed comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSBinarySearchingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSBinarySearchingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSBinarySearchingOptions
-        else { throw RuntimeError.invalid("NSBinarySearchingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "StreamSOCKSProxyVersion") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? StreamSOCKSProxyVersion,
-              case .opaque(_, let b) = rhs, let lb = b as? StreamSOCKSProxyVersion
-        else { throw RuntimeError.invalid("StreamSOCKSProxyVersion comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "ProgressUserInfoKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ProgressUserInfoKey,
-              case .opaque(_, let b) = rhs, let lb = b as? ProgressUserInfoKey
-        else { throw RuntimeError.invalid("ProgressUserInfoKey comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Progress.FileOperationKind") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Progress.FileOperationKind,
-              case .opaque(_, let b) = rhs, let lb = b as? Progress.FileOperationKind
-        else { throw RuntimeError.invalid("Progress.FileOperationKind comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "FileAttributeKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileAttributeKey,
-              case .opaque(_, let b) = rhs, let lb = b as? FileAttributeKey
-        else { throw RuntimeError.invalid("FileAttributeKey comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "UndoManager.UserInfoKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? UndoManager.UserInfoKey,
-              case .opaque(_, let b) = rhs, let lb = b as? UndoManager.UserInfoKey
-        else { throw RuntimeError.invalid("UndoManager.UserInfoKey comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "TimeZone") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? TimeZone,
-              case .opaque(_, let b) = rhs, let lb = b as? TimeZone
-        else { throw RuntimeError.invalid("TimeZone comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "URLError.Code") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLError.Code,
-              case .opaque(_, let b) = rhs, let lb = b as? URLError.Code
-        else { throw RuntimeError.invalid("URLError.Code comparison: bad payloads") }
+        i.registerComparator(on: "FileManager.VolumeEnumerationOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileManager.VolumeEnumerationOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? FileManager.VolumeEnumerationOptions
+        else { throw RuntimeError.invalid("FileManager.VolumeEnumerationOptions comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
@@ -6905,234 +5883,122 @@ extension FoundationModule {
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "StringTransform") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? StringTransform,
-              case .opaque(_, let b) = rhs, let lb = b as? StringTransform
-        else { throw RuntimeError.invalid("StringTransform comparison: bad payloads") }
+        i.registerComparator(on: "StreamSOCKSProxyConfiguration") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? StreamSOCKSProxyConfiguration,
+              case .opaque(_, let b) = rhs, let lb = b as? StreamSOCKSProxyConfiguration
+        else { throw RuntimeError.invalid("StreamSOCKSProxyConfiguration comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "NSData.WritingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSData.WritingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSData.WritingOptions
-        else { throw RuntimeError.invalid("NSData.WritingOptions comparison: bad payloads") }
+        i.registerComparator(on: "PropertyListSerialization.MutabilityOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PropertyListSerialization.MutabilityOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? PropertyListSerialization.MutabilityOptions
+        else { throw RuntimeError.invalid("PropertyListSerialization.MutabilityOptions comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "ErrorUserInfoKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ErrorUserInfoKey,
-              case .opaque(_, let b) = rhs, let lb = b as? ErrorUserInfoKey
-        else { throw RuntimeError.invalid("ErrorUserInfoKey comparison: bad payloads") }
+        i.registerComparator(on: "Progress.FileOperationKind") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Progress.FileOperationKind,
+              case .opaque(_, let b) = rhs, let lb = b as? Progress.FileOperationKind
+        else { throw RuntimeError.invalid("Progress.FileOperationKind comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "Locale.Language") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Language,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.Language
-        else { throw RuntimeError.invalid("Locale.Language comparison: bad payloads") }
+        i.registerComparator(on: "Notification") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Notification,
+              case .opaque(_, let b) = rhs, let lb = b as? Notification
+        else { throw RuntimeError.invalid("Notification comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "HTTPCookiePropertyKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? HTTPCookiePropertyKey,
-              case .opaque(_, let b) = rhs, let lb = b as? HTTPCookiePropertyKey
-        else { throw RuntimeError.invalid("HTTPCookiePropertyKey comparison: bad payloads") }
+        i.registerComparator(on: "NSFileManagerSupportedSyncControls") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSFileManagerSupportedSyncControls,
+              case .opaque(_, let b) = rhs, let lb = b as? NSFileManagerSupportedSyncControls
+        else { throw RuntimeError.invalid("NSFileManagerSupportedSyncControls comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "NSURL.BookmarkCreationOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSURL.BookmarkCreationOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSURL.BookmarkCreationOptions
-        else { throw RuntimeError.invalid("NSURL.BookmarkCreationOptions comparison: bad payloads") }
+        i.registerComparator(on: "StringEncodingDetectionOptionsKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? StringEncodingDetectionOptionsKey,
+              case .opaque(_, let b) = rhs, let lb = b as? StringEncodingDetectionOptionsKey
+        else { throw RuntimeError.invalid("StringEncodingDetectionOptionsKey comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "FileManager.ItemReplacementOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileManager.ItemReplacementOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? FileManager.ItemReplacementOptions
-        else { throw RuntimeError.invalid("FileManager.ItemReplacementOptions comparison: bad payloads") }
+        i.registerComparator(on: "Locale.Region") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Region,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.Region
+        else { throw RuntimeError.invalid("Locale.Region comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "Stream.PropertyKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Stream.PropertyKey,
-              case .opaque(_, let b) = rhs, let lb = b as? Stream.PropertyKey
-        else { throw RuntimeError.invalid("Stream.PropertyKey comparison: bad payloads") }
+        i.registerComparator(on: "UndoManager.UserInfoKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? UndoManager.UserInfoKey,
+              case .opaque(_, let b) = rhs, let lb = b as? UndoManager.UserInfoKey
+        else { throw RuntimeError.invalid("UndoManager.UserInfoKey comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "Date.HTTPFormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date.HTTPFormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Date.HTTPFormatStyle
-        else { throw RuntimeError.invalid("Date.HTTPFormatStyle comparison: bad payloads") }
+        i.registerComparator(on: "Date.FormatString") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date.FormatString,
+              case .opaque(_, let b) = rhs, let lb = b as? Date.FormatString
+        else { throw RuntimeError.invalid("Date.FormatString comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "XMLNode.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? XMLNode.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? XMLNode.Options
-        else { throw RuntimeError.invalid("XMLNode.Options comparison: bad payloads") }
+        i.registerComparator(on: "NSValueTransformerName") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSValueTransformerName,
+              case .opaque(_, let b) = rhs, let lb = b as? NSValueTransformerName
+        else { throw RuntimeError.invalid("NSValueTransformerName comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "URLResourceKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLResourceKey,
-              case .opaque(_, let b) = rhs, let lb = b as? URLResourceKey
-        else { throw RuntimeError.invalid("URLResourceKey comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "StreamNetworkServiceTypeValue") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? StreamNetworkServiceTypeValue,
-              case .opaque(_, let b) = rhs, let lb = b as? StreamNetworkServiceTypeValue
-        else { throw RuntimeError.invalid("StreamNetworkServiceTypeValue comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "FileProtectionType") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileProtectionType,
-              case .opaque(_, let b) = rhs, let lb = b as? FileProtectionType
-        else { throw RuntimeError.invalid("FileProtectionType comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "URLUbiquitousItemDownloadingStatus") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLUbiquitousItemDownloadingStatus,
-              case .opaque(_, let b) = rhs, let lb = b as? URLUbiquitousItemDownloadingStatus
-        else { throw RuntimeError.invalid("URLUbiquitousItemDownloadingStatus comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "FileManager.VolumeEnumerationOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileManager.VolumeEnumerationOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? FileManager.VolumeEnumerationOptions
-        else { throw RuntimeError.invalid("FileManager.VolumeEnumerationOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "ByteCountFormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ByteCountFormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? ByteCountFormatStyle
-        else { throw RuntimeError.invalid("ByteCountFormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSKeyValueChangeKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSKeyValueChangeKey,
-              case .opaque(_, let b) = rhs, let lb = b as? NSKeyValueChangeKey
-        else { throw RuntimeError.invalid("NSKeyValueChangeKey comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSXPCConnection.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSXPCConnection.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? NSXPCConnection.Options
-        else { throw RuntimeError.invalid("NSXPCConnection.Options comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "DateComponents.ISO8601FormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? DateComponents.ISO8601FormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? DateComponents.ISO8601FormatStyle
-        else { throw RuntimeError.invalid("DateComponents.ISO8601FormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "PresentationIntent.TableColumn") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PresentationIntent.TableColumn,
-              case .opaque(_, let b) = rhs, let lb = b as? PresentationIntent.TableColumn
-        else { throw RuntimeError.invalid("PresentationIntent.TableColumn comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Date.RelativeFormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date.RelativeFormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Date.RelativeFormatStyle
-        else { throw RuntimeError.invalid("Date.RelativeFormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "DistributedNotificationCenter.CenterType") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? DistributedNotificationCenter.CenterType,
-              case .opaque(_, let b) = rhs, let lb = b as? DistributedNotificationCenter.CenterType
-        else { throw RuntimeError.invalid("DistributedNotificationCenter.CenterType comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSFileProviderServiceName") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSFileProviderServiceName,
-              case .opaque(_, let b) = rhs, let lb = b as? NSFileProviderServiceName
-        else { throw RuntimeError.invalid("NSFileProviderServiceName comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSAttributedString.EnumerationOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSAttributedString.EnumerationOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSAttributedString.EnumerationOptions
-        else { throw RuntimeError.invalid("NSAttributedString.EnumerationOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "IndexSet.RangeView") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? IndexSet.RangeView,
-              case .opaque(_, let b) = rhs, let lb = b as? IndexSet.RangeView
-        else { throw RuntimeError.invalid("IndexSet.RangeView comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSKeyValueObservingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSKeyValueObservingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSKeyValueObservingOptions
-        else { throw RuntimeError.invalid("NSKeyValueObservingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "InlinePresentationIntent") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? InlinePresentationIntent,
-              case .opaque(_, let b) = rhs, let lb = b as? InlinePresentationIntent
-        else { throw RuntimeError.invalid("InlinePresentationIntent comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Morphology.Pronoun") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Morphology.Pronoun,
-              case .opaque(_, let b) = rhs, let lb = b as? Morphology.Pronoun
-        else { throw RuntimeError.invalid("Morphology.Pronoun comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NumberFormatStyleConfiguration.SignDisplayStrategy") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NumberFormatStyleConfiguration.SignDisplayStrategy,
-              case .opaque(_, let b) = rhs, let lb = b as? NumberFormatStyleConfiguration.SignDisplayStrategy
-        else { throw RuntimeError.invalid("NumberFormatStyleConfiguration.SignDisplayStrategy comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Decimal") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Decimal,
-              case .opaque(_, let b) = rhs, let lb = b as? Decimal
-        else { throw RuntimeError.invalid("Decimal comparison: bad payloads") }
+        i.registerComparator(on: "IndexSet.Index") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? IndexSet.Index,
+              case .opaque(_, let b) = rhs, let lb = b as? IndexSet.Index
+        else { throw RuntimeError.invalid("IndexSet.Index comparison: bad payloads") }
         return la < lb ? -1 : (la > lb ? 1 : 0)
         }
 
-        i.registerComparator(on: "NSTextCheckingResult.CheckingType") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSTextCheckingResult.CheckingType,
-              case .opaque(_, let b) = rhs, let lb = b as? NSTextCheckingResult.CheckingType
-        else { throw RuntimeError.invalid("NSTextCheckingResult.CheckingType comparison: bad payloads") }
+        i.registerComparator(on: "FileManager.DirectoryEnumerationOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileManager.DirectoryEnumerationOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? FileManager.DirectoryEnumerationOptions
+        else { throw RuntimeError.invalid("FileManager.DirectoryEnumerationOptions comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "HTTPCookieStringPolicy") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? HTTPCookieStringPolicy,
-              case .opaque(_, let b) = rhs, let lb = b as? HTTPCookieStringPolicy
-        else { throw RuntimeError.invalid("HTTPCookieStringPolicy comparison: bad payloads") }
+        i.registerComparator(on: "PredicateError") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PredicateError,
+              case .opaque(_, let b) = rhs, let lb = b as? PredicateError
+        else { throw RuntimeError.invalid("PredicateError comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "URLThumbnailDictionaryItem") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLThumbnailDictionaryItem,
-              case .opaque(_, let b) = rhs, let lb = b as? URLThumbnailDictionaryItem
-        else { throw RuntimeError.invalid("URLThumbnailDictionaryItem comparison: bad payloads") }
+        i.registerComparator(on: "ProgressUserInfoKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ProgressUserInfoKey,
+              case .opaque(_, let b) = rhs, let lb = b as? ProgressUserInfoKey
+        else { throw RuntimeError.invalid("ProgressUserInfoKey comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Locale.Script") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Script,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.Script
+        else { throw RuntimeError.invalid("Locale.Script comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Date.AttributedStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date.AttributedStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Date.AttributedStyle
+        else { throw RuntimeError.invalid("Date.AttributedStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "StringStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? StringStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? StringStyle
+        else { throw RuntimeError.invalid("StringStyle comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
@@ -7143,6 +6009,160 @@ extension FoundationModule {
         return la == lb ? 0 : -1
         }
 
+        i.registerComparator(on: "URLError") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLError,
+              case .opaque(_, let b) = rhs, let lb = b as? URLError
+        else { throw RuntimeError.invalid("URLError comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "PersonNameComponents.AttributedStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PersonNameComponents.AttributedStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? PersonNameComponents.AttributedStyle
+        else { throw RuntimeError.invalid("PersonNameComponents.AttributedStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSString.CompareOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSString.CompareOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSString.CompareOptions
+        else { throw RuntimeError.invalid("NSString.CompareOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "URL.FormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URL.FormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? URL.FormatStyle
+        else { throw RuntimeError.invalid("URL.FormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Date.VerbatimFormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date.VerbatimFormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Date.VerbatimFormatStyle
+        else { throw RuntimeError.invalid("Date.VerbatimFormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Stream.Event") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Stream.Event,
+              case .opaque(_, let b) = rhs, let lb = b as? Stream.Event
+        else { throw RuntimeError.invalid("Stream.Event comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSCalendar.Unit") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSCalendar.Unit,
+              case .opaque(_, let b) = rhs, let lb = b as? NSCalendar.Unit
+        else { throw RuntimeError.invalid("NSCalendar.Unit comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSData.WritingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSData.WritingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSData.WritingOptions
+        else { throw RuntimeError.invalid("NSData.WritingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "ByteCountFormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ByteCountFormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? ByteCountFormatStyle
+        else { throw RuntimeError.invalid("ByteCountFormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "IndexSet") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? IndexSet,
+              case .opaque(_, let b) = rhs, let lb = b as? IndexSet
+        else { throw RuntimeError.invalid("IndexSet comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "FileManager.SearchPathDomainMask") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileManager.SearchPathDomainMask,
+              case .opaque(_, let b) = rhs, let lb = b as? FileManager.SearchPathDomainMask
+        else { throw RuntimeError.invalid("FileManager.SearchPathDomainMask comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "StreamSocketSecurityLevel") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? StreamSocketSecurityLevel,
+              case .opaque(_, let b) = rhs, let lb = b as? StreamSocketSecurityLevel
+        else { throw RuntimeError.invalid("StreamSocketSecurityLevel comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "CocoaError") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? CocoaError,
+              case .opaque(_, let b) = rhs, let lb = b as? CocoaError
+        else { throw RuntimeError.invalid("CocoaError comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "AttributedSubstring") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? AttributedSubstring,
+              case .opaque(_, let b) = rhs, let lb = b as? AttributedSubstring
+        else { throw RuntimeError.invalid("AttributedSubstring comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSFileVersion.ReplacingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSFileVersion.ReplacingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSFileVersion.ReplacingOptions
+        else { throw RuntimeError.invalid("NSFileVersion.ReplacingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Locale.Currency") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Currency,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.Currency
+        else { throw RuntimeError.invalid("Locale.Currency comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "FileManager.UnmountOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileManager.UnmountOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? FileManager.UnmountOptions
+        else { throw RuntimeError.invalid("FileManager.UnmountOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSAttributedString.EnumerationOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSAttributedString.EnumerationOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSAttributedString.EnumerationOptions
+        else { throw RuntimeError.invalid("NSAttributedString.EnumerationOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSLinguisticTag") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSLinguisticTag,
+              case .opaque(_, let b) = rhs, let lb = b as? NSLinguisticTag
+        else { throw RuntimeError.invalid("NSLinguisticTag comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSFileVersion.AddingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSFileVersion.AddingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSFileVersion.AddingOptions
+        else { throw RuntimeError.invalid("NSFileVersion.AddingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Locale.Language") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Language,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.Language
+        else { throw RuntimeError.invalid("Locale.Language comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Data") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Data,
+              case .opaque(_, let b) = rhs, let lb = b as? Data
+        else { throw RuntimeError.invalid("Data comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
         i.registerComparator(on: "Locale.Components") { lhs, rhs in
             guard case .opaque(_, let a) = lhs, let la = a as? Locale.Components,
               case .opaque(_, let b) = rhs, let lb = b as? Locale.Components
@@ -7150,10 +6170,654 @@ extension FoundationModule {
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "DateComponentsFormatter.ZeroFormattingBehavior") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? DateComponentsFormatter.ZeroFormattingBehavior,
-              case .opaque(_, let b) = rhs, let lb = b as? DateComponentsFormatter.ZeroFormattingBehavior
-        else { throw RuntimeError.invalid("DateComponentsFormatter.ZeroFormattingBehavior comparison: bad payloads") }
+        i.registerComparator(on: "URL.ParseStrategy") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URL.ParseStrategy,
+              case .opaque(_, let b) = rhs, let lb = b as? URL.ParseStrategy
+        else { throw RuntimeError.invalid("URL.ParseStrategy comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Morphology.Pronoun") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Morphology.Pronoun,
+              case .opaque(_, let b) = rhs, let lb = b as? Morphology.Pronoun
+        else { throw RuntimeError.invalid("Morphology.Pronoun comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "ByteCountFormatStyle.Attributed") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ByteCountFormatStyle.Attributed,
+              case .opaque(_, let b) = rhs, let lb = b as? ByteCountFormatStyle.Attributed
+        else { throw RuntimeError.invalid("ByteCountFormatStyle.Attributed comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "URLError.Code") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLError.Code,
+              case .opaque(_, let b) = rhs, let lb = b as? URLError.Code
+        else { throw RuntimeError.invalid("URLError.Code comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Date.AnchoredRelativeFormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date.AnchoredRelativeFormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Date.AnchoredRelativeFormatStyle
+        else { throw RuntimeError.invalid("Date.AnchoredRelativeFormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "FileProtectionType") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileProtectionType,
+              case .opaque(_, let b) = rhs, let lb = b as? FileProtectionType
+        else { throw RuntimeError.invalid("FileProtectionType comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "PersonNameComponents") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PersonNameComponents,
+              case .opaque(_, let b) = rhs, let lb = b as? PersonNameComponents
+        else { throw RuntimeError.invalid("PersonNameComponents comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "URL") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URL,
+              case .opaque(_, let b) = rhs, let lb = b as? URL
+        else { throw RuntimeError.invalid("URL comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "URLResourceKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLResourceKey,
+              case .opaque(_, let b) = rhs, let lb = b as? URLResourceKey
+        else { throw RuntimeError.invalid("URLResourceKey comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "TimeZone") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? TimeZone,
+              case .opaque(_, let b) = rhs, let lb = b as? TimeZone
+        else { throw RuntimeError.invalid("TimeZone comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSRegularExpression.MatchingFlags") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSRegularExpression.MatchingFlags,
+              case .opaque(_, let b) = rhs, let lb = b as? NSRegularExpression.MatchingFlags
+        else { throw RuntimeError.invalid("NSRegularExpression.MatchingFlags comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "PresentationIntent.IntentType") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PresentationIntent.IntentType,
+              case .opaque(_, let b) = rhs, let lb = b as? PresentationIntent.IntentType
+        else { throw RuntimeError.invalid("PresentationIntent.IntentType comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSOrderedCollectionDifferenceCalculationOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSOrderedCollectionDifferenceCalculationOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSOrderedCollectionDifferenceCalculationOptions
+        else { throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Stream.PropertyKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Stream.PropertyKey,
+              case .opaque(_, let b) = rhs, let lb = b as? Stream.PropertyKey
+        else { throw RuntimeError.invalid("Stream.PropertyKey comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Decimal") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Decimal,
+              case .opaque(_, let b) = rhs, let lb = b as? Decimal
+        else { throw RuntimeError.invalid("Decimal comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+        i.registerComparator(on: "Calendar.RecurrenceRule") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Calendar.RecurrenceRule,
+              case .opaque(_, let b) = rhs, let lb = b as? Calendar.RecurrenceRule
+        else { throw RuntimeError.invalid("Calendar.RecurrenceRule comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSAttributedStringFormattingContextKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSAttributedStringFormattingContextKey,
+              case .opaque(_, let b) = rhs, let lb = b as? NSAttributedStringFormattingContextKey
+        else { throw RuntimeError.invalid("NSAttributedStringFormattingContextKey comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "MachError") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? MachError,
+              case .opaque(_, let b) = rhs, let lb = b as? MachError
+        else { throw RuntimeError.invalid("MachError comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSFileProviderServiceName") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSFileProviderServiceName,
+              case .opaque(_, let b) = rhs, let lb = b as? NSFileProviderServiceName
+        else { throw RuntimeError.invalid("NSFileProviderServiceName comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NumberFormatStyleConfiguration.Grouping") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NumberFormatStyleConfiguration.Grouping,
+              case .opaque(_, let b) = rhs, let lb = b as? NumberFormatStyleConfiguration.Grouping
+        else { throw RuntimeError.invalid("NumberFormatStyleConfiguration.Grouping comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "DescriptiveNumberFormatConfiguration.Presentation") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? DescriptiveNumberFormatConfiguration.Presentation,
+              case .opaque(_, let b) = rhs, let lb = b as? DescriptiveNumberFormatConfiguration.Presentation
+        else { throw RuntimeError.invalid("DescriptiveNumberFormatConfiguration.Presentation comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSExceptionName") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSExceptionName,
+              case .opaque(_, let b) = rhs, let lb = b as? NSExceptionName
+        else { throw RuntimeError.invalid("NSExceptionName comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSNotification.Name") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSNotification.Name,
+              case .opaque(_, let b) = rhs, let lb = b as? NSNotification.Name
+        else { throw RuntimeError.invalid("NSNotification.Name comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "PersonNameComponents.FormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PersonNameComponents.FormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? PersonNameComponents.FormatStyle
+        else { throw RuntimeError.invalid("PersonNameComponents.FormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSLinguisticTagger.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSLinguisticTagger.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? NSLinguisticTagger.Options
+        else { throw RuntimeError.invalid("NSLinguisticTagger.Options comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "DistributedNotificationCenter.CenterType") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? DistributedNotificationCenter.CenterType,
+              case .opaque(_, let b) = rhs, let lb = b as? DistributedNotificationCenter.CenterType
+        else { throw RuntimeError.invalid("DistributedNotificationCenter.CenterType comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSLocale.Key") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSLocale.Key,
+              case .opaque(_, let b) = rhs, let lb = b as? NSLocale.Key
+        else { throw RuntimeError.invalid("NSLocale.Key comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSData.Base64DecodingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSData.Base64DecodingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSData.Base64DecodingOptions
+        else { throw RuntimeError.invalid("NSData.Base64DecodingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Date.FormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date.FormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Date.FormatStyle
+        else { throw RuntimeError.invalid("Date.FormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSRegularExpression.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSRegularExpression.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? NSRegularExpression.Options
+        else { throw RuntimeError.invalid("NSRegularExpression.Options comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Date.ISO8601FormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date.ISO8601FormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Date.ISO8601FormatStyle
+        else { throw RuntimeError.invalid("Date.ISO8601FormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "URLUbiquitousItemDownloadingStatus") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLUbiquitousItemDownloadingStatus,
+              case .opaque(_, let b) = rhs, let lb = b as? URLUbiquitousItemDownloadingStatus
+        else { throw RuntimeError.invalid("URLUbiquitousItemDownloadingStatus comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "URLUbiquitousSharedItemRole") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLUbiquitousSharedItemRole,
+              case .opaque(_, let b) = rhs, let lb = b as? URLUbiquitousSharedItemRole
+        else { throw RuntimeError.invalid("URLUbiquitousSharedItemRole comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "FileManager.ItemReplacementOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileManager.ItemReplacementOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? FileManager.ItemReplacementOptions
+        else { throw RuntimeError.invalid("FileManager.ItemReplacementOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "HTTPCookieStringPolicy") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? HTTPCookieStringPolicy,
+              case .opaque(_, let b) = rhs, let lb = b as? HTTPCookieStringPolicy
+        else { throw RuntimeError.invalid("HTTPCookieStringPolicy comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSKeyValueOperator") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSKeyValueOperator,
+              case .opaque(_, let b) = rhs, let lb = b as? NSKeyValueOperator
+        else { throw RuntimeError.invalid("NSKeyValueOperator comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Calendar") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Calendar,
+              case .opaque(_, let b) = rhs, let lb = b as? Calendar
+        else { throw RuntimeError.invalid("Calendar comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "FileWrapper.WritingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileWrapper.WritingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? FileWrapper.WritingOptions
+        else { throw RuntimeError.invalid("FileWrapper.WritingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Locale.LanguageCode") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.LanguageCode,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.LanguageCode
+        else { throw RuntimeError.invalid("Locale.LanguageCode comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Locale.MeasurementSystem") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.MeasurementSystem,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.MeasurementSystem
+        else { throw RuntimeError.invalid("Locale.MeasurementSystem comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSData.Base64EncodingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSData.Base64EncodingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSData.Base64EncodingOptions
+        else { throw RuntimeError.invalid("NSData.Base64EncodingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSData.ReadingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSData.ReadingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSData.ReadingOptions
+        else { throw RuntimeError.invalid("NSData.ReadingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSTextCheckingResult.CheckingType") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSTextCheckingResult.CheckingType,
+              case .opaque(_, let b) = rhs, let lb = b as? NSTextCheckingResult.CheckingType
+        else { throw RuntimeError.invalid("NSTextCheckingResult.CheckingType comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "XMLNode.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? XMLNode.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? XMLNode.Options
+        else { throw RuntimeError.invalid("XMLNode.Options comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "FileAttributeKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileAttributeKey,
+              case .opaque(_, let b) = rhs, let lb = b as? FileAttributeKey
+        else { throw RuntimeError.invalid("FileAttributeKey comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSCalendar.Identifier") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSCalendar.Identifier,
+              case .opaque(_, let b) = rhs, let lb = b as? NSCalendar.Identifier
+        else { throw RuntimeError.invalid("NSCalendar.Identifier comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSFileCoordinator.ReadingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSFileCoordinator.ReadingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSFileCoordinator.ReadingOptions
+        else { throw RuntimeError.invalid("NSFileCoordinator.ReadingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NotificationQueue.NotificationCoalescing") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NotificationQueue.NotificationCoalescing,
+              case .opaque(_, let b) = rhs, let lb = b as? NotificationQueue.NotificationCoalescing
+        else { throw RuntimeError.invalid("NotificationQueue.NotificationCoalescing comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "InlinePresentationIntent") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? InlinePresentationIntent,
+              case .opaque(_, let b) = rhs, let lb = b as? InlinePresentationIntent
+        else { throw RuntimeError.invalid("InlinePresentationIntent comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "URLUbiquitousSharedItemPermissions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLUbiquitousSharedItemPermissions,
+              case .opaque(_, let b) = rhs, let lb = b as? URLUbiquitousSharedItemPermissions
+        else { throw RuntimeError.invalid("URLUbiquitousSharedItemPermissions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "URLComponents") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLComponents,
+              case .opaque(_, let b) = rhs, let lb = b as? URLComponents
+        else { throw RuntimeError.invalid("URLComponents comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "IndexSet.RangeView") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? IndexSet.RangeView,
+              case .opaque(_, let b) = rhs, let lb = b as? IndexSet.RangeView
+        else { throw RuntimeError.invalid("IndexSet.RangeView comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "PresentationIntent") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PresentationIntent,
+              case .opaque(_, let b) = rhs, let lb = b as? PresentationIntent
+        else { throw RuntimeError.invalid("PresentationIntent comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSAttributedString.Key") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSAttributedString.Key,
+              case .opaque(_, let b) = rhs, let lb = b as? NSAttributedString.Key
+        else { throw RuntimeError.invalid("NSAttributedString.Key comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "FileWrapper.ReadingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileWrapper.ReadingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? FileWrapper.ReadingOptions
+        else { throw RuntimeError.invalid("FileWrapper.ReadingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "DistributedNotificationCenter.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? DistributedNotificationCenter.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? DistributedNotificationCenter.Options
+        else { throw RuntimeError.invalid("DistributedNotificationCenter.Options comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Date.ParseStrategy") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date.ParseStrategy,
+              case .opaque(_, let b) = rhs, let lb = b as? Date.ParseStrategy
+        else { throw RuntimeError.invalid("Date.ParseStrategy comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "AttributedString.Runs") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.Runs,
+              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.Runs
+        else { throw RuntimeError.invalid("AttributedString.Runs comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSEnumerationOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSEnumerationOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSEnumerationOptions
+        else { throw RuntimeError.invalid("NSEnumerationOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "URLQueryItem") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLQueryItem,
+              case .opaque(_, let b) = rhs, let lb = b as? URLQueryItem
+        else { throw RuntimeError.invalid("URLQueryItem comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSString.EncodingConversionOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSString.EncodingConversionOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSString.EncodingConversionOptions
+        else { throw RuntimeError.invalid("NSString.EncodingConversionOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSString.EnumerationOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSString.EnumerationOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSString.EnumerationOptions
+        else { throw RuntimeError.invalid("NSString.EnumerationOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSItemProviderFileOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSItemProviderFileOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSItemProviderFileOptions
+        else { throw RuntimeError.invalid("NSItemProviderFileOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Locale.Variant") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Variant,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.Variant
+        else { throw RuntimeError.invalid("Locale.Variant comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "POSIXError") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? POSIXError,
+              case .opaque(_, let b) = rhs, let lb = b as? POSIXError
+        else { throw RuntimeError.invalid("POSIXError comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "DateComponents") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? DateComponents,
+              case .opaque(_, let b) = rhs, let lb = b as? DateComponents
+        else { throw RuntimeError.invalid("DateComponents comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "AttributedString.FormattingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.FormattingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.FormattingOptions
+        else { throw RuntimeError.invalid("AttributedString.FormattingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "RunLoop.Mode") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? RunLoop.Mode,
+              case .opaque(_, let b) = rhs, let lb = b as? RunLoop.Mode
+        else { throw RuntimeError.invalid("RunLoop.Mode comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "ISO8601DateFormatter.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ISO8601DateFormatter.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? ISO8601DateFormatter.Options
+        else { throw RuntimeError.invalid("ISO8601DateFormatter.Options comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Locale.NumberingSystem") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.NumberingSystem,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.NumberingSystem
+        else { throw RuntimeError.invalid("Locale.NumberingSystem comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "MeasurementFormatter.UnitOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? MeasurementFormatter.UnitOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? MeasurementFormatter.UnitOptions
+        else { throw RuntimeError.invalid("MeasurementFormatter.UnitOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "IndexPath") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? IndexPath,
+              case .opaque(_, let b) = rhs, let lb = b as? IndexPath
+        else { throw RuntimeError.invalid("IndexPath comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+        i.registerComparator(on: "StreamSOCKSProxyVersion") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? StreamSOCKSProxyVersion,
+              case .opaque(_, let b) = rhs, let lb = b as? StreamSOCKSProxyVersion
+        else { throw RuntimeError.invalid("StreamSOCKSProxyVersion comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "URLResource") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLResource,
+              case .opaque(_, let b) = rhs, let lb = b as? URLResource
+        else { throw RuntimeError.invalid("URLResource comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "URLFileResourceType") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLFileResourceType,
+              case .opaque(_, let b) = rhs, let lb = b as? URLFileResourceType
+        else { throw RuntimeError.invalid("URLFileResourceType comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NetService.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NetService.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? NetService.Options
+        else { throw RuntimeError.invalid("NetService.Options comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "CharacterSet") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? CharacterSet,
+              case .opaque(_, let b) = rhs, let lb = b as? CharacterSet
+        else { throw RuntimeError.invalid("CharacterSet comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Morphology") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Morphology,
+              case .opaque(_, let b) = rhs, let lb = b as? Morphology
+        else { throw RuntimeError.invalid("Morphology comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "PersonNameComponents.ParseStrategy") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PersonNameComponents.ParseStrategy,
+              case .opaque(_, let b) = rhs, let lb = b as? PersonNameComponents.ParseStrategy
+        else { throw RuntimeError.invalid("PersonNameComponents.ParseStrategy comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "ProgressKind") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ProgressKind,
+              case .opaque(_, let b) = rhs, let lb = b as? ProgressKind
+        else { throw RuntimeError.invalid("ProgressKind comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSXPCConnection.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSXPCConnection.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? NSXPCConnection.Options
+        else { throw RuntimeError.invalid("NSXPCConnection.Options comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "StreamNetworkServiceTypeValue") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? StreamNetworkServiceTypeValue,
+              case .opaque(_, let b) = rhs, let lb = b as? StreamNetworkServiceTypeValue
+        else { throw RuntimeError.invalid("StreamNetworkServiceTypeValue comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSBinarySearchingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSBinarySearchingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSBinarySearchingOptions
+        else { throw RuntimeError.invalid("NSBinarySearchingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSComparisonPredicate.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSComparisonPredicate.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? NSComparisonPredicate.Options
+        else { throw RuntimeError.invalid("NSComparisonPredicate.Options comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NumberFormatStyleConfiguration.SignDisplayStrategy") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NumberFormatStyleConfiguration.SignDisplayStrategy,
+              case .opaque(_, let b) = rhs, let lb = b as? NumberFormatStyleConfiguration.SignDisplayStrategy
+        else { throw RuntimeError.invalid("NumberFormatStyleConfiguration.SignDisplayStrategy comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "AttributedString.MarkdownSourcePosition") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.MarkdownSourcePosition,
+              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.MarkdownSourcePosition
+        else { throw RuntimeError.invalid("AttributedString.MarkdownSourcePosition comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "AttributedString") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString,
+              case .opaque(_, let b) = rhs, let lb = b as? AttributedString
+        else { throw RuntimeError.invalid("AttributedString comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSData.SearchOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSData.SearchOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSData.SearchOptions
+        else { throw RuntimeError.invalid("NSData.SearchOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSSortOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSSortOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSSortOptions
+        else { throw RuntimeError.invalid("NSSortOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Locale.Subdivision") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Subdivision,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.Subdivision
+        else { throw RuntimeError.invalid("Locale.Subdivision comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "JSONEncoder.OutputFormatting") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? JSONEncoder.OutputFormatting,
+              case .opaque(_, let b) = rhs, let lb = b as? JSONEncoder.OutputFormatting
+        else { throw RuntimeError.invalid("JSONEncoder.OutputFormatting comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "AttributedString.Index") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.Index,
+              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.Index
+        else { throw RuntimeError.invalid("AttributedString.Index comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+        i.registerComparator(on: "NSKeyValueChangeKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSKeyValueChangeKey,
+              case .opaque(_, let b) = rhs, let lb = b as? NSKeyValueChangeKey
+        else { throw RuntimeError.invalid("NSKeyValueChangeKey comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
@@ -7164,10 +6828,346 @@ extension FoundationModule {
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "NSOrderedCollectionDifferenceCalculationOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSOrderedCollectionDifferenceCalculationOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSOrderedCollectionDifferenceCalculationOptions
-        else { throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions comparison: bad payloads") }
+        i.registerComparator(on: "AlignmentOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? AlignmentOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? AlignmentOptions
+        else { throw RuntimeError.invalid("AlignmentOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "ByteCountFormatter.Units") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ByteCountFormatter.Units,
+              case .opaque(_, let b) = rhs, let lb = b as? ByteCountFormatter.Units
+        else { throw RuntimeError.invalid("ByteCountFormatter.Units comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "CurrencyFormatStyleConfiguration.Presentation") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? CurrencyFormatStyleConfiguration.Presentation,
+              case .opaque(_, let b) = rhs, let lb = b as? CurrencyFormatStyleConfiguration.Presentation
+        else { throw RuntimeError.invalid("CurrencyFormatStyleConfiguration.Presentation comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSAppleEventDescriptor.SendOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSAppleEventDescriptor.SendOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSAppleEventDescriptor.SendOptions
+        else { throw RuntimeError.invalid("NSAppleEventDescriptor.SendOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSPointerFunctions.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSPointerFunctions.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? NSPointerFunctions.Options
+        else { throw RuntimeError.invalid("NSPointerFunctions.Options comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NumberFormatStyleConfiguration.Notation") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NumberFormatStyleConfiguration.Notation,
+              case .opaque(_, let b) = rhs, let lb = b as? NumberFormatStyleConfiguration.Notation
+        else { throw RuntimeError.invalid("NumberFormatStyleConfiguration.Notation comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "UUID") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? UUID,
+              case .opaque(_, let b) = rhs, let lb = b as? UUID
+        else { throw RuntimeError.invalid("UUID comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+        i.registerComparator(on: "Date.RelativeFormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date.RelativeFormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Date.RelativeFormatStyle
+        else { throw RuntimeError.invalid("Date.RelativeFormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "StringTransform") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? StringTransform,
+              case .opaque(_, let b) = rhs, let lb = b as? StringTransform
+        else { throw RuntimeError.invalid("StringTransform comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "DateComponentsFormatter.ZeroFormattingBehavior") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? DateComponentsFormatter.ZeroFormattingBehavior,
+              case .opaque(_, let b) = rhs, let lb = b as? DateComponentsFormatter.ZeroFormattingBehavior
+        else { throw RuntimeError.invalid("DateComponentsFormatter.ZeroFormattingBehavior comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "AttributeContainer") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? AttributeContainer,
+              case .opaque(_, let b) = rhs, let lb = b as? AttributeContainer
+        else { throw RuntimeError.invalid("AttributeContainer comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSURL.BookmarkResolutionOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSURL.BookmarkResolutionOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSURL.BookmarkResolutionOptions
+        else { throw RuntimeError.invalid("NSURL.BookmarkResolutionOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "AttributedString.InterpolationOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.InterpolationOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.InterpolationOptions
+        else { throw RuntimeError.invalid("AttributedString.InterpolationOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "DateComponents.HTTPFormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? DateComponents.HTTPFormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? DateComponents.HTTPFormatStyle
+        else { throw RuntimeError.invalid("DateComponents.HTTPFormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "ErrorUserInfoKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ErrorUserInfoKey,
+              case .opaque(_, let b) = rhs, let lb = b as? ErrorUserInfoKey
+        else { throw RuntimeError.invalid("ErrorUserInfoKey comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSKeyValueObservingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSKeyValueObservingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSKeyValueObservingOptions
+        else { throw RuntimeError.invalid("NSKeyValueObservingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "PersonNameComponentsFormatter.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PersonNameComponentsFormatter.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? PersonNameComponentsFormatter.Options
+        else { throw RuntimeError.invalid("PersonNameComponentsFormatter.Options comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "PredicateExpressions.VariableID") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PredicateExpressions.VariableID,
+              case .opaque(_, let b) = rhs, let lb = b as? PredicateExpressions.VariableID
+        else { throw RuntimeError.invalid("PredicateExpressions.VariableID comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Date.IntervalFormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date.IntervalFormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Date.IntervalFormatStyle
+        else { throw RuntimeError.invalid("Date.IntervalFormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSURL.BookmarkCreationOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSURL.BookmarkCreationOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSURL.BookmarkCreationOptions
+        else { throw RuntimeError.invalid("NSURL.BookmarkCreationOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Locale") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale
+        else { throw RuntimeError.invalid("Locale comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "URLFileProtection") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLFileProtection,
+              case .opaque(_, let b) = rhs, let lb = b as? URLFileProtection
+        else { throw RuntimeError.invalid("URLFileProtection comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSTextCheckingKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSTextCheckingKey,
+              case .opaque(_, let b) = rhs, let lb = b as? NSTextCheckingKey
+        else { throw RuntimeError.invalid("NSTextCheckingKey comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSMachPort.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSMachPort.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? NSMachPort.Options
+        else { throw RuntimeError.invalid("NSMachPort.Options comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "HTTPCookiePropertyKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? HTTPCookiePropertyKey,
+              case .opaque(_, let b) = rhs, let lb = b as? HTTPCookiePropertyKey
+        else { throw RuntimeError.invalid("HTTPCookiePropertyKey comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "DateComponents.ISO8601FormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? DateComponents.ISO8601FormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? DateComponents.ISO8601FormatStyle
+        else { throw RuntimeError.invalid("DateComponents.ISO8601FormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "LocalizedStringResource") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? LocalizedStringResource,
+              case .opaque(_, let b) = rhs, let lb = b as? LocalizedStringResource
+        else { throw RuntimeError.invalid("LocalizedStringResource comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "PresentationIntent.TableColumn") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PresentationIntent.TableColumn,
+              case .opaque(_, let b) = rhs, let lb = b as? PresentationIntent.TableColumn
+        else { throw RuntimeError.invalid("PresentationIntent.TableColumn comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "JSONSerialization.WritingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? JSONSerialization.WritingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? JSONSerialization.WritingOptions
+        else { throw RuntimeError.invalid("JSONSerialization.WritingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "ProcessInfo.ActivityOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ProcessInfo.ActivityOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? ProcessInfo.ActivityOptions
+        else { throw RuntimeError.invalid("ProcessInfo.ActivityOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Date.HTTPFormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date.HTTPFormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Date.HTTPFormatStyle
+        else { throw RuntimeError.invalid("Date.HTTPFormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "URL.Template") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URL.Template,
+              case .opaque(_, let b) = rhs, let lb = b as? URL.Template
+        else { throw RuntimeError.invalid("URL.Template comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NumberFormatStyleConfiguration.Precision") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NumberFormatStyleConfiguration.Precision,
+              case .opaque(_, let b) = rhs, let lb = b as? NumberFormatStyleConfiguration.Precision
+        else { throw RuntimeError.invalid("NumberFormatStyleConfiguration.Precision comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "JSONSerialization.ReadingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? JSONSerialization.ReadingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? JSONSerialization.ReadingOptions
+        else { throw RuntimeError.invalid("JSONSerialization.ReadingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "URLThumbnailDictionaryItem") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLThumbnailDictionaryItem,
+              case .opaque(_, let b) = rhs, let lb = b as? URLThumbnailDictionaryItem
+        else { throw RuntimeError.invalid("URLThumbnailDictionaryItem comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "TermOfAddress") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? TermOfAddress,
+              case .opaque(_, let b) = rhs, let lb = b as? TermOfAddress
+        else { throw RuntimeError.invalid("TermOfAddress comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSFileCoordinator.WritingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSFileCoordinator.WritingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSFileCoordinator.WritingOptions
+        else { throw RuntimeError.invalid("NSFileCoordinator.WritingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "URLRequest") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLRequest,
+              case .opaque(_, let b) = rhs, let lb = b as? URLRequest
+        else { throw RuntimeError.invalid("URLRequest comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Locale.Collation") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Collation,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.Collation
+        else { throw RuntimeError.invalid("Locale.Collation comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "DiscontiguousAttributedSubstring") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? DiscontiguousAttributedSubstring,
+              case .opaque(_, let b) = rhs, let lb = b as? DiscontiguousAttributedSubstring
+        else { throw RuntimeError.invalid("DiscontiguousAttributedSubstring comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Morphology.CustomPronoun") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Morphology.CustomPronoun,
+              case .opaque(_, let b) = rhs, let lb = b as? Morphology.CustomPronoun
+        else { throw RuntimeError.invalid("Morphology.CustomPronoun comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "DateInterval") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? DateInterval,
+              case .opaque(_, let b) = rhs, let lb = b as? DateInterval
+        else { throw RuntimeError.invalid("DateInterval comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+        i.registerComparator(on: "NSCalendar.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSCalendar.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? NSCalendar.Options
+        else { throw RuntimeError.invalid("NSCalendar.Options comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "CurrencyFormatStyleConfiguration.SignDisplayStrategy") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? CurrencyFormatStyleConfiguration.SignDisplayStrategy,
+              case .opaque(_, let b) = rhs, let lb = b as? CurrencyFormatStyleConfiguration.SignDisplayStrategy
+        else { throw RuntimeError.invalid("CurrencyFormatStyleConfiguration.SignDisplayStrategy comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Date.ComponentsFormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date.ComponentsFormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Date.ComponentsFormatStyle
+        else { throw RuntimeError.invalid("Date.ComponentsFormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "CocoaError.Code") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? CocoaError.Code,
+              case .opaque(_, let b) = rhs, let lb = b as? CocoaError.Code
+        else { throw RuntimeError.invalid("CocoaError.Code comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "AttributedString.AttributeInvalidationCondition") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.AttributeInvalidationCondition,
+              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.AttributeInvalidationCondition
+        else { throw RuntimeError.invalid("AttributedString.AttributeInvalidationCondition comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "AffineTransform") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? AffineTransform,
+              case .opaque(_, let b) = rhs, let lb = b as? AffineTransform
+        else { throw RuntimeError.invalid("AffineTransform comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSLinguisticTagScheme") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSLinguisticTagScheme,
+              case .opaque(_, let b) = rhs, let lb = b as? NSLinguisticTagScheme
+        else { throw RuntimeError.invalid("NSLinguisticTagScheme comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
     }

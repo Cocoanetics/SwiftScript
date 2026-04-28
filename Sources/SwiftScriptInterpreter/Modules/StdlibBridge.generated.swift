@@ -4,62 +4,62 @@ import Foundation
 
 extension Interpreter {
     func registerGeneratedStdlib(into i: Interpreter) {
-        i.registerComputed(on: "String", name: "localizedCapitalized") { receiver in
+        i.bridges["String.localizedCapitalized"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return .string(recv.localizedCapitalized)
         }
 
-        i.registerComputed(on: "String", name: "localizedLowercase") { receiver in
+        i.bridges["String.localizedLowercase"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return .string(recv.localizedLowercase)
         }
 
-        i.registerComputed(on: "String", name: "localizedUppercase") { receiver in
+        i.bridges["String.localizedUppercase"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return .string(recv.localizedUppercase)
         }
 
-        i.registerComputed(on: "String", name: "capitalized") { receiver in
+        i.bridges["String.capitalized"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return .string(recv.capitalized)
         }
 
-        i.registerStaticValue(on: "Int", name: "zero", value: .int(Int.zero))
+        i.bridges["Int.Type.zero"] = .staticValue(.int(Int.zero))
 
-        i.registerComputed(on: "Int", name: "description") { receiver in
+        i.bridges["Int.description"] = .computed { receiver in
             let recv: Int = try unboxInt(receiver)
             return .string(recv.description)
         }
 
-        i.registerInit(on: "Int", labels: []) { args in
+        i.bridges["Int()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("Int(): expected 0 argument(s), got \(args.count)")
             }
             return .int(Int())
         }
 
-        i.registerComputed(on: "Int", name: "bitWidth") { receiver in
+        i.bridges["Int.bitWidth"] = .computed { receiver in
             let recv: Int = try unboxInt(receiver)
             return .int(recv.bitWidth)
         }
 
-        i.registerComputed(on: "Int", name: "littleEndian") { receiver in
+        i.bridges["Int.littleEndian"] = .computed { receiver in
             let recv: Int = try unboxInt(receiver)
             return .int(recv.littleEndian)
         }
 
-        i.registerComputed(on: "Int", name: "bigEndian") { receiver in
+        i.bridges["Int.bigEndian"] = .computed { receiver in
             let recv: Int = try unboxInt(receiver)
             return .int(recv.bigEndian)
         }
 
-        i.registerStaticValue(on: "Int", name: "isSigned", value: .bool(Int.isSigned))
+        i.bridges["Int.Type.isSigned"] = .staticValue(.bool(Int.isSigned))
 
-        i.registerStaticValue(on: "Int", name: "max", value: .int(Int.max))
+        i.bridges["Int.Type.max"] = .staticValue(.int(Int.max))
 
-        i.registerStaticValue(on: "Int", name: "min", value: .int(Int.min))
+        i.bridges["Int.Type.min"] = .staticValue(.int(Int.min))
 
-        i.registerMethod(on: "Int", name: "formatted") { receiver, args in
+        i.bridges["Int.formatted()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("Int.formatted: expected 0 argument(s), got \(args.count)")
             }
@@ -67,39 +67,39 @@ extension Interpreter {
             return .string(recv.formatted())
         }
 
-        i.registerStaticValue(on: "String", name: "defaultCStringEncoding", value: boxOpaque(String.defaultCStringEncoding, typeName: "String.Encoding"))
+        i.bridges["String.Type.defaultCStringEncoding"] = .staticValue(boxOpaque(String.defaultCStringEncoding, typeName: "String.Encoding"))
 
-        i.registerComputed(on: "String", name: "decomposedStringWithCanonicalMapping") { receiver in
+        i.bridges["String.decomposedStringWithCanonicalMapping"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return .string(recv.decomposedStringWithCanonicalMapping)
         }
 
-        i.registerComputed(on: "String", name: "decomposedStringWithCompatibilityMapping") { receiver in
+        i.bridges["String.decomposedStringWithCompatibilityMapping"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return .string(recv.decomposedStringWithCompatibilityMapping)
         }
 
-        i.registerComputed(on: "String", name: "fastestEncoding") { receiver in
+        i.bridges["String.fastestEncoding"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return boxOpaque(recv.fastestEncoding, typeName: "String.Encoding")
         }
 
-        i.registerComputed(on: "String", name: "hash") { receiver in
+        i.bridges["String.hash"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return .int(recv.hash)
         }
 
-        i.registerComputed(on: "String", name: "precomposedStringWithCanonicalMapping") { receiver in
+        i.bridges["String.precomposedStringWithCanonicalMapping"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return .string(recv.precomposedStringWithCanonicalMapping)
         }
 
-        i.registerComputed(on: "String", name: "precomposedStringWithCompatibilityMapping") { receiver in
+        i.bridges["String.precomposedStringWithCompatibilityMapping"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return .string(recv.precomposedStringWithCompatibilityMapping)
         }
 
-        i.registerMethod(on: "String", name: "propertyList") { receiver, args in
+        i.bridges["String.propertyList()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("String.propertyList: expected 0 argument(s), got \(args.count)")
             }
@@ -108,12 +108,12 @@ extension Interpreter {
             return .void
         }
 
-        i.registerComputed(on: "String", name: "smallestEncoding") { receiver in
+        i.bridges["String.smallestEncoding"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return boxOpaque(recv.smallestEncoding, typeName: "String.Encoding")
         }
 
-        i.registerComputed(on: "String", name: "removingPercentEncoding") { receiver in
+        i.bridges["String.removingPercentEncoding"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             if let _v = recv.removingPercentEncoding {
             return .optional(.string(_v))
@@ -121,14 +121,14 @@ extension Interpreter {
         return .optional(nil)
         }
 
-        i.registerInit(on: "Int", labels: ["integerLiteral"]) { args in
+        i.bridges["Int(integerLiteral:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Int(integerLiteral:): expected 1 argument(s), got \(args.count)")
             }
             return .int(Int(integerLiteral: try unboxInt(args[0])))
         }
 
-        i.registerMethod(on: "Int", name: "quotientAndRemainder") { receiver, args in
+        i.bridges["Int.quotientAndRemainder()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Int.quotientAndRemainder: expected 1 argument(s), got \(args.count)")
             }
@@ -137,35 +137,35 @@ extension Interpreter {
         return .tuple([.int(_t.0), .int(_t.1)])
         }
 
-        i.registerInit(on: "Int", labels: ["littleEndian"]) { args in
+        i.bridges["Int(littleEndian:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Int(littleEndian:): expected 1 argument(s), got \(args.count)")
             }
             return .int(Int(littleEndian: try unboxInt(args[0])))
         }
 
-        i.registerInit(on: "Int", labels: ["bigEndian"]) { args in
+        i.bridges["Int(bigEndian:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Int(bigEndian:): expected 1 argument(s), got \(args.count)")
             }
             return .int(Int(bigEndian: try unboxInt(args[0])))
         }
 
-        i.registerInit(on: "String", labels: ["localized"]) { args in
+        i.bridges["String(localized:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("String(localized:): expected 1 argument(s), got \(args.count)")
             }
             return .string(String(localized: try unboxOpaque(args[0], as: LocalizedStringResource.self, typeName: "LocalizedStringResource")))
         }
 
-        i.registerStaticMethod(on: "String", name: "localizedName") { args in
+        i.bridges["String.Type.localizedName()"] = .staticMethod { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("String.localizedName: expected 1 argument(s), got \(args.count)")
             }
             return .string(String.localizedName(of: try unboxOpaque(args[0], as: String.Encoding.self, typeName: "String.Encoding")))
         }
 
-        i.registerMethod(on: "String", name: "canBeConverted") { receiver, args in
+        i.bridges["String.canBeConverted()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("String.canBeConverted: expected 1 argument(s), got \(args.count)")
             }
@@ -173,7 +173,7 @@ extension Interpreter {
             return .bool(recv.canBeConverted(to: try unboxOpaque(args[0], as: String.Encoding.self, typeName: "String.Encoding")))
         }
 
-        i.registerMethod(on: "String", name: "lengthOfBytes") { receiver, args in
+        i.bridges["String.lengthOfBytes()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("String.lengthOfBytes: expected 1 argument(s), got \(args.count)")
             }
@@ -181,7 +181,7 @@ extension Interpreter {
             return .int(recv.lengthOfBytes(using: try unboxOpaque(args[0], as: String.Encoding.self, typeName: "String.Encoding")))
         }
 
-        i.registerMethod(on: "String", name: "maximumLengthOfBytes") { receiver, args in
+        i.bridges["String.maximumLengthOfBytes()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("String.maximumLengthOfBytes: expected 1 argument(s), got \(args.count)")
             }
@@ -189,7 +189,7 @@ extension Interpreter {
             return .int(recv.maximumLengthOfBytes(using: try unboxOpaque(args[0], as: String.Encoding.self, typeName: "String.Encoding")))
         }
 
-        i.registerMethod(on: "String", name: "addingPercentEncoding") { receiver, args in
+        i.bridges["String.addingPercentEncoding()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("String.addingPercentEncoding: expected 1 argument(s), got \(args.count)")
             }
@@ -200,7 +200,7 @@ extension Interpreter {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "String", name: "trimmingCharacters") { receiver, args in
+        i.bridges["String.trimmingCharacters()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("String.trimmingCharacters: expected 1 argument(s), got \(args.count)")
             }
@@ -208,7 +208,7 @@ extension Interpreter {
             return .string(recv.trimmingCharacters(in: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")))
         }
 
-        i.registerInit(on: "String", labels: ["data", "encoding"]) { args in
+        i.bridges["String(data:encoding:)"] = .`init` { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("String(data:encoding:): expected 2 argument(s), got \(args.count)")
             }
@@ -218,7 +218,7 @@ extension Interpreter {
         return .optional(nil)
         }
 
-        i.registerInit(on: "String", labels: ["contentsOfFile", "encoding"]) { args in
+        i.bridges["String(contentsOfFile:encoding:)"] = .`init` { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("String(contentsOfFile:encoding:): expected 2 argument(s), got \(args.count)")
             }
@@ -229,7 +229,7 @@ extension Interpreter {
         }
         }
 
-        i.registerInit(on: "String", labels: ["contentsOf", "encoding"]) { args in
+        i.bridges["String(contentsOf:encoding:)"] = .`init` { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("String(contentsOf:encoding:): expected 2 argument(s), got \(args.count)")
             }
@@ -240,7 +240,7 @@ extension Interpreter {
         }
         }
 
-        i.registerMethod(on: "String", name: "data") { receiver, args in
+        i.bridges["String.data()"] = .method { receiver, args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("String.data: expected 2 argument(s), got \(args.count)")
             }
@@ -251,7 +251,7 @@ extension Interpreter {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "String", name: "applyingTransform") { receiver, args in
+        i.bridges["String.applyingTransform()"] = .method { receiver, args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("String.applyingTransform: expected 2 argument(s), got \(args.count)")
             }
@@ -262,7 +262,7 @@ extension Interpreter {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "String", name: "write") { receiver, args in
+        i.bridges["String.write()"] = .method { receiver, args in
             guard args.count == 3 else {
                 throw RuntimeError.invalid("String.write: expected 3 argument(s), got \(args.count)")
             }
@@ -275,7 +275,7 @@ extension Interpreter {
         }
         }
 
-        i.registerMethod(on: "String", name: "completePath") { receiver, args in
+        i.bridges["String.completePath()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("String.completePath: expected 1 argument(s), got \(args.count)")
             }
@@ -283,73 +283,73 @@ extension Interpreter {
             return .int(recv.completePath(caseSensitive: try unboxBool(args[0])))
         }
 
-        i.registerInit(on: "Bool", labels: []) { args in
+        i.bridges["Bool()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("Bool(): expected 0 argument(s), got \(args.count)")
             }
             return .bool(Bool())
         }
 
-        i.registerStaticMethod(on: "Bool", name: "random") { args in
+        i.bridges["Bool.Type.random()"] = .staticMethod { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("Bool.random: expected 0 argument(s), got \(args.count)")
             }
             return .bool(Bool.random())
         }
 
-        i.registerComputed(on: "Bool", name: "description") { receiver in
+        i.bridges["Bool.description"] = .computed { receiver in
             let recv: Bool = try unboxBool(receiver)
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "Bool", name: "hashValue") { receiver in
+        i.bridges["Bool.hashValue"] = .computed { receiver in
             let recv: Bool = try unboxBool(receiver)
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "String", name: "hashValue") { receiver in
+        i.bridges["String.hashValue"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "String", name: "underestimatedCount") { receiver in
+        i.bridges["String.underestimatedCount"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return .int(recv.underestimatedCount)
         }
 
-        i.registerInit(on: "String", labels: []) { args in
+        i.bridges["String()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("String(): expected 0 argument(s), got \(args.count)")
             }
             return .string(String())
         }
 
-        i.registerComputed(on: "String", name: "debugDescription") { receiver in
+        i.bridges["String.debugDescription"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return .string(recv.debugDescription)
         }
 
-        i.registerComputed(on: "String", name: "description") { receiver in
+        i.bridges["String.description"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "String", name: "startIndex") { receiver in
+        i.bridges["String.startIndex"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return boxOpaque(recv.startIndex, typeName: "String.Index")
         }
 
-        i.registerComputed(on: "String", name: "endIndex") { receiver in
+        i.bridges["String.endIndex"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return boxOpaque(recv.endIndex, typeName: "String.Index")
         }
 
-        i.registerComputed(on: "String", name: "count") { receiver in
+        i.bridges["String.count"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return .int(recv.count)
         }
 
-        i.registerMethod(on: "String", name: "lowercased") { receiver, args in
+        i.bridges["String.lowercased()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("String.lowercased: expected 0 argument(s), got \(args.count)")
             }
@@ -357,7 +357,7 @@ extension Interpreter {
             return .string(recv.lowercased())
         }
 
-        i.registerMethod(on: "String", name: "uppercased") { receiver, args in
+        i.bridges["String.uppercased()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("String.uppercased: expected 0 argument(s), got \(args.count)")
             }
@@ -365,165 +365,165 @@ extension Interpreter {
             return .string(recv.uppercased())
         }
 
-        i.registerComputed(on: "String", name: "isContiguousUTF8") { receiver in
+        i.bridges["String.isContiguousUTF8"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return .bool(recv.isContiguousUTF8)
         }
 
-        i.registerComputed(on: "String", name: "isEmpty") { receiver in
+        i.bridges["String.isEmpty"] = .computed { receiver in
             let recv: String = try unboxString(receiver)
             return .bool(recv.isEmpty)
         }
 
-        i.registerStaticValue(on: "Double", name: "ulpOfOne", value: .double(Double.ulpOfOne))
+        i.bridges["Double.Type.ulpOfOne"] = .staticValue(.double(Double.ulpOfOne))
 
-        i.registerComputed(on: "Double", name: "nextDown") { receiver in
+        i.bridges["Double.nextDown"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .double(recv.nextDown)
         }
 
-        i.registerStaticValue(on: "Double", name: "radix", value: .int(Double.radix))
+        i.bridges["Double.Type.radix"] = .staticValue(.int(Double.radix))
 
-        i.registerStaticValue(on: "Double", name: "zero", value: .double(Double.zero))
+        i.bridges["Double.Type.zero"] = .staticValue(.double(Double.zero))
 
-        i.registerInit(on: "Double", labels: []) { args in
+        i.bridges["Double()"] = .`init` { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("Double(): expected 0 argument(s), got \(args.count)")
             }
             return .double(Double())
         }
 
-        i.registerComputed(on: "Double", name: "description") { receiver in
+        i.bridges["Double.description"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .string(recv.description)
         }
 
-        i.registerComputed(on: "Double", name: "debugDescription") { receiver in
+        i.bridges["Double.debugDescription"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .string(recv.debugDescription)
         }
 
-        i.registerStaticValue(on: "Double", name: "exponentBitCount", value: .int(Double.exponentBitCount))
+        i.bridges["Double.Type.exponentBitCount"] = .staticValue(.int(Double.exponentBitCount))
 
-        i.registerStaticValue(on: "Double", name: "significandBitCount", value: .int(Double.significandBitCount))
+        i.bridges["Double.Type.significandBitCount"] = .staticValue(.int(Double.significandBitCount))
 
-        i.registerComputed(on: "Double", name: "isCanonical") { receiver in
+        i.bridges["Double.isCanonical"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .bool(recv.isCanonical)
         }
 
-        i.registerStaticValue(on: "Double", name: "infinity", value: .double(Double.infinity))
+        i.bridges["Double.Type.infinity"] = .staticValue(.double(Double.infinity))
 
-        i.registerStaticValue(on: "Double", name: "nan", value: .double(Double.nan))
+        i.bridges["Double.Type.nan"] = .staticValue(.double(Double.nan))
 
-        i.registerStaticValue(on: "Double", name: "signalingNaN", value: .double(Double.signalingNaN))
+        i.bridges["Double.Type.signalingNaN"] = .staticValue(.double(Double.signalingNaN))
 
-        i.registerStaticValue(on: "Double", name: "greatestFiniteMagnitude", value: .double(Double.greatestFiniteMagnitude))
+        i.bridges["Double.Type.greatestFiniteMagnitude"] = .staticValue(.double(Double.greatestFiniteMagnitude))
 
-        i.registerStaticValue(on: "Double", name: "pi", value: .double(Double.pi))
+        i.bridges["Double.Type.pi"] = .staticValue(.double(Double.pi))
 
-        i.registerComputed(on: "Double", name: "ulp") { receiver in
+        i.bridges["Double.ulp"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .double(recv.ulp)
         }
 
-        i.registerStaticValue(on: "Double", name: "leastNormalMagnitude", value: .double(Double.leastNormalMagnitude))
+        i.bridges["Double.Type.leastNormalMagnitude"] = .staticValue(.double(Double.leastNormalMagnitude))
 
-        i.registerStaticValue(on: "Double", name: "leastNonzeroMagnitude", value: .double(Double.leastNonzeroMagnitude))
+        i.bridges["Double.Type.leastNonzeroMagnitude"] = .staticValue(.double(Double.leastNonzeroMagnitude))
 
-        i.registerComputed(on: "Double", name: "exponent") { receiver in
+        i.bridges["Double.exponent"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .int(recv.exponent)
         }
 
-        i.registerComputed(on: "Double", name: "significand") { receiver in
+        i.bridges["Double.significand"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .double(recv.significand)
         }
 
-        i.registerComputed(on: "Double", name: "nextUp") { receiver in
+        i.bridges["Double.nextUp"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .double(recv.nextUp)
         }
 
-        i.registerComputed(on: "Double", name: "isNormal") { receiver in
+        i.bridges["Double.isNormal"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .bool(recv.isNormal)
         }
 
-        i.registerComputed(on: "Double", name: "isFinite") { receiver in
+        i.bridges["Double.isFinite"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .bool(recv.isFinite)
         }
 
-        i.registerComputed(on: "Double", name: "isZero") { receiver in
+        i.bridges["Double.isZero"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .bool(recv.isZero)
         }
 
-        i.registerComputed(on: "Double", name: "isSubnormal") { receiver in
+        i.bridges["Double.isSubnormal"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .bool(recv.isSubnormal)
         }
 
-        i.registerComputed(on: "Double", name: "isInfinite") { receiver in
+        i.bridges["Double.isInfinite"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .bool(recv.isInfinite)
         }
 
-        i.registerComputed(on: "Double", name: "isNaN") { receiver in
+        i.bridges["Double.isNaN"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .bool(recv.isNaN)
         }
 
-        i.registerComputed(on: "Double", name: "isSignalingNaN") { receiver in
+        i.bridges["Double.isSignalingNaN"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .bool(recv.isSignalingNaN)
         }
 
-        i.registerComputed(on: "Double", name: "binade") { receiver in
+        i.bridges["Double.binade"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .double(recv.binade)
         }
 
-        i.registerComputed(on: "Double", name: "significandWidth") { receiver in
+        i.bridges["Double.significandWidth"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .int(recv.significandWidth)
         }
 
-        i.registerComputed(on: "Double", name: "hashValue") { receiver in
+        i.bridges["Double.hashValue"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .int(recv.hashValue)
         }
 
-        i.registerComputed(on: "Double", name: "magnitude") { receiver in
+        i.bridges["Double.magnitude"] = .computed { receiver in
             let recv: Double = try toDouble(receiver)
             return .double(recv.magnitude)
         }
 
-        i.registerStaticValue(on: "Int", name: "bitWidth", value: .int(Int.bitWidth))
+        i.bridges["Int.Type.bitWidth"] = .staticValue(.int(Int.bitWidth))
 
-        i.registerComputed(on: "Int", name: "leadingZeroBitCount") { receiver in
+        i.bridges["Int.leadingZeroBitCount"] = .computed { receiver in
             let recv: Int = try unboxInt(receiver)
             return .int(recv.leadingZeroBitCount)
         }
 
-        i.registerComputed(on: "Int", name: "trailingZeroBitCount") { receiver in
+        i.bridges["Int.trailingZeroBitCount"] = .computed { receiver in
             let recv: Int = try unboxInt(receiver)
             return .int(recv.trailingZeroBitCount)
         }
 
-        i.registerComputed(on: "Int", name: "nonzeroBitCount") { receiver in
+        i.bridges["Int.nonzeroBitCount"] = .computed { receiver in
             let recv: Int = try unboxInt(receiver)
             return .int(recv.nonzeroBitCount)
         }
 
-        i.registerComputed(on: "Int", name: "byteSwapped") { receiver in
+        i.bridges["Int.byteSwapped"] = .computed { receiver in
             let recv: Int = try unboxInt(receiver)
             return .int(recv.byteSwapped)
         }
 
-        i.registerMethod(on: "Int", name: "signum") { receiver, args in
+        i.bridges["Int.signum()"] = .method { receiver, args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("Int.signum: expected 0 argument(s), got \(args.count)")
             }
@@ -531,33 +531,33 @@ extension Interpreter {
             return .int(recv.signum())
         }
 
-        i.registerComputed(on: "Int", name: "hashValue") { receiver in
+        i.bridges["Int.hashValue"] = .computed { receiver in
             let recv: Int = try unboxInt(receiver)
             return .int(recv.hashValue)
         }
 
-        i.registerInit(on: "Bool", labels: ["booleanLiteral"]) { args in
+        i.bridges["Bool(booleanLiteral:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Bool(booleanLiteral:): expected 1 argument(s), got \(args.count)")
             }
             return .bool(Bool(booleanLiteral: try unboxBool(args[0])))
         }
 
-        i.registerInit(on: "Int", labels: ["bitPattern"]) { args in
+        i.bridges["Int(bitPattern:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Int(bitPattern:): expected 1 argument(s), got \(args.count)")
             }
             return .int(Int(bitPattern: try unboxOpaque(args[0], as: ObjectIdentifier.self, typeName: "ObjectIdentifier")))
         }
 
-        i.registerInit(on: "String", labels: ["stringLiteral"]) { args in
+        i.bridges["String(stringLiteral:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("String(stringLiteral:): expected 1 argument(s), got \(args.count)")
             }
             return .string(String(stringLiteral: try unboxString(args[0])))
         }
 
-        i.registerMethod(on: "String", name: "index") { receiver, args in
+        i.bridges["String.index()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("String.index: expected 1 argument(s), got \(args.count)")
             }
@@ -565,7 +565,7 @@ extension Interpreter {
             return boxOpaque(recv.index(after: try unboxOpaque(args[0], as: String.Index.self, typeName: "String.Index")), typeName: "String.Index")
         }
 
-        i.registerMethod(on: "String", name: "hasPrefix") { receiver, args in
+        i.bridges["String.hasPrefix()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("String.hasPrefix: expected 1 argument(s), got \(args.count)")
             }
@@ -573,7 +573,7 @@ extension Interpreter {
             return .bool(recv.hasPrefix(try unboxString(args[0])))
         }
 
-        i.registerMethod(on: "String", name: "hasSuffix") { receiver, args in
+        i.bridges["String.hasSuffix()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("String.hasSuffix: expected 1 argument(s), got \(args.count)")
             }
@@ -581,7 +581,7 @@ extension Interpreter {
             return .bool(recv.hasSuffix(try unboxString(args[0])))
         }
 
-        i.registerMethod(on: "Double", name: "truncatingRemainder") { receiver, args in
+        i.bridges["Double.truncatingRemainder()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Double.truncatingRemainder: expected 1 argument(s), got \(args.count)")
             }
@@ -589,7 +589,7 @@ extension Interpreter {
             return .double(recv.truncatingRemainder(dividingBy: try toDouble(args[0])))
         }
 
-        i.registerMethod(on: "Double", name: "remainder") { receiver, args in
+        i.bridges["Double.remainder()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Double.remainder: expected 1 argument(s), got \(args.count)")
             }
@@ -597,7 +597,7 @@ extension Interpreter {
             return .double(recv.remainder(dividingBy: try toDouble(args[0])))
         }
 
-        i.registerMethod(on: "Double", name: "isTotallyOrdered") { receiver, args in
+        i.bridges["Double.isTotallyOrdered()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Double.isTotallyOrdered: expected 1 argument(s), got \(args.count)")
             }
@@ -605,14 +605,14 @@ extension Interpreter {
             return .bool(recv.isTotallyOrdered(belowOrEqualTo: try toDouble(args[0])))
         }
 
-        i.registerInit(on: "Double", labels: ["integerLiteral"]) { args in
+        i.bridges["Double(integerLiteral:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Double(integerLiteral:): expected 1 argument(s), got \(args.count)")
             }
             return .double(Double(integerLiteral: try toDouble(args[0])))
         }
 
-        i.registerMethod(on: "Double", name: "isEqual") { receiver, args in
+        i.bridges["Double.isEqual()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Double.isEqual: expected 1 argument(s), got \(args.count)")
             }
@@ -620,7 +620,7 @@ extension Interpreter {
             return .bool(recv.isEqual(to: try toDouble(args[0])))
         }
 
-        i.registerMethod(on: "Double", name: "isLess") { receiver, args in
+        i.bridges["Double.isLess()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Double.isLess: expected 1 argument(s), got \(args.count)")
             }
@@ -628,7 +628,7 @@ extension Interpreter {
             return .bool(recv.isLess(than: try toDouble(args[0])))
         }
 
-        i.registerMethod(on: "Double", name: "isLessThanOrEqualTo") { receiver, args in
+        i.bridges["Double.isLessThanOrEqualTo()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Double.isLessThanOrEqualTo: expected 1 argument(s), got \(args.count)")
             }
@@ -636,14 +636,14 @@ extension Interpreter {
             return .bool(recv.isLessThanOrEqualTo(try toDouble(args[0])))
         }
 
-        i.registerInit(on: "Double", labels: ["floatLiteral"]) { args in
+        i.bridges["Double(floatLiteral:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Double(floatLiteral:): expected 1 argument(s), got \(args.count)")
             }
             return .double(Double(floatLiteral: try toDouble(args[0])))
         }
 
-        i.registerInit(on: "Double", labels: ["exactly"]) { args in
+        i.bridges["Double(exactly:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Double(exactly:): expected 1 argument(s), got \(args.count)")
             }
@@ -653,7 +653,7 @@ extension Interpreter {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "Double", name: "distance") { receiver, args in
+        i.bridges["Double.distance()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Double.distance: expected 1 argument(s), got \(args.count)")
             }
@@ -661,7 +661,7 @@ extension Interpreter {
             return .double(recv.distance(to: try toDouble(args[0])))
         }
 
-        i.registerMethod(on: "Double", name: "advanced") { receiver, args in
+        i.bridges["Double.advanced()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Double.advanced: expected 1 argument(s), got \(args.count)")
             }
@@ -669,7 +669,7 @@ extension Interpreter {
             return .double(recv.advanced(by: try toDouble(args[0])))
         }
 
-        i.registerInit(on: "Int", labels: ["exactly"]) { args in
+        i.bridges["Int(exactly:)"] = .`init` { args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Int(exactly:): expected 1 argument(s), got \(args.count)")
             }
@@ -679,7 +679,7 @@ extension Interpreter {
         return .optional(nil)
         }
 
-        i.registerMethod(on: "Int", name: "addingReportingOverflow") { receiver, args in
+        i.bridges["Int.addingReportingOverflow()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Int.addingReportingOverflow: expected 1 argument(s), got \(args.count)")
             }
@@ -688,7 +688,7 @@ extension Interpreter {
         return .tuple([.int(_t.0), .bool(_t.1)])
         }
 
-        i.registerMethod(on: "Int", name: "subtractingReportingOverflow") { receiver, args in
+        i.bridges["Int.subtractingReportingOverflow()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Int.subtractingReportingOverflow: expected 1 argument(s), got \(args.count)")
             }
@@ -697,7 +697,7 @@ extension Interpreter {
         return .tuple([.int(_t.0), .bool(_t.1)])
         }
 
-        i.registerMethod(on: "Int", name: "multipliedReportingOverflow") { receiver, args in
+        i.bridges["Int.multipliedReportingOverflow()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Int.multipliedReportingOverflow: expected 1 argument(s), got \(args.count)")
             }
@@ -706,7 +706,7 @@ extension Interpreter {
         return .tuple([.int(_t.0), .bool(_t.1)])
         }
 
-        i.registerMethod(on: "Int", name: "dividedReportingOverflow") { receiver, args in
+        i.bridges["Int.dividedReportingOverflow()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Int.dividedReportingOverflow: expected 1 argument(s), got \(args.count)")
             }
@@ -715,7 +715,7 @@ extension Interpreter {
         return .tuple([.int(_t.0), .bool(_t.1)])
         }
 
-        i.registerMethod(on: "Int", name: "remainderReportingOverflow") { receiver, args in
+        i.bridges["Int.remainderReportingOverflow()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Int.remainderReportingOverflow: expected 1 argument(s), got \(args.count)")
             }
@@ -724,7 +724,7 @@ extension Interpreter {
         return .tuple([.int(_t.0), .bool(_t.1)])
         }
 
-        i.registerMethod(on: "Int", name: "distance") { receiver, args in
+        i.bridges["Int.distance()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Int.distance: expected 1 argument(s), got \(args.count)")
             }
@@ -732,7 +732,7 @@ extension Interpreter {
             return .int(recv.distance(to: try unboxInt(args[0])))
         }
 
-        i.registerMethod(on: "Int", name: "advanced") { receiver, args in
+        i.bridges["Int.advanced()"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Int.advanced: expected 1 argument(s), got \(args.count)")
             }
@@ -740,7 +740,7 @@ extension Interpreter {
             return .int(recv.advanced(by: try unboxInt(args[0])))
         }
 
-        i.registerMethod(on: "String", name: "distance") { receiver, args in
+        i.bridges["String.distance()"] = .method { receiver, args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("String.distance: expected 2 argument(s), got \(args.count)")
             }
@@ -748,14 +748,14 @@ extension Interpreter {
             return .int(recv.distance(from: try unboxOpaque(args[0], as: String.Index.self, typeName: "String.Index"), to: try unboxOpaque(args[1], as: String.Index.self, typeName: "String.Index")))
         }
 
-        i.registerInit(on: "String", labels: ["repeating", "count"]) { args in
+        i.bridges["String(repeating:count:)"] = .`init` { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("String(repeating:count:): expected 2 argument(s), got \(args.count)")
             }
             return .string(String(repeating: try unboxString(args[0]), count: try unboxInt(args[1])))
         }
 
-        i.registerMethod(on: "Double", name: "addingProduct") { receiver, args in
+        i.bridges["Double.addingProduct()"] = .method { receiver, args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("Double.addingProduct: expected 2 argument(s), got \(args.count)")
             }
@@ -763,53 +763,39 @@ extension Interpreter {
             return .double(recv.addingProduct(try toDouble(args[0]), try toDouble(args[1])))
         }
 
-        i.registerStaticMethod(on: "Double", name: "minimum") { args in
+        i.bridges["Double.Type.minimum()"] = .staticMethod { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("Double.minimum: expected 2 argument(s), got \(args.count)")
             }
             return .double(Double.minimum(try toDouble(args[0]), try toDouble(args[1])))
         }
 
-        i.registerStaticMethod(on: "Double", name: "maximum") { args in
+        i.bridges["Double.Type.maximum()"] = .staticMethod { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("Double.maximum: expected 2 argument(s), got \(args.count)")
             }
             return .double(Double.maximum(try toDouble(args[0]), try toDouble(args[1])))
         }
 
-        i.registerStaticMethod(on: "Double", name: "minimumMagnitude") { args in
+        i.bridges["Double.Type.minimumMagnitude()"] = .staticMethod { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("Double.minimumMagnitude: expected 2 argument(s), got \(args.count)")
             }
             return .double(Double.minimumMagnitude(try toDouble(args[0]), try toDouble(args[1])))
         }
 
-        i.registerStaticMethod(on: "Double", name: "maximumMagnitude") { args in
+        i.bridges["Double.Type.maximumMagnitude()"] = .staticMethod { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("Double.maximumMagnitude: expected 2 argument(s), got \(args.count)")
             }
             return .double(Double.maximumMagnitude(try toDouble(args[0]), try toDouble(args[1])))
         }
 
-        i.registerInit(on: "Double", labels: ["signOf", "magnitudeOf"]) { args in
+        i.bridges["Double(signOf:magnitudeOf:)"] = .`init` { args in
             guard args.count == 2 else {
                 throw RuntimeError.invalid("Double(signOf:magnitudeOf:): expected 2 argument(s), got \(args.count)")
             }
             return .double(Double(signOf: try toDouble(args[0]), magnitudeOf: try toDouble(args[1])))
-        }
-
-        i.registerComparator(on: "OpaquePointer") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? OpaquePointer,
-              case .opaque(_, let b) = rhs, let lb = b as? OpaquePointer
-        else { throw RuntimeError.invalid("OpaquePointer comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "SuspendingClock.Instant") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? SuspendingClock.Instant,
-              case .opaque(_, let b) = rhs, let lb = b as? SuspendingClock.Instant
-        else { throw RuntimeError.invalid("SuspendingClock.Instant comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
         }
 
         i.registerComparator(on: "UnsafeCurrentTask") { lhs, rhs in
@@ -819,52 +805,24 @@ extension Interpreter {
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "UnsafeRawPointer") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? UnsafeRawPointer,
-              case .opaque(_, let b) = rhs, let lb = b as? UnsafeRawPointer
-        else { throw RuntimeError.invalid("UnsafeRawPointer comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-
-        i.registerComparator(on: "String.Index") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? String.Index,
-              case .opaque(_, let b) = rhs, let lb = b as? String.Index
-        else { throw RuntimeError.invalid("String.Index comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-
-        i.registerComparator(on: "Unicode.CanonicalCombiningClass") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Unicode.CanonicalCombiningClass,
-              case .opaque(_, let b) = rhs, let lb = b as? Unicode.CanonicalCombiningClass
-        else { throw RuntimeError.invalid("Unicode.CanonicalCombiningClass comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-
-        i.registerComparator(on: "NotificationCenter.Publisher") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NotificationCenter.Publisher,
-              case .opaque(_, let b) = rhs, let lb = b as? NotificationCenter.Publisher
-        else { throw RuntimeError.invalid("NotificationCenter.Publisher comparison: bad payloads") }
+        i.registerComparator(on: "String.Comparator") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? String.Comparator,
+              case .opaque(_, let b) = rhs, let lb = b as? String.Comparator
+        else { throw RuntimeError.invalid("String.Comparator comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "String.LocalizationValue") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? String.LocalizationValue,
-              case .opaque(_, let b) = rhs, let lb = b as? String.LocalizationValue
-        else { throw RuntimeError.invalid("String.LocalizationValue comparison: bad payloads") }
+        i.registerComparator(on: "OpaquePointer") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? OpaquePointer,
+              case .opaque(_, let b) = rhs, let lb = b as? OpaquePointer
+        else { throw RuntimeError.invalid("OpaquePointer comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "TaskPriority") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? TaskPriority,
-              case .opaque(_, let b) = rhs, let lb = b as? TaskPriority
-        else { throw RuntimeError.invalid("TaskPriority comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-
-        i.registerComparator(on: "OperationQueue.SchedulerTimeType") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? OperationQueue.SchedulerTimeType,
-              case .opaque(_, let b) = rhs, let lb = b as? OperationQueue.SchedulerTimeType
-        else { throw RuntimeError.invalid("OperationQueue.SchedulerTimeType comparison: bad payloads") }
+        i.registerComparator(on: "RunLoop.SchedulerTimeType") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? RunLoop.SchedulerTimeType,
+              case .opaque(_, let b) = rhs, let lb = b as? RunLoop.SchedulerTimeType
+        else { throw RuntimeError.invalid("RunLoop.SchedulerTimeType comparison: bad payloads") }
         return la < lb ? -1 : (la > lb ? 1 : 0)
         }
 
@@ -875,31 +833,17 @@ extension Interpreter {
         return la < lb ? -1 : (la > lb ? 1 : 0)
         }
 
-        i.registerComparator(on: "RegexWordBoundaryKind") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? RegexWordBoundaryKind,
-              case .opaque(_, let b) = rhs, let lb = b as? RegexWordBoundaryKind
-        else { throw RuntimeError.invalid("RegexWordBoundaryKind comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "RegexRepetitionBehavior") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? RegexRepetitionBehavior,
-              case .opaque(_, let b) = rhs, let lb = b as? RegexRepetitionBehavior
-        else { throw RuntimeError.invalid("RegexRepetitionBehavior comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "ContinuousClock.Instant") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ContinuousClock.Instant,
-              case .opaque(_, let b) = rhs, let lb = b as? ContinuousClock.Instant
-        else { throw RuntimeError.invalid("ContinuousClock.Instant comparison: bad payloads") }
+        i.registerComparator(on: "String.Index") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? String.Index,
+              case .opaque(_, let b) = rhs, let lb = b as? String.Index
+        else { throw RuntimeError.invalid("String.Index comparison: bad payloads") }
         return la < lb ? -1 : (la > lb ? 1 : 0)
         }
 
-        i.registerComparator(on: "UnownedTaskExecutor") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? UnownedTaskExecutor,
-              case .opaque(_, let b) = rhs, let lb = b as? UnownedTaskExecutor
-        else { throw RuntimeError.invalid("UnownedTaskExecutor comparison: bad payloads") }
+        i.registerComparator(on: "String.Encoding") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? String.Encoding,
+              case .opaque(_, let b) = rhs, let lb = b as? String.Encoding
+        else { throw RuntimeError.invalid("String.Encoding comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
@@ -910,18 +854,88 @@ extension Interpreter {
         return la < lb ? -1 : (la > lb ? 1 : 0)
         }
 
-        i.registerComparator(on: "Duration") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Duration,
-              case .opaque(_, let b) = rhs, let lb = b as? Duration
-        else { throw RuntimeError.invalid("Duration comparison: bad payloads") }
+        i.registerComparator(on: "UnsafeRawPointer") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? UnsafeRawPointer,
+              case .opaque(_, let b) = rhs, let lb = b as? UnsafeRawPointer
+        else { throw RuntimeError.invalid("UnsafeRawPointer comparison: bad payloads") }
         return la < lb ? -1 : (la > lb ? 1 : 0)
         }
 
-        i.registerComparator(on: "RunLoop.SchedulerTimeType") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? RunLoop.SchedulerTimeType,
-              case .opaque(_, let b) = rhs, let lb = b as? RunLoop.SchedulerTimeType
-        else { throw RuntimeError.invalid("RunLoop.SchedulerTimeType comparison: bad payloads") }
+        i.registerComparator(on: "CodingUserInfoKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? CodingUserInfoKey,
+              case .opaque(_, let b) = rhs, let lb = b as? CodingUserInfoKey
+        else { throw RuntimeError.invalid("CodingUserInfoKey comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Duration.TimeFormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Duration.TimeFormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Duration.TimeFormatStyle
+        else { throw RuntimeError.invalid("Duration.TimeFormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "String.StandardComparator") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? String.StandardComparator,
+              case .opaque(_, let b) = rhs, let lb = b as? String.StandardComparator
+        else { throw RuntimeError.invalid("String.StandardComparator comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "ObjectIdentifier") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ObjectIdentifier,
+              case .opaque(_, let b) = rhs, let lb = b as? ObjectIdentifier
+        else { throw RuntimeError.invalid("ObjectIdentifier comparison: bad payloads") }
         return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+        i.registerComparator(on: "TaskPriority") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? TaskPriority,
+              case .opaque(_, let b) = rhs, let lb = b as? TaskPriority
+        else { throw RuntimeError.invalid("TaskPriority comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+        i.registerComparator(on: "String.LocalizationValue") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? String.LocalizationValue,
+              case .opaque(_, let b) = rhs, let lb = b as? String.LocalizationValue
+        else { throw RuntimeError.invalid("String.LocalizationValue comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Unicode.CanonicalCombiningClass") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Unicode.CanonicalCombiningClass,
+              case .opaque(_, let b) = rhs, let lb = b as? Unicode.CanonicalCombiningClass
+        else { throw RuntimeError.invalid("Unicode.CanonicalCombiningClass comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+        i.registerComparator(on: "RegexRepetitionBehavior") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? RegexRepetitionBehavior,
+              case .opaque(_, let b) = rhs, let lb = b as? RegexRepetitionBehavior
+        else { throw RuntimeError.invalid("RegexRepetitionBehavior comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Duration.UnitsFormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Duration.UnitsFormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Duration.UnitsFormatStyle
+        else { throw RuntimeError.invalid("Duration.UnitsFormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "ContinuousClock.Instant") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ContinuousClock.Instant,
+              case .opaque(_, let b) = rhs, let lb = b as? ContinuousClock.Instant
+        else { throw RuntimeError.invalid("ContinuousClock.Instant comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+        i.registerComparator(on: "NotificationCenter.Publisher") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NotificationCenter.Publisher,
+              case .opaque(_, let b) = rhs, let lb = b as? NotificationCenter.Publisher
+        else { throw RuntimeError.invalid("NotificationCenter.Publisher comparison: bad payloads") }
+        return la == lb ? 0 : -1
         }
 
         i.registerComparator(on: "RegexSemanticLevel") { lhs, rhs in
@@ -938,38 +952,17 @@ extension Interpreter {
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "String.StandardComparator") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? String.StandardComparator,
-              case .opaque(_, let b) = rhs, let lb = b as? String.StandardComparator
-        else { throw RuntimeError.invalid("String.StandardComparator comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "CodingUserInfoKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? CodingUserInfoKey,
-              case .opaque(_, let b) = rhs, let lb = b as? CodingUserInfoKey
-        else { throw RuntimeError.invalid("CodingUserInfoKey comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "ObjectIdentifier") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ObjectIdentifier,
-              case .opaque(_, let b) = rhs, let lb = b as? ObjectIdentifier
-        else { throw RuntimeError.invalid("ObjectIdentifier comparison: bad payloads") }
+        i.registerComparator(on: "Duration") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Duration,
+              case .opaque(_, let b) = rhs, let lb = b as? Duration
+        else { throw RuntimeError.invalid("Duration comparison: bad payloads") }
         return la < lb ? -1 : (la > lb ? 1 : 0)
         }
 
-        i.registerComparator(on: "Duration.TimeFormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Duration.TimeFormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Duration.TimeFormatStyle
-        else { throw RuntimeError.invalid("Duration.TimeFormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "String.Comparator") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? String.Comparator,
-              case .opaque(_, let b) = rhs, let lb = b as? String.Comparator
-        else { throw RuntimeError.invalid("String.Comparator comparison: bad payloads") }
+        i.registerComparator(on: "RegexWordBoundaryKind") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? RegexWordBoundaryKind,
+              case .opaque(_, let b) = rhs, let lb = b as? RegexWordBoundaryKind
+        else { throw RuntimeError.invalid("RegexWordBoundaryKind comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
@@ -980,18 +973,18 @@ extension Interpreter {
         return la < lb ? -1 : (la > lb ? 1 : 0)
         }
 
-        i.registerComparator(on: "String.Encoding") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? String.Encoding,
-              case .opaque(_, let b) = rhs, let lb = b as? String.Encoding
-        else { throw RuntimeError.invalid("String.Encoding comparison: bad payloads") }
+        i.registerComparator(on: "UnownedTaskExecutor") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? UnownedTaskExecutor,
+              case .opaque(_, let b) = rhs, let lb = b as? UnownedTaskExecutor
+        else { throw RuntimeError.invalid("UnownedTaskExecutor comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "Duration.UnitsFormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Duration.UnitsFormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Duration.UnitsFormatStyle
-        else { throw RuntimeError.invalid("Duration.UnitsFormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
+        i.registerComparator(on: "OperationQueue.SchedulerTimeType") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? OperationQueue.SchedulerTimeType,
+              case .opaque(_, let b) = rhs, let lb = b as? OperationQueue.SchedulerTimeType
+        else { throw RuntimeError.invalid("OperationQueue.SchedulerTimeType comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
         }
 
         i.registerComparator(on: "Decimal.FormatStyle") { lhs, rhs in
@@ -999,6 +992,13 @@ extension Interpreter {
               case .opaque(_, let b) = rhs, let lb = b as? Decimal.FormatStyle
         else { throw RuntimeError.invalid("Decimal.FormatStyle comparison: bad payloads") }
         return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "SuspendingClock.Instant") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? SuspendingClock.Instant,
+              case .opaque(_, let b) = rhs, let lb = b as? SuspendingClock.Instant
+        else { throw RuntimeError.invalid("SuspendingClock.Instant comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
         }
     }
 }
