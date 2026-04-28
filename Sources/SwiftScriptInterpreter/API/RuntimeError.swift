@@ -1,3 +1,5 @@
+import Foundation
+
 public enum RuntimeError: Error, CustomStringConvertible {
     case unsupported(String, at: Int)
     case invalid(String)
@@ -41,11 +43,61 @@ struct BreakSignal: Error { let label: String? }
 /// targets a specific labeled loop; if `nil`, continues the innermost.
 struct ContinueSignal: Error { let label: String? }
 
-/// Raised by a `throw` statement; caught by `do/catch` or surfaces as a
-/// runtime error if uncaught at the top level.
-struct UserThrowSignal: Error {
-    let value: Value
+/// Wraps a value thrown from script `throw` so it can travel through
+/// host async/throwing code and be caught with normal Swift `catch`
+/// clauses. The thrown enum / struct payload is available as `value`,
+/// with convenience accessors for the most common shapes.
+public struct ScriptError: Error, CustomStringConvertible {
+    public let value: Value
+
+    public init(_ value: Value) {
+        self.value = value
+    }
+
+    /// Compatibility init matching the old `UserThrowSignal(value:)`
+    /// shape used at every interpreter throw site. Keeps the existing
+    /// runtime call sites unchanged.
+    init(value: Value) {
+        self.value = value
+    }
+
+    /// Type name of the thrown value (`E` in `throw E.bad`, struct name
+    /// for struct payloads). Nil for primitives or composite values
+    /// without a type name.
+    public var typeName: String? {
+        switch value {
+        case .enumValue(let n, _, _): return n
+        case .structValue(let n, _):  return n
+        case .classInstance(let i):   return i.typeName
+        default: return nil
+        }
+    }
+
+    /// Case name when the thrown value is an enum case.
+    public var caseName: String? {
+        if case .enumValue(_, let c, _) = value { return c }
+        return nil
+    }
+
+    public var description: String {
+        switch value {
+        case .enumValue(let n, let c, let payload):
+            if payload.isEmpty { return "\(n).\(c)" }
+            return "\(n).\(c)(\(payload.map { "\($0)" }.joined(separator: ", ")))"
+        default:
+            return String(describing: value)
+        }
+    }
 }
+
+extension ScriptError: LocalizedError {
+    public var errorDescription: String? { description }
+}
+
+/// Internal alias. The runtime threw `UserThrowSignal` historically;
+/// keeping the name lets the existing catch sites compile unchanged
+/// while host callers see a `ScriptError`.
+typealias UserThrowSignal = ScriptError
 
 /// Thrown by `fallthrough`; caught by the enclosing switch's case-execution
 /// loop, which then runs the next case's body without checking its pattern.

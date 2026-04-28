@@ -210,34 +210,15 @@ extension Interpreter {
         )
     }
 
-    /// Iterable adapter: returns a Swift sequence of `Value`s for any
-    /// iterable runtime value (range, array, string, dictionary).
+    /// Iterable adapter for `for x in y` loops. Delegates to the
+    /// `ScriptSequence` API so every iteration site shares the same
+    /// shape-handling and we don't drift between this and other
+    /// internal walkers.
     private func iterableElements(of value: Value, at offset: Int) throws -> AnySequence<Value> {
-        switch value {
-        case .range(let lo, let hi, let closed):
-            let end = closed ? hi + 1 : hi
-            return AnySequence((lo..<end).lazy.map { .int($0) })
-        case .array(let xs):
-            return AnySequence(xs)
-        case .set(let xs):
-            return AnySequence(xs)
-        case .string(let s):
-            return AnySequence(s.lazy.map { .string(String($0)) })
-        case .dict(let entries):
-            return AnySequence(entries.lazy.map {
-                Value.tuple([$0.key, $0.value], labels: ["key", "value"])
-            })
-        case .opaque("TaskGroup", let box):
-            // `for await result in group` just iterates the buffered
-            // results. Real Swift would yield as tasks complete; we run
-            // synchronously, so they're already all there.
-            if let group = box as? TaskGroupBox {
-                return AnySequence(group.results)
-            }
-            throw RuntimeError.invalid("malformed TaskGroup")
-        default:
+        guard ScriptSequence.isIterable(value) else {
             throw RuntimeError.invalid("not iterable: \(typeName(value))")
         }
+        return AnySequence(ScriptSequence(value))
     }
 
     /// Handle an `if let` / `while let` / `guard let` binding. Returns true if
