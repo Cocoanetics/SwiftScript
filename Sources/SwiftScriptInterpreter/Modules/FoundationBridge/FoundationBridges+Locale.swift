@@ -6,19 +6,13 @@ import FoundationNetworking
 #endif
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let locale: [String: Bridge] = [
+    nonisolated(unsafe) static let locale: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "static let Locale.autoupdatingCurrent": .staticValue(boxOpaque(Locale.autoupdatingCurrent, typeName: "Locale")),
     "static let Locale.current": .staticValue(boxOpaque(Locale.current, typeName: "Locale")),
     "var Locale.identifier: String": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         return .string(recv.identifier)
-    },
-    "var Locale.exemplarCharacterSet: CharacterSet?": .computed { receiver in
-        let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
-        if let _v = recv.exemplarCharacterSet {
-            return .optional(boxOpaque(_v, typeName: "CharacterSet"))
-        }
-        return .optional(nil)
     },
     "var Locale.calendar: Calendar": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
@@ -189,5 +183,16 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
-    ]
+        ]
+#if canImport(Darwin)
+        d["var Locale.exemplarCharacterSet: CharacterSet?"] = .computed { receiver in
+        let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
+        if let _v = recv.exemplarCharacterSet {
+            return .optional(boxOpaque(_v, typeName: "CharacterSet"))
+        }
+        return .optional(nil)
+    }
+#endif
+        return d
+    }()
 }

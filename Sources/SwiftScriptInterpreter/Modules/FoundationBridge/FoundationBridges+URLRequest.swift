@@ -6,7 +6,8 @@ import FoundationNetworking
 #endif
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let uRLRequest: [String: Bridge] = [
+    nonisolated(unsafe) static let uRLRequest: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var URLRequest.url: URL?": .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         if let _v = recv.url {
@@ -29,26 +30,6 @@ extension FoundationBridges {
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         return .bool(recv.allowsCellularAccess)
     },
-    "var URLRequest.allowsExpensiveNetworkAccess: Bool": .computed { receiver in
-        let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
-        return .bool(recv.allowsExpensiveNetworkAccess)
-    },
-    "var URLRequest.allowsConstrainedNetworkAccess: Bool": .computed { receiver in
-        let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
-        return .bool(recv.allowsConstrainedNetworkAccess)
-    },
-    "var URLRequest.assumesHTTP3Capable: Bool": .computed { receiver in
-        let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
-        return .bool(recv.assumesHTTP3Capable)
-    },
-    "var URLRequest.requiresDNSSECValidation: Bool": .computed { receiver in
-        let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
-        return .bool(recv.requiresDNSSECValidation)
-    },
-    "var URLRequest.allowsPersistentDNS: Bool": .computed { receiver in
-        let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
-        return .bool(recv.allowsPersistentDNS)
-    },
     "var URLRequest.httpMethod: String?": .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         if let _v = recv.httpMethod {
@@ -66,13 +47,6 @@ extension FoundationBridges {
     "var URLRequest.httpShouldHandleCookies: Bool": .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         return .bool(recv.httpShouldHandleCookies)
-    },
-    "var URLRequest.cookiePartitionIdentifier: String?": .computed { receiver in
-        let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
-        if let _v = recv.cookiePartitionIdentifier {
-            return .optional(.string(_v))
-        }
-        return .optional(nil)
     },
     "var URLRequest.hashValue: Int": .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
@@ -102,5 +76,36 @@ extension FoundationBridges {
         }
         return boxOpaque(URLRequest(url: try unboxOpaque(args[0], as: URL.self, typeName: "URL"), timeoutInterval: try toDouble(args[1])), typeName: "URLRequest")
     },
-    ]
+        ]
+#if canImport(Darwin)
+        d["var URLRequest.allowsExpensiveNetworkAccess: Bool"] = .computed { receiver in
+        let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+        return .bool(recv.allowsExpensiveNetworkAccess)
+    }
+        d["var URLRequest.allowsConstrainedNetworkAccess: Bool"] = .computed { receiver in
+        let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+        return .bool(recv.allowsConstrainedNetworkAccess)
+    }
+        d["var URLRequest.assumesHTTP3Capable: Bool"] = .computed { receiver in
+        let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+        return .bool(recv.assumesHTTP3Capable)
+    }
+        d["var URLRequest.requiresDNSSECValidation: Bool"] = .computed { receiver in
+        let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+        return .bool(recv.requiresDNSSECValidation)
+    }
+        d["var URLRequest.allowsPersistentDNS: Bool"] = .computed { receiver in
+        let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+        return .bool(recv.allowsPersistentDNS)
+    }
+        d["var URLRequest.cookiePartitionIdentifier: String?"] = .computed { receiver in
+        let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+        if let _v = recv.cookiePartitionIdentifier {
+            return .optional(.string(_v))
+        }
+        return .optional(nil)
+    }
+#endif
+        return d
+    }()
 }

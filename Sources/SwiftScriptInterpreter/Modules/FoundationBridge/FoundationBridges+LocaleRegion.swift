@@ -6,7 +6,8 @@ import FoundationNetworking
 #endif
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let localeRegion: [String: Bridge] = [
+    nonisolated(unsafe) static let localeRegion: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Locale.Region.debugDescription: String": .computed { receiver in
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         return .string(recv.debugDescription)
@@ -293,13 +294,6 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
-    "var Locale.Region.subcontinent: Locale.Region?": .computed { receiver in
-        let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
-        if let _v = recv.subcontinent {
-            return .optional(boxOpaque(_v, typeName: "Locale.Region"))
-        }
-        return .optional(nil)
-    },
     "init Locale.Region(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Region(stringLiteral:): expected 1 argument(s), got \(args.count)")
@@ -312,5 +306,16 @@ extension FoundationBridges {
         }
         return boxOpaque(Locale.Region(try unboxString(args[0])), typeName: "Locale.Region")
     },
-    ]
+        ]
+#if canImport(Darwin)
+        d["var Locale.Region.subcontinent: Locale.Region?"] = .computed { receiver in
+        let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
+        if let _v = recv.subcontinent {
+            return .optional(boxOpaque(_v, typeName: "Locale.Region"))
+        }
+        return .optional(nil)
+    }
+#endif
+        return d
+    }()
 }

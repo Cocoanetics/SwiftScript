@@ -6,7 +6,8 @@ import FoundationNetworking
 #endif
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let duration: [String: Bridge] = [
+    nonisolated(unsafe) static let duration: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "func Duration.formatted()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("Duration.formatted: expected 0 argument(s), got \(args.count)")
@@ -41,11 +42,15 @@ extension FoundationBridges {
         }
         return boxOpaque(Duration.microseconds(try toDouble(args[0])), typeName: "Duration")
     },
-    "static func Duration.nanoseconds()": .staticMethod { args in
+        ]
+#if canImport(Darwin)
+        d["static func Duration.nanoseconds()"] = .staticMethod { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Duration.nanoseconds: expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Duration.nanoseconds(try toDouble(args[0])), typeName: "Duration")
-    },
-    ]
+    }
+#endif
+        return d
+    }()
 }

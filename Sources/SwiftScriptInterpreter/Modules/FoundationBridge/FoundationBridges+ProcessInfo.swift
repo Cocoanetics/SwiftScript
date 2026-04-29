@@ -6,7 +6,8 @@ import FoundationNetworking
 #endif
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let processInfo: [String: Bridge] = [
+    nonisolated(unsafe) static let processInfo: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "static let ProcessInfo.processInfo": .staticValue(boxOpaque(ProcessInfo.processInfo, typeName: "ProcessInfo")),
     "var ProcessInfo.hostName: String": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
@@ -40,18 +41,22 @@ extension FoundationBridges {
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .double(recv.systemUptime)
     },
-    "var ProcessInfo.isLowPowerModeEnabled: Bool": .computed { receiver in
+        ]
+#if canImport(Darwin)
+        d["var ProcessInfo.isLowPowerModeEnabled: Bool"] = .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .bool(recv.isLowPowerModeEnabled)
-    },
-    "var ProcessInfo.isMacCatalystApp: Bool": .computed { receiver in
+    }
+        d["var ProcessInfo.isMacCatalystApp: Bool"] = .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .bool(recv.isMacCatalystApp)
-    },
-    "var ProcessInfo.isiOSAppOnMac: Bool": .computed { receiver in
+    }
+        d["var ProcessInfo.isiOSAppOnMac: Bool"] = .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .bool(recv.isiOSAppOnMac)
-    },
-    "static let ProcessInfo.thermalStateDidChangeNotification": .staticValue(boxOpaque(ProcessInfo.thermalStateDidChangeNotification, typeName: "NSNotification.Name")),
-    ]
+    }
+        d["static let ProcessInfo.thermalStateDidChangeNotification"] = .staticValue(boxOpaque(ProcessInfo.thermalStateDidChangeNotification, typeName: "NSNotification.Name"))
+#endif
+        return d
+    }()
 }

@@ -6,7 +6,8 @@ import FoundationNetworking
 #endif
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let fileManager: [String: Bridge] = [
+    nonisolated(unsafe) static let fileManager: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var FileManager.currentDirectoryPath: String": .computed { receiver in
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
         return .string(recv.currentDirectoryPath)
@@ -97,47 +98,6 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
-    "func FileManager.isUbiquitousItem()": .method { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("FileManager.isUbiquitousItem: expected 1 argument(s), got \(args.count)")
-        }
-        let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        return .bool(recv.isUbiquitousItem(at: try unboxOpaque(args[0], as: URL.self, typeName: "URL")))
-    },
-    "func FileManager.startDownloadingUbiquitousItem()": .method { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("FileManager.startDownloadingUbiquitousItem: expected 1 argument(s), got \(args.count)")
-        }
-        let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        do {
-            _ = try recv.startDownloadingUbiquitousItem(at: try unboxOpaque(args[0], as: URL.self, typeName: "URL"))
-            return .void
-        } catch {
-            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
-        }
-    },
-    "func FileManager.evictUbiquitousItem()": .method { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("FileManager.evictUbiquitousItem: expected 1 argument(s), got \(args.count)")
-        }
-        let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        do {
-            _ = try recv.evictUbiquitousItem(at: try unboxOpaque(args[0], as: URL.self, typeName: "URL"))
-            return .void
-        } catch {
-            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
-        }
-    },
-    "func FileManager.containerURL()": .method { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("FileManager.containerURL: expected 1 argument(s), got \(args.count)")
-        }
-        let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        if let _v = recv.containerURL(forSecurityApplicationGroupIdentifier: try unboxString(args[0])) {
-            return .optional(boxOpaque(_v, typeName: "URL"))
-        }
-        return .optional(nil)
-    },
     "func FileManager.createSymbolicLink()": .method { receiver, args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("FileManager.createSymbolicLink: expected 2 argument(s), got \(args.count)")
@@ -205,7 +165,50 @@ extension FoundationBridges {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
     },
-    "func FileManager.setUbiquitous()": .method { receiver, args in
+        ]
+#if canImport(Darwin)
+        d["func FileManager.isUbiquitousItem()"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("FileManager.isUbiquitousItem: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
+        return .bool(recv.isUbiquitousItem(at: try unboxOpaque(args[0], as: URL.self, typeName: "URL")))
+    }
+        d["func FileManager.startDownloadingUbiquitousItem()"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("FileManager.startDownloadingUbiquitousItem: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
+        do {
+            _ = try recv.startDownloadingUbiquitousItem(at: try unboxOpaque(args[0], as: URL.self, typeName: "URL"))
+            return .void
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    }
+        d["func FileManager.evictUbiquitousItem()"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("FileManager.evictUbiquitousItem: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
+        do {
+            _ = try recv.evictUbiquitousItem(at: try unboxOpaque(args[0], as: URL.self, typeName: "URL"))
+            return .void
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    }
+        d["func FileManager.containerURL()"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("FileManager.containerURL: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
+        if let _v = recv.containerURL(forSecurityApplicationGroupIdentifier: try unboxString(args[0])) {
+            return .optional(boxOpaque(_v, typeName: "URL"))
+        }
+        return .optional(nil)
+    }
+        d["func FileManager.setUbiquitous()"] = .method { receiver, args in
         guard args.count == 3 else {
             throw RuntimeError.invalid("FileManager.setUbiquitous: expected 3 argument(s), got \(args.count)")
         }
@@ -216,6 +219,8 @@ extension FoundationBridges {
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
-    },
-    ]
+    }
+#endif
+        return d
+    }()
 }

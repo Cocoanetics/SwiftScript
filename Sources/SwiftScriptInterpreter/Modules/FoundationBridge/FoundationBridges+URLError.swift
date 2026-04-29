@@ -6,7 +6,8 @@ import FoundationNetworking
 #endif
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let uRLError: [String: Bridge] = [
+    nonisolated(unsafe) static let uRLError: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var URLError.errorCode: Int": .computed { receiver in
         let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
         return .int(recv.errorCode)
@@ -24,20 +25,6 @@ extension FoundationBridges {
         let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
         if let _v = recv.failingURL {
             return .optional(boxOpaque(_v, typeName: "URL"))
-        }
-        return .optional(nil)
-    },
-    "var URLError.downloadTaskResumeData: Data?": .computed { receiver in
-        let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
-        if let _v = recv.downloadTaskResumeData {
-            return .optional(boxOpaque(_v, typeName: "Data"))
-        }
-        return .optional(nil)
-    },
-    "var URLError.uploadTaskResumeData: Data?": .computed { receiver in
-        let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
-        if let _v = recv.uploadTaskResumeData {
-            return .optional(boxOpaque(_v, typeName: "Data"))
         }
         return .optional(nil)
     },
@@ -61,11 +48,9 @@ extension FoundationBridges {
     "static let URLError.cannotDecodeRawData": .staticValue(boxOpaque(URLError.cannotDecodeRawData, typeName: "URLError.Code")),
     "static let URLError.cannotDecodeContentData": .staticValue(boxOpaque(URLError.cannotDecodeContentData, typeName: "URLError.Code")),
     "static let URLError.cannotParseResponse": .staticValue(boxOpaque(URLError.cannotParseResponse, typeName: "URLError.Code")),
-    "static let URLError.appTransportSecurityRequiresSecureConnection": .staticValue(boxOpaque(URLError.appTransportSecurityRequiresSecureConnection, typeName: "URLError.Code")),
     "static let URLError.fileDoesNotExist": .staticValue(boxOpaque(URLError.fileDoesNotExist, typeName: "URLError.Code")),
     "static let URLError.fileIsDirectory": .staticValue(boxOpaque(URLError.fileIsDirectory, typeName: "URLError.Code")),
     "static let URLError.noPermissionsToReadFile": .staticValue(boxOpaque(URLError.noPermissionsToReadFile, typeName: "URLError.Code")),
-    "static let URLError.dataLengthExceedsMaximum": .staticValue(boxOpaque(URLError.dataLengthExceedsMaximum, typeName: "URLError.Code")),
     "static let URLError.secureConnectionFailed": .staticValue(boxOpaque(URLError.secureConnectionFailed, typeName: "URLError.Code")),
     "static let URLError.serverCertificateHasBadDate": .staticValue(boxOpaque(URLError.serverCertificateHasBadDate, typeName: "URLError.Code")),
     "static let URLError.serverCertificateUntrusted": .staticValue(boxOpaque(URLError.serverCertificateUntrusted, typeName: "URLError.Code")),
@@ -89,5 +74,25 @@ extension FoundationBridges {
     "static let URLError.backgroundSessionRequiresSharedContainer": .staticValue(boxOpaque(URLError.backgroundSessionRequiresSharedContainer, typeName: "URLError.Code")),
     "static let URLError.backgroundSessionInUseByAnotherProcess": .staticValue(boxOpaque(URLError.backgroundSessionInUseByAnotherProcess, typeName: "URLError.Code")),
     "static let URLError.backgroundSessionWasDisconnected": .staticValue(boxOpaque(URLError.backgroundSessionWasDisconnected, typeName: "URLError.Code")),
-    ]
+        ]
+#if canImport(Darwin)
+        d["var URLError.downloadTaskResumeData: Data?"] = .computed { receiver in
+        let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
+        if let _v = recv.downloadTaskResumeData {
+            return .optional(boxOpaque(_v, typeName: "Data"))
+        }
+        return .optional(nil)
+    }
+        d["var URLError.uploadTaskResumeData: Data?"] = .computed { receiver in
+        let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
+        if let _v = recv.uploadTaskResumeData {
+            return .optional(boxOpaque(_v, typeName: "Data"))
+        }
+        return .optional(nil)
+    }
+        d["static let URLError.appTransportSecurityRequiresSecureConnection"] = .staticValue(boxOpaque(URLError.appTransportSecurityRequiresSecureConnection, typeName: "URLError.Code"))
+        d["static let URLError.dataLengthExceedsMaximum"] = .staticValue(boxOpaque(URLError.dataLengthExceedsMaximum, typeName: "URLError.Code"))
+#endif
+        return d
+    }()
 }
