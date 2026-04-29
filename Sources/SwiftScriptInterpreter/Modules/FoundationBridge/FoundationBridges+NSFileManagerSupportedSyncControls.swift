@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSFileManagerSupportedSyncControls(), typeName: "NSFileManagerSupportedSyncControls")
     },
-    "var NSFileManagerSupportedSyncControls.isEmpty": .computed { receiver in
+    "var NSFileManagerSupportedSyncControls.isEmpty: Bool": .computed { receiver in
         let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
         return .bool(recv.isEmpty)
     },
@@ -86,5 +86,18 @@ extension FoundationBridges {
         let recv: NSFileManagerSupportedSyncControls = try unboxOpaque(receiver, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")
         return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls")))
     },
+        "init NSFileManagerSupportedSyncControls(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSFileManagerSupportedSyncControls(arrayLiteral:): expected array literal")
+            }
+            var result = NSFileManagerSupportedSyncControls()
+            for element in elements {
+                let item: NSFileManagerSupportedSyncControls = try unboxOpaque(
+                    element, as: NSFileManagerSupportedSyncControls.self, typeName: "NSFileManagerSupportedSyncControls"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSFileManagerSupportedSyncControls")
+        },
     ]
 }

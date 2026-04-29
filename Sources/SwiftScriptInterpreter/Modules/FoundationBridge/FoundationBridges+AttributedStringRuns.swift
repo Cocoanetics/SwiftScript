@@ -4,19 +4,19 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let attributedStringRuns: [String: Bridge] = [
-    "var AttributedString.Runs.isEmpty": .computed { receiver in
+    "var AttributedString.Runs.isEmpty: Bool": .computed { receiver in
         let recv: AttributedString.Runs = try unboxOpaque(receiver, as: AttributedString.Runs.self, typeName: "AttributedString.Runs")
         return .bool(recv.isEmpty)
     },
-    "var AttributedString.Runs.underestimatedCount": .computed { receiver in
+    "var AttributedString.Runs.underestimatedCount: Int": .computed { receiver in
         let recv: AttributedString.Runs = try unboxOpaque(receiver, as: AttributedString.Runs.self, typeName: "AttributedString.Runs")
         return .int(recv.underestimatedCount)
     },
-    "var AttributedString.Runs.count": .computed { receiver in
+    "var AttributedString.Runs.count: Int": .computed { receiver in
         let recv: AttributedString.Runs = try unboxOpaque(receiver, as: AttributedString.Runs.self, typeName: "AttributedString.Runs")
         return .int(recv.count)
     },
-    "var AttributedString.Runs.description": .computed { receiver in
+    "var AttributedString.Runs.description: String": .computed { receiver in
         let recv: AttributedString.Runs = try unboxOpaque(receiver, as: AttributedString.Runs.self, typeName: "AttributedString.Runs")
         return .string(recv.description)
     },

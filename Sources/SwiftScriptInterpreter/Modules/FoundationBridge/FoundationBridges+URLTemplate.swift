@@ -4,11 +4,11 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let uRLTemplate: [String: Bridge] = [
-    "var URL.Template.hashValue": .computed { receiver in
+    "var URL.Template.hashValue: Int": .computed { receiver in
         let recv: URL.Template = try unboxOpaque(receiver, as: URL.Template.self, typeName: "URL.Template")
         return .int(recv.hashValue)
     },
-    "var URL.Template.description": .computed { receiver in
+    "var URL.Template.description: String": .computed { receiver in
         let recv: URL.Template = try unboxOpaque(receiver, as: URL.Template.self, typeName: "URL.Template")
         return .string(recv.description)
     },

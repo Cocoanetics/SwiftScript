@@ -4,18 +4,18 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let durationUnitsFormatStyle: [String: Bridge] = [
-    "var Duration.UnitsFormatStyle.locale": .computed { receiver in
+    "var Duration.UnitsFormatStyle.locale: Locale": .computed { receiver in
         let recv: Duration.UnitsFormatStyle = try unboxOpaque(receiver, as: Duration.UnitsFormatStyle.self, typeName: "Duration.UnitsFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
-    "var Duration.UnitsFormatStyle.maximumUnitCount": .computed { receiver in
+    "var Duration.UnitsFormatStyle.maximumUnitCount: Int?": .computed { receiver in
         let recv: Duration.UnitsFormatStyle = try unboxOpaque(receiver, as: Duration.UnitsFormatStyle.self, typeName: "Duration.UnitsFormatStyle")
         if let _v = recv.maximumUnitCount {
             return .optional(.int(_v))
         }
         return .optional(nil)
     },
-    "var Duration.UnitsFormatStyle.hashValue": .computed { receiver in
+    "var Duration.UnitsFormatStyle.hashValue: Int": .computed { receiver in
         let recv: Duration.UnitsFormatStyle = try unboxOpaque(receiver, as: Duration.UnitsFormatStyle.self, typeName: "Duration.UnitsFormatStyle")
         return .int(recv.hashValue)
     },

@@ -5,43 +5,47 @@ import Foundation
 extension FoundationBridges {
     nonisolated(unsafe) static let processInfo: [String: Bridge] = [
     "static let ProcessInfo.processInfo": .staticValue(boxOpaque(ProcessInfo.processInfo, typeName: "ProcessInfo")),
-    "var ProcessInfo.hostName": .computed { receiver in
+    "var ProcessInfo.hostName: String": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .string(recv.hostName)
     },
-    "var ProcessInfo.processName": .computed { receiver in
+    "var ProcessInfo.processName: String": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .string(recv.processName)
     },
-    "var ProcessInfo.globallyUniqueString": .computed { receiver in
+        "set var ProcessInfo.processName: String": .setter { receiver, newValue in
+            let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
+            recv.processName = try unboxString(newValue)
+        },
+    "var ProcessInfo.globallyUniqueString: String": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .string(recv.globallyUniqueString)
     },
-    "var ProcessInfo.operatingSystemVersionString": .computed { receiver in
+    "var ProcessInfo.operatingSystemVersionString: String": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .string(recv.operatingSystemVersionString)
     },
-    "var ProcessInfo.processorCount": .computed { receiver in
+    "var ProcessInfo.processorCount: Int": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .int(recv.processorCount)
     },
-    "var ProcessInfo.activeProcessorCount": .computed { receiver in
+    "var ProcessInfo.activeProcessorCount: Int": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .int(recv.activeProcessorCount)
     },
-    "var ProcessInfo.systemUptime": .computed { receiver in
+    "var ProcessInfo.systemUptime: Double": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .double(recv.systemUptime)
     },
-    "var ProcessInfo.isLowPowerModeEnabled": .computed { receiver in
+    "var ProcessInfo.isLowPowerModeEnabled: Bool": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .bool(recv.isLowPowerModeEnabled)
     },
-    "var ProcessInfo.isMacCatalystApp": .computed { receiver in
+    "var ProcessInfo.isMacCatalystApp: Bool": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .bool(recv.isMacCatalystApp)
     },
-    "var ProcessInfo.isiOSAppOnMac": .computed { receiver in
+    "var ProcessInfo.isiOSAppOnMac: Bool": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .bool(recv.isiOSAppOnMac)
     },

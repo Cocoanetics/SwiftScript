@@ -10,12 +10,25 @@ extension FoundationBridges {
         }
         return boxOpaque(NSComparisonPredicate.Options(), typeName: "NSComparisonPredicate.Options")
     },
-    "var NSComparisonPredicate.Options.isEmpty": .computed { receiver in
+    "var NSComparisonPredicate.Options.isEmpty: Bool": .computed { receiver in
         let recv: NSComparisonPredicate.Options = try unboxOpaque(receiver, as: NSComparisonPredicate.Options.self, typeName: "NSComparisonPredicate.Options")
         return .bool(recv.isEmpty)
     },
     "static let NSComparisonPredicate.Options.caseInsensitive": .staticValue(boxOpaque(NSComparisonPredicate.Options.caseInsensitive, typeName: "NSComparisonPredicate.Options")),
     "static let NSComparisonPredicate.Options.diacriticInsensitive": .staticValue(boxOpaque(NSComparisonPredicate.Options.diacriticInsensitive, typeName: "NSComparisonPredicate.Options")),
     "static let NSComparisonPredicate.Options.normalized": .staticValue(boxOpaque(NSComparisonPredicate.Options.normalized, typeName: "NSComparisonPredicate.Options")),
+        "init NSComparisonPredicate.Options(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSComparisonPredicate.Options(arrayLiteral:): expected array literal")
+            }
+            var result = NSComparisonPredicate.Options()
+            for element in elements {
+                let item: NSComparisonPredicate.Options = try unboxOpaque(
+                    element, as: NSComparisonPredicate.Options.self, typeName: "NSComparisonPredicate.Options"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSComparisonPredicate.Options")
+        },
     ]
 }

@@ -10,11 +10,24 @@ extension FoundationBridges {
         }
         return boxOpaque(NSString.EncodingConversionOptions(), typeName: "NSString.EncodingConversionOptions")
     },
-    "var NSString.EncodingConversionOptions.isEmpty": .computed { receiver in
+    "var NSString.EncodingConversionOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSString.EncodingConversionOptions = try unboxOpaque(receiver, as: NSString.EncodingConversionOptions.self, typeName: "NSString.EncodingConversionOptions")
         return .bool(recv.isEmpty)
     },
     "static let NSString.EncodingConversionOptions.allowLossy": .staticValue(boxOpaque(NSString.EncodingConversionOptions.allowLossy, typeName: "NSString.EncodingConversionOptions")),
     "static let NSString.EncodingConversionOptions.externalRepresentation": .staticValue(boxOpaque(NSString.EncodingConversionOptions.externalRepresentation, typeName: "NSString.EncodingConversionOptions")),
+        "init NSString.EncodingConversionOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSString.EncodingConversionOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSString.EncodingConversionOptions()
+            for element in elements {
+                let item: NSString.EncodingConversionOptions = try unboxOpaque(
+                    element, as: NSString.EncodingConversionOptions.self, typeName: "NSString.EncodingConversionOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSString.EncodingConversionOptions")
+        },
     ]
 }

@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(ProcessInfo.ActivityOptions(), typeName: "ProcessInfo.ActivityOptions")
     },
-    "var ProcessInfo.ActivityOptions.isEmpty": .computed { receiver in
+    "var ProcessInfo.ActivityOptions.isEmpty: Bool": .computed { receiver in
         let recv: ProcessInfo.ActivityOptions = try unboxOpaque(receiver, as: ProcessInfo.ActivityOptions.self, typeName: "ProcessInfo.ActivityOptions")
         return .bool(recv.isEmpty)
     },
@@ -25,5 +25,18 @@ extension FoundationBridges {
     "static let ProcessInfo.ActivityOptions.background": .staticValue(boxOpaque(ProcessInfo.ActivityOptions.background, typeName: "ProcessInfo.ActivityOptions")),
     "static let ProcessInfo.ActivityOptions.latencyCritical": .staticValue(boxOpaque(ProcessInfo.ActivityOptions.latencyCritical, typeName: "ProcessInfo.ActivityOptions")),
     "static let ProcessInfo.ActivityOptions.userInteractive": .staticValue(boxOpaque(ProcessInfo.ActivityOptions.userInteractive, typeName: "ProcessInfo.ActivityOptions")),
+        "init ProcessInfo.ActivityOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("ProcessInfo.ActivityOptions(arrayLiteral:): expected array literal")
+            }
+            var result = ProcessInfo.ActivityOptions()
+            for element in elements {
+                let item: ProcessInfo.ActivityOptions = try unboxOpaque(
+                    element, as: ProcessInfo.ActivityOptions.self, typeName: "ProcessInfo.ActivityOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "ProcessInfo.ActivityOptions")
+        },
     ]
 }

@@ -27,11 +27,11 @@ extension FoundationBridges {
     "static let String.Encoding.utf32": .staticValue(boxOpaque(String.Encoding.utf32, typeName: "String.Encoding")),
     "static let String.Encoding.utf32BigEndian": .staticValue(boxOpaque(String.Encoding.utf32BigEndian, typeName: "String.Encoding")),
     "static let String.Encoding.utf32LittleEndian": .staticValue(boxOpaque(String.Encoding.utf32LittleEndian, typeName: "String.Encoding")),
-    "var String.Encoding.hashValue": .computed { receiver in
+    "var String.Encoding.hashValue: Int": .computed { receiver in
         let recv: String.Encoding = try unboxOpaque(receiver, as: String.Encoding.self, typeName: "String.Encoding")
         return .int(recv.hashValue)
     },
-    "var String.Encoding.description": .computed { receiver in
+    "var String.Encoding.description: String": .computed { receiver in
         let recv: String.Encoding = try unboxOpaque(receiver, as: String.Encoding.self, typeName: "String.Encoding")
         return .string(recv.description)
     },

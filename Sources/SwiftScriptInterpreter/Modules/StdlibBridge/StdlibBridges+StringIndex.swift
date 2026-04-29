@@ -4,15 +4,15 @@ import Foundation
 
 extension StdlibBridges {
     nonisolated(unsafe) static let stringIndex: [String: Bridge] = [
-    "var String.Index.encodedOffset": .computed { receiver in
+    "var String.Index.encodedOffset: Int": .computed { receiver in
         let recv: String.Index = try unboxOpaque(receiver, as: String.Index.self, typeName: "String.Index")
         return .int(recv.encodedOffset)
     },
-    "var String.Index.hashValue": .computed { receiver in
+    "var String.Index.hashValue: Int": .computed { receiver in
         let recv: String.Index = try unboxOpaque(receiver, as: String.Index.self, typeName: "String.Index")
         return .int(recv.hashValue)
     },
-    "var String.Index.debugDescription": .computed { receiver in
+    "var String.Index.debugDescription: String": .computed { receiver in
         let recv: String.Index = try unboxOpaque(receiver, as: String.Index.self, typeName: "String.Index")
         return .string(recv.debugDescription)
     },

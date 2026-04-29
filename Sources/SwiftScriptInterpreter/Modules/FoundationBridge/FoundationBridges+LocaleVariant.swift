@@ -4,16 +4,16 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let localeVariant: [String: Bridge] = [
-    "var Locale.Variant.identifier": .computed { receiver in
+    "var Locale.Variant.identifier: String": .computed { receiver in
         let recv: Locale.Variant = try unboxOpaque(receiver, as: Locale.Variant.self, typeName: "Locale.Variant")
         return .string(recv.identifier)
     },
-    "var Locale.Variant.debugDescription": .computed { receiver in
+    "var Locale.Variant.debugDescription: String": .computed { receiver in
         let recv: Locale.Variant = try unboxOpaque(receiver, as: Locale.Variant.self, typeName: "Locale.Variant")
         return .string(recv.debugDescription)
     },
     "static let Locale.Variant.posix": .staticValue(boxOpaque(Locale.Variant.posix, typeName: "Locale.Variant")),
-    "var Locale.Variant.hashValue": .computed { receiver in
+    "var Locale.Variant.hashValue: Int": .computed { receiver in
         let recv: Locale.Variant = try unboxOpaque(receiver, as: Locale.Variant.self, typeName: "Locale.Variant")
         return .int(recv.hashValue)
     },

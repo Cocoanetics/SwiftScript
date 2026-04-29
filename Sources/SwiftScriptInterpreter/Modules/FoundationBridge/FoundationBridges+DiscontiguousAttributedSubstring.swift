@@ -4,19 +4,19 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let discontiguousAttributedSubstring: [String: Bridge] = [
-    "var DiscontiguousAttributedSubstring.base": .computed { receiver in
+    "var DiscontiguousAttributedSubstring.base: AttributedString": .computed { receiver in
         let recv: DiscontiguousAttributedSubstring = try unboxOpaque(receiver, as: DiscontiguousAttributedSubstring.self, typeName: "DiscontiguousAttributedSubstring")
         return boxOpaque(recv.base, typeName: "AttributedString")
     },
-    "var DiscontiguousAttributedSubstring.description": .computed { receiver in
+    "var DiscontiguousAttributedSubstring.description: String": .computed { receiver in
         let recv: DiscontiguousAttributedSubstring = try unboxOpaque(receiver, as: DiscontiguousAttributedSubstring.self, typeName: "DiscontiguousAttributedSubstring")
         return .string(recv.description)
     },
-    "var DiscontiguousAttributedSubstring.hashValue": .computed { receiver in
+    "var DiscontiguousAttributedSubstring.hashValue: Int": .computed { receiver in
         let recv: DiscontiguousAttributedSubstring = try unboxOpaque(receiver, as: DiscontiguousAttributedSubstring.self, typeName: "DiscontiguousAttributedSubstring")
         return .int(recv.hashValue)
     },
-    "var DiscontiguousAttributedSubstring.runs": .computed { receiver in
+    "var DiscontiguousAttributedSubstring.runs: AttributedString.Runs": .computed { receiver in
         let recv: DiscontiguousAttributedSubstring = try unboxOpaque(receiver, as: DiscontiguousAttributedSubstring.self, typeName: "DiscontiguousAttributedSubstring")
         return boxOpaque(recv.runs, typeName: "AttributedString.Runs")
     },

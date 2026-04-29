@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSKeyValueObservingOptions(), typeName: "NSKeyValueObservingOptions")
     },
-    "var NSKeyValueObservingOptions.isEmpty": .computed { receiver in
+    "var NSKeyValueObservingOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
         return .bool(recv.isEmpty)
     },
@@ -88,5 +88,18 @@ extension FoundationBridges {
         let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
         return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
     },
+        "init NSKeyValueObservingOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSKeyValueObservingOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSKeyValueObservingOptions()
+            for element in elements {
+                let item: NSKeyValueObservingOptions = try unboxOpaque(
+                    element, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSKeyValueObservingOptions")
+        },
     ]
 }

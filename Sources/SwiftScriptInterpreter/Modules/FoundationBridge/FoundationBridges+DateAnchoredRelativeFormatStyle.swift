@@ -4,23 +4,23 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let dateAnchoredRelativeFormatStyle: [String: Bridge] = [
-    "var Date.AnchoredRelativeFormatStyle.anchor": .computed { receiver in
+    "var Date.AnchoredRelativeFormatStyle.anchor: Date": .computed { receiver in
         let recv: Date.AnchoredRelativeFormatStyle = try unboxOpaque(receiver, as: Date.AnchoredRelativeFormatStyle.self, typeName: "Date.AnchoredRelativeFormatStyle")
         return boxOpaque(recv.anchor, typeName: "Date")
     },
-    "var Date.AnchoredRelativeFormatStyle.capitalizationContext": .computed { receiver in
+    "var Date.AnchoredRelativeFormatStyle.capitalizationContext: FormatStyleCapitalizationContext": .computed { receiver in
         let recv: Date.AnchoredRelativeFormatStyle = try unboxOpaque(receiver, as: Date.AnchoredRelativeFormatStyle.self, typeName: "Date.AnchoredRelativeFormatStyle")
         return boxOpaque(recv.capitalizationContext, typeName: "FormatStyleCapitalizationContext")
     },
-    "var Date.AnchoredRelativeFormatStyle.locale": .computed { receiver in
+    "var Date.AnchoredRelativeFormatStyle.locale: Locale": .computed { receiver in
         let recv: Date.AnchoredRelativeFormatStyle = try unboxOpaque(receiver, as: Date.AnchoredRelativeFormatStyle.self, typeName: "Date.AnchoredRelativeFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
-    "var Date.AnchoredRelativeFormatStyle.calendar": .computed { receiver in
+    "var Date.AnchoredRelativeFormatStyle.calendar: Calendar": .computed { receiver in
         let recv: Date.AnchoredRelativeFormatStyle = try unboxOpaque(receiver, as: Date.AnchoredRelativeFormatStyle.self, typeName: "Date.AnchoredRelativeFormatStyle")
         return boxOpaque(recv.calendar, typeName: "Calendar")
     },
-    "var Date.AnchoredRelativeFormatStyle.hashValue": .computed { receiver in
+    "var Date.AnchoredRelativeFormatStyle.hashValue: Int": .computed { receiver in
         let recv: Date.AnchoredRelativeFormatStyle = try unboxOpaque(receiver, as: Date.AnchoredRelativeFormatStyle.self, typeName: "Date.AnchoredRelativeFormatStyle")
         return .int(recv.hashValue)
     },

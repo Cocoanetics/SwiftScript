@@ -10,11 +10,24 @@ extension FoundationBridges {
         }
         return boxOpaque(FileManager.VolumeEnumerationOptions(), typeName: "FileManager.VolumeEnumerationOptions")
     },
-    "var FileManager.VolumeEnumerationOptions.isEmpty": .computed { receiver in
+    "var FileManager.VolumeEnumerationOptions.isEmpty: Bool": .computed { receiver in
         let recv: FileManager.VolumeEnumerationOptions = try unboxOpaque(receiver, as: FileManager.VolumeEnumerationOptions.self, typeName: "FileManager.VolumeEnumerationOptions")
         return .bool(recv.isEmpty)
     },
     "static let FileManager.VolumeEnumerationOptions.skipHiddenVolumes": .staticValue(boxOpaque(FileManager.VolumeEnumerationOptions.skipHiddenVolumes, typeName: "FileManager.VolumeEnumerationOptions")),
     "static let FileManager.VolumeEnumerationOptions.produceFileReferenceURLs": .staticValue(boxOpaque(FileManager.VolumeEnumerationOptions.produceFileReferenceURLs, typeName: "FileManager.VolumeEnumerationOptions")),
+        "init FileManager.VolumeEnumerationOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("FileManager.VolumeEnumerationOptions(arrayLiteral:): expected array literal")
+            }
+            var result = FileManager.VolumeEnumerationOptions()
+            for element in elements {
+                let item: FileManager.VolumeEnumerationOptions = try unboxOpaque(
+                    element, as: FileManager.VolumeEnumerationOptions.self, typeName: "FileManager.VolumeEnumerationOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "FileManager.VolumeEnumerationOptions")
+        },
     ]
 }

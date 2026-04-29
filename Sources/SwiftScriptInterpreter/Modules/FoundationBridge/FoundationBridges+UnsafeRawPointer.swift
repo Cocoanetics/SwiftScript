@@ -18,11 +18,11 @@ extension FoundationBridges {
         let recv: UnsafeRawPointer = try unboxOpaque(receiver, as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer")
         return boxOpaque(recv.predecessor(), typeName: "UnsafeRawPointer")
     },
-    "var UnsafeRawPointer.debugDescription": .computed { receiver in
+    "var UnsafeRawPointer.debugDescription: String": .computed { receiver in
         let recv: UnsafeRawPointer = try unboxOpaque(receiver, as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer")
         return .string(recv.debugDescription)
     },
-    "var UnsafeRawPointer.hashValue": .computed { receiver in
+    "var UnsafeRawPointer.hashValue: Int": .computed { receiver in
         let recv: UnsafeRawPointer = try unboxOpaque(receiver, as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer")
         return .int(recv.hashValue)
     },

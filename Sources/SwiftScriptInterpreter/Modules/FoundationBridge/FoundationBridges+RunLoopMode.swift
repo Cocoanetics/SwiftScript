@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let runLoopMode: [String: Bridge] = [
-    "var RunLoop.Mode.hashValue": .computed { receiver in
+    "var RunLoop.Mode.hashValue: Int": .computed { receiver in
         let recv: RunLoop.Mode = try unboxOpaque(receiver, as: RunLoop.Mode.self, typeName: "RunLoop.Mode")
         return .int(recv.hashValue)
     },

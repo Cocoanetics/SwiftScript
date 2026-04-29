@@ -24,7 +24,7 @@ extension StdlibBridges {
     "static let Unicode.CanonicalCombiningClass.doubleBelow": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.doubleBelow, typeName: "Unicode.CanonicalCombiningClass")),
     "static let Unicode.CanonicalCombiningClass.doubleAbove": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.doubleAbove, typeName: "Unicode.CanonicalCombiningClass")),
     "static let Unicode.CanonicalCombiningClass.iotaSubscript": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.iotaSubscript, typeName: "Unicode.CanonicalCombiningClass")),
-    "var Unicode.CanonicalCombiningClass.hashValue": .computed { receiver in
+    "var Unicode.CanonicalCombiningClass.hashValue: Int": .computed { receiver in
         let recv: Unicode.CanonicalCombiningClass = try unboxOpaque(receiver, as: Unicode.CanonicalCombiningClass.self, typeName: "Unicode.CanonicalCombiningClass")
         return .int(recv.hashValue)
     },

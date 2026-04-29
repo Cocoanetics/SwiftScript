@@ -4,15 +4,15 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let unsafeCurrentTask: [String: Bridge] = [
-    "var UnsafeCurrentTask.isCancelled": .computed { receiver in
+    "var UnsafeCurrentTask.isCancelled: Bool": .computed { receiver in
         let recv: UnsafeCurrentTask = try unboxOpaque(receiver, as: UnsafeCurrentTask.self, typeName: "UnsafeCurrentTask")
         return .bool(recv.isCancelled)
     },
-    "var UnsafeCurrentTask.priority": .computed { receiver in
+    "var UnsafeCurrentTask.priority: TaskPriority": .computed { receiver in
         let recv: UnsafeCurrentTask = try unboxOpaque(receiver, as: UnsafeCurrentTask.self, typeName: "UnsafeCurrentTask")
         return boxOpaque(recv.priority, typeName: "TaskPriority")
     },
-    "var UnsafeCurrentTask.basePriority": .computed { receiver in
+    "var UnsafeCurrentTask.basePriority: TaskPriority": .computed { receiver in
         let recv: UnsafeCurrentTask = try unboxOpaque(receiver, as: UnsafeCurrentTask.self, typeName: "UnsafeCurrentTask")
         return boxOpaque(recv.basePriority, typeName: "TaskPriority")
     },
@@ -24,11 +24,11 @@ extension FoundationBridges {
         _ = recv.cancel()
             return .void
     },
-    "var UnsafeCurrentTask.hashValue": .computed { receiver in
+    "var UnsafeCurrentTask.hashValue: Int": .computed { receiver in
         let recv: UnsafeCurrentTask = try unboxOpaque(receiver, as: UnsafeCurrentTask.self, typeName: "UnsafeCurrentTask")
         return .int(recv.hashValue)
     },
-    "var UnsafeCurrentTask.unownedTaskExecutor": .computed { receiver in
+    "var UnsafeCurrentTask.unownedTaskExecutor: UnownedTaskExecutor?": .computed { receiver in
         let recv: UnsafeCurrentTask = try unboxOpaque(receiver, as: UnsafeCurrentTask.self, typeName: "UnsafeCurrentTask")
         if let _v = recv.unownedTaskExecutor {
             return .optional(boxOpaque(_v, typeName: "UnownedTaskExecutor"))

@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSString.CompareOptions(), typeName: "NSString.CompareOptions")
     },
-    "var NSString.CompareOptions.isEmpty": .computed { receiver in
+    "var NSString.CompareOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSString.CompareOptions = try unboxOpaque(receiver, as: NSString.CompareOptions.self, typeName: "NSString.CompareOptions")
         return .bool(recv.isEmpty)
     },
@@ -23,5 +23,18 @@ extension FoundationBridges {
     "static let NSString.CompareOptions.widthInsensitive": .staticValue(boxOpaque(NSString.CompareOptions.widthInsensitive, typeName: "NSString.CompareOptions")),
     "static let NSString.CompareOptions.forcedOrdering": .staticValue(boxOpaque(NSString.CompareOptions.forcedOrdering, typeName: "NSString.CompareOptions")),
     "static let NSString.CompareOptions.regularExpression": .staticValue(boxOpaque(NSString.CompareOptions.regularExpression, typeName: "NSString.CompareOptions")),
+        "init NSString.CompareOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSString.CompareOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSString.CompareOptions()
+            for element in elements {
+                let item: NSString.CompareOptions = try unboxOpaque(
+                    element, as: NSString.CompareOptions.self, typeName: "NSString.CompareOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSString.CompareOptions")
+        },
     ]
 }

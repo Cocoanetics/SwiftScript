@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let nSKeyValueOperator: [String: Bridge] = [
-    "var NSKeyValueOperator.hashValue": .computed { receiver in
+    "var NSKeyValueOperator.hashValue: Int": .computed { receiver in
         let recv: NSKeyValueOperator = try unboxOpaque(receiver, as: NSKeyValueOperator.self, typeName: "NSKeyValueOperator")
         return .int(recv.hashValue)
     },

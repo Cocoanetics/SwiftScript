@@ -10,10 +10,23 @@ extension FoundationBridges {
         }
         return boxOpaque(NSFileVersion.ReplacingOptions(), typeName: "NSFileVersion.ReplacingOptions")
     },
-    "var NSFileVersion.ReplacingOptions.isEmpty": .computed { receiver in
+    "var NSFileVersion.ReplacingOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSFileVersion.ReplacingOptions = try unboxOpaque(receiver, as: NSFileVersion.ReplacingOptions.self, typeName: "NSFileVersion.ReplacingOptions")
         return .bool(recv.isEmpty)
     },
     "static let NSFileVersion.ReplacingOptions.byMoving": .staticValue(boxOpaque(NSFileVersion.ReplacingOptions.byMoving, typeName: "NSFileVersion.ReplacingOptions")),
+        "init NSFileVersion.ReplacingOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSFileVersion.ReplacingOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSFileVersion.ReplacingOptions()
+            for element in elements {
+                let item: NSFileVersion.ReplacingOptions = try unboxOpaque(
+                    element, as: NSFileVersion.ReplacingOptions.self, typeName: "NSFileVersion.ReplacingOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSFileVersion.ReplacingOptions")
+        },
     ]
 }

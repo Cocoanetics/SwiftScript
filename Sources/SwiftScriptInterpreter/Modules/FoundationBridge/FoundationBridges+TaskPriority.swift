@@ -10,7 +10,7 @@ extension FoundationBridges {
     "static let TaskPriority.userInitiated": .staticValue(boxOpaque(TaskPriority.userInitiated, typeName: "TaskPriority")),
     "static let TaskPriority.utility": .staticValue(boxOpaque(TaskPriority.utility, typeName: "TaskPriority")),
     "static let TaskPriority.background": .staticValue(boxOpaque(TaskPriority.background, typeName: "TaskPriority")),
-    "var TaskPriority.description": .computed { receiver in
+    "var TaskPriority.description: String": .computed { receiver in
         let recv: TaskPriority = try unboxOpaque(receiver, as: TaskPriority.self, typeName: "TaskPriority")
         return .string(recv.description)
     },

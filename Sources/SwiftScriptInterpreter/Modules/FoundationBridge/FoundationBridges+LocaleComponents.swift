@@ -4,63 +4,63 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let localeComponents: [String: Bridge] = [
-    "var Locale.Components.collation": .computed { receiver in
+    "var Locale.Components.collation: Locale.Collation?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.collation {
             return .optional(boxOpaque(_v, typeName: "Locale.Collation"))
         }
         return .optional(nil)
     },
-    "var Locale.Components.currency": .computed { receiver in
+    "var Locale.Components.currency: Locale.Currency?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.currency {
             return .optional(boxOpaque(_v, typeName: "Locale.Currency"))
         }
         return .optional(nil)
     },
-    "var Locale.Components.numberingSystem": .computed { receiver in
+    "var Locale.Components.numberingSystem: Locale.NumberingSystem?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.numberingSystem {
             return .optional(boxOpaque(_v, typeName: "Locale.NumberingSystem"))
         }
         return .optional(nil)
     },
-    "var Locale.Components.measurementSystem": .computed { receiver in
+    "var Locale.Components.measurementSystem: Locale.MeasurementSystem?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.measurementSystem {
             return .optional(boxOpaque(_v, typeName: "Locale.MeasurementSystem"))
         }
         return .optional(nil)
     },
-    "var Locale.Components.region": .computed { receiver in
+    "var Locale.Components.region: Locale.Region?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.region {
             return .optional(boxOpaque(_v, typeName: "Locale.Region"))
         }
         return .optional(nil)
     },
-    "var Locale.Components.subdivision": .computed { receiver in
+    "var Locale.Components.subdivision: Locale.Subdivision?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.subdivision {
             return .optional(boxOpaque(_v, typeName: "Locale.Subdivision"))
         }
         return .optional(nil)
     },
-    "var Locale.Components.timeZone": .computed { receiver in
+    "var Locale.Components.timeZone: TimeZone?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.timeZone {
             return .optional(boxOpaque(_v, typeName: "TimeZone"))
         }
         return .optional(nil)
     },
-    "var Locale.Components.variant": .computed { receiver in
+    "var Locale.Components.variant: Locale.Variant?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.variant {
             return .optional(boxOpaque(_v, typeName: "Locale.Variant"))
         }
         return .optional(nil)
     },
-    "var Locale.Components.hashValue": .computed { receiver in
+    "var Locale.Components.hashValue: Int": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         return .int(recv.hashValue)
     },

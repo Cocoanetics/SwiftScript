@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let stringStyle: [String: Bridge] = [
-    "var StringStyle.hashValue": .computed { receiver in
+    "var StringStyle.hashValue: Int": .computed { receiver in
         let recv: StringStyle = try unboxOpaque(receiver, as: StringStyle.self, typeName: "StringStyle")
         return .int(recv.hashValue)
     },

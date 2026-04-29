@@ -4,159 +4,159 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let dateComponents: [String: Bridge] = [
-    "var DateComponents.calendar": .computed { receiver in
+    "var DateComponents.calendar: Calendar?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.calendar {
             return .optional(boxOpaque(_v, typeName: "Calendar"))
         }
         return .optional(nil)
     },
-    "var DateComponents.timeZone": .computed { receiver in
+    "var DateComponents.timeZone: TimeZone?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.timeZone {
             return .optional(boxOpaque(_v, typeName: "TimeZone"))
         }
         return .optional(nil)
     },
-    "var DateComponents.era": .computed { receiver in
+    "var DateComponents.era: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.era {
             return .optional(.int(_v))
         }
         return .optional(nil)
     },
-    "var DateComponents.year": .computed { receiver in
+    "var DateComponents.year: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.year {
             return .optional(.int(_v))
         }
         return .optional(nil)
     },
-    "var DateComponents.month": .computed { receiver in
+    "var DateComponents.month: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.month {
             return .optional(.int(_v))
         }
         return .optional(nil)
     },
-    "var DateComponents.day": .computed { receiver in
+    "var DateComponents.day: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.day {
             return .optional(.int(_v))
         }
         return .optional(nil)
     },
-    "var DateComponents.hour": .computed { receiver in
+    "var DateComponents.hour: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.hour {
             return .optional(.int(_v))
         }
         return .optional(nil)
     },
-    "var DateComponents.minute": .computed { receiver in
+    "var DateComponents.minute: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.minute {
             return .optional(.int(_v))
         }
         return .optional(nil)
     },
-    "var DateComponents.second": .computed { receiver in
+    "var DateComponents.second: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.second {
             return .optional(.int(_v))
         }
         return .optional(nil)
     },
-    "var DateComponents.nanosecond": .computed { receiver in
+    "var DateComponents.nanosecond: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.nanosecond {
             return .optional(.int(_v))
         }
         return .optional(nil)
     },
-    "var DateComponents.weekday": .computed { receiver in
+    "var DateComponents.weekday: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.weekday {
             return .optional(.int(_v))
         }
         return .optional(nil)
     },
-    "var DateComponents.weekdayOrdinal": .computed { receiver in
+    "var DateComponents.weekdayOrdinal: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.weekdayOrdinal {
             return .optional(.int(_v))
         }
         return .optional(nil)
     },
-    "var DateComponents.quarter": .computed { receiver in
+    "var DateComponents.quarter: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.quarter {
             return .optional(.int(_v))
         }
         return .optional(nil)
     },
-    "var DateComponents.weekOfMonth": .computed { receiver in
+    "var DateComponents.weekOfMonth: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.weekOfMonth {
             return .optional(.int(_v))
         }
         return .optional(nil)
     },
-    "var DateComponents.weekOfYear": .computed { receiver in
+    "var DateComponents.weekOfYear: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.weekOfYear {
             return .optional(.int(_v))
         }
         return .optional(nil)
     },
-    "var DateComponents.dayOfYear": .computed { receiver in
+    "var DateComponents.dayOfYear: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.dayOfYear {
             return .optional(.int(_v))
         }
         return .optional(nil)
     },
-    "var DateComponents.yearForWeekOfYear": .computed { receiver in
+    "var DateComponents.yearForWeekOfYear: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.yearForWeekOfYear {
             return .optional(.int(_v))
         }
         return .optional(nil)
     },
-    "var DateComponents.isLeapMonth": .computed { receiver in
+    "var DateComponents.isLeapMonth: Bool?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.isLeapMonth {
             return .optional(.bool(_v))
         }
         return .optional(nil)
     },
-    "var DateComponents.isRepeatedDay": .computed { receiver in
+    "var DateComponents.isRepeatedDay: Bool?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.isRepeatedDay {
             return .optional(.bool(_v))
         }
         return .optional(nil)
     },
-    "var DateComponents.date": .computed { receiver in
+    "var DateComponents.date: Date?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.date {
             return .optional(boxOpaque(_v, typeName: "Date"))
         }
         return .optional(nil)
     },
-    "var DateComponents.isValidDate": .computed { receiver in
+    "var DateComponents.isValidDate: Bool": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         return .bool(recv.isValidDate)
     },
-    "var DateComponents.hashValue": .computed { receiver in
+    "var DateComponents.hashValue: Int": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         return .int(recv.hashValue)
     },
-    "var DateComponents.description": .computed { receiver in
+    "var DateComponents.description: String": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         return .string(recv.description)
     },
-    "var DateComponents.debugDescription": .computed { receiver in
+    "var DateComponents.debugDescription: String": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         return .string(recv.debugDescription)
     },

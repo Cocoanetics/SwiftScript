@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let uRLFileProtection: [String: Bridge] = [
-    "var URLFileProtection.hashValue": .computed { receiver in
+    "var URLFileProtection.hashValue: Int": .computed { receiver in
         let recv: URLFileProtection = try unboxOpaque(receiver, as: URLFileProtection.self, typeName: "URLFileProtection")
         return .int(recv.hashValue)
     },

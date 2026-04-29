@@ -5,27 +5,27 @@ import Foundation
 extension FoundationBridges {
     nonisolated(unsafe) static let dateFormatStyle: [String: Bridge] = [
     "static let Date.FormatStyle.dateTime": .staticValue(boxOpaque(Date.FormatStyle.dateTime, typeName: "Date.FormatStyle")),
-    "var Date.FormatStyle.locale": .computed { receiver in
+    "var Date.FormatStyle.locale: Locale": .computed { receiver in
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
-    "var Date.FormatStyle.timeZone": .computed { receiver in
+    "var Date.FormatStyle.timeZone: TimeZone": .computed { receiver in
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
         return boxOpaque(recv.timeZone, typeName: "TimeZone")
     },
-    "var Date.FormatStyle.calendar": .computed { receiver in
+    "var Date.FormatStyle.calendar: Calendar": .computed { receiver in
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
         return boxOpaque(recv.calendar, typeName: "Calendar")
     },
-    "var Date.FormatStyle.capitalizationContext": .computed { receiver in
+    "var Date.FormatStyle.capitalizationContext: FormatStyleCapitalizationContext": .computed { receiver in
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
         return boxOpaque(recv.capitalizationContext, typeName: "FormatStyleCapitalizationContext")
     },
-    "var Date.FormatStyle.hashValue": .computed { receiver in
+    "var Date.FormatStyle.hashValue: Int": .computed { receiver in
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
         return .int(recv.hashValue)
     },
-    "var Date.FormatStyle.parseStrategy": .computed { receiver in
+    "var Date.FormatStyle.parseStrategy: Date.FormatStyle": .computed { receiver in
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
         return boxOpaque(recv.parseStrategy, typeName: "Date.FormatStyle")
     },

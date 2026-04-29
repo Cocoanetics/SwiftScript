@@ -4,11 +4,11 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let objectIdentifier: [String: Bridge] = [
-    "var ObjectIdentifier.debugDescription": .computed { receiver in
+    "var ObjectIdentifier.debugDescription: String": .computed { receiver in
         let recv: ObjectIdentifier = try unboxOpaque(receiver, as: ObjectIdentifier.self, typeName: "ObjectIdentifier")
         return .string(recv.debugDescription)
     },
-    "var ObjectIdentifier.hashValue": .computed { receiver in
+    "var ObjectIdentifier.hashValue: Int": .computed { receiver in
         let recv: ObjectIdentifier = try unboxOpaque(receiver, as: ObjectIdentifier.self, typeName: "ObjectIdentifier")
         return .int(recv.hashValue)
     },

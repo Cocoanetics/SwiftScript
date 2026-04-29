@@ -9,7 +9,7 @@ extension FoundationBridges {
     "static let FormatStyleCapitalizationContext.listItem": .staticValue(boxOpaque(FormatStyleCapitalizationContext.listItem, typeName: "FormatStyleCapitalizationContext")),
     "static let FormatStyleCapitalizationContext.beginningOfSentence": .staticValue(boxOpaque(FormatStyleCapitalizationContext.beginningOfSentence, typeName: "FormatStyleCapitalizationContext")),
     "static let FormatStyleCapitalizationContext.middleOfSentence": .staticValue(boxOpaque(FormatStyleCapitalizationContext.middleOfSentence, typeName: "FormatStyleCapitalizationContext")),
-    "var FormatStyleCapitalizationContext.hashValue": .computed { receiver in
+    "var FormatStyleCapitalizationContext.hashValue: Int": .computed { receiver in
         let recv: FormatStyleCapitalizationContext = try unboxOpaque(receiver, as: FormatStyleCapitalizationContext.self, typeName: "FormatStyleCapitalizationContext")
         return .int(recv.hashValue)
     },

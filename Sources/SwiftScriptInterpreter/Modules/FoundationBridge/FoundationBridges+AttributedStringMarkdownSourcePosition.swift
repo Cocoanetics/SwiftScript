@@ -4,23 +4,23 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let attributedStringMarkdownSourcePosition: [String: Bridge] = [
-    "var AttributedString.MarkdownSourcePosition.startLine": .computed { receiver in
+    "var AttributedString.MarkdownSourcePosition.startLine: Int": .computed { receiver in
         let recv: AttributedString.MarkdownSourcePosition = try unboxOpaque(receiver, as: AttributedString.MarkdownSourcePosition.self, typeName: "AttributedString.MarkdownSourcePosition")
         return .int(recv.startLine)
     },
-    "var AttributedString.MarkdownSourcePosition.startColumn": .computed { receiver in
+    "var AttributedString.MarkdownSourcePosition.startColumn: Int": .computed { receiver in
         let recv: AttributedString.MarkdownSourcePosition = try unboxOpaque(receiver, as: AttributedString.MarkdownSourcePosition.self, typeName: "AttributedString.MarkdownSourcePosition")
         return .int(recv.startColumn)
     },
-    "var AttributedString.MarkdownSourcePosition.endLine": .computed { receiver in
+    "var AttributedString.MarkdownSourcePosition.endLine: Int": .computed { receiver in
         let recv: AttributedString.MarkdownSourcePosition = try unboxOpaque(receiver, as: AttributedString.MarkdownSourcePosition.self, typeName: "AttributedString.MarkdownSourcePosition")
         return .int(recv.endLine)
     },
-    "var AttributedString.MarkdownSourcePosition.endColumn": .computed { receiver in
+    "var AttributedString.MarkdownSourcePosition.endColumn: Int": .computed { receiver in
         let recv: AttributedString.MarkdownSourcePosition = try unboxOpaque(receiver, as: AttributedString.MarkdownSourcePosition.self, typeName: "AttributedString.MarkdownSourcePosition")
         return .int(recv.endColumn)
     },
-    "var AttributedString.MarkdownSourcePosition.hashValue": .computed { receiver in
+    "var AttributedString.MarkdownSourcePosition.hashValue: Int": .computed { receiver in
         let recv: AttributedString.MarkdownSourcePosition = try unboxOpaque(receiver, as: AttributedString.MarkdownSourcePosition.self, typeName: "AttributedString.MarkdownSourcePosition")
         return .int(recv.hashValue)
     },

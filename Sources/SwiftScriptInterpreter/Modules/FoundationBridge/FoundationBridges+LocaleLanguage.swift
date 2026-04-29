@@ -4,40 +4,40 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let localeLanguage: [String: Bridge] = [
-    "var Locale.Language.hashValue": .computed { receiver in
+    "var Locale.Language.hashValue: Int": .computed { receiver in
         let recv: Locale.Language = try unboxOpaque(receiver, as: Locale.Language.self, typeName: "Locale.Language")
         return .int(recv.hashValue)
     },
-    "var Locale.Language.parent": .computed { receiver in
+    "var Locale.Language.parent: Locale.Language?": .computed { receiver in
         let recv: Locale.Language = try unboxOpaque(receiver, as: Locale.Language.self, typeName: "Locale.Language")
         if let _v = recv.parent {
             return .optional(boxOpaque(_v, typeName: "Locale.Language"))
         }
         return .optional(nil)
     },
-    "var Locale.Language.minimalIdentifier": .computed { receiver in
+    "var Locale.Language.minimalIdentifier: String": .computed { receiver in
         let recv: Locale.Language = try unboxOpaque(receiver, as: Locale.Language.self, typeName: "Locale.Language")
         return .string(recv.minimalIdentifier)
     },
-    "var Locale.Language.maximalIdentifier": .computed { receiver in
+    "var Locale.Language.maximalIdentifier: String": .computed { receiver in
         let recv: Locale.Language = try unboxOpaque(receiver, as: Locale.Language.self, typeName: "Locale.Language")
         return .string(recv.maximalIdentifier)
     },
-    "var Locale.Language.languageCode": .computed { receiver in
+    "var Locale.Language.languageCode: Locale.LanguageCode?": .computed { receiver in
         let recv: Locale.Language = try unboxOpaque(receiver, as: Locale.Language.self, typeName: "Locale.Language")
         if let _v = recv.languageCode {
             return .optional(boxOpaque(_v, typeName: "Locale.LanguageCode"))
         }
         return .optional(nil)
     },
-    "var Locale.Language.script": .computed { receiver in
+    "var Locale.Language.script: Locale.Script?": .computed { receiver in
         let recv: Locale.Language = try unboxOpaque(receiver, as: Locale.Language.self, typeName: "Locale.Language")
         if let _v = recv.script {
             return .optional(boxOpaque(_v, typeName: "Locale.Script"))
         }
         return .optional(nil)
     },
-    "var Locale.Language.region": .computed { receiver in
+    "var Locale.Language.region: Locale.Region?": .computed { receiver in
         let recv: Locale.Language = try unboxOpaque(receiver, as: Locale.Language.self, typeName: "Locale.Language")
         if let _v = recv.region {
             return .optional(boxOpaque(_v, typeName: "Locale.Region"))

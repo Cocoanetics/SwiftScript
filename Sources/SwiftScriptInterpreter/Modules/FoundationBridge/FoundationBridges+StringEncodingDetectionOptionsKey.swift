@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let stringEncodingDetectionOptionsKey: [String: Bridge] = [
-    "var StringEncodingDetectionOptionsKey.hashValue": .computed { receiver in
+    "var StringEncodingDetectionOptionsKey.hashValue: Int": .computed { receiver in
         let recv: StringEncodingDetectionOptionsKey = try unboxOpaque(receiver, as: StringEncodingDetectionOptionsKey.self, typeName: "StringEncodingDetectionOptionsKey")
         return .int(recv.hashValue)
     },

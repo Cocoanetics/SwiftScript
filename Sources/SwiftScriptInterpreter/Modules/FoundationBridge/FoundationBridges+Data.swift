@@ -4,11 +4,11 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let data: [String: Bridge] = [
-    "var Data.isEmpty": .computed { receiver in
+    "var Data.isEmpty: Bool": .computed { receiver in
         let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
         return .bool(recv.isEmpty)
     },
-    "var Data.underestimatedCount": .computed { receiver in
+    "var Data.underestimatedCount: Int": .computed { receiver in
         let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
         return .int(recv.underestimatedCount)
     },
@@ -18,19 +18,19 @@ extension FoundationBridges {
         }
         return boxOpaque(Data(), typeName: "Data")
     },
-    "var Data.count": .computed { receiver in
+    "var Data.count: Int": .computed { receiver in
         let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
         return .int(recv.count)
     },
-    "var Data.hashValue": .computed { receiver in
+    "var Data.hashValue: Int": .computed { receiver in
         let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
         return .int(recv.hashValue)
     },
-    "var Data.description": .computed { receiver in
+    "var Data.description: String": .computed { receiver in
         let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
         return .string(recv.description)
     },
-    "var Data.debugDescription": .computed { receiver in
+    "var Data.debugDescription: String": .computed { receiver in
         let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
         return .string(recv.debugDescription)
     },

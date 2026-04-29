@@ -6,42 +6,42 @@ extension FoundationBridges {
     nonisolated(unsafe) static let calendar: [String: Bridge] = [
     "static let Calendar.current": .staticValue(boxOpaque(Calendar.current, typeName: "Calendar")),
     "static let Calendar.autoupdatingCurrent": .staticValue(boxOpaque(Calendar.autoupdatingCurrent, typeName: "Calendar")),
-    "var Calendar.locale": .computed { receiver in
+    "var Calendar.locale: Locale?": .computed { receiver in
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         if let _v = recv.locale {
             return .optional(boxOpaque(_v, typeName: "Locale"))
         }
         return .optional(nil)
     },
-    "var Calendar.timeZone": .computed { receiver in
+    "var Calendar.timeZone: TimeZone": .computed { receiver in
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return boxOpaque(recv.timeZone, typeName: "TimeZone")
     },
-    "var Calendar.firstWeekday": .computed { receiver in
+    "var Calendar.firstWeekday: Int": .computed { receiver in
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .int(recv.firstWeekday)
     },
-    "var Calendar.minimumDaysInFirstWeek": .computed { receiver in
+    "var Calendar.minimumDaysInFirstWeek: Int": .computed { receiver in
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .int(recv.minimumDaysInFirstWeek)
     },
-    "var Calendar.hashValue": .computed { receiver in
+    "var Calendar.hashValue: Int": .computed { receiver in
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .int(recv.hashValue)
     },
-    "var Calendar.description": .computed { receiver in
+    "var Calendar.description: String": .computed { receiver in
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .string(recv.description)
     },
-    "var Calendar.debugDescription": .computed { receiver in
+    "var Calendar.debugDescription: String": .computed { receiver in
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .string(recv.debugDescription)
     },
-    "var Calendar.amSymbol": .computed { receiver in
+    "var Calendar.amSymbol: String": .computed { receiver in
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .string(recv.amSymbol)
     },
-    "var Calendar.pmSymbol": .computed { receiver in
+    "var Calendar.pmSymbol: String": .computed { receiver in
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .string(recv.pmSymbol)
     },

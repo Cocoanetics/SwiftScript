@@ -4,11 +4,11 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let localeLanguageCode: [String: Bridge] = [
-    "var Locale.LanguageCode.debugDescription": .computed { receiver in
+    "var Locale.LanguageCode.debugDescription: String": .computed { receiver in
         let recv: Locale.LanguageCode = try unboxOpaque(receiver, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode")
         return .string(recv.debugDescription)
     },
-    "var Locale.LanguageCode.identifier": .computed { receiver in
+    "var Locale.LanguageCode.identifier: String": .computed { receiver in
         let recv: Locale.LanguageCode = try unboxOpaque(receiver, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode")
         return .string(recv.identifier)
     },
@@ -16,7 +16,7 @@ extension FoundationBridges {
     "static let Locale.LanguageCode.uncoded": .staticValue(boxOpaque(Locale.LanguageCode.uncoded, typeName: "Locale.LanguageCode")),
     "static let Locale.LanguageCode.multiple": .staticValue(boxOpaque(Locale.LanguageCode.multiple, typeName: "Locale.LanguageCode")),
     "static let Locale.LanguageCode.unavailable": .staticValue(boxOpaque(Locale.LanguageCode.unavailable, typeName: "Locale.LanguageCode")),
-    "var Locale.LanguageCode.hashValue": .computed { receiver in
+    "var Locale.LanguageCode.hashValue: Int": .computed { receiver in
         let recv: Locale.LanguageCode = try unboxOpaque(receiver, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode")
         return .int(recv.hashValue)
     },
@@ -127,7 +127,7 @@ extension FoundationBridges {
     "static let Locale.LanguageCode.vietnamese": .staticValue(boxOpaque(Locale.LanguageCode.vietnamese, typeName: "Locale.LanguageCode")),
     "static let Locale.LanguageCode.welsh": .staticValue(boxOpaque(Locale.LanguageCode.welsh, typeName: "Locale.LanguageCode")),
     "static let Locale.LanguageCode.yiddish": .staticValue(boxOpaque(Locale.LanguageCode.yiddish, typeName: "Locale.LanguageCode")),
-    "var Locale.LanguageCode.isISOLanguage": .computed { receiver in
+    "var Locale.LanguageCode.isISOLanguage: Bool": .computed { receiver in
         let recv: Locale.LanguageCode = try unboxOpaque(receiver, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode")
         return .bool(recv.isISOLanguage)
     },

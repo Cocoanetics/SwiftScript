@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let nSFileProviderServiceName: [String: Bridge] = [
-    "var NSFileProviderServiceName.hashValue": .computed { receiver in
+    "var NSFileProviderServiceName.hashValue: Int": .computed { receiver in
         let recv: NSFileProviderServiceName = try unboxOpaque(receiver, as: NSFileProviderServiceName.self, typeName: "NSFileProviderServiceName")
         return .int(recv.hashValue)
     },

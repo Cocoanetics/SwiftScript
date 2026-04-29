@@ -4,16 +4,16 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let localeScript: [String: Bridge] = [
-    "var Locale.Script.identifier": .computed { receiver in
+    "var Locale.Script.identifier: String": .computed { receiver in
         let recv: Locale.Script = try unboxOpaque(receiver, as: Locale.Script.self, typeName: "Locale.Script")
         return .string(recv.identifier)
     },
-    "var Locale.Script.debugDescription": .computed { receiver in
+    "var Locale.Script.debugDescription: String": .computed { receiver in
         let recv: Locale.Script = try unboxOpaque(receiver, as: Locale.Script.self, typeName: "Locale.Script")
         return .string(recv.debugDescription)
     },
     "static let Locale.Script.unknown": .staticValue(boxOpaque(Locale.Script.unknown, typeName: "Locale.Script")),
-    "var Locale.Script.hashValue": .computed { receiver in
+    "var Locale.Script.hashValue: Int": .computed { receiver in
         let recv: Locale.Script = try unboxOpaque(receiver, as: Locale.Script.self, typeName: "Locale.Script")
         return .int(recv.hashValue)
     },
@@ -54,7 +54,7 @@ extension FoundationBridges {
     "static let Locale.Script.thaana": .staticValue(boxOpaque(Locale.Script.thaana, typeName: "Locale.Script")),
     "static let Locale.Script.thai": .staticValue(boxOpaque(Locale.Script.thai, typeName: "Locale.Script")),
     "static let Locale.Script.tibetan": .staticValue(boxOpaque(Locale.Script.tibetan, typeName: "Locale.Script")),
-    "var Locale.Script.isISOScript": .computed { receiver in
+    "var Locale.Script.isISOScript: Bool": .computed { receiver in
         let recv: Locale.Script = try unboxOpaque(receiver, as: Locale.Script.self, typeName: "Locale.Script")
         return .bool(recv.isISOScript)
     },

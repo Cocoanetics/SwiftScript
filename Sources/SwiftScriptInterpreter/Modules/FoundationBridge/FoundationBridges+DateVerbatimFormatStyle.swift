@@ -4,26 +4,26 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let dateVerbatimFormatStyle: [String: Bridge] = [
-    "var Date.VerbatimFormatStyle.timeZone": .computed { receiver in
+    "var Date.VerbatimFormatStyle.timeZone: TimeZone": .computed { receiver in
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return boxOpaque(recv.timeZone, typeName: "TimeZone")
     },
-    "var Date.VerbatimFormatStyle.calendar": .computed { receiver in
+    "var Date.VerbatimFormatStyle.calendar: Calendar": .computed { receiver in
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return boxOpaque(recv.calendar, typeName: "Calendar")
     },
-    "var Date.VerbatimFormatStyle.locale": .computed { receiver in
+    "var Date.VerbatimFormatStyle.locale: Locale?": .computed { receiver in
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         if let _v = recv.locale {
             return .optional(boxOpaque(_v, typeName: "Locale"))
         }
         return .optional(nil)
     },
-    "var Date.VerbatimFormatStyle.hashValue": .computed { receiver in
+    "var Date.VerbatimFormatStyle.hashValue: Int": .computed { receiver in
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return .int(recv.hashValue)
     },
-    "var Date.VerbatimFormatStyle.parseStrategy": .computed { receiver in
+    "var Date.VerbatimFormatStyle.parseStrategy: Date.ParseStrategy": .computed { receiver in
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return boxOpaque(recv.parseStrategy, typeName: "Date.ParseStrategy")
     },

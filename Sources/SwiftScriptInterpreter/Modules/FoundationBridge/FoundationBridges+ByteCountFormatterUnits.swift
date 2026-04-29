@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(ByteCountFormatter.Units(), typeName: "ByteCountFormatter.Units")
     },
-    "var ByteCountFormatter.Units.isEmpty": .computed { receiver in
+    "var ByteCountFormatter.Units.isEmpty: Bool": .computed { receiver in
         let recv: ByteCountFormatter.Units = try unboxOpaque(receiver, as: ByteCountFormatter.Units.self, typeName: "ByteCountFormatter.Units")
         return .bool(recv.isEmpty)
     },
@@ -24,5 +24,18 @@ extension FoundationBridges {
     "static let ByteCountFormatter.Units.useZB": .staticValue(boxOpaque(ByteCountFormatter.Units.useZB, typeName: "ByteCountFormatter.Units")),
     "static let ByteCountFormatter.Units.useYBOrHigher": .staticValue(boxOpaque(ByteCountFormatter.Units.useYBOrHigher, typeName: "ByteCountFormatter.Units")),
     "static let ByteCountFormatter.Units.useAll": .staticValue(boxOpaque(ByteCountFormatter.Units.useAll, typeName: "ByteCountFormatter.Units")),
+        "init ByteCountFormatter.Units(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("ByteCountFormatter.Units(arrayLiteral:): expected array literal")
+            }
+            var result = ByteCountFormatter.Units()
+            for element in elements {
+                let item: ByteCountFormatter.Units = try unboxOpaque(
+                    element, as: ByteCountFormatter.Units.self, typeName: "ByteCountFormatter.Units"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "ByteCountFormatter.Units")
+        },
     ]
 }

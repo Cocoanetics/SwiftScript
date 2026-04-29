@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let indexSetIndex: [String: Bridge] = [
-    "var IndexSet.Index.description": .computed { receiver in
+    "var IndexSet.Index.description: String": .computed { receiver in
         let recv: IndexSet.Index = try unboxOpaque(receiver, as: IndexSet.Index.self, typeName: "IndexSet.Index")
         return .string(recv.description)
     },

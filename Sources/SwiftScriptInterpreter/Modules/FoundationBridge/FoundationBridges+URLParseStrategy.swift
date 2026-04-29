@@ -5,7 +5,7 @@ import Foundation
 extension FoundationBridges {
     nonisolated(unsafe) static let uRLParseStrategy: [String: Bridge] = [
     "static let URL.ParseStrategy.url": .staticValue(boxOpaque(URL.ParseStrategy.url, typeName: "URL.ParseStrategy")),
-    "var URL.ParseStrategy.hashValue": .computed { receiver in
+    "var URL.ParseStrategy.hashValue: Int": .computed { receiver in
         let recv: URL.ParseStrategy = try unboxOpaque(receiver, as: URL.ParseStrategy.self, typeName: "URL.ParseStrategy")
         return .int(recv.hashValue)
     },

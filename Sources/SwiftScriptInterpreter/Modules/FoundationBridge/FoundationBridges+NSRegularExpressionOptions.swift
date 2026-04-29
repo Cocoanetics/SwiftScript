@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSRegularExpression.Options(), typeName: "NSRegularExpression.Options")
     },
-    "var NSRegularExpression.Options.isEmpty": .computed { receiver in
+    "var NSRegularExpression.Options.isEmpty: Bool": .computed { receiver in
         let recv: NSRegularExpression.Options = try unboxOpaque(receiver, as: NSRegularExpression.Options.self, typeName: "NSRegularExpression.Options")
         return .bool(recv.isEmpty)
     },
@@ -21,5 +21,18 @@ extension FoundationBridges {
     "static let NSRegularExpression.Options.anchorsMatchLines": .staticValue(boxOpaque(NSRegularExpression.Options.anchorsMatchLines, typeName: "NSRegularExpression.Options")),
     "static let NSRegularExpression.Options.useUnixLineSeparators": .staticValue(boxOpaque(NSRegularExpression.Options.useUnixLineSeparators, typeName: "NSRegularExpression.Options")),
     "static let NSRegularExpression.Options.useUnicodeWordBoundaries": .staticValue(boxOpaque(NSRegularExpression.Options.useUnicodeWordBoundaries, typeName: "NSRegularExpression.Options")),
+        "init NSRegularExpression.Options(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSRegularExpression.Options(arrayLiteral:): expected array literal")
+            }
+            var result = NSRegularExpression.Options()
+            for element in elements {
+                let item: NSRegularExpression.Options = try unboxOpaque(
+                    element, as: NSRegularExpression.Options.self, typeName: "NSRegularExpression.Options"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSRegularExpression.Options")
+        },
     ]
 }

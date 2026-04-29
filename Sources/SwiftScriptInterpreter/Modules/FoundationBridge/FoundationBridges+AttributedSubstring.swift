@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let attributedSubstring: [String: Bridge] = [
-    "var AttributedSubstring.description": .computed { receiver in
+    "var AttributedSubstring.description: String": .computed { receiver in
         let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
         return .string(recv.description)
     },
@@ -14,23 +14,23 @@ extension FoundationBridges {
         }
         return boxOpaque(AttributedSubstring(), typeName: "AttributedSubstring")
     },
-    "var AttributedSubstring.base": .computed { receiver in
+    "var AttributedSubstring.base: AttributedString": .computed { receiver in
         let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
         return boxOpaque(recv.base, typeName: "AttributedString")
     },
-    "var AttributedSubstring.startIndex": .computed { receiver in
+    "var AttributedSubstring.startIndex: AttributedString.Index": .computed { receiver in
         let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
         return boxOpaque(recv.startIndex, typeName: "AttributedString.Index")
     },
-    "var AttributedSubstring.endIndex": .computed { receiver in
+    "var AttributedSubstring.endIndex: AttributedString.Index": .computed { receiver in
         let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
         return boxOpaque(recv.endIndex, typeName: "AttributedString.Index")
     },
-    "var AttributedSubstring.runs": .computed { receiver in
+    "var AttributedSubstring.runs: AttributedString.Runs": .computed { receiver in
         let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
         return boxOpaque(recv.runs, typeName: "AttributedString.Runs")
     },
-    "var AttributedSubstring.hashValue": .computed { receiver in
+    "var AttributedSubstring.hashValue: Int": .computed { receiver in
         let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
         return .int(recv.hashValue)
     },

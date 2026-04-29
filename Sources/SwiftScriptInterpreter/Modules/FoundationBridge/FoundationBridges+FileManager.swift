@@ -4,11 +4,11 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let fileManager: [String: Bridge] = [
-    "var FileManager.currentDirectoryPath": .computed { receiver in
+    "var FileManager.currentDirectoryPath: String": .computed { receiver in
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
         return .string(recv.currentDirectoryPath)
     },
-    "var FileManager.temporaryDirectory": .computed { receiver in
+    "var FileManager.temporaryDirectory: URL": .computed { receiver in
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
         return boxOpaque(recv.temporaryDirectory, typeName: "URL")
     },

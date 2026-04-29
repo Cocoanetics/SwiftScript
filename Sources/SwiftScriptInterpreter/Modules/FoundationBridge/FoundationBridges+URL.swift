@@ -4,99 +4,99 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let uRL: [String: Bridge] = [
-    "var URL.dataRepresentation": .computed { receiver in
+    "var URL.dataRepresentation: Data": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return boxOpaque(recv.dataRepresentation, typeName: "Data")
     },
-    "var URL.absoluteString": .computed { receiver in
+    "var URL.absoluteString: String": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return .string(recv.absoluteString)
     },
-    "var URL.relativeString": .computed { receiver in
+    "var URL.relativeString: String": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return .string(recv.relativeString)
     },
-    "var URL.baseURL": .computed { receiver in
+    "var URL.baseURL: URL?": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         if let _v = recv.baseURL {
             return .optional(boxOpaque(_v, typeName: "URL"))
         }
         return .optional(nil)
     },
-    "var URL.absoluteURL": .computed { receiver in
+    "var URL.absoluteURL: URL": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return boxOpaque(recv.absoluteURL, typeName: "URL")
     },
-    "var URL.scheme": .computed { receiver in
+    "var URL.scheme: String?": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         if let _v = recv.scheme {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URL.isFileURL": .computed { receiver in
+    "var URL.isFileURL: Bool": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return .bool(recv.isFileURL)
     },
-    "var URL.host": .computed { receiver in
+    "var URL.host: String?": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         if let _v = recv.host {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URL.port": .computed { receiver in
+    "var URL.port: Int?": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         if let _v = recv.port {
             return .optional(.int(_v))
         }
         return .optional(nil)
     },
-    "var URL.user": .computed { receiver in
+    "var URL.user: String?": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         if let _v = recv.user {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URL.password": .computed { receiver in
+    "var URL.password: String?": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         if let _v = recv.password {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URL.path": .computed { receiver in
+    "var URL.path: String": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return .string(recv.path)
     },
-    "var URL.relativePath": .computed { receiver in
+    "var URL.relativePath: String": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return .string(recv.relativePath)
     },
-    "var URL.query": .computed { receiver in
+    "var URL.query: String?": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         if let _v = recv.query {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URL.fragment": .computed { receiver in
+    "var URL.fragment: String?": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         if let _v = recv.fragment {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URL.hasDirectoryPath": .computed { receiver in
+    "var URL.hasDirectoryPath: Bool": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return .bool(recv.hasDirectoryPath)
     },
-    "var URL.lastPathComponent": .computed { receiver in
+    "var URL.lastPathComponent: String": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return .string(recv.lastPathComponent)
     },
-    "var URL.pathExtension": .computed { receiver in
+    "var URL.pathExtension: String": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return .string(recv.pathExtension)
     },
@@ -114,11 +114,11 @@ extension FoundationBridges {
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return boxOpaque(recv.deletingPathExtension(), typeName: "URL")
     },
-    "var URL.standardized": .computed { receiver in
+    "var URL.standardized: URL": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return boxOpaque(recv.standardized, typeName: "URL")
     },
-    "var URL.standardizedFileURL": .computed { receiver in
+    "var URL.standardizedFileURL: URL": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return boxOpaque(recv.standardizedFileURL, typeName: "URL")
     },
@@ -166,7 +166,7 @@ extension FoundationBridges {
         _ = recv.stopAccessingSecurityScopedResource()
             return .void
     },
-    "var URL.hashValue": .computed { receiver in
+    "var URL.hashValue: Int": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return .int(recv.hashValue)
     },
@@ -190,11 +190,11 @@ extension FoundationBridges {
     "static let URL.musicDirectory": .staticValue(boxOpaque(URL.musicDirectory, typeName: "URL")),
     "static let URL.picturesDirectory": .staticValue(boxOpaque(URL.picturesDirectory, typeName: "URL")),
     "static let URL.sharedPublicDirectory": .staticValue(boxOpaque(URL.sharedPublicDirectory, typeName: "URL")),
-    "var URL.description": .computed { receiver in
+    "var URL.description: String": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return .string(recv.description)
     },
-    "var URL.debugDescription": .computed { receiver in
+    "var URL.debugDescription: String": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return .string(recv.debugDescription)
     },

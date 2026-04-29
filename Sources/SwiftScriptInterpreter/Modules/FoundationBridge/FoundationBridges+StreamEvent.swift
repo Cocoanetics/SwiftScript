@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(Stream.Event(), typeName: "Stream.Event")
     },
-    "var Stream.Event.isEmpty": .computed { receiver in
+    "var Stream.Event.isEmpty: Bool": .computed { receiver in
         let recv: Stream.Event = try unboxOpaque(receiver, as: Stream.Event.self, typeName: "Stream.Event")
         return .bool(recv.isEmpty)
     },
@@ -19,5 +19,18 @@ extension FoundationBridges {
     "static let Stream.Event.hasSpaceAvailable": .staticValue(boxOpaque(Stream.Event.hasSpaceAvailable, typeName: "Stream.Event")),
     "static let Stream.Event.errorOccurred": .staticValue(boxOpaque(Stream.Event.errorOccurred, typeName: "Stream.Event")),
     "static let Stream.Event.endEncountered": .staticValue(boxOpaque(Stream.Event.endEncountered, typeName: "Stream.Event")),
+        "init Stream.Event(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("Stream.Event(arrayLiteral:): expected array literal")
+            }
+            var result = Stream.Event()
+            for element in elements {
+                let item: Stream.Event = try unboxOpaque(
+                    element, as: Stream.Event.self, typeName: "Stream.Event"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "Stream.Event")
+        },
     ]
 }

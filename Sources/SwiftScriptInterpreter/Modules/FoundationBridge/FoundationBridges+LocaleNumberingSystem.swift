@@ -4,15 +4,15 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let localeNumberingSystem: [String: Bridge] = [
-    "var Locale.NumberingSystem.identifier": .computed { receiver in
+    "var Locale.NumberingSystem.identifier: String": .computed { receiver in
         let recv: Locale.NumberingSystem = try unboxOpaque(receiver, as: Locale.NumberingSystem.self, typeName: "Locale.NumberingSystem")
         return .string(recv.identifier)
     },
-    "var Locale.NumberingSystem.debugDescription": .computed { receiver in
+    "var Locale.NumberingSystem.debugDescription: String": .computed { receiver in
         let recv: Locale.NumberingSystem = try unboxOpaque(receiver, as: Locale.NumberingSystem.self, typeName: "Locale.NumberingSystem")
         return .string(recv.debugDescription)
     },
-    "var Locale.NumberingSystem.hashValue": .computed { receiver in
+    "var Locale.NumberingSystem.hashValue: Int": .computed { receiver in
         let recv: Locale.NumberingSystem = try unboxOpaque(receiver, as: Locale.NumberingSystem.self, typeName: "Locale.NumberingSystem")
         return .int(recv.hashValue)
     },

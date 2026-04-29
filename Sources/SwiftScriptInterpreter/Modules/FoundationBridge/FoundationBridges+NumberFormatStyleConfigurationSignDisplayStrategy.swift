@@ -6,11 +6,11 @@ extension FoundationBridges {
     nonisolated(unsafe) static let numberFormatStyleConfigurationSignDisplayStrategy: [String: Bridge] = [
     "static let NumberFormatStyleConfiguration.SignDisplayStrategy.automatic": .staticValue(boxOpaque(NumberFormatStyleConfiguration.SignDisplayStrategy.automatic, typeName: "NumberFormatStyleConfiguration.SignDisplayStrategy")),
     "static let NumberFormatStyleConfiguration.SignDisplayStrategy.never": .staticValue(boxOpaque(NumberFormatStyleConfiguration.SignDisplayStrategy.never, typeName: "NumberFormatStyleConfiguration.SignDisplayStrategy")),
-    "var NumberFormatStyleConfiguration.SignDisplayStrategy.description": .computed { receiver in
+    "var NumberFormatStyleConfiguration.SignDisplayStrategy.description: String": .computed { receiver in
         let recv: NumberFormatStyleConfiguration.SignDisplayStrategy = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.SignDisplayStrategy.self, typeName: "NumberFormatStyleConfiguration.SignDisplayStrategy")
         return .string(recv.description)
     },
-    "var NumberFormatStyleConfiguration.SignDisplayStrategy.hashValue": .computed { receiver in
+    "var NumberFormatStyleConfiguration.SignDisplayStrategy.hashValue: Int": .computed { receiver in
         let recv: NumberFormatStyleConfiguration.SignDisplayStrategy = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.SignDisplayStrategy.self, typeName: "NumberFormatStyleConfiguration.SignDisplayStrategy")
         return .int(recv.hashValue)
     },

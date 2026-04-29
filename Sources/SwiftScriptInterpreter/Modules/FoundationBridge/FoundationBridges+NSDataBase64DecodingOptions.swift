@@ -10,10 +10,23 @@ extension FoundationBridges {
         }
         return boxOpaque(NSData.Base64DecodingOptions(), typeName: "NSData.Base64DecodingOptions")
     },
-    "var NSData.Base64DecodingOptions.isEmpty": .computed { receiver in
+    "var NSData.Base64DecodingOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSData.Base64DecodingOptions = try unboxOpaque(receiver, as: NSData.Base64DecodingOptions.self, typeName: "NSData.Base64DecodingOptions")
         return .bool(recv.isEmpty)
     },
     "static let NSData.Base64DecodingOptions.ignoreUnknownCharacters": .staticValue(boxOpaque(NSData.Base64DecodingOptions.ignoreUnknownCharacters, typeName: "NSData.Base64DecodingOptions")),
+        "init NSData.Base64DecodingOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSData.Base64DecodingOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSData.Base64DecodingOptions()
+            for element in elements {
+                let item: NSData.Base64DecodingOptions = try unboxOpaque(
+                    element, as: NSData.Base64DecodingOptions.self, typeName: "NSData.Base64DecodingOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSData.Base64DecodingOptions")
+        },
     ]
 }

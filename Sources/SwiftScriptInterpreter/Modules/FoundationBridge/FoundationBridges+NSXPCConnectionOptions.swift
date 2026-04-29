@@ -10,10 +10,23 @@ extension FoundationBridges {
         }
         return boxOpaque(NSXPCConnection.Options(), typeName: "NSXPCConnection.Options")
     },
-    "var NSXPCConnection.Options.isEmpty": .computed { receiver in
+    "var NSXPCConnection.Options.isEmpty: Bool": .computed { receiver in
         let recv: NSXPCConnection.Options = try unboxOpaque(receiver, as: NSXPCConnection.Options.self, typeName: "NSXPCConnection.Options")
         return .bool(recv.isEmpty)
     },
     "static let NSXPCConnection.Options.privileged": .staticValue(boxOpaque(NSXPCConnection.Options.privileged, typeName: "NSXPCConnection.Options")),
+        "init NSXPCConnection.Options(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSXPCConnection.Options(arrayLiteral:): expected array literal")
+            }
+            var result = NSXPCConnection.Options()
+            for element in elements {
+                let item: NSXPCConnection.Options = try unboxOpaque(
+                    element, as: NSXPCConnection.Options.self, typeName: "NSXPCConnection.Options"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSXPCConnection.Options")
+        },
     ]
 }

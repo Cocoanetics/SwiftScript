@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(DateComponentsFormatter.ZeroFormattingBehavior(), typeName: "DateComponentsFormatter.ZeroFormattingBehavior")
     },
-    "var DateComponentsFormatter.ZeroFormattingBehavior.isEmpty": .computed { receiver in
+    "var DateComponentsFormatter.ZeroFormattingBehavior.isEmpty: Bool": .computed { receiver in
         let recv: DateComponentsFormatter.ZeroFormattingBehavior = try unboxOpaque(receiver, as: DateComponentsFormatter.ZeroFormattingBehavior.self, typeName: "DateComponentsFormatter.ZeroFormattingBehavior")
         return .bool(recv.isEmpty)
     },
@@ -20,5 +20,18 @@ extension FoundationBridges {
     "static let DateComponentsFormatter.ZeroFormattingBehavior.dropTrailing": .staticValue(boxOpaque(DateComponentsFormatter.ZeroFormattingBehavior.dropTrailing, typeName: "DateComponentsFormatter.ZeroFormattingBehavior")),
     "static let DateComponentsFormatter.ZeroFormattingBehavior.dropAll": .staticValue(boxOpaque(DateComponentsFormatter.ZeroFormattingBehavior.dropAll, typeName: "DateComponentsFormatter.ZeroFormattingBehavior")),
     "static let DateComponentsFormatter.ZeroFormattingBehavior.pad": .staticValue(boxOpaque(DateComponentsFormatter.ZeroFormattingBehavior.pad, typeName: "DateComponentsFormatter.ZeroFormattingBehavior")),
+        "init DateComponentsFormatter.ZeroFormattingBehavior(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("DateComponentsFormatter.ZeroFormattingBehavior(arrayLiteral:): expected array literal")
+            }
+            var result = DateComponentsFormatter.ZeroFormattingBehavior()
+            for element in elements {
+                let item: DateComponentsFormatter.ZeroFormattingBehavior = try unboxOpaque(
+                    element, as: DateComponentsFormatter.ZeroFormattingBehavior.self, typeName: "DateComponentsFormatter.ZeroFormattingBehavior"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "DateComponentsFormatter.ZeroFormattingBehavior")
+        },
     ]
 }

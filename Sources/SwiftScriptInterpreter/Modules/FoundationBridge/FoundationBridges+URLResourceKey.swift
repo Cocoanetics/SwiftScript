@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let uRLResourceKey: [String: Bridge] = [
-    "var URLResourceKey.hashValue": .computed { receiver in
+    "var URLResourceKey.hashValue: Int": .computed { receiver in
         let recv: URLResourceKey = try unboxOpaque(receiver, as: URLResourceKey.self, typeName: "URLResourceKey")
         return .int(recv.hashValue)
     },

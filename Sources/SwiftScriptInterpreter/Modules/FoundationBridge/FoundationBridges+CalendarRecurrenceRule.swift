@@ -4,15 +4,15 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let calendarRecurrenceRule: [String: Bridge] = [
-    "var Calendar.RecurrenceRule.calendar": .computed { receiver in
+    "var Calendar.RecurrenceRule.calendar: Calendar": .computed { receiver in
         let recv: Calendar.RecurrenceRule = try unboxOpaque(receiver, as: Calendar.RecurrenceRule.self, typeName: "Calendar.RecurrenceRule")
         return boxOpaque(recv.calendar, typeName: "Calendar")
     },
-    "var Calendar.RecurrenceRule.interval": .computed { receiver in
+    "var Calendar.RecurrenceRule.interval: Int": .computed { receiver in
         let recv: Calendar.RecurrenceRule = try unboxOpaque(receiver, as: Calendar.RecurrenceRule.self, typeName: "Calendar.RecurrenceRule")
         return .int(recv.interval)
     },
-    "var Calendar.RecurrenceRule.hashValue": .computed { receiver in
+    "var Calendar.RecurrenceRule.hashValue: Int": .computed { receiver in
         let recv: Calendar.RecurrenceRule = try unboxOpaque(receiver, as: Calendar.RecurrenceRule.self, typeName: "Calendar.RecurrenceRule")
         return .int(recv.hashValue)
     },

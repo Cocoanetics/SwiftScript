@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let predicateExpressionsVariableID: [String: Bridge] = [
-    "var PredicateExpressions.VariableID.hashValue": .computed { receiver in
+    "var PredicateExpressions.VariableID.hashValue: Int": .computed { receiver in
         let recv: PredicateExpressions.VariableID = try unboxOpaque(receiver, as: PredicateExpressions.VariableID.self, typeName: "PredicateExpressions.VariableID")
         return .int(recv.hashValue)
     },

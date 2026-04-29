@@ -10,19 +10,19 @@ extension FoundationBridges {
         }
         return boxOpaque(UUID(), typeName: "UUID")
     },
-    "var UUID.uuidString": .computed { receiver in
+    "var UUID.uuidString: String": .computed { receiver in
         let recv: UUID = try unboxOpaque(receiver, as: UUID.self, typeName: "UUID")
         return .string(recv.uuidString)
     },
-    "var UUID.description": .computed { receiver in
+    "var UUID.description: String": .computed { receiver in
         let recv: UUID = try unboxOpaque(receiver, as: UUID.self, typeName: "UUID")
         return .string(recv.description)
     },
-    "var UUID.debugDescription": .computed { receiver in
+    "var UUID.debugDescription: String": .computed { receiver in
         let recv: UUID = try unboxOpaque(receiver, as: UUID.self, typeName: "UUID")
         return .string(recv.debugDescription)
     },
-    "var UUID.hashValue": .computed { receiver in
+    "var UUID.hashValue: Int": .computed { receiver in
         let recv: UUID = try unboxOpaque(receiver, as: UUID.self, typeName: "UUID")
         return .int(recv.hashValue)
     },

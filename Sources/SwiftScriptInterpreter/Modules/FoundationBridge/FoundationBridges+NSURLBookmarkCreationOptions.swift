@@ -10,12 +10,25 @@ extension FoundationBridges {
         }
         return boxOpaque(NSURL.BookmarkCreationOptions(), typeName: "NSURL.BookmarkCreationOptions")
     },
-    "var NSURL.BookmarkCreationOptions.isEmpty": .computed { receiver in
+    "var NSURL.BookmarkCreationOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSURL.BookmarkCreationOptions = try unboxOpaque(receiver, as: NSURL.BookmarkCreationOptions.self, typeName: "NSURL.BookmarkCreationOptions")
         return .bool(recv.isEmpty)
     },
     "static let NSURL.BookmarkCreationOptions.minimalBookmark": .staticValue(boxOpaque(NSURL.BookmarkCreationOptions.minimalBookmark, typeName: "NSURL.BookmarkCreationOptions")),
     "static let NSURL.BookmarkCreationOptions.suitableForBookmarkFile": .staticValue(boxOpaque(NSURL.BookmarkCreationOptions.suitableForBookmarkFile, typeName: "NSURL.BookmarkCreationOptions")),
     "static let NSURL.BookmarkCreationOptions.withoutImplicitSecurityScope": .staticValue(boxOpaque(NSURL.BookmarkCreationOptions.withoutImplicitSecurityScope, typeName: "NSURL.BookmarkCreationOptions")),
+        "init NSURL.BookmarkCreationOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSURL.BookmarkCreationOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSURL.BookmarkCreationOptions()
+            for element in elements {
+                let item: NSURL.BookmarkCreationOptions = try unboxOpaque(
+                    element, as: NSURL.BookmarkCreationOptions.self, typeName: "NSURL.BookmarkCreationOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSURL.BookmarkCreationOptions")
+        },
     ]
 }

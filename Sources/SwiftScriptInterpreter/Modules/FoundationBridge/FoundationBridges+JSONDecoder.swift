@@ -4,14 +4,22 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let jSONDecoder: [String: Bridge] = [
-    "var JSONDecoder.allowsJSON5": .computed { receiver in
+    "var JSONDecoder.allowsJSON5: Bool": .computed { receiver in
         let recv: JSONDecoder = try unboxOpaque(receiver, as: JSONDecoder.self, typeName: "JSONDecoder")
         return .bool(recv.allowsJSON5)
     },
-    "var JSONDecoder.assumesTopLevelDictionary": .computed { receiver in
+        "set var JSONDecoder.allowsJSON5: Bool": .setter { receiver, newValue in
+            let recv: JSONDecoder = try unboxOpaque(receiver, as: JSONDecoder.self, typeName: "JSONDecoder")
+            recv.allowsJSON5 = try unboxBool(newValue)
+        },
+    "var JSONDecoder.assumesTopLevelDictionary: Bool": .computed { receiver in
         let recv: JSONDecoder = try unboxOpaque(receiver, as: JSONDecoder.self, typeName: "JSONDecoder")
         return .bool(recv.assumesTopLevelDictionary)
     },
+        "set var JSONDecoder.assumesTopLevelDictionary: Bool": .setter { receiver, newValue in
+            let recv: JSONDecoder = try unboxOpaque(receiver, as: JSONDecoder.self, typeName: "JSONDecoder")
+            recv.assumesTopLevelDictionary = try unboxBool(newValue)
+        },
     "init JSONDecoder()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init JSONDecoder(): expected 0 argument(s), got \(args.count)")

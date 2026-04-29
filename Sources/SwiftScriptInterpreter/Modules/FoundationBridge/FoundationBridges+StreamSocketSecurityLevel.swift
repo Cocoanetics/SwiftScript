@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let streamSocketSecurityLevel: [String: Bridge] = [
-    "var StreamSocketSecurityLevel.hashValue": .computed { receiver in
+    "var StreamSocketSecurityLevel.hashValue: Int": .computed { receiver in
         let recv: StreamSocketSecurityLevel = try unboxOpaque(receiver, as: StreamSocketSecurityLevel.self, typeName: "StreamSocketSecurityLevel")
         return .int(recv.hashValue)
     },

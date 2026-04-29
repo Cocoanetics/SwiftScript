@@ -5,19 +5,19 @@ import Foundation
 extension FoundationBridges {
     nonisolated(unsafe) static let dateComponentsFormatStyle: [String: Bridge] = [
     "static let Date.ComponentsFormatStyle.timeDuration": .staticValue(boxOpaque(Date.ComponentsFormatStyle.timeDuration, typeName: "Date.ComponentsFormatStyle")),
-    "var Date.ComponentsFormatStyle.calendar": .computed { receiver in
+    "var Date.ComponentsFormatStyle.calendar: Calendar": .computed { receiver in
         let recv: Date.ComponentsFormatStyle = try unboxOpaque(receiver, as: Date.ComponentsFormatStyle.self, typeName: "Date.ComponentsFormatStyle")
         return boxOpaque(recv.calendar, typeName: "Calendar")
     },
-    "var Date.ComponentsFormatStyle.locale": .computed { receiver in
+    "var Date.ComponentsFormatStyle.locale: Locale": .computed { receiver in
         let recv: Date.ComponentsFormatStyle = try unboxOpaque(receiver, as: Date.ComponentsFormatStyle.self, typeName: "Date.ComponentsFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
-    "var Date.ComponentsFormatStyle.isPositive": .computed { receiver in
+    "var Date.ComponentsFormatStyle.isPositive: Bool": .computed { receiver in
         let recv: Date.ComponentsFormatStyle = try unboxOpaque(receiver, as: Date.ComponentsFormatStyle.self, typeName: "Date.ComponentsFormatStyle")
         return .bool(recv.isPositive)
     },
-    "var Date.ComponentsFormatStyle.hashValue": .computed { receiver in
+    "var Date.ComponentsFormatStyle.hashValue: Int": .computed { receiver in
         let recv: Date.ComponentsFormatStyle = try unboxOpaque(receiver, as: Date.ComponentsFormatStyle.self, typeName: "Date.ComponentsFormatStyle")
         return .int(recv.hashValue)
     },

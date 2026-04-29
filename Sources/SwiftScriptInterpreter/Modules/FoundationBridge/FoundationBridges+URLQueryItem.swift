@@ -4,26 +4,26 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let uRLQueryItem: [String: Bridge] = [
-    "var URLQueryItem.name": .computed { receiver in
+    "var URLQueryItem.name: String": .computed { receiver in
         let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
         return .string(recv.name)
     },
-    "var URLQueryItem.value": .computed { receiver in
+    "var URLQueryItem.value: String?": .computed { receiver in
         let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
         if let _v = recv.value {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URLQueryItem.hashValue": .computed { receiver in
+    "var URLQueryItem.hashValue: Int": .computed { receiver in
         let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
         return .int(recv.hashValue)
     },
-    "var URLQueryItem.description": .computed { receiver in
+    "var URLQueryItem.description: String": .computed { receiver in
         let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
         return .string(recv.description)
     },
-    "var URLQueryItem.debugDescription": .computed { receiver in
+    "var URLQueryItem.debugDescription: String": .computed { receiver in
         let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
         return .string(recv.debugDescription)
     },

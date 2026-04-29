@@ -10,11 +10,24 @@ extension FoundationBridges {
         }
         return boxOpaque(NSData.SearchOptions(), typeName: "NSData.SearchOptions")
     },
-    "var NSData.SearchOptions.isEmpty": .computed { receiver in
+    "var NSData.SearchOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSData.SearchOptions = try unboxOpaque(receiver, as: NSData.SearchOptions.self, typeName: "NSData.SearchOptions")
         return .bool(recv.isEmpty)
     },
     "static let NSData.SearchOptions.backwards": .staticValue(boxOpaque(NSData.SearchOptions.backwards, typeName: "NSData.SearchOptions")),
     "static let NSData.SearchOptions.anchored": .staticValue(boxOpaque(NSData.SearchOptions.anchored, typeName: "NSData.SearchOptions")),
+        "init NSData.SearchOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSData.SearchOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSData.SearchOptions()
+            for element in elements {
+                let item: NSData.SearchOptions = try unboxOpaque(
+                    element, as: NSData.SearchOptions.self, typeName: "NSData.SearchOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSData.SearchOptions")
+        },
     ]
 }

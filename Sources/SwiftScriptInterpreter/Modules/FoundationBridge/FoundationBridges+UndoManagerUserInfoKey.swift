@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let undoManagerUserInfoKey: [String: Bridge] = [
-    "var UndoManager.UserInfoKey.hashValue": .computed { receiver in
+    "var UndoManager.UserInfoKey.hashValue: Int": .computed { receiver in
         let recv: UndoManager.UserInfoKey = try unboxOpaque(receiver, as: UndoManager.UserInfoKey.self, typeName: "UndoManager.UserInfoKey")
         return .int(recv.hashValue)
     },

@@ -10,10 +10,23 @@ extension FoundationBridges {
         }
         return boxOpaque(AttributedString.FormattingOptions(), typeName: "AttributedString.FormattingOptions")
     },
-    "var AttributedString.FormattingOptions.isEmpty": .computed { receiver in
+    "var AttributedString.FormattingOptions.isEmpty: Bool": .computed { receiver in
         let recv: AttributedString.FormattingOptions = try unboxOpaque(receiver, as: AttributedString.FormattingOptions.self, typeName: "AttributedString.FormattingOptions")
         return .bool(recv.isEmpty)
     },
     "static let AttributedString.FormattingOptions.applyReplacementIndexAttribute": .staticValue(boxOpaque(AttributedString.FormattingOptions.applyReplacementIndexAttribute, typeName: "AttributedString.FormattingOptions")),
+        "init AttributedString.FormattingOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("AttributedString.FormattingOptions(arrayLiteral:): expected array literal")
+            }
+            var result = AttributedString.FormattingOptions()
+            for element in elements {
+                let item: AttributedString.FormattingOptions = try unboxOpaque(
+                    element, as: AttributedString.FormattingOptions.self, typeName: "AttributedString.FormattingOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "AttributedString.FormattingOptions")
+        },
     ]
 }

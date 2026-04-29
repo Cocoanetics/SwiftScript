@@ -6,137 +6,137 @@ extension FoundationBridges {
     nonisolated(unsafe) static let locale: [String: Bridge] = [
     "static let Locale.autoupdatingCurrent": .staticValue(boxOpaque(Locale.autoupdatingCurrent, typeName: "Locale")),
     "static let Locale.current": .staticValue(boxOpaque(Locale.current, typeName: "Locale")),
-    "var Locale.identifier": .computed { receiver in
+    "var Locale.identifier: String": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         return .string(recv.identifier)
     },
-    "var Locale.exemplarCharacterSet": .computed { receiver in
+    "var Locale.exemplarCharacterSet: CharacterSet?": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         if let _v = recv.exemplarCharacterSet {
             return .optional(boxOpaque(_v, typeName: "CharacterSet"))
         }
         return .optional(nil)
     },
-    "var Locale.calendar": .computed { receiver in
+    "var Locale.calendar: Calendar": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         return boxOpaque(recv.calendar, typeName: "Calendar")
     },
-    "var Locale.decimalSeparator": .computed { receiver in
+    "var Locale.decimalSeparator: String?": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         if let _v = recv.decimalSeparator {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var Locale.groupingSeparator": .computed { receiver in
+    "var Locale.groupingSeparator: String?": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         if let _v = recv.groupingSeparator {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var Locale.currencySymbol": .computed { receiver in
+    "var Locale.currencySymbol: String?": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         if let _v = recv.currencySymbol {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var Locale.collatorIdentifier": .computed { receiver in
+    "var Locale.collatorIdentifier: String?": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         if let _v = recv.collatorIdentifier {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var Locale.quotationBeginDelimiter": .computed { receiver in
+    "var Locale.quotationBeginDelimiter: String?": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         if let _v = recv.quotationBeginDelimiter {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var Locale.quotationEndDelimiter": .computed { receiver in
+    "var Locale.quotationEndDelimiter: String?": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         if let _v = recv.quotationEndDelimiter {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var Locale.alternateQuotationBeginDelimiter": .computed { receiver in
+    "var Locale.alternateQuotationBeginDelimiter: String?": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         if let _v = recv.alternateQuotationBeginDelimiter {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var Locale.alternateQuotationEndDelimiter": .computed { receiver in
+    "var Locale.alternateQuotationEndDelimiter: String?": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         if let _v = recv.alternateQuotationEndDelimiter {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var Locale.measurementSystem": .computed { receiver in
+    "var Locale.measurementSystem: Locale.MeasurementSystem": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         return boxOpaque(recv.measurementSystem, typeName: "Locale.MeasurementSystem")
     },
-    "var Locale.currency": .computed { receiver in
+    "var Locale.currency: Locale.Currency?": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         if let _v = recv.currency {
             return .optional(boxOpaque(_v, typeName: "Locale.Currency"))
         }
         return .optional(nil)
     },
-    "var Locale.numberingSystem": .computed { receiver in
+    "var Locale.numberingSystem: Locale.NumberingSystem": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         return boxOpaque(recv.numberingSystem, typeName: "Locale.NumberingSystem")
     },
-    "var Locale.language": .computed { receiver in
+    "var Locale.language: Locale.Language": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         return boxOpaque(recv.language, typeName: "Locale.Language")
     },
-    "var Locale.collation": .computed { receiver in
+    "var Locale.collation: Locale.Collation": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         return boxOpaque(recv.collation, typeName: "Locale.Collation")
     },
-    "var Locale.region": .computed { receiver in
+    "var Locale.region: Locale.Region?": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         if let _v = recv.region {
             return .optional(boxOpaque(_v, typeName: "Locale.Region"))
         }
         return .optional(nil)
     },
-    "var Locale.timeZone": .computed { receiver in
+    "var Locale.timeZone: TimeZone?": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         if let _v = recv.timeZone {
             return .optional(boxOpaque(_v, typeName: "TimeZone"))
         }
         return .optional(nil)
     },
-    "var Locale.subdivision": .computed { receiver in
+    "var Locale.subdivision: Locale.Subdivision?": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         if let _v = recv.subdivision {
             return .optional(boxOpaque(_v, typeName: "Locale.Subdivision"))
         }
         return .optional(nil)
     },
-    "var Locale.variant": .computed { receiver in
+    "var Locale.variant: Locale.Variant?": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         if let _v = recv.variant {
             return .optional(boxOpaque(_v, typeName: "Locale.Variant"))
         }
         return .optional(nil)
     },
-    "var Locale.hashValue": .computed { receiver in
+    "var Locale.hashValue: Int": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         return .int(recv.hashValue)
     },
-    "var Locale.description": .computed { receiver in
+    "var Locale.description: String": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         return .string(recv.description)
     },
-    "var Locale.debugDescription": .computed { receiver in
+    "var Locale.debugDescription: String": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         return .string(recv.debugDescription)
     },

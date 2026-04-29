@@ -10,64 +10,64 @@ extension FoundationBridges {
         }
         return boxOpaque(PersonNameComponents(), typeName: "PersonNameComponents")
     },
-    "var PersonNameComponents.namePrefix": .computed { receiver in
+    "var PersonNameComponents.namePrefix: String?": .computed { receiver in
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         if let _v = recv.namePrefix {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var PersonNameComponents.givenName": .computed { receiver in
+    "var PersonNameComponents.givenName: String?": .computed { receiver in
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         if let _v = recv.givenName {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var PersonNameComponents.middleName": .computed { receiver in
+    "var PersonNameComponents.middleName: String?": .computed { receiver in
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         if let _v = recv.middleName {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var PersonNameComponents.familyName": .computed { receiver in
+    "var PersonNameComponents.familyName: String?": .computed { receiver in
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         if let _v = recv.familyName {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var PersonNameComponents.nameSuffix": .computed { receiver in
+    "var PersonNameComponents.nameSuffix: String?": .computed { receiver in
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         if let _v = recv.nameSuffix {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var PersonNameComponents.nickname": .computed { receiver in
+    "var PersonNameComponents.nickname: String?": .computed { receiver in
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         if let _v = recv.nickname {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var PersonNameComponents.phoneticRepresentation": .computed { receiver in
+    "var PersonNameComponents.phoneticRepresentation: PersonNameComponents?": .computed { receiver in
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         if let _v = recv.phoneticRepresentation {
             return .optional(boxOpaque(_v, typeName: "PersonNameComponents"))
         }
         return .optional(nil)
     },
-    "var PersonNameComponents.hashValue": .computed { receiver in
+    "var PersonNameComponents.hashValue: Int": .computed { receiver in
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         return .int(recv.hashValue)
     },
-    "var PersonNameComponents.description": .computed { receiver in
+    "var PersonNameComponents.description: String": .computed { receiver in
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         return .string(recv.description)
     },
-    "var PersonNameComponents.debugDescription": .computed { receiver in
+    "var PersonNameComponents.debugDescription: String": .computed { receiver in
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         return .string(recv.debugDescription)
     },

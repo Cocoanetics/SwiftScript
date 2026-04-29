@@ -4,11 +4,11 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let indexPath: [String: Bridge] = [
-    "var IndexPath.isEmpty": .computed { receiver in
+    "var IndexPath.isEmpty: Bool": .computed { receiver in
         let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
         return .bool(recv.isEmpty)
     },
-    "var IndexPath.underestimatedCount": .computed { receiver in
+    "var IndexPath.underestimatedCount: Int": .computed { receiver in
         let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
         return .int(recv.underestimatedCount)
     },
@@ -25,19 +25,19 @@ extension FoundationBridges {
         let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
         return boxOpaque(recv.dropLast(), typeName: "IndexPath")
     },
-    "var IndexPath.count": .computed { receiver in
+    "var IndexPath.count: Int": .computed { receiver in
         let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
         return .int(recv.count)
     },
-    "var IndexPath.hashValue": .computed { receiver in
+    "var IndexPath.hashValue: Int": .computed { receiver in
         let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
         return .int(recv.hashValue)
     },
-    "var IndexPath.description": .computed { receiver in
+    "var IndexPath.description: String": .computed { receiver in
         let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
         return .string(recv.description)
     },
-    "var IndexPath.debugDescription": .computed { receiver in
+    "var IndexPath.debugDescription: String": .computed { receiver in
         let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
         return .string(recv.debugDescription)
     },

@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSOrderedCollectionDifferenceCalculationOptions(), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
     },
-    "var NSOrderedCollectionDifferenceCalculationOptions.isEmpty": .computed { receiver in
+    "var NSOrderedCollectionDifferenceCalculationOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
         return .bool(recv.isEmpty)
     },
@@ -87,5 +87,18 @@ extension FoundationBridges {
         let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
         return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
     },
+        "init NSOrderedCollectionDifferenceCalculationOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSOrderedCollectionDifferenceCalculationOptions()
+            for element in elements {
+                let item: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(
+                    element, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        },
     ]
 }

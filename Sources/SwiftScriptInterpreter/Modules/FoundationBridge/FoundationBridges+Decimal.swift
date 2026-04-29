@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let decimal: [String: Bridge] = [
-    "var Decimal.description": .computed { receiver in
+    "var Decimal.description: String": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .string(recv.description)
     },
@@ -16,71 +16,71 @@ extension FoundationBridges {
     "static let Decimal.quietNaN": .staticValue(boxOpaque(Decimal.quietNaN, typeName: "Decimal")),
     "static let Decimal.nan": .staticValue(boxOpaque(Decimal.nan, typeName: "Decimal")),
     "static let Decimal.radix": .staticValue(.int(Decimal.radix)),
-    "var Decimal.exponent": .computed { receiver in
+    "var Decimal.exponent: Int": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .int(recv.exponent)
     },
-    "var Decimal.significand": .computed { receiver in
+    "var Decimal.significand: Decimal": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return boxOpaque(recv.significand, typeName: "Decimal")
     },
-    "var Decimal.ulp": .computed { receiver in
+    "var Decimal.ulp: Decimal": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return boxOpaque(recv.ulp, typeName: "Decimal")
     },
-    "var Decimal.isCanonical": .computed { receiver in
+    "var Decimal.isCanonical: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isCanonical)
     },
-    "var Decimal.isSignMinus": .computed { receiver in
+    "var Decimal.isSignMinus: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isSignMinus)
     },
-    "var Decimal.isZero": .computed { receiver in
+    "var Decimal.isZero: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isZero)
     },
-    "var Decimal.isSubnormal": .computed { receiver in
+    "var Decimal.isSubnormal: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isSubnormal)
     },
-    "var Decimal.isNormal": .computed { receiver in
+    "var Decimal.isNormal: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isNormal)
     },
-    "var Decimal.isFinite": .computed { receiver in
+    "var Decimal.isFinite: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isFinite)
     },
-    "var Decimal.isInfinite": .computed { receiver in
+    "var Decimal.isInfinite: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isInfinite)
     },
-    "var Decimal.isNaN": .computed { receiver in
+    "var Decimal.isNaN: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isNaN)
     },
-    "var Decimal.isSignaling": .computed { receiver in
+    "var Decimal.isSignaling: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isSignaling)
     },
-    "var Decimal.isSignalingNaN": .computed { receiver in
+    "var Decimal.isSignalingNaN: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isSignalingNaN)
     },
-    "var Decimal.nextUp": .computed { receiver in
+    "var Decimal.nextUp: Decimal": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return boxOpaque(recv.nextUp, typeName: "Decimal")
     },
-    "var Decimal.nextDown": .computed { receiver in
+    "var Decimal.nextDown: Decimal": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return boxOpaque(recv.nextDown, typeName: "Decimal")
     },
-    "var Decimal.hashValue": .computed { receiver in
+    "var Decimal.hashValue: Int": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .int(recv.hashValue)
     },
-    "var Decimal.magnitude": .computed { receiver in
+    "var Decimal.magnitude: Decimal": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return boxOpaque(recv.magnitude, typeName: "Decimal")
     },

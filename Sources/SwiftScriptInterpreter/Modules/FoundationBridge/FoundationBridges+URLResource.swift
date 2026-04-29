@@ -4,22 +4,22 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let uRLResource: [String: Bridge] = [
-    "var URLResource.name": .computed { receiver in
+    "var URLResource.name: String": .computed { receiver in
         let recv: URLResource = try unboxOpaque(receiver, as: URLResource.self, typeName: "URLResource")
         return .string(recv.name)
     },
-    "var URLResource.subdirectory": .computed { receiver in
+    "var URLResource.subdirectory: String?": .computed { receiver in
         let recv: URLResource = try unboxOpaque(receiver, as: URLResource.self, typeName: "URLResource")
         if let _v = recv.subdirectory {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URLResource.locale": .computed { receiver in
+    "var URLResource.locale: Locale": .computed { receiver in
         let recv: URLResource = try unboxOpaque(receiver, as: URLResource.self, typeName: "URLResource")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
-    "var URLResource.hashValue": .computed { receiver in
+    "var URLResource.hashValue: Int": .computed { receiver in
         let recv: URLResource = try unboxOpaque(receiver, as: URLResource.self, typeName: "URLResource")
         return .int(recv.hashValue)
     },

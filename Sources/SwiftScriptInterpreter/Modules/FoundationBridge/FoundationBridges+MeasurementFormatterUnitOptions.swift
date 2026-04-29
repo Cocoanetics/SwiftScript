@@ -10,12 +10,25 @@ extension FoundationBridges {
         }
         return boxOpaque(MeasurementFormatter.UnitOptions(), typeName: "MeasurementFormatter.UnitOptions")
     },
-    "var MeasurementFormatter.UnitOptions.isEmpty": .computed { receiver in
+    "var MeasurementFormatter.UnitOptions.isEmpty: Bool": .computed { receiver in
         let recv: MeasurementFormatter.UnitOptions = try unboxOpaque(receiver, as: MeasurementFormatter.UnitOptions.self, typeName: "MeasurementFormatter.UnitOptions")
         return .bool(recv.isEmpty)
     },
     "static let MeasurementFormatter.UnitOptions.providedUnit": .staticValue(boxOpaque(MeasurementFormatter.UnitOptions.providedUnit, typeName: "MeasurementFormatter.UnitOptions")),
     "static let MeasurementFormatter.UnitOptions.naturalScale": .staticValue(boxOpaque(MeasurementFormatter.UnitOptions.naturalScale, typeName: "MeasurementFormatter.UnitOptions")),
     "static let MeasurementFormatter.UnitOptions.temperatureWithoutUnit": .staticValue(boxOpaque(MeasurementFormatter.UnitOptions.temperatureWithoutUnit, typeName: "MeasurementFormatter.UnitOptions")),
+        "init MeasurementFormatter.UnitOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("MeasurementFormatter.UnitOptions(arrayLiteral:): expected array literal")
+            }
+            var result = MeasurementFormatter.UnitOptions()
+            for element in elements {
+                let item: MeasurementFormatter.UnitOptions = try unboxOpaque(
+                    element, as: MeasurementFormatter.UnitOptions.self, typeName: "MeasurementFormatter.UnitOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "MeasurementFormatter.UnitOptions")
+        },
     ]
 }

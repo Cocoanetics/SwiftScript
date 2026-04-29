@@ -163,10 +163,15 @@ extension Interpreter {
     }
 
     func extensionComputedProperty(typeName: String, name: String) -> Function? {
-        let key = bridgeKey(forComputedProperty: name, on: typeName)
-        if case .computed(let body)? = bridges[key] {
+        // Properties carry rich keys (`var Type.member: ReturnType`) so
+        // the index is the source of truth for lookup. The bare-key
+        // bridge subscript is no longer used by the property dispatch
+        // path.
+        if let entry = propertyIndex["\(typeName).\(name)"],
+           case .computed(let body)? = entry.getter
+        {
             return Function(
-                name: key, parameters: [],
+                name: "var \(typeName).\(name)", parameters: [],
                 kind: .builtinMethod({ recv, _ in try await body(recv) })
             )
         }

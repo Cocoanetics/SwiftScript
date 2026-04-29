@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let streamSOCKSProxyVersion: [String: Bridge] = [
-    "var StreamSOCKSProxyVersion.hashValue": .computed { receiver in
+    "var StreamSOCKSProxyVersion.hashValue: Int": .computed { receiver in
         let recv: StreamSOCKSProxyVersion = try unboxOpaque(receiver, as: StreamSOCKSProxyVersion.self, typeName: "StreamSOCKSProxyVersion")
         return .int(recv.hashValue)
     },

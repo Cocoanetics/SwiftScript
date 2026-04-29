@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(JSONSerialization.ReadingOptions(), typeName: "JSONSerialization.ReadingOptions")
     },
-    "var JSONSerialization.ReadingOptions.isEmpty": .computed { receiver in
+    "var JSONSerialization.ReadingOptions.isEmpty: Bool": .computed { receiver in
         let recv: JSONSerialization.ReadingOptions = try unboxOpaque(receiver, as: JSONSerialization.ReadingOptions.self, typeName: "JSONSerialization.ReadingOptions")
         return .bool(recv.isEmpty)
     },
@@ -20,5 +20,18 @@ extension FoundationBridges {
     "static let JSONSerialization.ReadingOptions.json5Allowed": .staticValue(boxOpaque(JSONSerialization.ReadingOptions.json5Allowed, typeName: "JSONSerialization.ReadingOptions")),
     "static let JSONSerialization.ReadingOptions.topLevelDictionaryAssumed": .staticValue(boxOpaque(JSONSerialization.ReadingOptions.topLevelDictionaryAssumed, typeName: "JSONSerialization.ReadingOptions")),
     "static let JSONSerialization.ReadingOptions.allowFragments": .staticValue(boxOpaque(JSONSerialization.ReadingOptions.allowFragments, typeName: "JSONSerialization.ReadingOptions")),
+        "init JSONSerialization.ReadingOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("JSONSerialization.ReadingOptions(arrayLiteral:): expected array literal")
+            }
+            var result = JSONSerialization.ReadingOptions()
+            for element in elements {
+                let item: JSONSerialization.ReadingOptions = try unboxOpaque(
+                    element, as: JSONSerialization.ReadingOptions.self, typeName: "JSONSerialization.ReadingOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "JSONSerialization.ReadingOptions")
+        },
     ]
 }

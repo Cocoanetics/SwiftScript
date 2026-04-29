@@ -4,11 +4,11 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let uRLErrorCode: [String: Bridge] = [
-    "var URLError.Code.hashValue": .computed { receiver in
+    "var URLError.Code.hashValue: Int": .computed { receiver in
         let recv: URLError.Code = try unboxOpaque(receiver, as: URLError.Code.self, typeName: "URLError.Code")
         return .int(recv.hashValue)
     },
-    "var URLError.Code.rawValue": .computed { receiver in
+    "var URLError.Code.rawValue: Int": .computed { receiver in
         let recv: URLError.Code = try unboxOpaque(receiver, as: URLError.Code.self, typeName: "URLError.Code")
         return .int(recv.rawValue)
     },

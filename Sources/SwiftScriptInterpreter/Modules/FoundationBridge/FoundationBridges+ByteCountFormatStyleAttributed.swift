@@ -4,23 +4,23 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let byteCountFormatStyleAttributed: [String: Bridge] = [
-    "var ByteCountFormatStyle.Attributed.allowedUnits": .computed { receiver in
+    "var ByteCountFormatStyle.Attributed.allowedUnits: ByteCountFormatStyle.Units": .computed { receiver in
         let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
         return boxOpaque(recv.allowedUnits, typeName: "ByteCountFormatStyle.Units")
     },
-    "var ByteCountFormatStyle.Attributed.spellsOutZero": .computed { receiver in
+    "var ByteCountFormatStyle.Attributed.spellsOutZero: Bool": .computed { receiver in
         let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
         return .bool(recv.spellsOutZero)
     },
-    "var ByteCountFormatStyle.Attributed.includesActualByteCount": .computed { receiver in
+    "var ByteCountFormatStyle.Attributed.includesActualByteCount: Bool": .computed { receiver in
         let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
         return .bool(recv.includesActualByteCount)
     },
-    "var ByteCountFormatStyle.Attributed.locale": .computed { receiver in
+    "var ByteCountFormatStyle.Attributed.locale: Locale": .computed { receiver in
         let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
-    "var ByteCountFormatStyle.Attributed.hashValue": .computed { receiver in
+    "var ByteCountFormatStyle.Attributed.hashValue: Int": .computed { receiver in
         let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
         return .int(recv.hashValue)
     },

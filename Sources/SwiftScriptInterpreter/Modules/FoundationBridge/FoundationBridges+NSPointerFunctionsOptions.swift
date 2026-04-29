@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSPointerFunctions.Options(), typeName: "NSPointerFunctions.Options")
     },
-    "var NSPointerFunctions.Options.isEmpty": .computed { receiver in
+    "var NSPointerFunctions.Options.isEmpty: Bool": .computed { receiver in
         let recv: NSPointerFunctions.Options = try unboxOpaque(receiver, as: NSPointerFunctions.Options.self, typeName: "NSPointerFunctions.Options")
         return .bool(recv.isEmpty)
     },
@@ -26,5 +26,18 @@ extension FoundationBridges {
     "static let NSPointerFunctions.Options.structPersonality": .staticValue(boxOpaque(NSPointerFunctions.Options.structPersonality, typeName: "NSPointerFunctions.Options")),
     "static let NSPointerFunctions.Options.integerPersonality": .staticValue(boxOpaque(NSPointerFunctions.Options.integerPersonality, typeName: "NSPointerFunctions.Options")),
     "static let NSPointerFunctions.Options.copyIn": .staticValue(boxOpaque(NSPointerFunctions.Options.copyIn, typeName: "NSPointerFunctions.Options")),
+        "init NSPointerFunctions.Options(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSPointerFunctions.Options(arrayLiteral:): expected array literal")
+            }
+            var result = NSPointerFunctions.Options()
+            for element in elements {
+                let item: NSPointerFunctions.Options = try unboxOpaque(
+                    element, as: NSPointerFunctions.Options.self, typeName: "NSPointerFunctions.Options"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSPointerFunctions.Options")
+        },
     ]
 }

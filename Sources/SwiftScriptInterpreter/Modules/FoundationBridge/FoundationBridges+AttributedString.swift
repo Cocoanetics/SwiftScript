@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let attributedString: [String: Bridge] = [
-    "var AttributedString.description": .computed { receiver in
+    "var AttributedString.description: String": .computed { receiver in
         let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
         return .string(recv.description)
     },
@@ -14,19 +14,19 @@ extension FoundationBridges {
         }
         return boxOpaque(AttributedString(), typeName: "AttributedString")
     },
-    "var AttributedString.startIndex": .computed { receiver in
+    "var AttributedString.startIndex: AttributedString.Index": .computed { receiver in
         let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
         return boxOpaque(recv.startIndex, typeName: "AttributedString.Index")
     },
-    "var AttributedString.endIndex": .computed { receiver in
+    "var AttributedString.endIndex: AttributedString.Index": .computed { receiver in
         let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
         return boxOpaque(recv.endIndex, typeName: "AttributedString.Index")
     },
-    "var AttributedString.hashValue": .computed { receiver in
+    "var AttributedString.hashValue: Int": .computed { receiver in
         let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
         return .int(recv.hashValue)
     },
-    "var AttributedString.runs": .computed { receiver in
+    "var AttributedString.runs: AttributedString.Runs": .computed { receiver in
         let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
         return boxOpaque(recv.runs, typeName: "AttributedString.Runs")
     },

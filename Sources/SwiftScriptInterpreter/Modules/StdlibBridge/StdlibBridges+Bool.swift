@@ -16,11 +16,11 @@ extension StdlibBridges {
         }
         return .bool(Bool.random())
     },
-    "var Bool.description": .computed { receiver in
+    "var Bool.description: String": .computed { receiver in
         let recv: Bool = try unboxBool(receiver)
         return .string(recv.description)
     },
-    "var Bool.hashValue": .computed { receiver in
+    "var Bool.hashValue: Int": .computed { receiver in
         let recv: Bool = try unboxBool(receiver)
         return .int(recv.hashValue)
     },

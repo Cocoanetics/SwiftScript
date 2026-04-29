@@ -19,10 +19,15 @@ public enum Bridge {
     /// Instance method. Receives the value the method was called on
     /// plus the positional arguments.
     case method((Value, [Value]) async throws -> Value)
-    /// Read-only computed property — getter only. Setter-shaped
-    /// properties stay in the per-def storage path (where mutating
-    /// writeback already lives).
+    /// Read-only computed property — getter only.
     case computed((Value) async throws -> Value)
+    /// Property setter — paired with a `.computed` entry that shares
+    /// the same `Type.member` suffix but is keyed `set var Type.member`.
+    /// Receives the receiver value and the new value; mutates the
+    /// underlying reference in place. Emitted for `var` properties on
+    /// auto-bridged classes; struct-typed mutable properties are out
+    /// of scope (they'd need writeback through the opaque payload).
+    case setter((Value, Value) async throws -> Void)
     /// Initializer reachable via `Type(label1:label2:)`.
     case `init`(([Value]) async throws -> Value)
     /// Static value (`static let`). The value is fixed at registration
@@ -32,6 +37,19 @@ public enum Bridge {
     /// reached through a static slot). Wrapped into a `.function`
     /// value at lookup time so call sites see it as a callable.
     case staticMethod(([Value]) async throws -> Value)
+}
+
+/// Indexed view of a property bridge — getter (always present for
+/// readable properties) and setter (present for `var` properties on
+/// bridged classes), plus the declared property-type spelling so the
+/// runtime can resolve implicit-member access in assignment RHS.
+public struct PropertyEntry {
+    public var typeSpelling: String      // `"JSONEncoder.OutputFormatting"` or empty
+    public var getter: Bridge?
+    public var setter: Bridge?
+    public init(typeSpelling: String) {
+        self.typeSpelling = typeSpelling
+    }
 }
 
 extension Interpreter {
@@ -45,6 +63,7 @@ extension Interpreter {
             _bridges = newValue
             _bridgedTypeNamesCache = nil
             _genericIndex = nil
+            _propertyIndex = nil
         }
     }
 
@@ -65,6 +84,46 @@ extension Interpreter {
             index[bucket, default: []].append((sig, bridge))
         }
         _genericIndex = index
+        return index
+    }
+
+    /// Lazy index of property-shaped bridges keyed by `"Type.member"`.
+    /// Each entry pairs the bridge body (getter or setter) with the
+    /// declared property type spelling (`"JSONEncoder.OutputFormatting"`).
+    /// Built from `bridges` keys that begin with `"var "` or
+    /// `"set var "`; rebuilt whenever `bridges` is reassigned.
+    var propertyIndex: [String: PropertyEntry] {
+        if let cached = _propertyIndex { return cached }
+        var index: [String: PropertyEntry] = [:]
+        for (key, bridge) in _bridges {
+            let stripped: Substring
+            let isSetter: Bool
+            if key.hasPrefix("var ") {
+                stripped = key.dropFirst("var ".count); isSetter = false
+            } else if key.hasPrefix("set var ") {
+                stripped = key.dropFirst("set var ".count); isSetter = true
+            } else {
+                continue
+            }
+            // `Type.member: ReturnType` — split on `:`. Older keys
+            // without the type still resolve to a getter-only entry
+            // with empty type spelling.
+            let qualName: String
+            let typeSpelling: String
+            if let colon = stripped.firstIndex(of: ":") {
+                qualName = String(stripped[..<colon]).trimmingCharacters(in: .whitespaces)
+                typeSpelling = String(stripped[stripped.index(after: colon)...])
+                    .trimmingCharacters(in: .whitespaces)
+            } else {
+                qualName = String(stripped).trimmingCharacters(in: .whitespaces)
+                typeSpelling = ""
+            }
+            var entry = index[qualName] ?? PropertyEntry(typeSpelling: typeSpelling)
+            if isSetter { entry.setter = bridge } else { entry.getter = bridge }
+            if !typeSpelling.isEmpty { entry.typeSpelling = typeSpelling }
+            index[qualName] = entry
+        }
+        _propertyIndex = index
         return index
     }
 
@@ -125,12 +184,29 @@ extension Interpreter {
     /// Drop the leading kind keyword from a bridge key, returning the
     /// remainder (`Type.member` / `Type(labels)` shape).
     private func stripKindKeyword(_ key: String) -> Substring {
-        for prefix in ["static let ", "static func ", "func ", "var ", "init "] {
+        for prefix in ["set var ", "static let ", "static func ", "func ", "var ", "init "] {
             if key.hasPrefix(prefix) {
                 return key.dropFirst(prefix.count)
             }
         }
         return Substring(key)
+    }
+
+    /// True if `typeName` names an auto-bridged Foundation class (the
+    /// generator's class allowlist surfaced through `bridges`). Used by
+    /// the assignment dispatcher to allow `let foo = JSONEncoder()` /
+    /// `foo.outputFormatting = …` — the `let` only freezes the reference,
+    /// not the pointee, same as it does for script-side `class` types.
+    /// Detection is signature-shaped: a property setter exists for at
+    /// least one `var Type.member`. Avoids needing a separate registry
+    /// of "which types are class-shaped".
+    func isAutoBridgedClass(_ typeName: String) -> Bool {
+        let prefix = "\(typeName)."
+        for entry in propertyIndex {
+            guard entry.key.hasPrefix(prefix), entry.value.setter != nil else { continue }
+            return true
+        }
+        return false
     }
 }
 

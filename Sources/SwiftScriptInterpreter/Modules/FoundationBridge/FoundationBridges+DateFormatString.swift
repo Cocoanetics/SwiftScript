@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let dateFormatString: [String: Bridge] = [
-    "var Date.FormatString.hashValue": .computed { receiver in
+    "var Date.FormatString.hashValue: Int": .computed { receiver in
         let recv: Date.FormatString = try unboxOpaque(receiver, as: Date.FormatString.self, typeName: "Date.FormatString")
         return .int(recv.hashValue)
     },

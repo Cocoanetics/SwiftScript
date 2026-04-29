@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSData.WritingOptions(), typeName: "NSData.WritingOptions")
     },
-    "var NSData.WritingOptions.isEmpty": .computed { receiver in
+    "var NSData.WritingOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSData.WritingOptions = try unboxOpaque(receiver, as: NSData.WritingOptions.self, typeName: "NSData.WritingOptions")
         return .bool(recv.isEmpty)
     },
@@ -22,5 +22,18 @@ extension FoundationBridges {
     "static let NSData.WritingOptions.completeFileProtectionUntilFirstUserAuthentication": .staticValue(boxOpaque(NSData.WritingOptions.completeFileProtectionUntilFirstUserAuthentication, typeName: "NSData.WritingOptions")),
     "static let NSData.WritingOptions.fileProtectionMask": .staticValue(boxOpaque(NSData.WritingOptions.fileProtectionMask, typeName: "NSData.WritingOptions")),
     "static let NSData.WritingOptions.atomicWrite": .staticValue(boxOpaque(NSData.WritingOptions.atomicWrite, typeName: "NSData.WritingOptions")),
+        "init NSData.WritingOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSData.WritingOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSData.WritingOptions()
+            for element in elements {
+                let item: NSData.WritingOptions = try unboxOpaque(
+                    element, as: NSData.WritingOptions.self, typeName: "NSData.WritingOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSData.WritingOptions")
+        },
     ]
 }

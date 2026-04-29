@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let indexSet: [String: Bridge] = [
-    "var IndexSet.underestimatedCount": .computed { receiver in
+    "var IndexSet.underestimatedCount: Int": .computed { receiver in
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return .int(recv.underestimatedCount)
     },
@@ -14,35 +14,35 @@ extension FoundationBridges {
         }
         return boxOpaque(IndexSet(), typeName: "IndexSet")
     },
-    "var IndexSet.count": .computed { receiver in
+    "var IndexSet.count: Int": .computed { receiver in
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return .int(recv.count)
     },
-    "var IndexSet.rangeView": .computed { receiver in
+    "var IndexSet.rangeView: IndexSet.RangeView": .computed { receiver in
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return boxOpaque(recv.rangeView, typeName: "IndexSet.RangeView")
     },
-    "var IndexSet.startIndex": .computed { receiver in
+    "var IndexSet.startIndex: IndexSet.Index": .computed { receiver in
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return boxOpaque(recv.startIndex, typeName: "IndexSet.Index")
     },
-    "var IndexSet.endIndex": .computed { receiver in
+    "var IndexSet.endIndex: IndexSet.Index": .computed { receiver in
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return boxOpaque(recv.endIndex, typeName: "IndexSet.Index")
     },
-    "var IndexSet.isEmpty": .computed { receiver in
+    "var IndexSet.isEmpty: Bool": .computed { receiver in
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return .bool(recv.isEmpty)
     },
-    "var IndexSet.hashValue": .computed { receiver in
+    "var IndexSet.hashValue: Int": .computed { receiver in
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return .int(recv.hashValue)
     },
-    "var IndexSet.description": .computed { receiver in
+    "var IndexSet.description: String": .computed { receiver in
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return .string(recv.description)
     },
-    "var IndexSet.debugDescription": .computed { receiver in
+    "var IndexSet.debugDescription: String": .computed { receiver in
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return .string(recv.debugDescription)
     },

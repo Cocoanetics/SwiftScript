@@ -187,6 +187,44 @@ extension Interpreter {
         return try await evaluate(expr, in: scope)
     }
 
+    /// Variant of `evaluate(_:expecting:in:)` that takes the expected
+    /// type as a string spelling (matches the bridge-key shape) rather
+    /// than a `TypeSyntax`. Used by property assignment when the target
+    /// is an opaque-bridged property whose type comes from
+    /// `propertyIndex`. Resolves implicit-member access against the
+    /// expected type's bridge static-let table and array-literal
+    /// initializers.
+    func evaluate(_ expr: ExprSyntax, expectingTypeName: String?, in scope: Scope) async throws -> Value {
+        if let typeName = expectingTypeName {
+            // `.member` against a bridge static-let.
+            if let memberAccess = expr.as(MemberAccessExprSyntax.self),
+               memberAccess.base == nil
+            {
+                let memberName = memberAccess.declName.baseName.text
+                if case .staticValue(let v)? = bridges["static let \(typeName).\(memberName)"] {
+                    return v
+                }
+            }
+            // `[.a, .b]` against a target with `init(arrayLiteral:)`
+            // — the OptionSet path. Wraps the literal elements
+            // (recursively evaluated with the same context type so
+            // `.a`/`.b` resolve as static lets) into the target type.
+            if let arr = expr.as(ArrayExprSyntax.self),
+               case .`init`(let body)? = bridges["init \(typeName)(arrayLiteral:)"]
+            {
+                var elements: [Value] = []
+                for element in arr.elements {
+                    elements.append(
+                        try await evaluate(element.expression,
+                                           expectingTypeName: typeName, in: scope)
+                    )
+                }
+                return try await body([.array(elements)])
+            }
+        }
+        return try await evaluate(expr, in: scope)
+    }
+
     /// Look up a case on an enum type. Returns the constructed value for
     /// payload-less cases, or a Function that takes the payload args for
     /// cases with associated values.

@@ -4,15 +4,15 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let durationTimeFormatStyle: [String: Bridge] = [
-    "var Duration.TimeFormatStyle.locale": .computed { receiver in
+    "var Duration.TimeFormatStyle.locale: Locale": .computed { receiver in
         let recv: Duration.TimeFormatStyle = try unboxOpaque(receiver, as: Duration.TimeFormatStyle.self, typeName: "Duration.TimeFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
-    "var Duration.TimeFormatStyle.hashValue": .computed { receiver in
+    "var Duration.TimeFormatStyle.hashValue: Int": .computed { receiver in
         let recv: Duration.TimeFormatStyle = try unboxOpaque(receiver, as: Duration.TimeFormatStyle.self, typeName: "Duration.TimeFormatStyle")
         return .int(recv.hashValue)
     },
-    "var Duration.TimeFormatStyle.grouping": .computed { receiver in
+    "var Duration.TimeFormatStyle.grouping: NumberFormatStyleConfiguration.Grouping": .computed { receiver in
         let recv: Duration.TimeFormatStyle = try unboxOpaque(receiver, as: Duration.TimeFormatStyle.self, typeName: "Duration.TimeFormatStyle")
         return boxOpaque(recv.grouping, typeName: "NumberFormatStyleConfiguration.Grouping")
     },

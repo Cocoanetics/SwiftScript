@@ -4,11 +4,11 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let personNameComponentsAttributedStyle: [String: Bridge] = [
-    "var PersonNameComponents.AttributedStyle.locale": .computed { receiver in
+    "var PersonNameComponents.AttributedStyle.locale: Locale": .computed { receiver in
         let recv: PersonNameComponents.AttributedStyle = try unboxOpaque(receiver, as: PersonNameComponents.AttributedStyle.self, typeName: "PersonNameComponents.AttributedStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
-    "var PersonNameComponents.AttributedStyle.hashValue": .computed { receiver in
+    "var PersonNameComponents.AttributedStyle.hashValue: Int": .computed { receiver in
         let recv: PersonNameComponents.AttributedStyle = try unboxOpaque(receiver, as: PersonNameComponents.AttributedStyle.self, typeName: "PersonNameComponents.AttributedStyle")
         return .int(recv.hashValue)
     },

@@ -5,7 +5,7 @@ import Foundation
 extension StdlibBridges {
     nonisolated(unsafe) static let suspendingClockInstant: [String: Bridge] = [
     "static let SuspendingClock.Instant.now": .staticValue(boxOpaque(SuspendingClock.Instant.now, typeName: "SuspendingClock.Instant")),
-    "var SuspendingClock.Instant.hashValue": .computed { receiver in
+    "var SuspendingClock.Instant.hashValue: Int": .computed { receiver in
         let recv: SuspendingClock.Instant = try unboxOpaque(receiver, as: SuspendingClock.Instant.self, typeName: "SuspendingClock.Instant")
         return .int(recv.hashValue)
     },

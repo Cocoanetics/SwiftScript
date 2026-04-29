@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSData.Base64EncodingOptions(), typeName: "NSData.Base64EncodingOptions")
     },
-    "var NSData.Base64EncodingOptions.isEmpty": .computed { receiver in
+    "var NSData.Base64EncodingOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSData.Base64EncodingOptions = try unboxOpaque(receiver, as: NSData.Base64EncodingOptions.self, typeName: "NSData.Base64EncodingOptions")
         return .bool(recv.isEmpty)
     },
@@ -18,5 +18,18 @@ extension FoundationBridges {
     "static let NSData.Base64EncodingOptions.lineLength76Characters": .staticValue(boxOpaque(NSData.Base64EncodingOptions.lineLength76Characters, typeName: "NSData.Base64EncodingOptions")),
     "static let NSData.Base64EncodingOptions.endLineWithCarriageReturn": .staticValue(boxOpaque(NSData.Base64EncodingOptions.endLineWithCarriageReturn, typeName: "NSData.Base64EncodingOptions")),
     "static let NSData.Base64EncodingOptions.endLineWithLineFeed": .staticValue(boxOpaque(NSData.Base64EncodingOptions.endLineWithLineFeed, typeName: "NSData.Base64EncodingOptions")),
+        "init NSData.Base64EncodingOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSData.Base64EncodingOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSData.Base64EncodingOptions()
+            for element in elements {
+                let item: NSData.Base64EncodingOptions = try unboxOpaque(
+                    element, as: NSData.Base64EncodingOptions.self, typeName: "NSData.Base64EncodingOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSData.Base64EncodingOptions")
+        },
     ]
 }

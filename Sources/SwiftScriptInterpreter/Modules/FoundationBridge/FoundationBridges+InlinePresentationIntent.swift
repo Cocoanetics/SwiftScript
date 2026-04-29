@@ -10,11 +10,11 @@ extension FoundationBridges {
         }
         return boxOpaque(InlinePresentationIntent(), typeName: "InlinePresentationIntent")
     },
-    "var InlinePresentationIntent.hashValue": .computed { receiver in
+    "var InlinePresentationIntent.hashValue: Int": .computed { receiver in
         let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
         return .int(recv.hashValue)
     },
-    "var InlinePresentationIntent.isEmpty": .computed { receiver in
+    "var InlinePresentationIntent.isEmpty: Bool": .computed { receiver in
         let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
         return .bool(recv.isEmpty)
     },
@@ -96,5 +96,18 @@ extension FoundationBridges {
         let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
         return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
     },
+        "init InlinePresentationIntent(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("InlinePresentationIntent(arrayLiteral:): expected array literal")
+            }
+            var result = InlinePresentationIntent()
+            for element in elements {
+                let item: InlinePresentationIntent = try unboxOpaque(
+                    element, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "InlinePresentationIntent")
+        },
     ]
 }

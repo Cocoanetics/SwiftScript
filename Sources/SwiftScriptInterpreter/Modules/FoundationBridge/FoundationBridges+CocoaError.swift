@@ -4,34 +4,34 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let cocoaError: [String: Bridge] = [
-    "var CocoaError.errorCode": .computed { receiver in
+    "var CocoaError.errorCode: Int": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .int(recv.errorCode)
     },
     "static let CocoaError.errorDomain": .staticValue(.string(CocoaError.errorDomain)),
-    "var CocoaError.localizedDescription": .computed { receiver in
+    "var CocoaError.localizedDescription: String": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .string(recv.localizedDescription)
     },
-    "var CocoaError.hashValue": .computed { receiver in
+    "var CocoaError.hashValue: Int": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .int(recv.hashValue)
     },
-    "var CocoaError.filePath": .computed { receiver in
+    "var CocoaError.filePath: String?": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         if let _v = recv.filePath {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var CocoaError.stringEncoding": .computed { receiver in
+    "var CocoaError.stringEncoding: String.Encoding?": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         if let _v = recv.stringEncoding {
             return .optional(boxOpaque(_v, typeName: "String.Encoding"))
         }
         return .optional(nil)
     },
-    "var CocoaError.url": .computed { receiver in
+    "var CocoaError.url: URL?": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         if let _v = recv.url {
             return .optional(boxOpaque(_v, typeName: "URL"))
@@ -84,39 +84,39 @@ extension FoundationBridges {
     "static let CocoaError.coderReadCorrupt": .staticValue(boxOpaque(CocoaError.coderReadCorrupt, typeName: "CocoaError.Code")),
     "static let CocoaError.coderValueNotFound": .staticValue(boxOpaque(CocoaError.coderValueNotFound, typeName: "CocoaError.Code")),
     "static let CocoaError.coderInvalidValue": .staticValue(boxOpaque(CocoaError.coderInvalidValue, typeName: "CocoaError.Code")),
-    "var CocoaError.isCoderError": .computed { receiver in
+    "var CocoaError.isCoderError: Bool": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .bool(recv.isCoderError)
     },
-    "var CocoaError.isExecutableError": .computed { receiver in
+    "var CocoaError.isExecutableError: Bool": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .bool(recv.isExecutableError)
     },
-    "var CocoaError.isFileError": .computed { receiver in
+    "var CocoaError.isFileError: Bool": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .bool(recv.isFileError)
     },
-    "var CocoaError.isFormattingError": .computed { receiver in
+    "var CocoaError.isFormattingError: Bool": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .bool(recv.isFormattingError)
     },
-    "var CocoaError.isPropertyListError": .computed { receiver in
+    "var CocoaError.isPropertyListError: Bool": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .bool(recv.isPropertyListError)
     },
-    "var CocoaError.isValidationError": .computed { receiver in
+    "var CocoaError.isValidationError: Bool": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .bool(recv.isValidationError)
     },
-    "var CocoaError.isUbiquitousFileError": .computed { receiver in
+    "var CocoaError.isUbiquitousFileError: Bool": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .bool(recv.isUbiquitousFileError)
     },
-    "var CocoaError.isUserActivityError": .computed { receiver in
+    "var CocoaError.isUserActivityError: Bool": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .bool(recv.isUserActivityError)
     },
-    "var CocoaError.isXPCConnectionError": .computed { receiver in
+    "var CocoaError.isXPCConnectionError: Bool": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .bool(recv.isXPCConnectionError)
     },

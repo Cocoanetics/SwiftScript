@@ -10,11 +10,24 @@ extension FoundationBridges {
         }
         return boxOpaque(NetService.Options(), typeName: "NetService.Options")
     },
-    "var NetService.Options.isEmpty": .computed { receiver in
+    "var NetService.Options.isEmpty: Bool": .computed { receiver in
         let recv: NetService.Options = try unboxOpaque(receiver, as: NetService.Options.self, typeName: "NetService.Options")
         return .bool(recv.isEmpty)
     },
     "static let NetService.Options.noAutoRename": .staticValue(boxOpaque(NetService.Options.noAutoRename, typeName: "NetService.Options")),
     "static let NetService.Options.listenForConnections": .staticValue(boxOpaque(NetService.Options.listenForConnections, typeName: "NetService.Options")),
+        "init NetService.Options(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NetService.Options(arrayLiteral:): expected array literal")
+            }
+            var result = NetService.Options()
+            for element in elements {
+                let item: NetService.Options = try unboxOpaque(
+                    element, as: NetService.Options.self, typeName: "NetService.Options"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NetService.Options")
+        },
     ]
 }

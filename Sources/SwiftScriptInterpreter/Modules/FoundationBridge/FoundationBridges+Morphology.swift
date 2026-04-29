@@ -10,11 +10,11 @@ extension FoundationBridges {
         }
         return boxOpaque(Morphology(), typeName: "Morphology")
     },
-    "var Morphology.hashValue": .computed { receiver in
+    "var Morphology.hashValue: Int": .computed { receiver in
         let recv: Morphology = try unboxOpaque(receiver, as: Morphology.self, typeName: "Morphology")
         return .int(recv.hashValue)
     },
-    "var Morphology.isUnspecified": .computed { receiver in
+    "var Morphology.isUnspecified: Bool": .computed { receiver in
         let recv: Morphology = try unboxOpaque(receiver, as: Morphology.self, typeName: "Morphology")
         return .bool(recv.isUnspecified)
     },

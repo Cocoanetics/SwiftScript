@@ -7,7 +7,7 @@ extension FoundationBridges {
     "static let String.StandardComparator.localizedStandard": .staticValue(boxOpaque(String.StandardComparator.localizedStandard, typeName: "String.StandardComparator")),
     "static let String.StandardComparator.localized": .staticValue(boxOpaque(String.StandardComparator.localized, typeName: "String.StandardComparator")),
     "static let String.StandardComparator.lexical": .staticValue(boxOpaque(String.StandardComparator.lexical, typeName: "String.StandardComparator")),
-    "var String.StandardComparator.hashValue": .computed { receiver in
+    "var String.StandardComparator.hashValue: Int": .computed { receiver in
         let recv: String.StandardComparator = try unboxOpaque(receiver, as: String.StandardComparator.self, typeName: "String.StandardComparator")
         return .int(recv.hashValue)
     },

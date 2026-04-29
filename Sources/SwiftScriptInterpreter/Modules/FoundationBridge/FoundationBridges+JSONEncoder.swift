@@ -4,10 +4,14 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let jSONEncoder: [String: Bridge] = [
-    "var JSONEncoder.outputFormatting": .computed { receiver in
+    "var JSONEncoder.outputFormatting: JSONEncoder.OutputFormatting": .computed { receiver in
         let recv: JSONEncoder = try unboxOpaque(receiver, as: JSONEncoder.self, typeName: "JSONEncoder")
         return boxOpaque(recv.outputFormatting, typeName: "JSONEncoder.OutputFormatting")
     },
+        "set var JSONEncoder.outputFormatting: JSONEncoder.OutputFormatting": .setter { receiver, newValue in
+            let recv: JSONEncoder = try unboxOpaque(receiver, as: JSONEncoder.self, typeName: "JSONEncoder")
+            recv.outputFormatting = try unboxOpaque(newValue, as: JSONEncoder.OutputFormatting.self, typeName: "JSONEncoder.OutputFormatting")
+        },
     "init JSONEncoder()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init JSONEncoder(): expected 0 argument(s), got \(args.count)")

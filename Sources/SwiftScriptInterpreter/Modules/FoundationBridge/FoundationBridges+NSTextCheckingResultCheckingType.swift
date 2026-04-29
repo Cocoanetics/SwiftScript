@@ -13,7 +13,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSTextCheckingResult.CheckingType(), typeName: "NSTextCheckingResult.CheckingType")
     },
-    "var NSTextCheckingResult.CheckingType.isEmpty": .computed { receiver in
+    "var NSTextCheckingResult.CheckingType.isEmpty: Bool": .computed { receiver in
         let recv: NSTextCheckingResult.CheckingType = try unboxOpaque(receiver, as: NSTextCheckingResult.CheckingType.self, typeName: "NSTextCheckingResult.CheckingType")
         return .bool(recv.isEmpty)
     },
@@ -30,5 +30,18 @@ extension FoundationBridges {
     "static let NSTextCheckingResult.CheckingType.regularExpression": .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.regularExpression, typeName: "NSTextCheckingResult.CheckingType")),
     "static let NSTextCheckingResult.CheckingType.phoneNumber": .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.phoneNumber, typeName: "NSTextCheckingResult.CheckingType")),
     "static let NSTextCheckingResult.CheckingType.transitInformation": .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.transitInformation, typeName: "NSTextCheckingResult.CheckingType")),
+        "init NSTextCheckingResult.CheckingType(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSTextCheckingResult.CheckingType(arrayLiteral:): expected array literal")
+            }
+            var result = NSTextCheckingResult.CheckingType()
+            for element in elements {
+                let item: NSTextCheckingResult.CheckingType = try unboxOpaque(
+                    element, as: NSTextCheckingResult.CheckingType.self, typeName: "NSTextCheckingResult.CheckingType"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSTextCheckingResult.CheckingType")
+        },
     ]
 }

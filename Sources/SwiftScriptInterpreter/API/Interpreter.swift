@@ -48,6 +48,10 @@ public final class Interpreter {
     /// access from the keys of `bridges` that mention `<...>`.
     var _genericIndex: [String: [(Signature, Bridge)]]?
 
+    /// Index of property-shaped bridges: getter, optional setter, and
+    /// the declared property-type spelling. Keyed by `"Type.member"`.
+    var _propertyIndex: [String: PropertyEntry]?
+
     /// `typealias Foo = Bar` declarations. Looked up at type-resolution
     /// sites (coerce, struct/enum init dispatch, isTypeName, …).
     var typeAliases: [String: TypeSyntax] = [:]

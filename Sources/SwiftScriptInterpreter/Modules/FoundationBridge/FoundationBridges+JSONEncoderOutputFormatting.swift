@@ -10,12 +10,25 @@ extension FoundationBridges {
         }
         return boxOpaque(JSONEncoder.OutputFormatting(), typeName: "JSONEncoder.OutputFormatting")
     },
-    "var JSONEncoder.OutputFormatting.isEmpty": .computed { receiver in
+    "var JSONEncoder.OutputFormatting.isEmpty: Bool": .computed { receiver in
         let recv: JSONEncoder.OutputFormatting = try unboxOpaque(receiver, as: JSONEncoder.OutputFormatting.self, typeName: "JSONEncoder.OutputFormatting")
         return .bool(recv.isEmpty)
     },
     "static let JSONEncoder.OutputFormatting.prettyPrinted": .staticValue(boxOpaque(JSONEncoder.OutputFormatting.prettyPrinted, typeName: "JSONEncoder.OutputFormatting")),
     "static let JSONEncoder.OutputFormatting.sortedKeys": .staticValue(boxOpaque(JSONEncoder.OutputFormatting.sortedKeys, typeName: "JSONEncoder.OutputFormatting")),
     "static let JSONEncoder.OutputFormatting.withoutEscapingSlashes": .staticValue(boxOpaque(JSONEncoder.OutputFormatting.withoutEscapingSlashes, typeName: "JSONEncoder.OutputFormatting")),
+        "init JSONEncoder.OutputFormatting(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("JSONEncoder.OutputFormatting(arrayLiteral:): expected array literal")
+            }
+            var result = JSONEncoder.OutputFormatting()
+            for element in elements {
+                let item: JSONEncoder.OutputFormatting = try unboxOpaque(
+                    element, as: JSONEncoder.OutputFormatting.self, typeName: "JSONEncoder.OutputFormatting"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "JSONEncoder.OutputFormatting")
+        },
     ]
 }

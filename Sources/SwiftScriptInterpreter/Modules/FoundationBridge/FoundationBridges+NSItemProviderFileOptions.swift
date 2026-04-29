@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSItemProviderFileOptions(), typeName: "NSItemProviderFileOptions")
     },
-    "var NSItemProviderFileOptions.isEmpty": .computed { receiver in
+    "var NSItemProviderFileOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSItemProviderFileOptions = try unboxOpaque(receiver, as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")
         return .bool(recv.isEmpty)
     },
@@ -91,5 +91,18 @@ extension FoundationBridges {
         }
         return boxOpaque(NSItemProviderFileOptions(rawValue: try unboxInt(args[0])), typeName: "NSItemProviderFileOptions")
     },
+        "init NSItemProviderFileOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSItemProviderFileOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSItemProviderFileOptions()
+            for element in elements {
+                let item: NSItemProviderFileOptions = try unboxOpaque(
+                    element, as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSItemProviderFileOptions")
+        },
     ]
 }

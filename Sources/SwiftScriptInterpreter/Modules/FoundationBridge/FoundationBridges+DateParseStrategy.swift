@@ -4,34 +4,34 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let dateParseStrategy: [String: Bridge] = [
-    "var Date.ParseStrategy.isLenient": .computed { receiver in
+    "var Date.ParseStrategy.isLenient: Bool": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return .bool(recv.isLenient)
     },
-    "var Date.ParseStrategy.twoDigitStartDate": .computed { receiver in
+    "var Date.ParseStrategy.twoDigitStartDate: Date": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return boxOpaque(recv.twoDigitStartDate, typeName: "Date")
     },
-    "var Date.ParseStrategy.locale": .computed { receiver in
+    "var Date.ParseStrategy.locale: Locale?": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         if let _v = recv.locale {
             return .optional(boxOpaque(_v, typeName: "Locale"))
         }
         return .optional(nil)
     },
-    "var Date.ParseStrategy.timeZone": .computed { receiver in
+    "var Date.ParseStrategy.timeZone: TimeZone": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return boxOpaque(recv.timeZone, typeName: "TimeZone")
     },
-    "var Date.ParseStrategy.calendar": .computed { receiver in
+    "var Date.ParseStrategy.calendar: Calendar": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return boxOpaque(recv.calendar, typeName: "Calendar")
     },
-    "var Date.ParseStrategy.format": .computed { receiver in
+    "var Date.ParseStrategy.format: String": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return .string(recv.format)
     },
-    "var Date.ParseStrategy.hashValue": .computed { receiver in
+    "var Date.ParseStrategy.hashValue: Int": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return .int(recv.hashValue)
     },

@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let stringTransform: [String: Bridge] = [
-    "var StringTransform.hashValue": .computed { receiver in
+    "var StringTransform.hashValue: Int": .computed { receiver in
         let recv: StringTransform = try unboxOpaque(receiver, as: StringTransform.self, typeName: "StringTransform")
         return .int(recv.hashValue)
     },

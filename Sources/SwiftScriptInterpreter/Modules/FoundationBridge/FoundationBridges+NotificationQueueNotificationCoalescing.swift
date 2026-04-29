@@ -10,12 +10,25 @@ extension FoundationBridges {
         }
         return boxOpaque(NotificationQueue.NotificationCoalescing(), typeName: "NotificationQueue.NotificationCoalescing")
     },
-    "var NotificationQueue.NotificationCoalescing.isEmpty": .computed { receiver in
+    "var NotificationQueue.NotificationCoalescing.isEmpty: Bool": .computed { receiver in
         let recv: NotificationQueue.NotificationCoalescing = try unboxOpaque(receiver, as: NotificationQueue.NotificationCoalescing.self, typeName: "NotificationQueue.NotificationCoalescing")
         return .bool(recv.isEmpty)
     },
     "static let NotificationQueue.NotificationCoalescing.none": .staticValue(boxOpaque(NotificationQueue.NotificationCoalescing.none, typeName: "NotificationQueue.NotificationCoalescing")),
     "static let NotificationQueue.NotificationCoalescing.onName": .staticValue(boxOpaque(NotificationQueue.NotificationCoalescing.onName, typeName: "NotificationQueue.NotificationCoalescing")),
     "static let NotificationQueue.NotificationCoalescing.onSender": .staticValue(boxOpaque(NotificationQueue.NotificationCoalescing.onSender, typeName: "NotificationQueue.NotificationCoalescing")),
+        "init NotificationQueue.NotificationCoalescing(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NotificationQueue.NotificationCoalescing(arrayLiteral:): expected array literal")
+            }
+            var result = NotificationQueue.NotificationCoalescing()
+            for element in elements {
+                let item: NotificationQueue.NotificationCoalescing = try unboxOpaque(
+                    element, as: NotificationQueue.NotificationCoalescing.self, typeName: "NotificationQueue.NotificationCoalescing"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NotificationQueue.NotificationCoalescing")
+        },
     ]
 }

@@ -4,15 +4,15 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let dateInterval: [String: Bridge] = [
-    "var DateInterval.start": .computed { receiver in
+    "var DateInterval.start: Date": .computed { receiver in
         let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
         return boxOpaque(recv.start, typeName: "Date")
     },
-    "var DateInterval.end": .computed { receiver in
+    "var DateInterval.end: Date": .computed { receiver in
         let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
         return boxOpaque(recv.end, typeName: "Date")
     },
-    "var DateInterval.duration": .computed { receiver in
+    "var DateInterval.duration: Double": .computed { receiver in
         let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
         return .double(recv.duration)
     },
@@ -22,15 +22,15 @@ extension FoundationBridges {
         }
         return boxOpaque(DateInterval(), typeName: "DateInterval")
     },
-    "var DateInterval.hashValue": .computed { receiver in
+    "var DateInterval.hashValue: Int": .computed { receiver in
         let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
         return .int(recv.hashValue)
     },
-    "var DateInterval.description": .computed { receiver in
+    "var DateInterval.description: String": .computed { receiver in
         let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
         return .string(recv.description)
     },
-    "var DateInterval.debugDescription": .computed { receiver in
+    "var DateInterval.debugDescription: String": .computed { receiver in
         let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
         return .string(recv.debugDescription)
     },

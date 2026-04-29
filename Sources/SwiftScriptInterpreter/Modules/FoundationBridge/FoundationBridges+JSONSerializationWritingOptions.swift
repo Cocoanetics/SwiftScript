@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(JSONSerialization.WritingOptions(), typeName: "JSONSerialization.WritingOptions")
     },
-    "var JSONSerialization.WritingOptions.isEmpty": .computed { receiver in
+    "var JSONSerialization.WritingOptions.isEmpty: Bool": .computed { receiver in
         let recv: JSONSerialization.WritingOptions = try unboxOpaque(receiver, as: JSONSerialization.WritingOptions.self, typeName: "JSONSerialization.WritingOptions")
         return .bool(recv.isEmpty)
     },
@@ -18,5 +18,18 @@ extension FoundationBridges {
     "static let JSONSerialization.WritingOptions.sortedKeys": .staticValue(boxOpaque(JSONSerialization.WritingOptions.sortedKeys, typeName: "JSONSerialization.WritingOptions")),
     "static let JSONSerialization.WritingOptions.fragmentsAllowed": .staticValue(boxOpaque(JSONSerialization.WritingOptions.fragmentsAllowed, typeName: "JSONSerialization.WritingOptions")),
     "static let JSONSerialization.WritingOptions.withoutEscapingSlashes": .staticValue(boxOpaque(JSONSerialization.WritingOptions.withoutEscapingSlashes, typeName: "JSONSerialization.WritingOptions")),
+        "init JSONSerialization.WritingOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("JSONSerialization.WritingOptions(arrayLiteral:): expected array literal")
+            }
+            var result = JSONSerialization.WritingOptions()
+            for element in elements {
+                let item: JSONSerialization.WritingOptions = try unboxOpaque(
+                    element, as: JSONSerialization.WritingOptions.self, typeName: "JSONSerialization.WritingOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "JSONSerialization.WritingOptions")
+        },
     ]
 }

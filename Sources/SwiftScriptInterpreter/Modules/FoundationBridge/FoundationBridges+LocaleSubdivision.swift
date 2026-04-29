@@ -4,15 +4,15 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let localeSubdivision: [String: Bridge] = [
-    "var Locale.Subdivision.identifier": .computed { receiver in
+    "var Locale.Subdivision.identifier: String": .computed { receiver in
         let recv: Locale.Subdivision = try unboxOpaque(receiver, as: Locale.Subdivision.self, typeName: "Locale.Subdivision")
         return .string(recv.identifier)
     },
-    "var Locale.Subdivision.debugDescription": .computed { receiver in
+    "var Locale.Subdivision.debugDescription: String": .computed { receiver in
         let recv: Locale.Subdivision = try unboxOpaque(receiver, as: Locale.Subdivision.self, typeName: "Locale.Subdivision")
         return .string(recv.debugDescription)
     },
-    "var Locale.Subdivision.hashValue": .computed { receiver in
+    "var Locale.Subdivision.hashValue: Int": .computed { receiver in
         let recv: Locale.Subdivision = try unboxOpaque(receiver, as: Locale.Subdivision.self, typeName: "Locale.Subdivision")
         return .int(recv.hashValue)
     },

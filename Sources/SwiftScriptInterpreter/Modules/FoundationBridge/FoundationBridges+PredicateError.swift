@@ -4,11 +4,11 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let predicateError: [String: Bridge] = [
-    "var PredicateError.localizedDescription": .computed { receiver in
+    "var PredicateError.localizedDescription: String": .computed { receiver in
         let recv: PredicateError = try unboxOpaque(receiver, as: PredicateError.self, typeName: "PredicateError")
         return .string(recv.localizedDescription)
     },
-    "var PredicateError.debugDescription": .computed { receiver in
+    "var PredicateError.debugDescription: String": .computed { receiver in
         let recv: PredicateError = try unboxOpaque(receiver, as: PredicateError.self, typeName: "PredicateError")
         return .string(recv.debugDescription)
     },
@@ -16,7 +16,7 @@ extension FoundationBridges {
     "static let PredicateError.forceUnwrapFailure": .staticValue(boxOpaque(PredicateError.forceUnwrapFailure, typeName: "PredicateError")),
     "static let PredicateError.forceCastFailure": .staticValue(boxOpaque(PredicateError.forceCastFailure, typeName: "PredicateError")),
     "static let PredicateError.invalidInput": .staticValue(boxOpaque(PredicateError.invalidInput, typeName: "PredicateError")),
-    "var PredicateError.hashValue": .computed { receiver in
+    "var PredicateError.hashValue: Int": .computed { receiver in
         let recv: PredicateError = try unboxOpaque(receiver, as: PredicateError.self, typeName: "PredicateError")
         return .int(recv.hashValue)
     },

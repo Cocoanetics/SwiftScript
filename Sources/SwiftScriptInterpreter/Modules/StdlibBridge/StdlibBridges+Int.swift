@@ -5,7 +5,7 @@ import Foundation
 extension StdlibBridges {
     nonisolated(unsafe) static let int: [String: Bridge] = [
     "static let Int.zero": .staticValue(.int(Int.zero)),
-    "var Int.description": .computed { receiver in
+    "var Int.description: String": .computed { receiver in
         let recv: Int = try unboxInt(receiver)
         return .string(recv.description)
     },
@@ -15,15 +15,15 @@ extension StdlibBridges {
         }
         return .int(Int())
     },
-    "var Int.bitWidth": .computed { receiver in
+    "var Int.bitWidth: Int": .computed { receiver in
         let recv: Int = try unboxInt(receiver)
         return .int(recv.bitWidth)
     },
-    "var Int.littleEndian": .computed { receiver in
+    "var Int.littleEndian: Int": .computed { receiver in
         let recv: Int = try unboxInt(receiver)
         return .int(recv.littleEndian)
     },
-    "var Int.bigEndian": .computed { receiver in
+    "var Int.bigEndian: Int": .computed { receiver in
         let recv: Int = try unboxInt(receiver)
         return .int(recv.bigEndian)
     },
@@ -64,19 +64,19 @@ extension StdlibBridges {
         return .int(Int(bigEndian: try unboxInt(args[0])))
     },
     "static let Int.bitWidth": .staticValue(.int(Int.bitWidth)),
-    "var Int.leadingZeroBitCount": .computed { receiver in
+    "var Int.leadingZeroBitCount: Int": .computed { receiver in
         let recv: Int = try unboxInt(receiver)
         return .int(recv.leadingZeroBitCount)
     },
-    "var Int.trailingZeroBitCount": .computed { receiver in
+    "var Int.trailingZeroBitCount: Int": .computed { receiver in
         let recv: Int = try unboxInt(receiver)
         return .int(recv.trailingZeroBitCount)
     },
-    "var Int.nonzeroBitCount": .computed { receiver in
+    "var Int.nonzeroBitCount: Int": .computed { receiver in
         let recv: Int = try unboxInt(receiver)
         return .int(recv.nonzeroBitCount)
     },
-    "var Int.byteSwapped": .computed { receiver in
+    "var Int.byteSwapped: Int": .computed { receiver in
         let recv: Int = try unboxInt(receiver)
         return .int(recv.byteSwapped)
     },
@@ -87,7 +87,7 @@ extension StdlibBridges {
         let recv: Int = try unboxInt(receiver)
         return .int(recv.signum())
     },
-    "var Int.hashValue": .computed { receiver in
+    "var Int.hashValue: Int": .computed { receiver in
         let recv: Int = try unboxInt(receiver)
         return .int(recv.hashValue)
     },

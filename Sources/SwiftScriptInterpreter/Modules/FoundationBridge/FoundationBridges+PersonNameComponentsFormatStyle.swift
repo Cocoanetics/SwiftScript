@@ -4,19 +4,19 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let personNameComponentsFormatStyle: [String: Bridge] = [
-    "var PersonNameComponents.FormatStyle.locale": .computed { receiver in
+    "var PersonNameComponents.FormatStyle.locale: Locale": .computed { receiver in
         let recv: PersonNameComponents.FormatStyle = try unboxOpaque(receiver, as: PersonNameComponents.FormatStyle.self, typeName: "PersonNameComponents.FormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
-    "var PersonNameComponents.FormatStyle.attributed": .computed { receiver in
+    "var PersonNameComponents.FormatStyle.attributed: PersonNameComponents.AttributedStyle": .computed { receiver in
         let recv: PersonNameComponents.FormatStyle = try unboxOpaque(receiver, as: PersonNameComponents.FormatStyle.self, typeName: "PersonNameComponents.FormatStyle")
         return boxOpaque(recv.attributed, typeName: "PersonNameComponents.AttributedStyle")
     },
-    "var PersonNameComponents.FormatStyle.hashValue": .computed { receiver in
+    "var PersonNameComponents.FormatStyle.hashValue: Int": .computed { receiver in
         let recv: PersonNameComponents.FormatStyle = try unboxOpaque(receiver, as: PersonNameComponents.FormatStyle.self, typeName: "PersonNameComponents.FormatStyle")
         return .int(recv.hashValue)
     },
-    "var PersonNameComponents.FormatStyle.parseStrategy": .computed { receiver in
+    "var PersonNameComponents.FormatStyle.parseStrategy: PersonNameComponents.ParseStrategy": .computed { receiver in
         let recv: PersonNameComponents.FormatStyle = try unboxOpaque(receiver, as: PersonNameComponents.FormatStyle.self, typeName: "PersonNameComponents.FormatStyle")
         return boxOpaque(recv.parseStrategy, typeName: "PersonNameComponents.ParseStrategy")
     },

@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSBinarySearchingOptions(), typeName: "NSBinarySearchingOptions")
     },
-    "var NSBinarySearchingOptions.isEmpty": .computed { receiver in
+    "var NSBinarySearchingOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
         return .bool(recv.isEmpty)
     },
@@ -87,5 +87,18 @@ extension FoundationBridges {
         let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
         return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
     },
+        "init NSBinarySearchingOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSBinarySearchingOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSBinarySearchingOptions()
+            for element in elements {
+                let item: NSBinarySearchingOptions = try unboxOpaque(
+                    element, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSBinarySearchingOptions")
+        },
     ]
 }

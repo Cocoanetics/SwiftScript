@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(ISO8601DateFormatter.Options(), typeName: "ISO8601DateFormatter.Options")
     },
-    "var ISO8601DateFormatter.Options.isEmpty": .computed { receiver in
+    "var ISO8601DateFormatter.Options.isEmpty: Bool": .computed { receiver in
         let recv: ISO8601DateFormatter.Options = try unboxOpaque(receiver, as: ISO8601DateFormatter.Options.self, typeName: "ISO8601DateFormatter.Options")
         return .bool(recv.isEmpty)
     },
@@ -28,5 +28,18 @@ extension FoundationBridges {
     "static let ISO8601DateFormatter.Options.withFullDate": .staticValue(boxOpaque(ISO8601DateFormatter.Options.withFullDate, typeName: "ISO8601DateFormatter.Options")),
     "static let ISO8601DateFormatter.Options.withFullTime": .staticValue(boxOpaque(ISO8601DateFormatter.Options.withFullTime, typeName: "ISO8601DateFormatter.Options")),
     "static let ISO8601DateFormatter.Options.withInternetDateTime": .staticValue(boxOpaque(ISO8601DateFormatter.Options.withInternetDateTime, typeName: "ISO8601DateFormatter.Options")),
+        "init ISO8601DateFormatter.Options(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("ISO8601DateFormatter.Options(arrayLiteral:): expected array literal")
+            }
+            var result = ISO8601DateFormatter.Options()
+            for element in elements {
+                let item: ISO8601DateFormatter.Options = try unboxOpaque(
+                    element, as: ISO8601DateFormatter.Options.self, typeName: "ISO8601DateFormatter.Options"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "ISO8601DateFormatter.Options")
+        },
     ]
 }

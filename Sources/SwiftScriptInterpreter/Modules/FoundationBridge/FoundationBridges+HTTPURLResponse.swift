@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let hTTPURLResponse: [String: Bridge] = [
-    "var HTTPURLResponse.statusCode": .computed { receiver in
+    "var HTTPURLResponse.statusCode: Int": .computed { receiver in
         let recv: HTTPURLResponse = try unboxOpaque(receiver, as: HTTPURLResponse.self, typeName: "HTTPURLResponse")
         return .int(recv.statusCode)
     },

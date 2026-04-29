@@ -10,11 +10,24 @@ extension FoundationBridges {
         }
         return boxOpaque(FileWrapper.ReadingOptions(), typeName: "FileWrapper.ReadingOptions")
     },
-    "var FileWrapper.ReadingOptions.isEmpty": .computed { receiver in
+    "var FileWrapper.ReadingOptions.isEmpty: Bool": .computed { receiver in
         let recv: FileWrapper.ReadingOptions = try unboxOpaque(receiver, as: FileWrapper.ReadingOptions.self, typeName: "FileWrapper.ReadingOptions")
         return .bool(recv.isEmpty)
     },
     "static let FileWrapper.ReadingOptions.immediate": .staticValue(boxOpaque(FileWrapper.ReadingOptions.immediate, typeName: "FileWrapper.ReadingOptions")),
     "static let FileWrapper.ReadingOptions.withoutMapping": .staticValue(boxOpaque(FileWrapper.ReadingOptions.withoutMapping, typeName: "FileWrapper.ReadingOptions")),
+        "init FileWrapper.ReadingOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("FileWrapper.ReadingOptions(arrayLiteral:): expected array literal")
+            }
+            var result = FileWrapper.ReadingOptions()
+            for element in elements {
+                let item: FileWrapper.ReadingOptions = try unboxOpaque(
+                    element, as: FileWrapper.ReadingOptions.self, typeName: "FileWrapper.ReadingOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "FileWrapper.ReadingOptions")
+        },
     ]
 }

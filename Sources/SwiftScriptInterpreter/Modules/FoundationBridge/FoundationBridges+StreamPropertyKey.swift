@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let streamPropertyKey: [String: Bridge] = [
-    "var Stream.PropertyKey.hashValue": .computed { receiver in
+    "var Stream.PropertyKey.hashValue: Int": .computed { receiver in
         let recv: Stream.PropertyKey = try unboxOpaque(receiver, as: Stream.PropertyKey.self, typeName: "Stream.PropertyKey")
         return .int(recv.hashValue)
     },

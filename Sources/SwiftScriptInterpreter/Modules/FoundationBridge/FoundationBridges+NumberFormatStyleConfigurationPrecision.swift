@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let numberFormatStyleConfigurationPrecision: [String: Bridge] = [
-    "var NumberFormatStyleConfiguration.Precision.hashValue": .computed { receiver in
+    "var NumberFormatStyleConfiguration.Precision.hashValue: Int": .computed { receiver in
         let recv: NumberFormatStyleConfiguration.Precision = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.Precision.self, typeName: "NumberFormatStyleConfiguration.Precision")
         return .int(recv.hashValue)
     },

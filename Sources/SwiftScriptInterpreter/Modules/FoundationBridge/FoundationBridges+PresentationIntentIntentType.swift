@@ -4,15 +4,15 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let presentationIntentIntentType: [String: Bridge] = [
-    "var PresentationIntent.IntentType.identity": .computed { receiver in
+    "var PresentationIntent.IntentType.identity: Int": .computed { receiver in
         let recv: PresentationIntent.IntentType = try unboxOpaque(receiver, as: PresentationIntent.IntentType.self, typeName: "PresentationIntent.IntentType")
         return .int(recv.identity)
     },
-    "var PresentationIntent.IntentType.debugDescription": .computed { receiver in
+    "var PresentationIntent.IntentType.debugDescription: String": .computed { receiver in
         let recv: PresentationIntent.IntentType = try unboxOpaque(receiver, as: PresentationIntent.IntentType.self, typeName: "PresentationIntent.IntentType")
         return .string(recv.debugDescription)
     },
-    "var PresentationIntent.IntentType.hashValue": .computed { receiver in
+    "var PresentationIntent.IntentType.hashValue: Int": .computed { receiver in
         let recv: PresentationIntent.IntentType = try unboxOpaque(receiver, as: PresentationIntent.IntentType.self, typeName: "PresentationIntent.IntentType")
         return .int(recv.hashValue)
     },

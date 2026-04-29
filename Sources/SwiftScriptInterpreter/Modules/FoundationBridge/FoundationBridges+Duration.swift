@@ -11,12 +11,12 @@ extension FoundationBridges {
         let recv: Duration = try unboxOpaque(receiver, as: Duration.self, typeName: "Duration")
         return .string(recv.formatted())
     },
-    "var Duration.hashValue": .computed { receiver in
+    "var Duration.hashValue: Int": .computed { receiver in
         let recv: Duration = try unboxOpaque(receiver, as: Duration.self, typeName: "Duration")
         return .int(recv.hashValue)
     },
     "static let Duration.zero": .staticValue(boxOpaque(Duration.zero, typeName: "Duration")),
-    "var Duration.description": .computed { receiver in
+    "var Duration.description: String": .computed { receiver in
         let recv: Duration = try unboxOpaque(receiver, as: Duration.self, typeName: "Duration")
         return .string(recv.description)
     },

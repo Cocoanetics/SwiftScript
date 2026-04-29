@@ -4,26 +4,26 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let localizedStringResource: [String: Bridge] = [
-    "var LocalizedStringResource.key": .computed { receiver in
+    "var LocalizedStringResource.key: String": .computed { receiver in
         let recv: LocalizedStringResource = try unboxOpaque(receiver, as: LocalizedStringResource.self, typeName: "LocalizedStringResource")
         return .string(recv.key)
     },
-    "var LocalizedStringResource.defaultValue": .computed { receiver in
+    "var LocalizedStringResource.defaultValue: String.LocalizationValue": .computed { receiver in
         let recv: LocalizedStringResource = try unboxOpaque(receiver, as: LocalizedStringResource.self, typeName: "LocalizedStringResource")
         return boxOpaque(recv.defaultValue, typeName: "String.LocalizationValue")
     },
-    "var LocalizedStringResource.table": .computed { receiver in
+    "var LocalizedStringResource.table: String?": .computed { receiver in
         let recv: LocalizedStringResource = try unboxOpaque(receiver, as: LocalizedStringResource.self, typeName: "LocalizedStringResource")
         if let _v = recv.table {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var LocalizedStringResource.locale": .computed { receiver in
+    "var LocalizedStringResource.locale: Locale": .computed { receiver in
         let recv: LocalizedStringResource = try unboxOpaque(receiver, as: LocalizedStringResource.self, typeName: "LocalizedStringResource")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
-    "var LocalizedStringResource.localizedStringResource": .computed { receiver in
+    "var LocalizedStringResource.localizedStringResource: LocalizedStringResource": .computed { receiver in
         let recv: LocalizedStringResource = try unboxOpaque(receiver, as: LocalizedStringResource.self, typeName: "LocalizedStringResource")
         return boxOpaque(recv.localizedStringResource, typeName: "LocalizedStringResource")
     },

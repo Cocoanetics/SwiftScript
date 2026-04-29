@@ -4,19 +4,19 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let localeCurrency: [String: Bridge] = [
-    "var Locale.Currency.identifier": .computed { receiver in
+    "var Locale.Currency.identifier: String": .computed { receiver in
         let recv: Locale.Currency = try unboxOpaque(receiver, as: Locale.Currency.self, typeName: "Locale.Currency")
         return .string(recv.identifier)
     },
-    "var Locale.Currency.debugDescription": .computed { receiver in
+    "var Locale.Currency.debugDescription: String": .computed { receiver in
         let recv: Locale.Currency = try unboxOpaque(receiver, as: Locale.Currency.self, typeName: "Locale.Currency")
         return .string(recv.debugDescription)
     },
-    "var Locale.Currency.hashValue": .computed { receiver in
+    "var Locale.Currency.hashValue: Int": .computed { receiver in
         let recv: Locale.Currency = try unboxOpaque(receiver, as: Locale.Currency.self, typeName: "Locale.Currency")
         return .int(recv.hashValue)
     },
-    "var Locale.Currency.isISOCurrency": .computed { receiver in
+    "var Locale.Currency.isISOCurrency: Bool": .computed { receiver in
         let recv: Locale.Currency = try unboxOpaque(receiver, as: Locale.Currency.self, typeName: "Locale.Currency")
         return .bool(recv.isISOCurrency)
     },

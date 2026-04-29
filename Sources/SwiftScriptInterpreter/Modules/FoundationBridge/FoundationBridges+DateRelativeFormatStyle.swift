@@ -4,19 +4,19 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let dateRelativeFormatStyle: [String: Bridge] = [
-    "var Date.RelativeFormatStyle.capitalizationContext": .computed { receiver in
+    "var Date.RelativeFormatStyle.capitalizationContext: FormatStyleCapitalizationContext": .computed { receiver in
         let recv: Date.RelativeFormatStyle = try unboxOpaque(receiver, as: Date.RelativeFormatStyle.self, typeName: "Date.RelativeFormatStyle")
         return boxOpaque(recv.capitalizationContext, typeName: "FormatStyleCapitalizationContext")
     },
-    "var Date.RelativeFormatStyle.locale": .computed { receiver in
+    "var Date.RelativeFormatStyle.locale: Locale": .computed { receiver in
         let recv: Date.RelativeFormatStyle = try unboxOpaque(receiver, as: Date.RelativeFormatStyle.self, typeName: "Date.RelativeFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
-    "var Date.RelativeFormatStyle.calendar": .computed { receiver in
+    "var Date.RelativeFormatStyle.calendar: Calendar": .computed { receiver in
         let recv: Date.RelativeFormatStyle = try unboxOpaque(receiver, as: Date.RelativeFormatStyle.self, typeName: "Date.RelativeFormatStyle")
         return boxOpaque(recv.calendar, typeName: "Calendar")
     },
-    "var Date.RelativeFormatStyle.hashValue": .computed { receiver in
+    "var Date.RelativeFormatStyle.hashValue: Int": .computed { receiver in
         let recv: Date.RelativeFormatStyle = try unboxOpaque(receiver, as: Date.RelativeFormatStyle.self, typeName: "Date.RelativeFormatStyle")
         return .int(recv.hashValue)
     },

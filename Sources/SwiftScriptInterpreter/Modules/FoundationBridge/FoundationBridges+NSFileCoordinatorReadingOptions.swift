@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSFileCoordinator.ReadingOptions(), typeName: "NSFileCoordinator.ReadingOptions")
     },
-    "var NSFileCoordinator.ReadingOptions.isEmpty": .computed { receiver in
+    "var NSFileCoordinator.ReadingOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSFileCoordinator.ReadingOptions = try unboxOpaque(receiver, as: NSFileCoordinator.ReadingOptions.self, typeName: "NSFileCoordinator.ReadingOptions")
         return .bool(recv.isEmpty)
     },
@@ -18,5 +18,18 @@ extension FoundationBridges {
     "static let NSFileCoordinator.ReadingOptions.resolvesSymbolicLink": .staticValue(boxOpaque(NSFileCoordinator.ReadingOptions.resolvesSymbolicLink, typeName: "NSFileCoordinator.ReadingOptions")),
     "static let NSFileCoordinator.ReadingOptions.immediatelyAvailableMetadataOnly": .staticValue(boxOpaque(NSFileCoordinator.ReadingOptions.immediatelyAvailableMetadataOnly, typeName: "NSFileCoordinator.ReadingOptions")),
     "static let NSFileCoordinator.ReadingOptions.forUploading": .staticValue(boxOpaque(NSFileCoordinator.ReadingOptions.forUploading, typeName: "NSFileCoordinator.ReadingOptions")),
+        "init NSFileCoordinator.ReadingOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSFileCoordinator.ReadingOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSFileCoordinator.ReadingOptions()
+            for element in elements {
+                let item: NSFileCoordinator.ReadingOptions = try unboxOpaque(
+                    element, as: NSFileCoordinator.ReadingOptions.self, typeName: "NSFileCoordinator.ReadingOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSFileCoordinator.ReadingOptions")
+        },
     ]
 }

@@ -10,11 +10,24 @@ extension FoundationBridges {
         }
         return boxOpaque(NSMachPort.Options(), typeName: "NSMachPort.Options")
     },
-    "var NSMachPort.Options.isEmpty": .computed { receiver in
+    "var NSMachPort.Options.isEmpty: Bool": .computed { receiver in
         let recv: NSMachPort.Options = try unboxOpaque(receiver, as: NSMachPort.Options.self, typeName: "NSMachPort.Options")
         return .bool(recv.isEmpty)
     },
     "static let NSMachPort.Options.deallocateSendRight": .staticValue(boxOpaque(NSMachPort.Options.deallocateSendRight, typeName: "NSMachPort.Options")),
     "static let NSMachPort.Options.deallocateReceiveRight": .staticValue(boxOpaque(NSMachPort.Options.deallocateReceiveRight, typeName: "NSMachPort.Options")),
+        "init NSMachPort.Options(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSMachPort.Options(arrayLiteral:): expected array literal")
+            }
+            var result = NSMachPort.Options()
+            for element in elements {
+                let item: NSMachPort.Options = try unboxOpaque(
+                    element, as: NSMachPort.Options.self, typeName: "NSMachPort.Options"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSMachPort.Options")
+        },
     ]
 }

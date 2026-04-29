@@ -4,16 +4,16 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let machError: [String: Bridge] = [
-    "var MachError.errorCode": .computed { receiver in
+    "var MachError.errorCode: Int": .computed { receiver in
         let recv: MachError = try unboxOpaque(receiver, as: MachError.self, typeName: "MachError")
         return .int(recv.errorCode)
     },
     "static let MachError.errorDomain": .staticValue(.string(MachError.errorDomain)),
-    "var MachError.localizedDescription": .computed { receiver in
+    "var MachError.localizedDescription: String": .computed { receiver in
         let recv: MachError = try unboxOpaque(receiver, as: MachError.self, typeName: "MachError")
         return .string(recv.localizedDescription)
     },
-    "var MachError.hashValue": .computed { receiver in
+    "var MachError.hashValue: Int": .computed { receiver in
         let recv: MachError = try unboxOpaque(receiver, as: MachError.self, typeName: "MachError")
         return .int(recv.hashValue)
     },

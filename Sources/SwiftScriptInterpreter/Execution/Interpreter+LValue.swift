@@ -53,7 +53,7 @@ extension Interpreter {
         _ path: LValuePath,
         value newValue: Value,
         in scope: Scope
-    ) throws {
+    ) async throws {
         guard let binding = scope.lookup(path.base) else {
             throw RuntimeError.invalid("cannot find '\(path.base)' in scope")
         }
@@ -62,7 +62,7 @@ extension Interpreter {
         // rebuilt — class semantics already shares the instance across
         // every reference. We still walk up to the boundary so any
         // value-typed parents (struct holding a class) keep working.
-        if let updated = try setThroughChain(
+        if let updated = try await setThroughChain(
             container: binding.value, steps: path.steps, value: newValue
         ) {
             // The chain hit no class boundary: write the rebuilt value
@@ -83,7 +83,7 @@ extension Interpreter {
     ///   along the chain (no writeback needed).
     private func setThroughChain(
         container: Value, steps: [String], value: Value
-    ) throws -> Value? {
+    ) async throws -> Value? {
         if steps.isEmpty { return value }
         var rest = steps
         let head = rest.removeFirst()
@@ -96,7 +96,7 @@ extension Interpreter {
             }
             if rest.isEmpty {
                 inst.fields[idx].value = value
-            } else if let updated = try setThroughChain(
+            } else if let updated = try await setThroughChain(
                 container: inst.fields[idx].value, steps: rest, value: value
             ) {
                 inst.fields[idx].value = updated
@@ -113,7 +113,7 @@ extension Interpreter {
                 fields[idx].value = value
                 return .structValue(typeName: typeName, fields: fields)
             }
-            if let updated = try setThroughChain(
+            if let updated = try await setThroughChain(
                 container: fields[idx].value, steps: rest, value: value
             ) {
                 fields[idx].value = updated
@@ -123,6 +123,22 @@ extension Interpreter {
             // upward. The struct's own field still references the same
             // class instance.
             return nil
+        case .opaque(let typeName, _):
+            // Auto-bridged class property setter: the bridge generator
+            // emits a paired `set var Type.member: ...` entry for each
+            // mutable `var` property. Calling it mutates the underlying
+            // Foundation reference in place; the opaque envelope
+            // doesn't need rebuilding.
+            if rest.isEmpty,
+               let entry = propertyIndex["\(typeName).\(head)"],
+               case .setter(let body)? = entry.setter
+            {
+                try await body(container, value)
+                return nil
+            }
+            throw RuntimeError.invalid(
+                "value of type '\(typeName)' has no settable member '\(head)'"
+            )
         default:
             throw RuntimeError.invalid(
                 "value of type '\(typeName(container))' has no settable member '\(head)'"

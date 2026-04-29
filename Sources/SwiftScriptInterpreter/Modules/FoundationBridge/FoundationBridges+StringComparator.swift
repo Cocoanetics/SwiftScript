@@ -6,14 +6,14 @@ extension FoundationBridges {
     nonisolated(unsafe) static let stringComparator: [String: Bridge] = [
     "static let String.Comparator.localizedStandard": .staticValue(boxOpaque(String.Comparator.localizedStandard, typeName: "String.Comparator")),
     "static let String.Comparator.localized": .staticValue(boxOpaque(String.Comparator.localized, typeName: "String.Comparator")),
-    "var String.Comparator.locale": .computed { receiver in
+    "var String.Comparator.locale: Locale?": .computed { receiver in
         let recv: String.Comparator = try unboxOpaque(receiver, as: String.Comparator.self, typeName: "String.Comparator")
         if let _v = recv.locale {
             return .optional(boxOpaque(_v, typeName: "Locale"))
         }
         return .optional(nil)
     },
-    "var String.Comparator.hashValue": .computed { receiver in
+    "var String.Comparator.hashValue: Int": .computed { receiver in
         let recv: String.Comparator = try unboxOpaque(receiver, as: String.Comparator.self, typeName: "String.Comparator")
         return .int(recv.hashValue)
     },

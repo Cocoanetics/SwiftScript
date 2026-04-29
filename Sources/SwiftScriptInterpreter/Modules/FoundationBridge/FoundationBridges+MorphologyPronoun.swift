@@ -4,22 +4,22 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let morphologyPronoun: [String: Bridge] = [
-    "var Morphology.Pronoun.pronoun": .computed { receiver in
+    "var Morphology.Pronoun.pronoun: String": .computed { receiver in
         let recv: Morphology.Pronoun = try unboxOpaque(receiver, as: Morphology.Pronoun.self, typeName: "Morphology.Pronoun")
         return .string(recv.pronoun)
     },
-    "var Morphology.Pronoun.morphology": .computed { receiver in
+    "var Morphology.Pronoun.morphology: Morphology": .computed { receiver in
         let recv: Morphology.Pronoun = try unboxOpaque(receiver, as: Morphology.Pronoun.self, typeName: "Morphology.Pronoun")
         return boxOpaque(recv.morphology, typeName: "Morphology")
     },
-    "var Morphology.Pronoun.dependentMorphology": .computed { receiver in
+    "var Morphology.Pronoun.dependentMorphology: Morphology?": .computed { receiver in
         let recv: Morphology.Pronoun = try unboxOpaque(receiver, as: Morphology.Pronoun.self, typeName: "Morphology.Pronoun")
         if let _v = recv.dependentMorphology {
             return .optional(boxOpaque(_v, typeName: "Morphology"))
         }
         return .optional(nil)
     },
-    "var Morphology.Pronoun.hashValue": .computed { receiver in
+    "var Morphology.Pronoun.hashValue: Int": .computed { receiver in
         let recv: Morphology.Pronoun = try unboxOpaque(receiver, as: Morphology.Pronoun.self, typeName: "Morphology.Pronoun")
         return .int(recv.hashValue)
     },

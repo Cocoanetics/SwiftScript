@@ -10,11 +10,24 @@ extension FoundationBridges {
         }
         return boxOpaque(FileManager.ItemReplacementOptions(), typeName: "FileManager.ItemReplacementOptions")
     },
-    "var FileManager.ItemReplacementOptions.isEmpty": .computed { receiver in
+    "var FileManager.ItemReplacementOptions.isEmpty: Bool": .computed { receiver in
         let recv: FileManager.ItemReplacementOptions = try unboxOpaque(receiver, as: FileManager.ItemReplacementOptions.self, typeName: "FileManager.ItemReplacementOptions")
         return .bool(recv.isEmpty)
     },
     "static let FileManager.ItemReplacementOptions.usingNewMetadataOnly": .staticValue(boxOpaque(FileManager.ItemReplacementOptions.usingNewMetadataOnly, typeName: "FileManager.ItemReplacementOptions")),
     "static let FileManager.ItemReplacementOptions.withoutDeletingBackupItem": .staticValue(boxOpaque(FileManager.ItemReplacementOptions.withoutDeletingBackupItem, typeName: "FileManager.ItemReplacementOptions")),
+        "init FileManager.ItemReplacementOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("FileManager.ItemReplacementOptions(arrayLiteral:): expected array literal")
+            }
+            var result = FileManager.ItemReplacementOptions()
+            for element in elements {
+                let item: FileManager.ItemReplacementOptions = try unboxOpaque(
+                    element, as: FileManager.ItemReplacementOptions.self, typeName: "FileManager.ItemReplacementOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "FileManager.ItemReplacementOptions")
+        },
     ]
 }

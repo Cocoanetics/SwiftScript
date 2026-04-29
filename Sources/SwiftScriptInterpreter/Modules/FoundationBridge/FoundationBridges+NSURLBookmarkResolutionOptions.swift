@@ -10,12 +10,25 @@ extension FoundationBridges {
         }
         return boxOpaque(NSURL.BookmarkResolutionOptions(), typeName: "NSURL.BookmarkResolutionOptions")
     },
-    "var NSURL.BookmarkResolutionOptions.isEmpty": .computed { receiver in
+    "var NSURL.BookmarkResolutionOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSURL.BookmarkResolutionOptions = try unboxOpaque(receiver, as: NSURL.BookmarkResolutionOptions.self, typeName: "NSURL.BookmarkResolutionOptions")
         return .bool(recv.isEmpty)
     },
     "static let NSURL.BookmarkResolutionOptions.withoutUI": .staticValue(boxOpaque(NSURL.BookmarkResolutionOptions.withoutUI, typeName: "NSURL.BookmarkResolutionOptions")),
     "static let NSURL.BookmarkResolutionOptions.withoutMounting": .staticValue(boxOpaque(NSURL.BookmarkResolutionOptions.withoutMounting, typeName: "NSURL.BookmarkResolutionOptions")),
     "static let NSURL.BookmarkResolutionOptions.withoutImplicitStartAccessing": .staticValue(boxOpaque(NSURL.BookmarkResolutionOptions.withoutImplicitStartAccessing, typeName: "NSURL.BookmarkResolutionOptions")),
+        "init NSURL.BookmarkResolutionOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSURL.BookmarkResolutionOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSURL.BookmarkResolutionOptions()
+            for element in elements {
+                let item: NSURL.BookmarkResolutionOptions = try unboxOpaque(
+                    element, as: NSURL.BookmarkResolutionOptions.self, typeName: "NSURL.BookmarkResolutionOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSURL.BookmarkResolutionOptions")
+        },
     ]
 }

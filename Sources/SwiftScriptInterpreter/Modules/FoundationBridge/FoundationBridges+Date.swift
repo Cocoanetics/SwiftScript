@@ -19,30 +19,30 @@ extension FoundationBridges {
         }
         return boxOpaque(Date(), typeName: "Date")
     },
-    "var Date.timeIntervalSinceReferenceDate": .computed { receiver in
+    "var Date.timeIntervalSinceReferenceDate: Double": .computed { receiver in
         let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
         return .double(recv.timeIntervalSinceReferenceDate)
     },
-    "var Date.timeIntervalSinceNow": .computed { receiver in
+    "var Date.timeIntervalSinceNow: Double": .computed { receiver in
         let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
         return .double(recv.timeIntervalSinceNow)
     },
-    "var Date.timeIntervalSince1970": .computed { receiver in
+    "var Date.timeIntervalSince1970: Double": .computed { receiver in
         let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
         return .double(recv.timeIntervalSince1970)
     },
     "static let Date.distantFuture": .staticValue(boxOpaque(Date.distantFuture, typeName: "Date")),
     "static let Date.distantPast": .staticValue(boxOpaque(Date.distantPast, typeName: "Date")),
     "static let Date.now": .staticValue(boxOpaque(Date.now, typeName: "Date")),
-    "var Date.hashValue": .computed { receiver in
+    "var Date.hashValue: Int": .computed { receiver in
         let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
         return .int(recv.hashValue)
     },
-    "var Date.debugDescription": .computed { receiver in
+    "var Date.debugDescription: String": .computed { receiver in
         let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
         return .string(recv.debugDescription)
     },
-    "var Date.description": .computed { receiver in
+    "var Date.description: String": .computed { receiver in
         let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
         return .string(recv.description)
     },

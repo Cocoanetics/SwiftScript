@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSSortOptions(), typeName: "NSSortOptions")
     },
-    "var NSSortOptions.isEmpty": .computed { receiver in
+    "var NSSortOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
         return .bool(recv.isEmpty)
     },
@@ -86,5 +86,18 @@ extension FoundationBridges {
         let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
         return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")))
     },
+        "init NSSortOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSSortOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSSortOptions()
+            for element in elements {
+                let item: NSSortOptions = try unboxOpaque(
+                    element, as: NSSortOptions.self, typeName: "NSSortOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSSortOptions")
+        },
     ]
 }

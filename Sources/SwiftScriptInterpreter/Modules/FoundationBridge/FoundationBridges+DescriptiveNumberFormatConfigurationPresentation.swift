@@ -6,7 +6,7 @@ extension FoundationBridges {
     nonisolated(unsafe) static let descriptiveNumberFormatConfigurationPresentation: [String: Bridge] = [
     "static let DescriptiveNumberFormatConfiguration.Presentation.spellOut": .staticValue(boxOpaque(DescriptiveNumberFormatConfiguration.Presentation.spellOut, typeName: "DescriptiveNumberFormatConfiguration.Presentation")),
     "static let DescriptiveNumberFormatConfiguration.Presentation.ordinal": .staticValue(boxOpaque(DescriptiveNumberFormatConfiguration.Presentation.ordinal, typeName: "DescriptiveNumberFormatConfiguration.Presentation")),
-    "var DescriptiveNumberFormatConfiguration.Presentation.hashValue": .computed { receiver in
+    "var DescriptiveNumberFormatConfiguration.Presentation.hashValue: Int": .computed { receiver in
         let recv: DescriptiveNumberFormatConfiguration.Presentation = try unboxOpaque(receiver, as: DescriptiveNumberFormatConfiguration.Presentation.self, typeName: "DescriptiveNumberFormatConfiguration.Presentation")
         return .int(recv.hashValue)
     },

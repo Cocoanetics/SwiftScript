@@ -8,7 +8,7 @@ extension FoundationBridges {
     "static let CurrencyFormatStyleConfiguration.Presentation.standard": .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.Presentation.standard, typeName: "CurrencyFormatStyleConfiguration.Presentation")),
     "static let CurrencyFormatStyleConfiguration.Presentation.isoCode": .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.Presentation.isoCode, typeName: "CurrencyFormatStyleConfiguration.Presentation")),
     "static let CurrencyFormatStyleConfiguration.Presentation.fullName": .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.Presentation.fullName, typeName: "CurrencyFormatStyleConfiguration.Presentation")),
-    "var CurrencyFormatStyleConfiguration.Presentation.hashValue": .computed { receiver in
+    "var CurrencyFormatStyleConfiguration.Presentation.hashValue: Int": .computed { receiver in
         let recv: CurrencyFormatStyleConfiguration.Presentation = try unboxOpaque(receiver, as: CurrencyFormatStyleConfiguration.Presentation.self, typeName: "CurrencyFormatStyleConfiguration.Presentation")
         return .int(recv.hashValue)
     },

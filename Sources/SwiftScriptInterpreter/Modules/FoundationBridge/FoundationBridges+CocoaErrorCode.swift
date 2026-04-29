@@ -4,11 +4,11 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let cocoaErrorCode: [String: Bridge] = [
-    "var CocoaError.Code.hashValue": .computed { receiver in
+    "var CocoaError.Code.hashValue: Int": .computed { receiver in
         let recv: CocoaError.Code = try unboxOpaque(receiver, as: CocoaError.Code.self, typeName: "CocoaError.Code")
         return .int(recv.hashValue)
     },
-    "var CocoaError.Code.rawValue": .computed { receiver in
+    "var CocoaError.Code.rawValue: Int": .computed { receiver in
         let recv: CocoaError.Code = try unboxOpaque(receiver, as: CocoaError.Code.self, typeName: "CocoaError.Code")
         return .int(recv.rawValue)
     },

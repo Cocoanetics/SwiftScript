@@ -10,11 +10,24 @@ extension FoundationBridges {
         }
         return boxOpaque(FileWrapper.WritingOptions(), typeName: "FileWrapper.WritingOptions")
     },
-    "var FileWrapper.WritingOptions.isEmpty": .computed { receiver in
+    "var FileWrapper.WritingOptions.isEmpty: Bool": .computed { receiver in
         let recv: FileWrapper.WritingOptions = try unboxOpaque(receiver, as: FileWrapper.WritingOptions.self, typeName: "FileWrapper.WritingOptions")
         return .bool(recv.isEmpty)
     },
     "static let FileWrapper.WritingOptions.atomic": .staticValue(boxOpaque(FileWrapper.WritingOptions.atomic, typeName: "FileWrapper.WritingOptions")),
     "static let FileWrapper.WritingOptions.withNameUpdating": .staticValue(boxOpaque(FileWrapper.WritingOptions.withNameUpdating, typeName: "FileWrapper.WritingOptions")),
+        "init FileWrapper.WritingOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("FileWrapper.WritingOptions(arrayLiteral:): expected array literal")
+            }
+            var result = FileWrapper.WritingOptions()
+            for element in elements {
+                let item: FileWrapper.WritingOptions = try unboxOpaque(
+                    element, as: FileWrapper.WritingOptions.self, typeName: "FileWrapper.WritingOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "FileWrapper.WritingOptions")
+        },
     ]
 }

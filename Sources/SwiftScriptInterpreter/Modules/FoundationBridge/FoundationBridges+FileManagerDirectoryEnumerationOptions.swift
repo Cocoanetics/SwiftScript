@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(FileManager.DirectoryEnumerationOptions(), typeName: "FileManager.DirectoryEnumerationOptions")
     },
-    "var FileManager.DirectoryEnumerationOptions.isEmpty": .computed { receiver in
+    "var FileManager.DirectoryEnumerationOptions.isEmpty: Bool": .computed { receiver in
         let recv: FileManager.DirectoryEnumerationOptions = try unboxOpaque(receiver, as: FileManager.DirectoryEnumerationOptions.self, typeName: "FileManager.DirectoryEnumerationOptions")
         return .bool(recv.isEmpty)
     },
@@ -19,5 +19,18 @@ extension FoundationBridges {
     "static let FileManager.DirectoryEnumerationOptions.skipsHiddenFiles": .staticValue(boxOpaque(FileManager.DirectoryEnumerationOptions.skipsHiddenFiles, typeName: "FileManager.DirectoryEnumerationOptions")),
     "static let FileManager.DirectoryEnumerationOptions.includesDirectoriesPostOrder": .staticValue(boxOpaque(FileManager.DirectoryEnumerationOptions.includesDirectoriesPostOrder, typeName: "FileManager.DirectoryEnumerationOptions")),
     "static let FileManager.DirectoryEnumerationOptions.producesRelativePathURLs": .staticValue(boxOpaque(FileManager.DirectoryEnumerationOptions.producesRelativePathURLs, typeName: "FileManager.DirectoryEnumerationOptions")),
+        "init FileManager.DirectoryEnumerationOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("FileManager.DirectoryEnumerationOptions(arrayLiteral:): expected array literal")
+            }
+            var result = FileManager.DirectoryEnumerationOptions()
+            for element in elements {
+                let item: FileManager.DirectoryEnumerationOptions = try unboxOpaque(
+                    element, as: FileManager.DirectoryEnumerationOptions.self, typeName: "FileManager.DirectoryEnumerationOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "FileManager.DirectoryEnumerationOptions")
+        },
     ]
 }

@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let dateHTTPFormatStyle: [String: Bridge] = [
-    "var Date.HTTPFormatStyle.parseStrategy": .computed { receiver in
+    "var Date.HTTPFormatStyle.parseStrategy: Date.HTTPFormatStyle": .computed { receiver in
         let recv: Date.HTTPFormatStyle = try unboxOpaque(receiver, as: Date.HTTPFormatStyle.self, typeName: "Date.HTTPFormatStyle")
         return boxOpaque(recv.parseStrategy, typeName: "Date.HTTPFormatStyle")
     },
@@ -14,7 +14,7 @@ extension FoundationBridges {
         }
         return boxOpaque(Date.HTTPFormatStyle(), typeName: "Date.HTTPFormatStyle")
     },
-    "var Date.HTTPFormatStyle.hashValue": .computed { receiver in
+    "var Date.HTTPFormatStyle.hashValue: Int": .computed { receiver in
         let recv: Date.HTTPFormatStyle = try unboxOpaque(receiver, as: Date.HTTPFormatStyle.self, typeName: "Date.HTTPFormatStyle")
         return .int(recv.hashValue)
     },

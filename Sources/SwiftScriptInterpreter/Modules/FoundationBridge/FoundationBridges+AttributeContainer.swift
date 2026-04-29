@@ -10,11 +10,11 @@ extension FoundationBridges {
         }
         return boxOpaque(AttributeContainer(), typeName: "AttributeContainer")
     },
-    "var AttributeContainer.hashValue": .computed { receiver in
+    "var AttributeContainer.hashValue: Int": .computed { receiver in
         let recv: AttributeContainer = try unboxOpaque(receiver, as: AttributeContainer.self, typeName: "AttributeContainer")
         return .int(recv.hashValue)
     },
-    "var AttributeContainer.description": .computed { receiver in
+    "var AttributeContainer.description: String": .computed { receiver in
         let recv: AttributeContainer = try unboxOpaque(receiver, as: AttributeContainer.self, typeName: "AttributeContainer")
         return .string(recv.description)
     },

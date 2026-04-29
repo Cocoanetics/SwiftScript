@@ -5,19 +5,19 @@ import Foundation
 extension FoundationBridges {
     nonisolated(unsafe) static let dateIntervalFormatStyle: [String: Bridge] = [
     "static let Date.IntervalFormatStyle.interval": .staticValue(boxOpaque(Date.IntervalFormatStyle.interval, typeName: "Date.IntervalFormatStyle")),
-    "var Date.IntervalFormatStyle.locale": .computed { receiver in
+    "var Date.IntervalFormatStyle.locale: Locale": .computed { receiver in
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
-    "var Date.IntervalFormatStyle.timeZone": .computed { receiver in
+    "var Date.IntervalFormatStyle.timeZone: TimeZone": .computed { receiver in
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return boxOpaque(recv.timeZone, typeName: "TimeZone")
     },
-    "var Date.IntervalFormatStyle.calendar": .computed { receiver in
+    "var Date.IntervalFormatStyle.calendar: Calendar": .computed { receiver in
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return boxOpaque(recv.calendar, typeName: "Calendar")
     },
-    "var Date.IntervalFormatStyle.hashValue": .computed { receiver in
+    "var Date.IntervalFormatStyle.hashValue: Int": .computed { receiver in
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return .int(recv.hashValue)
     },

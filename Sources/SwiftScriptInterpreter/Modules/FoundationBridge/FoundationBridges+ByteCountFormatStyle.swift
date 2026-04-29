@@ -4,27 +4,27 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let byteCountFormatStyle: [String: Bridge] = [
-    "var ByteCountFormatStyle.allowedUnits": .computed { receiver in
+    "var ByteCountFormatStyle.allowedUnits: ByteCountFormatStyle.Units": .computed { receiver in
         let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
         return boxOpaque(recv.allowedUnits, typeName: "ByteCountFormatStyle.Units")
     },
-    "var ByteCountFormatStyle.spellsOutZero": .computed { receiver in
+    "var ByteCountFormatStyle.spellsOutZero: Bool": .computed { receiver in
         let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
         return .bool(recv.spellsOutZero)
     },
-    "var ByteCountFormatStyle.includesActualByteCount": .computed { receiver in
+    "var ByteCountFormatStyle.includesActualByteCount: Bool": .computed { receiver in
         let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
         return .bool(recv.includesActualByteCount)
     },
-    "var ByteCountFormatStyle.locale": .computed { receiver in
+    "var ByteCountFormatStyle.locale: Locale": .computed { receiver in
         let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
-    "var ByteCountFormatStyle.attributed": .computed { receiver in
+    "var ByteCountFormatStyle.attributed: ByteCountFormatStyle.Attributed": .computed { receiver in
         let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
         return boxOpaque(recv.attributed, typeName: "ByteCountFormatStyle.Attributed")
     },
-    "var ByteCountFormatStyle.hashValue": .computed { receiver in
+    "var ByteCountFormatStyle.hashValue: Int": .computed { receiver in
         let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
         return .int(recv.hashValue)
     },

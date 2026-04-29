@@ -4,16 +4,16 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let pOSIXError: [String: Bridge] = [
-    "var POSIXError.errorCode": .computed { receiver in
+    "var POSIXError.errorCode: Int": .computed { receiver in
         let recv: POSIXError = try unboxOpaque(receiver, as: POSIXError.self, typeName: "POSIXError")
         return .int(recv.errorCode)
     },
     "static let POSIXError.errorDomain": .staticValue(.string(POSIXError.errorDomain)),
-    "var POSIXError.localizedDescription": .computed { receiver in
+    "var POSIXError.localizedDescription: String": .computed { receiver in
         let recv: POSIXError = try unboxOpaque(receiver, as: POSIXError.self, typeName: "POSIXError")
         return .string(recv.localizedDescription)
     },
-    "var POSIXError.hashValue": .computed { receiver in
+    "var POSIXError.hashValue: Int": .computed { receiver in
         let recv: POSIXError = try unboxOpaque(receiver, as: POSIXError.self, typeName: "POSIXError")
         return .int(recv.hashValue)
     },

@@ -10,128 +10,128 @@ extension FoundationBridges {
         }
         return boxOpaque(URLComponents(), typeName: "URLComponents")
     },
-    "var URLComponents.url": .computed { receiver in
+    "var URLComponents.url: URL?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.url {
             return .optional(boxOpaque(_v, typeName: "URL"))
         }
         return .optional(nil)
     },
-    "var URLComponents.string": .computed { receiver in
+    "var URLComponents.string: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.string {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URLComponents.scheme": .computed { receiver in
+    "var URLComponents.scheme: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.scheme {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URLComponents.user": .computed { receiver in
+    "var URLComponents.user: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.user {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URLComponents.password": .computed { receiver in
+    "var URLComponents.password: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.password {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URLComponents.host": .computed { receiver in
+    "var URLComponents.host: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.host {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URLComponents.port": .computed { receiver in
+    "var URLComponents.port: Int?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.port {
             return .optional(.int(_v))
         }
         return .optional(nil)
     },
-    "var URLComponents.path": .computed { receiver in
+    "var URLComponents.path: String": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         return .string(recv.path)
     },
-    "var URLComponents.query": .computed { receiver in
+    "var URLComponents.query: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.query {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URLComponents.fragment": .computed { receiver in
+    "var URLComponents.fragment: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.fragment {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URLComponents.percentEncodedUser": .computed { receiver in
+    "var URLComponents.percentEncodedUser: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.percentEncodedUser {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URLComponents.percentEncodedPassword": .computed { receiver in
+    "var URLComponents.percentEncodedPassword: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.percentEncodedPassword {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URLComponents.percentEncodedHost": .computed { receiver in
+    "var URLComponents.percentEncodedHost: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.percentEncodedHost {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URLComponents.encodedHost": .computed { receiver in
+    "var URLComponents.encodedHost: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.encodedHost {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URLComponents.percentEncodedPath": .computed { receiver in
+    "var URLComponents.percentEncodedPath: String": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         return .string(recv.percentEncodedPath)
     },
-    "var URLComponents.percentEncodedQuery": .computed { receiver in
+    "var URLComponents.percentEncodedQuery: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.percentEncodedQuery {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URLComponents.percentEncodedFragment": .computed { receiver in
+    "var URLComponents.percentEncodedFragment: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.percentEncodedFragment {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URLComponents.hashValue": .computed { receiver in
+    "var URLComponents.hashValue: Int": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         return .int(recv.hashValue)
     },
-    "var URLComponents.description": .computed { receiver in
+    "var URLComponents.description: String": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         return .string(recv.description)
     },
-    "var URLComponents.debugDescription": .computed { receiver in
+    "var URLComponents.debugDescription: String": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         return .string(recv.debugDescription)
     },

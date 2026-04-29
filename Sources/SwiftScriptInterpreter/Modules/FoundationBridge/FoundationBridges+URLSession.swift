@@ -5,7 +5,7 @@ import Foundation
 extension FoundationBridges {
     nonisolated(unsafe) static let uRLSession: [String: Bridge] = [
     "static let URLSession.shared": .staticValue(boxOpaque(URLSession.shared, typeName: "URLSession")),
-    "var URLSession.sessionDescription": .computed { receiver in
+    "var URLSession.sessionDescription: String?": .computed { receiver in
         let recv: URLSession = try unboxOpaque(receiver, as: URLSession.self, typeName: "URLSession")
         if let _v = recv.sessionDescription {
             return .optional(.string(_v))

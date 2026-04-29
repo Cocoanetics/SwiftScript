@@ -125,6 +125,7 @@ for url in cli.symbolGraphs {
 
 let equatableUSR = "s:SQ"
 let comparableUSR = "s:SL"
+let optionSetUSR = "s:s9OptionSetP"
 
 // Auto-discovery of opaque-bridgeable types runs further down, AFTER
 // `bridgedTypes` and `bridgeableReceivers` are declared. (Swift top-
@@ -193,6 +194,14 @@ let primitiveBridges: [String: BridgedType] = [
 /// overrides for typealias-shaped types (`String.Encoding` lives as a
 /// nested-typealias struct).
 nonisolated(unsafe) var bridgedTypes: [String: BridgedType] = primitiveBridges
+
+/// Set of bridged type names that are reference-type Swift classes
+/// (vs structs). Populated alongside `bridgedTypes` during auto-
+/// discovery; consulted at property emit time to decide whether to
+/// emit a setter alongside the getter for `var` properties — only
+/// classes get the setter, since their underlying reference allows
+/// in-place mutation through an `.opaque` Value.
+nonisolated(unsafe) var bridgedClassTypeNames: Set<String> = []
 
 /// Types we auto-promote into `bridgedTypes` regardless of whether
 /// the symbol graph reports `Equatable` conformance. Two cases:
@@ -615,6 +624,31 @@ func isMutating(_ sym: SymbolGraph.Symbol) -> Bool {
     return fragments.first?.spelling == "mutating"
 }
 
+/// True for `swift.property` symbols declared with `var` and not
+/// marked `{ get }`-only. Used to decide whether to emit a setter
+/// alongside the getter for class-typed receivers.
+func isVarMutable(_ sym: SymbolGraph.Symbol) -> Bool {
+    let frags = sym.declarationFragments ?? []
+    var sawVar = false
+    var hasGet = false
+    var hasSet = false
+    for f in frags {
+        if f.kind == "keyword" {
+            switch f.spelling {
+            case "var": sawVar = true
+            case "let": return false
+            case "get": hasGet = true
+            case "set": hasSet = true
+            default: break
+            }
+        }
+    }
+    guard sawVar else { return false }
+    // `var foo: T { get }` — read-only computed (get with no set).
+    if hasGet && !hasSet { return false }
+    return true
+}
+
 /// True for `@available(*, deprecated)`, `unavailable`, or symbols
 /// introduced after our deployment target. The deployment target lives
 /// in `Package.swift` (macOS 26 today); we bake it in here to keep the
@@ -1018,6 +1052,9 @@ for annotated in allSymbols {
     let isAllowed = bridgeableTypeAllowlist.contains(typeName)
     guard isAllowed || conformances.contains(equatableUSR) else { continue }
     bridgedTypes[usr] = opaqueBridge(typeName)
+    if kind == "swift.class" {
+        bridgedClassTypeNames.insert(typeName)
+    }
 }
 
 // Build `bridgeableReceivers` from the resolved `bridgedTypes`. Two
@@ -1206,8 +1243,13 @@ for annotated in prioritizedSymbols {
             skippedReasons[path] = "non-value property type"; continue
         }
         let recvUnbox = render(recvType.unboxTemplate, "receiver")
+        // Property keys carry the return-type spelling so the runtime
+        // can resolve implicit-member expressions in property
+        // assignment RHS (`.prettyPrinted` against the property's
+        // declared `JSONEncoder.OutputFormatting`).
+        let propTypeSpelling = propType.bridge.swiftSpelling + (propType.isOptional ? "?" : "")
         record(key, bucket: .type(receiverTypeName), code: renderEmit(EmitConfig(
-            registerLine: "\"var \(receiverTypeName).\(memberName)\": .computed",
+            registerLine: "\"var \(receiverTypeName).\(memberName): \(propTypeSpelling)\": .computed",
             closureParams: "receiver",
             arity: nil,
             recvUnboxLine: "let recv: \(recvType.swiftSpelling) = \(recvUnbox)",
@@ -1219,6 +1261,33 @@ for annotated in prioritizedSymbols {
             isAsync: false,
             tupleElements: []
         )))
+        // For `var` properties on bridged classes, emit a setter
+        // alongside the getter. The reference can be mutated in place
+        // — the runtime's `setThroughChain` looks up
+        // `bridges["set var Type.member: ...."]` and calls the setter
+        // body. Skipped for structs (we'd need writeback through the
+        // opaque Value, not modeled), for read-only computed
+        // properties, and for non-bridgeable property types.
+        if bridgedClassTypeNames.contains(receiverTypeName),
+           !propType.isOptional,
+           isVarMutable(sym)
+        {
+            let unboxNew = render(propType.bridge.unboxTemplate, "newValue")
+            let setterCode = """
+                    \"set var \(receiverTypeName).\(memberName): \(propTypeSpelling)\": .setter { receiver, newValue in
+                        let recv: \(recvType.swiftSpelling) = \(recvUnbox)
+                        recv.\(memberName) = \(unboxNew)
+                    },
+            """
+            let setterClaim = "setter:\(receiverTypeName).\(memberName)"
+            if !registeredKeys.contains(setterClaim) {
+                emitted.append(EmitEntry(
+                    symbolPath: path, group: emitGroup,
+                    bucket: .type(receiverTypeName), code: setterCode
+                ))
+                registeredKeys.insert(setterClaim)
+            }
+        }
 
     case "swift.type.property" where (2...3).contains(sym.pathComponents.count) && !isDeprecated(sym) && !isAsync(sym):
         // The odd one out: emits a `registerStaticValue(value: …)` call
@@ -1389,6 +1458,47 @@ for annotated in prioritizedSymbols {
     default:
         continue
     }
+}
+
+// MARK: - OptionSet array-literal init pass
+//
+// OptionSet types (e.g. `JSONEncoder.OutputFormatting`) conform to
+// `ExpressibleByArrayLiteral` via the protocol's default; their
+// `init(arrayLiteral:)` takes a variadic `Element...` which the main
+// emit pass rejects. We synthesise it directly from the conformance
+// data: build via the empty `init()` then `formUnion` each element.
+// This is what powers `encoder.outputFormatting = [.prettyPrinted,
+// .sortedKeys]` at the call site — the runtime invokes this bridge
+// after evaluating each `.case` against the property's type.
+for (usr, bridge) in bridgedTypes {
+    guard bridge.unboxTemplate.contains("unboxOpaque") else { continue }
+    let conformances = conformancesByUSR[usr] ?? []
+    guard conformances.contains(optionSetUSR) else { continue }
+    let typeName = bridge.swiftSpelling
+    let key = "init \(typeName)(arrayLiteral:)"
+    let claimKey = "init:\(typeName)(arrayLiteral:)"
+    if registeredKeys.contains(claimKey) { continue }
+    let code = """
+            \"\(key)\": .`init` { args in
+                guard args.count == 1, case .array(let elements) = args[0] else {
+                    throw RuntimeError.invalid("\(typeName)(arrayLiteral:): expected array literal")
+                }
+                var result = \(typeName)()
+                for element in elements {
+                    let item: \(typeName) = try unboxOpaque(
+                        element, as: \(typeName).self, typeName: "\(typeName)"
+                    )
+                    result.formUnion(item)
+                }
+                return boxOpaque(result, typeName: "\(typeName)")
+            },
+    """
+    let group: EmitGroup = usr.hasPrefix("s:10Foundation") || usr.hasPrefix("c:") ? .foundation : .stdlib
+    emitted.append(EmitEntry(
+        symbolPath: "\(typeName)(arrayLiteral:)",
+        group: group, bucket: .type(typeName), code: code
+    ))
+    registeredKeys.insert(claimKey)
 }
 
 // Emit `registerComparator` calls for every bridged opaque type that

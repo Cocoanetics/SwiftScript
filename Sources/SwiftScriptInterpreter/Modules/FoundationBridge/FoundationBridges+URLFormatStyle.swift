@@ -5,11 +5,11 @@ import Foundation
 extension FoundationBridges {
     nonisolated(unsafe) static let uRLFormatStyle: [String: Bridge] = [
     "static let URL.FormatStyle.url": .staticValue(boxOpaque(URL.FormatStyle.url, typeName: "URL.FormatStyle")),
-    "var URL.FormatStyle.hashValue": .computed { receiver in
+    "var URL.FormatStyle.hashValue: Int": .computed { receiver in
         let recv: URL.FormatStyle = try unboxOpaque(receiver, as: URL.FormatStyle.self, typeName: "URL.FormatStyle")
         return .int(recv.hashValue)
     },
-    "var URL.FormatStyle.parseStrategy": .computed { receiver in
+    "var URL.FormatStyle.parseStrategy: URL.ParseStrategy": .computed { receiver in
         let recv: URL.FormatStyle = try unboxOpaque(receiver, as: URL.FormatStyle.self, typeName: "URL.FormatStyle")
         return boxOpaque(recv.parseStrategy, typeName: "URL.ParseStrategy")
     },

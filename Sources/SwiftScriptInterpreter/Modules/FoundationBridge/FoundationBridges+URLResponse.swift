@@ -4,28 +4,28 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let uRLResponse: [String: Bridge] = [
-    "var URLResponse.url": .computed { receiver in
+    "var URLResponse.url: URL?": .computed { receiver in
         let recv: URLResponse = try unboxOpaque(receiver, as: URLResponse.self, typeName: "URLResponse")
         if let _v = recv.url {
             return .optional(boxOpaque(_v, typeName: "URL"))
         }
         return .optional(nil)
     },
-    "var URLResponse.mimeType": .computed { receiver in
+    "var URLResponse.mimeType: String?": .computed { receiver in
         let recv: URLResponse = try unboxOpaque(receiver, as: URLResponse.self, typeName: "URLResponse")
         if let _v = recv.mimeType {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URLResponse.textEncodingName": .computed { receiver in
+    "var URLResponse.textEncodingName: String?": .computed { receiver in
         let recv: URLResponse = try unboxOpaque(receiver, as: URLResponse.self, typeName: "URLResponse")
         if let _v = recv.textEncodingName {
             return .optional(.string(_v))
         }
         return .optional(nil)
     },
-    "var URLResponse.suggestedFilename": .computed { receiver in
+    "var URLResponse.suggestedFilename: String?": .computed { receiver in
         let recv: URLResponse = try unboxOpaque(receiver, as: URLResponse.self, typeName: "URLResponse")
         if let _v = recv.suggestedFilename {
             return .optional(.string(_v))

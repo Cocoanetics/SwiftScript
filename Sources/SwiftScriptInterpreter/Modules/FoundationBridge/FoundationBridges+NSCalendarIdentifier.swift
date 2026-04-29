@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let nSCalendarIdentifier: [String: Bridge] = [
-    "var NSCalendar.Identifier.hashValue": .computed { receiver in
+    "var NSCalendar.Identifier.hashValue: Int": .computed { receiver in
         let recv: NSCalendar.Identifier = try unboxOpaque(receiver, as: NSCalendar.Identifier.self, typeName: "NSCalendar.Identifier")
         return .int(recv.hashValue)
     },

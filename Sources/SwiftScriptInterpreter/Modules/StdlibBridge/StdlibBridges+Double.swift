@@ -5,7 +5,7 @@ import Foundation
 extension StdlibBridges {
     nonisolated(unsafe) static let double: [String: Bridge] = [
     "static let Double.ulpOfOne": .staticValue(.double(Double.ulpOfOne)),
-    "var Double.nextDown": .computed { receiver in
+    "var Double.nextDown: Double": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .double(recv.nextDown)
     },
@@ -17,17 +17,17 @@ extension StdlibBridges {
         }
         return .double(Double())
     },
-    "var Double.description": .computed { receiver in
+    "var Double.description: String": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .string(recv.description)
     },
-    "var Double.debugDescription": .computed { receiver in
+    "var Double.debugDescription: String": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .string(recv.debugDescription)
     },
     "static let Double.exponentBitCount": .staticValue(.int(Double.exponentBitCount)),
     "static let Double.significandBitCount": .staticValue(.int(Double.significandBitCount)),
-    "var Double.isCanonical": .computed { receiver in
+    "var Double.isCanonical: Bool": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .bool(recv.isCanonical)
     },
@@ -36,65 +36,65 @@ extension StdlibBridges {
     "static let Double.signalingNaN": .staticValue(.double(Double.signalingNaN)),
     "static let Double.greatestFiniteMagnitude": .staticValue(.double(Double.greatestFiniteMagnitude)),
     "static let Double.pi": .staticValue(.double(Double.pi)),
-    "var Double.ulp": .computed { receiver in
+    "var Double.ulp: Double": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .double(recv.ulp)
     },
     "static let Double.leastNormalMagnitude": .staticValue(.double(Double.leastNormalMagnitude)),
     "static let Double.leastNonzeroMagnitude": .staticValue(.double(Double.leastNonzeroMagnitude)),
-    "var Double.exponent": .computed { receiver in
+    "var Double.exponent: Int": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .int(recv.exponent)
     },
-    "var Double.significand": .computed { receiver in
+    "var Double.significand: Double": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .double(recv.significand)
     },
-    "var Double.nextUp": .computed { receiver in
+    "var Double.nextUp: Double": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .double(recv.nextUp)
     },
-    "var Double.isNormal": .computed { receiver in
+    "var Double.isNormal: Bool": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .bool(recv.isNormal)
     },
-    "var Double.isFinite": .computed { receiver in
+    "var Double.isFinite: Bool": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .bool(recv.isFinite)
     },
-    "var Double.isZero": .computed { receiver in
+    "var Double.isZero: Bool": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .bool(recv.isZero)
     },
-    "var Double.isSubnormal": .computed { receiver in
+    "var Double.isSubnormal: Bool": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .bool(recv.isSubnormal)
     },
-    "var Double.isInfinite": .computed { receiver in
+    "var Double.isInfinite: Bool": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .bool(recv.isInfinite)
     },
-    "var Double.isNaN": .computed { receiver in
+    "var Double.isNaN: Bool": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .bool(recv.isNaN)
     },
-    "var Double.isSignalingNaN": .computed { receiver in
+    "var Double.isSignalingNaN: Bool": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .bool(recv.isSignalingNaN)
     },
-    "var Double.binade": .computed { receiver in
+    "var Double.binade: Double": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .double(recv.binade)
     },
-    "var Double.significandWidth": .computed { receiver in
+    "var Double.significandWidth: Int": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .int(recv.significandWidth)
     },
-    "var Double.hashValue": .computed { receiver in
+    "var Double.hashValue: Int": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .int(recv.hashValue)
     },
-    "var Double.magnitude": .computed { receiver in
+    "var Double.magnitude: Double": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .double(recv.magnitude)
     },

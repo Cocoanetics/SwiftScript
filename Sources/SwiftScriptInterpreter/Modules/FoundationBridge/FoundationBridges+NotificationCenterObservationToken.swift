@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let notificationCenterObservationToken: [String: Bridge] = [
-    "var NotificationCenter.ObservationToken.hashValue": .computed { receiver in
+    "var NotificationCenter.ObservationToken.hashValue: Int": .computed { receiver in
         let recv: NotificationCenter.ObservationToken = try unboxOpaque(receiver, as: NotificationCenter.ObservationToken.self, typeName: "NotificationCenter.ObservationToken")
         return .int(recv.hashValue)
     },

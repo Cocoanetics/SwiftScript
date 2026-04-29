@@ -398,7 +398,7 @@ extension Interpreter {
                 lhs: lhsValue, lhsExpr: lhs,
                 rhs: rhsValue, rhsExpr: rhs
             )
-            try writeLValuePath(path, value: newValue, in: scope)
+            try await writeLValuePath(path, value: newValue, in: scope)
             return .void
         }
 
@@ -607,7 +607,7 @@ extension Interpreter {
                         if let leafType = leafPropertyType(selfBinding.value, steps: rewritten.steps) {
                             newValue = try await coerce(value: newValue, expr: rhs, toType: leafType, in: .argument)
                         }
-                        try writeLValuePath(rewritten, value: newValue, in: scope)
+                        try await writeLValuePath(rewritten, value: newValue, in: scope)
                         return .void
                     }
                     if case .classInstance(let inst) = selfBinding.value,
@@ -620,7 +620,7 @@ extension Interpreter {
                         if let leafType = leafPropertyType(selfBinding.value, steps: rewritten.steps) {
                             newValue = try await coerce(value: newValue, expr: rhs, toType: leafType, in: .argument)
                         }
-                        try writeLValuePath(rewritten, value: newValue, in: scope)
+                        try await writeLValuePath(rewritten, value: newValue, in: scope)
                         return .void
                     }
                 }
@@ -631,10 +631,17 @@ extension Interpreter {
             // Class roots: a `let alias = shape` still allows
             // `alias.numberOfSides = …` because the let only freezes the
             // reference, not the pointee. Skip the mutability check when
-            // the very first hop crosses a class instance.
+            // the very first hop crosses a class instance — including
+            // an `.opaque` whose underlying payload is a Foundation
+            // reference type (auto-bridged classes like JSONEncoder).
             let rootIsClass = (path.steps.count > 0)
                 && {
                     if case .classInstance = binding.value { return true }
+                    if case .opaque(let typeName, _) = binding.value,
+                       isAutoBridgedClass(typeName)
+                    {
+                        return true
+                    }
                     return false
                 }()
             if !rootIsClass {
@@ -647,9 +654,31 @@ extension Interpreter {
                 }
             }
             // Coerce against the leaf property's declared type if we know it.
-            var newValue = try await evaluate(rhs, in: scope)
-            if let leafType = leafPropertyType(binding.value, steps: path.steps) {
-                newValue = try await coerce(value: newValue, expr: rhs, toType: leafType, in: .argument)
+            // Two paths:
+            //   - Value-typed leaf: `leafPropertyType` returns a TypeSyntax
+            //     and we coerce against it.
+            //   - Opaque-bridged leaf (auto-bridged class property):
+            //     consult `propertyIndex` for the declared type spelling
+            //     and use it as the implicit-member context so
+            //     `.prettyPrinted` / `[.a, .b]` against an OptionSet
+            //     property type resolves correctly.
+            var newValue: Value
+            let bridgedPropType: String?
+            if path.steps.count == 1,
+               case .opaque(let typeName, _) = binding.value,
+               let entry = propertyIndex["\(typeName).\(path.steps[0])"]
+            {
+                bridgedPropType = entry.typeSpelling.isEmpty ? nil : entry.typeSpelling
+            } else {
+                bridgedPropType = nil
+            }
+            if let bridgedPropType {
+                newValue = try await evaluate(rhs, expectingTypeName: bridgedPropType, in: scope)
+            } else {
+                newValue = try await evaluate(rhs, in: scope)
+                if let leafType = leafPropertyType(binding.value, steps: path.steps) {
+                    newValue = try await coerce(value: newValue, expr: rhs, toType: leafType, in: .argument)
+                }
             }
             // Setter dispatch: walk the chain to the leaf, and if it's a
             // class computed property (with a setter), call the setter
@@ -679,13 +708,13 @@ extension Interpreter {
                 if let willSet = lookupClassWillSet(on: def, path.steps[0]) {
                     _ = try await invokeClassMethod(willSet, on: inst, def: def, args: [newValue])
                 }
-                try writeLValuePath(path, value: newValue, in: scope)
+                try await writeLValuePath(path, value: newValue, in: scope)
                 if let didSet = lookupClassDidSet(on: def, path.steps[0]) {
                     _ = try await invokeClassMethod(didSet, on: inst, def: def, args: [oldValue])
                 }
                 return .void
             }
-            try writeLValuePath(path, value: newValue, in: scope)
+            try await writeLValuePath(path, value: newValue, in: scope)
             return .void
         }
         throw RuntimeError.invalid(

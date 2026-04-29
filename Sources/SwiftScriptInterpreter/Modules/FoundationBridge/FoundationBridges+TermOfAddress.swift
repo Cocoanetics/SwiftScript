@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let termOfAddress: [String: Bridge] = [
-    "var TermOfAddress.language": .computed { receiver in
+    "var TermOfAddress.language: Locale.Language?": .computed { receiver in
         let recv: TermOfAddress = try unboxOpaque(receiver, as: TermOfAddress.self, typeName: "TermOfAddress")
         if let _v = recv.language {
             return .optional(boxOpaque(_v, typeName: "Locale.Language"))
@@ -15,7 +15,7 @@ extension FoundationBridges {
     "static let TermOfAddress.feminine": .staticValue(boxOpaque(TermOfAddress.feminine, typeName: "TermOfAddress")),
     "static let TermOfAddress.masculine": .staticValue(boxOpaque(TermOfAddress.masculine, typeName: "TermOfAddress")),
     "static let TermOfAddress.currentUser": .staticValue(boxOpaque(TermOfAddress.currentUser, typeName: "TermOfAddress")),
-    "var TermOfAddress.hashValue": .computed { receiver in
+    "var TermOfAddress.hashValue: Int": .computed { receiver in
         let recv: TermOfAddress = try unboxOpaque(receiver, as: TermOfAddress.self, typeName: "TermOfAddress")
         return .int(recv.hashValue)
     },

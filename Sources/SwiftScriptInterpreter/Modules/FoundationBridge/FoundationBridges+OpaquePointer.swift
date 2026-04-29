@@ -4,11 +4,11 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let opaquePointer: [String: Bridge] = [
-    "var OpaquePointer.hashValue": .computed { receiver in
+    "var OpaquePointer.hashValue: Int": .computed { receiver in
         let recv: OpaquePointer = try unboxOpaque(receiver, as: OpaquePointer.self, typeName: "OpaquePointer")
         return .int(recv.hashValue)
     },
-    "var OpaquePointer.debugDescription": .computed { receiver in
+    "var OpaquePointer.debugDescription: String": .computed { receiver in
         let recv: OpaquePointer = try unboxOpaque(receiver, as: OpaquePointer.self, typeName: "OpaquePointer")
         return .string(recv.debugDescription)
     },

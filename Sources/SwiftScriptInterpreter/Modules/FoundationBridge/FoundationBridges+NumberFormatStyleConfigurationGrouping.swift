@@ -6,11 +6,11 @@ extension FoundationBridges {
     nonisolated(unsafe) static let numberFormatStyleConfigurationGrouping: [String: Bridge] = [
     "static let NumberFormatStyleConfiguration.Grouping.automatic": .staticValue(boxOpaque(NumberFormatStyleConfiguration.Grouping.automatic, typeName: "NumberFormatStyleConfiguration.Grouping")),
     "static let NumberFormatStyleConfiguration.Grouping.never": .staticValue(boxOpaque(NumberFormatStyleConfiguration.Grouping.never, typeName: "NumberFormatStyleConfiguration.Grouping")),
-    "var NumberFormatStyleConfiguration.Grouping.description": .computed { receiver in
+    "var NumberFormatStyleConfiguration.Grouping.description: String": .computed { receiver in
         let recv: NumberFormatStyleConfiguration.Grouping = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.Grouping.self, typeName: "NumberFormatStyleConfiguration.Grouping")
         return .string(recv.description)
     },
-    "var NumberFormatStyleConfiguration.Grouping.hashValue": .computed { receiver in
+    "var NumberFormatStyleConfiguration.Grouping.hashValue: Int": .computed { receiver in
         let recv: NumberFormatStyleConfiguration.Grouping = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.Grouping.self, typeName: "NumberFormatStyleConfiguration.Grouping")
         return .int(recv.hashValue)
     },

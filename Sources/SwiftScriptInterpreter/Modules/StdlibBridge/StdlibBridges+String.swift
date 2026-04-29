@@ -4,44 +4,44 @@ import Foundation
 
 extension StdlibBridges {
     nonisolated(unsafe) static let string: [String: Bridge] = [
-    "var String.localizedCapitalized": .computed { receiver in
+    "var String.localizedCapitalized: String": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return .string(recv.localizedCapitalized)
     },
-    "var String.localizedLowercase": .computed { receiver in
+    "var String.localizedLowercase: String": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return .string(recv.localizedLowercase)
     },
-    "var String.localizedUppercase": .computed { receiver in
+    "var String.localizedUppercase: String": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return .string(recv.localizedUppercase)
     },
-    "var String.capitalized": .computed { receiver in
+    "var String.capitalized: String": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return .string(recv.capitalized)
     },
     "static let String.defaultCStringEncoding": .staticValue(boxOpaque(String.defaultCStringEncoding, typeName: "String.Encoding")),
-    "var String.decomposedStringWithCanonicalMapping": .computed { receiver in
+    "var String.decomposedStringWithCanonicalMapping: String": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return .string(recv.decomposedStringWithCanonicalMapping)
     },
-    "var String.decomposedStringWithCompatibilityMapping": .computed { receiver in
+    "var String.decomposedStringWithCompatibilityMapping: String": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return .string(recv.decomposedStringWithCompatibilityMapping)
     },
-    "var String.fastestEncoding": .computed { receiver in
+    "var String.fastestEncoding: String.Encoding": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return boxOpaque(recv.fastestEncoding, typeName: "String.Encoding")
     },
-    "var String.hash": .computed { receiver in
+    "var String.hash: Int": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return .int(recv.hash)
     },
-    "var String.precomposedStringWithCanonicalMapping": .computed { receiver in
+    "var String.precomposedStringWithCanonicalMapping: String": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return .string(recv.precomposedStringWithCanonicalMapping)
     },
-    "var String.precomposedStringWithCompatibilityMapping": .computed { receiver in
+    "var String.precomposedStringWithCompatibilityMapping: String": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return .string(recv.precomposedStringWithCompatibilityMapping)
     },
@@ -53,11 +53,11 @@ extension StdlibBridges {
         _ = recv.propertyList()
             return .void
     },
-    "var String.smallestEncoding": .computed { receiver in
+    "var String.smallestEncoding: String.Encoding": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return boxOpaque(recv.smallestEncoding, typeName: "String.Encoding")
     },
-    "var String.removingPercentEncoding": .computed { receiver in
+    "var String.removingPercentEncoding: String?": .computed { receiver in
         let recv: String = try unboxString(receiver)
         if let _v = recv.removingPercentEncoding {
             return .optional(.string(_v))
@@ -182,11 +182,11 @@ extension StdlibBridges {
         let recv: String = try unboxString(receiver)
         return .int(recv.completePath(caseSensitive: try unboxBool(args[0])))
     },
-    "var String.hashValue": .computed { receiver in
+    "var String.hashValue: Int": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return .int(recv.hashValue)
     },
-    "var String.underestimatedCount": .computed { receiver in
+    "var String.underestimatedCount: Int": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return .int(recv.underestimatedCount)
     },
@@ -196,23 +196,23 @@ extension StdlibBridges {
         }
         return .string(String())
     },
-    "var String.debugDescription": .computed { receiver in
+    "var String.debugDescription: String": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return .string(recv.debugDescription)
     },
-    "var String.description": .computed { receiver in
+    "var String.description: String": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return .string(recv.description)
     },
-    "var String.startIndex": .computed { receiver in
+    "var String.startIndex: String.Index": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return boxOpaque(recv.startIndex, typeName: "String.Index")
     },
-    "var String.endIndex": .computed { receiver in
+    "var String.endIndex: String.Index": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return boxOpaque(recv.endIndex, typeName: "String.Index")
     },
-    "var String.count": .computed { receiver in
+    "var String.count: Int": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return .int(recv.count)
     },
@@ -230,11 +230,11 @@ extension StdlibBridges {
         let recv: String = try unboxString(receiver)
         return .string(recv.uppercased())
     },
-    "var String.isContiguousUTF8": .computed { receiver in
+    "var String.isContiguousUTF8: Bool": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return .bool(recv.isContiguousUTF8)
     },
-    "var String.isEmpty": .computed { receiver in
+    "var String.isEmpty: Bool": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return .bool(recv.isEmpty)
     },

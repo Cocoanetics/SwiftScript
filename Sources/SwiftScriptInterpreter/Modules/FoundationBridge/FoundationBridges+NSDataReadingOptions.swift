@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSData.ReadingOptions(), typeName: "NSData.ReadingOptions")
     },
-    "var NSData.ReadingOptions.isEmpty": .computed { receiver in
+    "var NSData.ReadingOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSData.ReadingOptions = try unboxOpaque(receiver, as: NSData.ReadingOptions.self, typeName: "NSData.ReadingOptions")
         return .bool(recv.isEmpty)
     },
@@ -20,5 +20,18 @@ extension FoundationBridges {
     "static let NSData.ReadingOptions.dataReadingMapped": .staticValue(boxOpaque(NSData.ReadingOptions.dataReadingMapped, typeName: "NSData.ReadingOptions")),
     "static let NSData.ReadingOptions.mappedRead": .staticValue(boxOpaque(NSData.ReadingOptions.mappedRead, typeName: "NSData.ReadingOptions")),
     "static let NSData.ReadingOptions.uncachedRead": .staticValue(boxOpaque(NSData.ReadingOptions.uncachedRead, typeName: "NSData.ReadingOptions")),
+        "init NSData.ReadingOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSData.ReadingOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSData.ReadingOptions()
+            for element in elements {
+                let item: NSData.ReadingOptions = try unboxOpaque(
+                    element, as: NSData.ReadingOptions.self, typeName: "NSData.ReadingOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSData.ReadingOptions")
+        },
     ]
 }

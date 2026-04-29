@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let progressFileOperationKind: [String: Bridge] = [
-    "var Progress.FileOperationKind.hashValue": .computed { receiver in
+    "var Progress.FileOperationKind.hashValue: Int": .computed { receiver in
         let recv: Progress.FileOperationKind = try unboxOpaque(receiver, as: Progress.FileOperationKind.self, typeName: "Progress.FileOperationKind")
         return .int(recv.hashValue)
     },

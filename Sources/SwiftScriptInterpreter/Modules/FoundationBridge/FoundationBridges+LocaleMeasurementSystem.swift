@@ -4,18 +4,18 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let localeMeasurementSystem: [String: Bridge] = [
-    "var Locale.MeasurementSystem.identifier": .computed { receiver in
+    "var Locale.MeasurementSystem.identifier: String": .computed { receiver in
         let recv: Locale.MeasurementSystem = try unboxOpaque(receiver, as: Locale.MeasurementSystem.self, typeName: "Locale.MeasurementSystem")
         return .string(recv.identifier)
     },
-    "var Locale.MeasurementSystem.debugDescription": .computed { receiver in
+    "var Locale.MeasurementSystem.debugDescription: String": .computed { receiver in
         let recv: Locale.MeasurementSystem = try unboxOpaque(receiver, as: Locale.MeasurementSystem.self, typeName: "Locale.MeasurementSystem")
         return .string(recv.debugDescription)
     },
     "static let Locale.MeasurementSystem.metric": .staticValue(boxOpaque(Locale.MeasurementSystem.metric, typeName: "Locale.MeasurementSystem")),
     "static let Locale.MeasurementSystem.us": .staticValue(boxOpaque(Locale.MeasurementSystem.us, typeName: "Locale.MeasurementSystem")),
     "static let Locale.MeasurementSystem.uk": .staticValue(boxOpaque(Locale.MeasurementSystem.uk, typeName: "Locale.MeasurementSystem")),
-    "var Locale.MeasurementSystem.hashValue": .computed { receiver in
+    "var Locale.MeasurementSystem.hashValue: Int": .computed { receiver in
         let recv: Locale.MeasurementSystem = try unboxOpaque(receiver, as: Locale.MeasurementSystem.self, typeName: "Locale.MeasurementSystem")
         return .int(recv.hashValue)
     },

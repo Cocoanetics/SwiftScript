@@ -4,15 +4,15 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let indexSetRangeView: [String: Bridge] = [
-    "var IndexSet.RangeView.isEmpty": .computed { receiver in
+    "var IndexSet.RangeView.isEmpty: Bool": .computed { receiver in
         let recv: IndexSet.RangeView = try unboxOpaque(receiver, as: IndexSet.RangeView.self, typeName: "IndexSet.RangeView")
         return .bool(recv.isEmpty)
     },
-    "var IndexSet.RangeView.underestimatedCount": .computed { receiver in
+    "var IndexSet.RangeView.underestimatedCount: Int": .computed { receiver in
         let recv: IndexSet.RangeView = try unboxOpaque(receiver, as: IndexSet.RangeView.self, typeName: "IndexSet.RangeView")
         return .int(recv.underestimatedCount)
     },
-    "var IndexSet.RangeView.count": .computed { receiver in
+    "var IndexSet.RangeView.count: Int": .computed { receiver in
         let recv: IndexSet.RangeView = try unboxOpaque(receiver, as: IndexSet.RangeView.self, typeName: "IndexSet.RangeView")
         return .int(recv.count)
     },

@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSCalendar.Unit(), typeName: "NSCalendar.Unit")
     },
-    "var NSCalendar.Unit.isEmpty": .computed { receiver in
+    "var NSCalendar.Unit.isEmpty: Bool": .computed { receiver in
         let recv: NSCalendar.Unit = try unboxOpaque(receiver, as: NSCalendar.Unit.self, typeName: "NSCalendar.Unit")
         return .bool(recv.isEmpty)
     },
@@ -33,5 +33,18 @@ extension FoundationBridges {
     "static let NSCalendar.Unit.timeZone": .staticValue(boxOpaque(NSCalendar.Unit.timeZone, typeName: "NSCalendar.Unit")),
     "static let NSCalendar.Unit.isLeapMonth": .staticValue(boxOpaque(NSCalendar.Unit.isLeapMonth, typeName: "NSCalendar.Unit")),
     "static let NSCalendar.Unit.isRepeatedDay": .staticValue(boxOpaque(NSCalendar.Unit.isRepeatedDay, typeName: "NSCalendar.Unit")),
+        "init NSCalendar.Unit(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSCalendar.Unit(arrayLiteral:): expected array literal")
+            }
+            var result = NSCalendar.Unit()
+            for element in elements {
+                let item: NSCalendar.Unit = try unboxOpaque(
+                    element, as: NSCalendar.Unit.self, typeName: "NSCalendar.Unit"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSCalendar.Unit")
+        },
     ]
 }

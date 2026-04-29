@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSRegularExpression.MatchingOptions(), typeName: "NSRegularExpression.MatchingOptions")
     },
-    "var NSRegularExpression.MatchingOptions.isEmpty": .computed { receiver in
+    "var NSRegularExpression.MatchingOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSRegularExpression.MatchingOptions = try unboxOpaque(receiver, as: NSRegularExpression.MatchingOptions.self, typeName: "NSRegularExpression.MatchingOptions")
         return .bool(recv.isEmpty)
     },
@@ -19,5 +19,18 @@ extension FoundationBridges {
     "static let NSRegularExpression.MatchingOptions.anchored": .staticValue(boxOpaque(NSRegularExpression.MatchingOptions.anchored, typeName: "NSRegularExpression.MatchingOptions")),
     "static let NSRegularExpression.MatchingOptions.withTransparentBounds": .staticValue(boxOpaque(NSRegularExpression.MatchingOptions.withTransparentBounds, typeName: "NSRegularExpression.MatchingOptions")),
     "static let NSRegularExpression.MatchingOptions.withoutAnchoringBounds": .staticValue(boxOpaque(NSRegularExpression.MatchingOptions.withoutAnchoringBounds, typeName: "NSRegularExpression.MatchingOptions")),
+        "init NSRegularExpression.MatchingOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSRegularExpression.MatchingOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSRegularExpression.MatchingOptions()
+            for element in elements {
+                let item: NSRegularExpression.MatchingOptions = try unboxOpaque(
+                    element, as: NSRegularExpression.MatchingOptions.self, typeName: "NSRegularExpression.MatchingOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSRegularExpression.MatchingOptions")
+        },
     ]
 }

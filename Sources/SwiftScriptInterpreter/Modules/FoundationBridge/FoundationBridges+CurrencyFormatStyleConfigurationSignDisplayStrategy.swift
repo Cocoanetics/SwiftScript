@@ -7,7 +7,7 @@ extension FoundationBridges {
     "static let CurrencyFormatStyleConfiguration.SignDisplayStrategy.automatic": .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.SignDisplayStrategy.automatic, typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy")),
     "static let CurrencyFormatStyleConfiguration.SignDisplayStrategy.never": .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.SignDisplayStrategy.never, typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy")),
     "static let CurrencyFormatStyleConfiguration.SignDisplayStrategy.accounting": .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.SignDisplayStrategy.accounting, typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy")),
-    "var CurrencyFormatStyleConfiguration.SignDisplayStrategy.hashValue": .computed { receiver in
+    "var CurrencyFormatStyleConfiguration.SignDisplayStrategy.hashValue: Int": .computed { receiver in
         let recv: CurrencyFormatStyleConfiguration.SignDisplayStrategy = try unboxOpaque(receiver, as: CurrencyFormatStyleConfiguration.SignDisplayStrategy.self, typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy")
         return .int(recv.hashValue)
     },

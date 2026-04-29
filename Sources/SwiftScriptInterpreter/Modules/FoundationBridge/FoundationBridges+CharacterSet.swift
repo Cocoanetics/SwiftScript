@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let characterSet: [String: Bridge] = [
-    "var CharacterSet.isEmpty": .computed { receiver in
+    "var CharacterSet.isEmpty: Bool": .computed { receiver in
         let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
         return .bool(recv.isEmpty)
     },
@@ -35,23 +35,23 @@ extension FoundationBridges {
     "static let CharacterSet.urlPathAllowed": .staticValue(boxOpaque(CharacterSet.urlPathAllowed, typeName: "CharacterSet")),
     "static let CharacterSet.urlQueryAllowed": .staticValue(boxOpaque(CharacterSet.urlQueryAllowed, typeName: "CharacterSet")),
     "static let CharacterSet.urlFragmentAllowed": .staticValue(boxOpaque(CharacterSet.urlFragmentAllowed, typeName: "CharacterSet")),
-    "var CharacterSet.bitmapRepresentation": .computed { receiver in
+    "var CharacterSet.bitmapRepresentation: Data": .computed { receiver in
         let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
         return boxOpaque(recv.bitmapRepresentation, typeName: "Data")
     },
-    "var CharacterSet.inverted": .computed { receiver in
+    "var CharacterSet.inverted: CharacterSet": .computed { receiver in
         let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
         return boxOpaque(recv.inverted, typeName: "CharacterSet")
     },
-    "var CharacterSet.hashValue": .computed { receiver in
+    "var CharacterSet.hashValue: Int": .computed { receiver in
         let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
         return .int(recv.hashValue)
     },
-    "var CharacterSet.description": .computed { receiver in
+    "var CharacterSet.description: String": .computed { receiver in
         let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
         return .string(recv.description)
     },
-    "var CharacterSet.debugDescription": .computed { receiver in
+    "var CharacterSet.debugDescription: String": .computed { receiver in
         let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
         return .string(recv.debugDescription)
     },

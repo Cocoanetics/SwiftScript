@@ -4,15 +4,15 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let notification: [String: Bridge] = [
-    "var Notification.description": .computed { receiver in
+    "var Notification.description: String": .computed { receiver in
         let recv: Notification = try unboxOpaque(receiver, as: Notification.self, typeName: "Notification")
         return .string(recv.description)
     },
-    "var Notification.debugDescription": .computed { receiver in
+    "var Notification.debugDescription: String": .computed { receiver in
         let recv: Notification = try unboxOpaque(receiver, as: Notification.self, typeName: "Notification")
         return .string(recv.debugDescription)
     },
-    "var Notification.hashValue": .computed { receiver in
+    "var Notification.hashValue: Int": .computed { receiver in
         let recv: Notification = try unboxOpaque(receiver, as: Notification.self, typeName: "Notification")
         return .int(recv.hashValue)
     },

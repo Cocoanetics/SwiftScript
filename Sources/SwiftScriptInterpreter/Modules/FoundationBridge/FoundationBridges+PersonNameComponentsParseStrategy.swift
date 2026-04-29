@@ -11,7 +11,7 @@ extension FoundationBridges {
         }
         return boxOpaque(PersonNameComponents.ParseStrategy(), typeName: "PersonNameComponents.ParseStrategy")
     },
-    "var PersonNameComponents.ParseStrategy.hashValue": .computed { receiver in
+    "var PersonNameComponents.ParseStrategy.hashValue: Int": .computed { receiver in
         let recv: PersonNameComponents.ParseStrategy = try unboxOpaque(receiver, as: PersonNameComponents.ParseStrategy.self, typeName: "PersonNameComponents.ParseStrategy")
         return .int(recv.hashValue)
     },

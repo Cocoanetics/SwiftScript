@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSLinguisticTagger.Options(), typeName: "NSLinguisticTagger.Options")
     },
-    "var NSLinguisticTagger.Options.isEmpty": .computed { receiver in
+    "var NSLinguisticTagger.Options.isEmpty: Bool": .computed { receiver in
         let recv: NSLinguisticTagger.Options = try unboxOpaque(receiver, as: NSLinguisticTagger.Options.self, typeName: "NSLinguisticTagger.Options")
         return .bool(recv.isEmpty)
     },
@@ -19,5 +19,18 @@ extension FoundationBridges {
     "static let NSLinguisticTagger.Options.omitWhitespace": .staticValue(boxOpaque(NSLinguisticTagger.Options.omitWhitespace, typeName: "NSLinguisticTagger.Options")),
     "static let NSLinguisticTagger.Options.omitOther": .staticValue(boxOpaque(NSLinguisticTagger.Options.omitOther, typeName: "NSLinguisticTagger.Options")),
     "static let NSLinguisticTagger.Options.joinNames": .staticValue(boxOpaque(NSLinguisticTagger.Options.joinNames, typeName: "NSLinguisticTagger.Options")),
+        "init NSLinguisticTagger.Options(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSLinguisticTagger.Options(arrayLiteral:): expected array literal")
+            }
+            var result = NSLinguisticTagger.Options()
+            for element in elements {
+                let item: NSLinguisticTagger.Options = try unboxOpaque(
+                    element, as: NSLinguisticTagger.Options.self, typeName: "NSLinguisticTagger.Options"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSLinguisticTagger.Options")
+        },
     ]
 }

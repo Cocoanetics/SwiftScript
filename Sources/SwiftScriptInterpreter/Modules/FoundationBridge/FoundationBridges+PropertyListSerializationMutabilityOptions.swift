@@ -10,11 +10,24 @@ extension FoundationBridges {
         }
         return boxOpaque(PropertyListSerialization.MutabilityOptions(), typeName: "PropertyListSerialization.MutabilityOptions")
     },
-    "var PropertyListSerialization.MutabilityOptions.isEmpty": .computed { receiver in
+    "var PropertyListSerialization.MutabilityOptions.isEmpty: Bool": .computed { receiver in
         let recv: PropertyListSerialization.MutabilityOptions = try unboxOpaque(receiver, as: PropertyListSerialization.MutabilityOptions.self, typeName: "PropertyListSerialization.MutabilityOptions")
         return .bool(recv.isEmpty)
     },
     "static let PropertyListSerialization.MutabilityOptions.mutableContainers": .staticValue(boxOpaque(PropertyListSerialization.MutabilityOptions.mutableContainers, typeName: "PropertyListSerialization.MutabilityOptions")),
     "static let PropertyListSerialization.MutabilityOptions.mutableContainersAndLeaves": .staticValue(boxOpaque(PropertyListSerialization.MutabilityOptions.mutableContainersAndLeaves, typeName: "PropertyListSerialization.MutabilityOptions")),
+        "init PropertyListSerialization.MutabilityOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("PropertyListSerialization.MutabilityOptions(arrayLiteral:): expected array literal")
+            }
+            var result = PropertyListSerialization.MutabilityOptions()
+            for element in elements {
+                let item: PropertyListSerialization.MutabilityOptions = try unboxOpaque(
+                    element, as: PropertyListSerialization.MutabilityOptions.self, typeName: "PropertyListSerialization.MutabilityOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "PropertyListSerialization.MutabilityOptions")
+        },
     ]
 }

@@ -4,11 +4,11 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let runLoopSchedulerTimeType: [String: Bridge] = [
-    "var RunLoop.SchedulerTimeType.date": .computed { receiver in
+    "var RunLoop.SchedulerTimeType.date: Date": .computed { receiver in
         let recv: RunLoop.SchedulerTimeType = try unboxOpaque(receiver, as: RunLoop.SchedulerTimeType.self, typeName: "RunLoop.SchedulerTimeType")
         return boxOpaque(recv.date, typeName: "Date")
     },
-    "var RunLoop.SchedulerTimeType.hashValue": .computed { receiver in
+    "var RunLoop.SchedulerTimeType.hashValue: Int": .computed { receiver in
         let recv: RunLoop.SchedulerTimeType = try unboxOpaque(receiver, as: RunLoop.SchedulerTimeType.self, typeName: "RunLoop.SchedulerTimeType")
         return .int(recv.hashValue)
     },

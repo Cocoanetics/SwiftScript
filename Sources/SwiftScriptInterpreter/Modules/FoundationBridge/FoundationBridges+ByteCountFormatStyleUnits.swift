@@ -10,11 +10,11 @@ extension FoundationBridges {
         }
         return boxOpaque(ByteCountFormatStyle.Units(), typeName: "ByteCountFormatStyle.Units")
     },
-    "var ByteCountFormatStyle.Units.hashValue": .computed { receiver in
+    "var ByteCountFormatStyle.Units.hashValue: Int": .computed { receiver in
         let recv: ByteCountFormatStyle.Units = try unboxOpaque(receiver, as: ByteCountFormatStyle.Units.self, typeName: "ByteCountFormatStyle.Units")
         return .int(recv.hashValue)
     },
-    "var ByteCountFormatStyle.Units.isEmpty": .computed { receiver in
+    "var ByteCountFormatStyle.Units.isEmpty: Bool": .computed { receiver in
         let recv: ByteCountFormatStyle.Units = try unboxOpaque(receiver, as: ByteCountFormatStyle.Units.self, typeName: "ByteCountFormatStyle.Units")
         return .bool(recv.isEmpty)
     },
@@ -29,5 +29,18 @@ extension FoundationBridges {
     "static let ByteCountFormatStyle.Units.ybOrHigher": .staticValue(boxOpaque(ByteCountFormatStyle.Units.ybOrHigher, typeName: "ByteCountFormatStyle.Units")),
     "static let ByteCountFormatStyle.Units.all": .staticValue(boxOpaque(ByteCountFormatStyle.Units.all, typeName: "ByteCountFormatStyle.Units")),
     "static let ByteCountFormatStyle.Units.default": .staticValue(boxOpaque(ByteCountFormatStyle.Units.default, typeName: "ByteCountFormatStyle.Units")),
+        "init ByteCountFormatStyle.Units(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("ByteCountFormatStyle.Units(arrayLiteral:): expected array literal")
+            }
+            var result = ByteCountFormatStyle.Units()
+            for element in elements {
+                let item: ByteCountFormatStyle.Units = try unboxOpaque(
+                    element, as: ByteCountFormatStyle.Units.self, typeName: "ByteCountFormatStyle.Units"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "ByteCountFormatStyle.Units")
+        },
     ]
 }

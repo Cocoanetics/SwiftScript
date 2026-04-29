@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSString.EnumerationOptions(), typeName: "NSString.EnumerationOptions")
     },
-    "var NSString.EnumerationOptions.isEmpty": .computed { receiver in
+    "var NSString.EnumerationOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSString.EnumerationOptions = try unboxOpaque(receiver, as: NSString.EnumerationOptions.self, typeName: "NSString.EnumerationOptions")
         return .bool(recv.isEmpty)
     },
@@ -24,5 +24,18 @@ extension FoundationBridges {
     "static let NSString.EnumerationOptions.reverse": .staticValue(boxOpaque(NSString.EnumerationOptions.reverse, typeName: "NSString.EnumerationOptions")),
     "static let NSString.EnumerationOptions.substringNotRequired": .staticValue(boxOpaque(NSString.EnumerationOptions.substringNotRequired, typeName: "NSString.EnumerationOptions")),
     "static let NSString.EnumerationOptions.localized": .staticValue(boxOpaque(NSString.EnumerationOptions.localized, typeName: "NSString.EnumerationOptions")),
+        "init NSString.EnumerationOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSString.EnumerationOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSString.EnumerationOptions()
+            for element in elements {
+                let item: NSString.EnumerationOptions = try unboxOpaque(
+                    element, as: NSString.EnumerationOptions.self, typeName: "NSString.EnumerationOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSString.EnumerationOptions")
+        },
     ]
 }

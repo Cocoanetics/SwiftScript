@@ -7,11 +7,11 @@ extension FoundationBridges {
     "static let NumberFormatStyleConfiguration.Notation.scientific": .staticValue(boxOpaque(NumberFormatStyleConfiguration.Notation.scientific, typeName: "NumberFormatStyleConfiguration.Notation")),
     "static let NumberFormatStyleConfiguration.Notation.automatic": .staticValue(boxOpaque(NumberFormatStyleConfiguration.Notation.automatic, typeName: "NumberFormatStyleConfiguration.Notation")),
     "static let NumberFormatStyleConfiguration.Notation.compactName": .staticValue(boxOpaque(NumberFormatStyleConfiguration.Notation.compactName, typeName: "NumberFormatStyleConfiguration.Notation")),
-    "var NumberFormatStyleConfiguration.Notation.description": .computed { receiver in
+    "var NumberFormatStyleConfiguration.Notation.description: String": .computed { receiver in
         let recv: NumberFormatStyleConfiguration.Notation = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.Notation.self, typeName: "NumberFormatStyleConfiguration.Notation")
         return .string(recv.description)
     },
-    "var NumberFormatStyleConfiguration.Notation.hashValue": .computed { receiver in
+    "var NumberFormatStyleConfiguration.Notation.hashValue: Int": .computed { receiver in
         let recv: NumberFormatStyleConfiguration.Notation = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.Notation.self, typeName: "NumberFormatStyleConfiguration.Notation")
         return .int(recv.hashValue)
     },

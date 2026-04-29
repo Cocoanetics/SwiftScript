@@ -5,11 +5,11 @@ import Foundation
 extension FoundationBridges {
     nonisolated(unsafe) static let decimalFormatStyle: [String: Bridge] = [
     "static let Decimal.FormatStyle.number": .staticValue(boxOpaque(Decimal.FormatStyle.number, typeName: "Decimal.FormatStyle")),
-    "var Decimal.FormatStyle.locale": .computed { receiver in
+    "var Decimal.FormatStyle.locale: Locale": .computed { receiver in
         let recv: Decimal.FormatStyle = try unboxOpaque(receiver, as: Decimal.FormatStyle.self, typeName: "Decimal.FormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
-    "var Decimal.FormatStyle.hashValue": .computed { receiver in
+    "var Decimal.FormatStyle.hashValue: Int": .computed { receiver in
         let recv: Decimal.FormatStyle = try unboxOpaque(receiver, as: Decimal.FormatStyle.self, typeName: "Decimal.FormatStyle")
         return .int(recv.hashValue)
     },

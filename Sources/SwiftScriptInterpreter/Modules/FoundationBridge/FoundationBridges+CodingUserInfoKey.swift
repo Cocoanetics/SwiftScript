@@ -4,11 +4,11 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let codingUserInfoKey: [String: Bridge] = [
-    "var CodingUserInfoKey.rawValue": .computed { receiver in
+    "var CodingUserInfoKey.rawValue: String": .computed { receiver in
         let recv: CodingUserInfoKey = try unboxOpaque(receiver, as: CodingUserInfoKey.self, typeName: "CodingUserInfoKey")
         return .string(recv.rawValue)
     },
-    "var CodingUserInfoKey.hashValue": .computed { receiver in
+    "var CodingUserInfoKey.hashValue: Int": .computed { receiver in
         let recv: CodingUserInfoKey = try unboxOpaque(receiver, as: CodingUserInfoKey.self, typeName: "CodingUserInfoKey")
         return .int(recv.hashValue)
     },

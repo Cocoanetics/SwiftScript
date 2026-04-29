@@ -256,7 +256,7 @@ extension Interpreter {
                     let (result, finalSelf) = try await invokeStructMethod(
                         method, on: receiver, fields: fields, args: args
                     )
-                    try writeLValuePath(path, value: finalSelf, in: scope)
+                    try await writeLValuePath(path, value: finalSelf, in: scope)
                     return result
                 }
 
@@ -416,7 +416,7 @@ extension Interpreter {
         // l-value path so we can flush the body's final value back when
         // invoke returns. We carry the param index as well so we can
         // map back to the right parameter name.
-        var inoutWritebacks: [(paramIdx: Int, write: (Value) throws -> Void)] = []
+        var inoutWritebacks: [(paramIdx: Int, write: (Value) async throws -> Void)] = []
         for (i, argSyntax) in argSyntaxes.enumerated() {
             let paramType = (i < fn.parameters.count) ? fn.parameters[i].type : nil
             // `&x` — strip the `inout` marker, evaluate the underlying
@@ -437,7 +437,7 @@ extension Interpreter {
                         }))
                     } else if let path = parseLValuePath(inner) {
                         inoutWritebacks.append((i, { newValue in
-                            try self.writeLValuePath(path, value: newValue, in: scope)
+                            try await self.writeLValuePath(path, value: newValue, in: scope)
                         }))
                     }
                 }
@@ -467,7 +467,7 @@ extension Interpreter {
     func invoke(
         _ fn: Function,
         args: [Value],
-        inoutWritebacks: [(paramIdx: Int, write: (Value) throws -> Void)] = []
+        inoutWritebacks: [(paramIdx: Int, write: (Value) async throws -> Void)] = []
     ) async throws -> Value {
         switch fn.kind {
         case .builtin(let body):
@@ -590,7 +590,7 @@ extension Interpreter {
                       let binding = callScope.lookup(fn.parameters[paramIdx].name)
                 else { continue }
                 do {
-                    try write(binding.value)
+                    try await write(binding.value)
                 } catch {
                     if caught == nil { caught = error }
                 }

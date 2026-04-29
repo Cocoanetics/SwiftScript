@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSCalendar.Options(), typeName: "NSCalendar.Options")
     },
-    "var NSCalendar.Options.isEmpty": .computed { receiver in
+    "var NSCalendar.Options.isEmpty: Bool": .computed { receiver in
         let recv: NSCalendar.Options = try unboxOpaque(receiver, as: NSCalendar.Options.self, typeName: "NSCalendar.Options")
         return .bool(recv.isEmpty)
     },
@@ -22,5 +22,18 @@ extension FoundationBridges {
     "static let NSCalendar.Options.matchNextTime": .staticValue(boxOpaque(NSCalendar.Options.matchNextTime, typeName: "NSCalendar.Options")),
     "static let NSCalendar.Options.matchFirst": .staticValue(boxOpaque(NSCalendar.Options.matchFirst, typeName: "NSCalendar.Options")),
     "static let NSCalendar.Options.matchLast": .staticValue(boxOpaque(NSCalendar.Options.matchLast, typeName: "NSCalendar.Options")),
+        "init NSCalendar.Options(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSCalendar.Options(arrayLiteral:): expected array literal")
+            }
+            var result = NSCalendar.Options()
+            for element in elements {
+                let item: NSCalendar.Options = try unboxOpaque(
+                    element, as: NSCalendar.Options.self, typeName: "NSCalendar.Options"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSCalendar.Options")
+        },
     ]
 }

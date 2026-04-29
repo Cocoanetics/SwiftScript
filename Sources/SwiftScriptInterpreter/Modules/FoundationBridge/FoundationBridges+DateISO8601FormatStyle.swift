@@ -5,11 +5,11 @@ import Foundation
 extension FoundationBridges {
     nonisolated(unsafe) static let dateISO8601FormatStyle: [String: Bridge] = [
     "static let Date.ISO8601FormatStyle.iso8601": .staticValue(boxOpaque(Date.ISO8601FormatStyle.iso8601, typeName: "Date.ISO8601FormatStyle")),
-    "var Date.ISO8601FormatStyle.includingFractionalSeconds": .computed { receiver in
+    "var Date.ISO8601FormatStyle.includingFractionalSeconds: Bool": .computed { receiver in
         let recv: Date.ISO8601FormatStyle = try unboxOpaque(receiver, as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")
         return .bool(recv.includingFractionalSeconds)
     },
-    "var Date.ISO8601FormatStyle.timeZone": .computed { receiver in
+    "var Date.ISO8601FormatStyle.timeZone: TimeZone": .computed { receiver in
         let recv: Date.ISO8601FormatStyle = try unboxOpaque(receiver, as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")
         return boxOpaque(recv.timeZone, typeName: "TimeZone")
     },
@@ -41,11 +41,11 @@ extension FoundationBridges {
         let recv: Date.ISO8601FormatStyle = try unboxOpaque(receiver, as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")
         return boxOpaque(recv.day(), typeName: "Date.ISO8601FormatStyle")
     },
-    "var Date.ISO8601FormatStyle.hashValue": .computed { receiver in
+    "var Date.ISO8601FormatStyle.hashValue: Int": .computed { receiver in
         let recv: Date.ISO8601FormatStyle = try unboxOpaque(receiver, as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")
         return .int(recv.hashValue)
     },
-    "var Date.ISO8601FormatStyle.parseStrategy": .computed { receiver in
+    "var Date.ISO8601FormatStyle.parseStrategy: Date.ISO8601FormatStyle": .computed { receiver in
         let recv: Date.ISO8601FormatStyle = try unboxOpaque(receiver, as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")
         return boxOpaque(recv.parseStrategy, typeName: "Date.ISO8601FormatStyle")
     },

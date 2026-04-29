@@ -10,7 +10,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSEnumerationOptions(), typeName: "NSEnumerationOptions")
     },
-    "var NSEnumerationOptions.isEmpty": .computed { receiver in
+    "var NSEnumerationOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
         return .bool(recv.isEmpty)
     },
@@ -86,5 +86,18 @@ extension FoundationBridges {
         let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
         return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")))
     },
+        "init NSEnumerationOptions(arrayLiteral:)": .`init` { args in
+            guard args.count == 1, case .array(let elements) = args[0] else {
+                throw RuntimeError.invalid("NSEnumerationOptions(arrayLiteral:): expected array literal")
+            }
+            var result = NSEnumerationOptions()
+            for element in elements {
+                let item: NSEnumerationOptions = try unboxOpaque(
+                    element, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions"
+                )
+                result.formUnion(item)
+            }
+            return boxOpaque(result, typeName: "NSEnumerationOptions")
+        },
     ]
 }

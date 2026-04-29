@@ -4,34 +4,34 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let uRLError: [String: Bridge] = [
-    "var URLError.errorCode": .computed { receiver in
+    "var URLError.errorCode: Int": .computed { receiver in
         let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
         return .int(recv.errorCode)
     },
     "static let URLError.errorDomain": .staticValue(.string(URLError.errorDomain)),
-    "var URLError.localizedDescription": .computed { receiver in
+    "var URLError.localizedDescription: String": .computed { receiver in
         let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
         return .string(recv.localizedDescription)
     },
-    "var URLError.hashValue": .computed { receiver in
+    "var URLError.hashValue: Int": .computed { receiver in
         let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
         return .int(recv.hashValue)
     },
-    "var URLError.failingURL": .computed { receiver in
+    "var URLError.failingURL: URL?": .computed { receiver in
         let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
         if let _v = recv.failingURL {
             return .optional(boxOpaque(_v, typeName: "URL"))
         }
         return .optional(nil)
     },
-    "var URLError.downloadTaskResumeData": .computed { receiver in
+    "var URLError.downloadTaskResumeData: Data?": .computed { receiver in
         let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
         if let _v = recv.downloadTaskResumeData {
             return .optional(boxOpaque(_v, typeName: "Data"))
         }
         return .optional(nil)
     },
-    "var URLError.uploadTaskResumeData": .computed { receiver in
+    "var URLError.uploadTaskResumeData: Data?": .computed { receiver in
         let recv: URLError = try unboxOpaque(receiver, as: URLError.self, typeName: "URLError")
         if let _v = recv.uploadTaskResumeData {
             return .optional(boxOpaque(_v, typeName: "Data"))

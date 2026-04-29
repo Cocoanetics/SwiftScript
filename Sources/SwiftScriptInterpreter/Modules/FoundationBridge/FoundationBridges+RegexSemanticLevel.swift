@@ -6,7 +6,7 @@ extension FoundationBridges {
     nonisolated(unsafe) static let regexSemanticLevel: [String: Bridge] = [
     "static let RegexSemanticLevel.graphemeCluster": .staticValue(boxOpaque(RegexSemanticLevel.graphemeCluster, typeName: "RegexSemanticLevel")),
     "static let RegexSemanticLevel.unicodeScalar": .staticValue(boxOpaque(RegexSemanticLevel.unicodeScalar, typeName: "RegexSemanticLevel")),
-    "var RegexSemanticLevel.hashValue": .computed { receiver in
+    "var RegexSemanticLevel.hashValue: Int": .computed { receiver in
         let recv: RegexSemanticLevel = try unboxOpaque(receiver, as: RegexSemanticLevel.self, typeName: "RegexSemanticLevel")
         return .int(recv.hashValue)
     },

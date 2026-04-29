@@ -7,11 +7,11 @@ extension FoundationBridges {
     "static let TimeZone.timeZoneDataVersion": .staticValue(.string(TimeZone.timeZoneDataVersion)),
     "static let TimeZone.current": .staticValue(boxOpaque(TimeZone.current, typeName: "TimeZone")),
     "static let TimeZone.autoupdatingCurrent": .staticValue(boxOpaque(TimeZone.autoupdatingCurrent, typeName: "TimeZone")),
-    "var TimeZone.identifier": .computed { receiver in
+    "var TimeZone.identifier: String": .computed { receiver in
         let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
         return .string(recv.identifier)
     },
-    "var TimeZone.nextDaylightSavingTimeTransition": .computed { receiver in
+    "var TimeZone.nextDaylightSavingTimeTransition: Date?": .computed { receiver in
         let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
         if let _v = recv.nextDaylightSavingTimeTransition {
             return .optional(boxOpaque(_v, typeName: "Date"))
@@ -19,15 +19,15 @@ extension FoundationBridges {
         return .optional(nil)
     },
     "static let TimeZone.gmt": .staticValue(boxOpaque(TimeZone.gmt, typeName: "TimeZone")),
-    "var TimeZone.hashValue": .computed { receiver in
+    "var TimeZone.hashValue: Int": .computed { receiver in
         let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
         return .int(recv.hashValue)
     },
-    "var TimeZone.description": .computed { receiver in
+    "var TimeZone.description: String": .computed { receiver in
         let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
         return .string(recv.description)
     },
-    "var TimeZone.debugDescription": .computed { receiver in
+    "var TimeZone.debugDescription: String": .computed { receiver in
         let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
         return .string(recv.debugDescription)
     },

@@ -4,7 +4,7 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let nSLocaleKey: [String: Bridge] = [
-    "var NSLocale.Key.hashValue": .computed { receiver in
+    "var NSLocale.Key.hashValue: Int": .computed { receiver in
         let recv: NSLocale.Key = try unboxOpaque(receiver, as: NSLocale.Key.self, typeName: "NSLocale.Key")
         return .int(recv.hashValue)
     },

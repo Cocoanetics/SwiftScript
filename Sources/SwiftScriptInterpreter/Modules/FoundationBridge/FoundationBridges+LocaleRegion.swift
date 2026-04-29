@@ -4,16 +4,16 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let localeRegion: [String: Bridge] = [
-    "var Locale.Region.debugDescription": .computed { receiver in
+    "var Locale.Region.debugDescription: String": .computed { receiver in
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         return .string(recv.debugDescription)
     },
-    "var Locale.Region.identifier": .computed { receiver in
+    "var Locale.Region.identifier: String": .computed { receiver in
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         return .string(recv.identifier)
     },
     "static let Locale.Region.unknown": .staticValue(boxOpaque(Locale.Region.unknown, typeName: "Locale.Region")),
-    "var Locale.Region.hashValue": .computed { receiver in
+    "var Locale.Region.hashValue: Int": .computed { receiver in
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         return .int(recv.hashValue)
     },
@@ -272,25 +272,25 @@ extension FoundationBridges {
     "static let Locale.Region.zimbabwe": .staticValue(boxOpaque(Locale.Region.zimbabwe, typeName: "Locale.Region")),
     "static let Locale.Region.world": .staticValue(boxOpaque(Locale.Region.world, typeName: "Locale.Region")),
     "static let Locale.Region.latinAmerica": .staticValue(boxOpaque(Locale.Region.latinAmerica, typeName: "Locale.Region")),
-    "var Locale.Region.isISORegion": .computed { receiver in
+    "var Locale.Region.isISORegion: Bool": .computed { receiver in
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         return .bool(recv.isISORegion)
     },
-    "var Locale.Region.containingRegion": .computed { receiver in
+    "var Locale.Region.containingRegion: Locale.Region?": .computed { receiver in
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         if let _v = recv.containingRegion {
             return .optional(boxOpaque(_v, typeName: "Locale.Region"))
         }
         return .optional(nil)
     },
-    "var Locale.Region.continent": .computed { receiver in
+    "var Locale.Region.continent: Locale.Region?": .computed { receiver in
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         if let _v = recv.continent {
             return .optional(boxOpaque(_v, typeName: "Locale.Region"))
         }
         return .optional(nil)
     },
-    "var Locale.Region.subcontinent": .computed { receiver in
+    "var Locale.Region.subcontinent: Locale.Region?": .computed { receiver in
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         if let _v = recv.subcontinent {
             return .optional(boxOpaque(_v, typeName: "Locale.Region"))
