@@ -2,10 +2,6 @@ import Testing
 import Foundation
 @testable import SwiftScriptInterpreter
 
-// Foundation bridge is gated to Apple platforms — see
-// `Sources/SwiftScriptInterpreter/Modules/FoundationBridge/`.
-#if canImport(Darwin)
-
 /// JSON encode/decode for script values rides on Foundation's actual
 /// `JSONEncoder`/`JSONDecoder` via the `ScriptCodable` bridge. These
 /// tests cover the Codable surface the bridge exposes — primitives,
@@ -180,4 +176,3 @@ struct CodableTests {
     }
 }
 
-#endif

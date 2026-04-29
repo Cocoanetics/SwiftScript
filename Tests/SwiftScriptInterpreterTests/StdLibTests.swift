@@ -68,9 +68,6 @@ struct StdLibTests {
         #expect(r == .array([.double(0.0), .double(0.25), .double(0.5), .double(0.75)]))
     }
 
-    // `Int.max` / `Double.pi` come from the auto-generated stdlib bridge,
-    // which is gated to canImport(Darwin) — see StdlibBridge.
-#if canImport(Darwin)
     @Test func intMaxMin() async throws {
         let interp = Interpreter()
         #expect(try await interp.eval("Int.max") == .int(Int.max))
@@ -85,7 +82,6 @@ struct StdLibTests {
         #expect(try await interp.eval("Double.infinity.isInfinite") == .bool(true))
         #expect(try await interp.eval("(1.0).isFinite") == .bool(true))
     }
-#endif
 
     @Test func intRandomInRange() async throws {
         let interp = Interpreter()

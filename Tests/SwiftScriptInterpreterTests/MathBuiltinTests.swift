@@ -24,7 +24,6 @@ struct MathBuiltinTests {
         #expect(r == .double(1024.0))
     }
 
-#if canImport(Darwin)
     @Test func piConstant() async throws {
         // `Double.pi` rides on the auto-generated stdlib bridge, which
         // is gated to canImport(Darwin) — see StdlibBridge.
@@ -35,7 +34,6 @@ struct MathBuiltinTests {
         }
         #expect(abs(v - .pi) < 1e-15)
     }
-#endif
 
     @Test func pythagoras() async throws {
         // sqrt(3*3 + 4*4) == 5
