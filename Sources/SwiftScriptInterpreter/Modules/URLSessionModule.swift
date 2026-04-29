@@ -27,6 +27,10 @@ struct URLSessionModule: BuiltinModule {
         // returns a tuple of an AsyncStream of bytes (each a `.int`
         // 0..<256) and the response. Lets script code do
         // `for await b in stream { … }` over real async byte data.
+        // swift-corelibs-foundation doesn't ship `URLSession.bytes(from:)`,
+        // so the bridge is Apple-only; on Linux the call falls through
+        // to a `cannot find 'URLSession.bytes' in scope` runtime error.
+#if canImport(Darwin)
         i.bridges["func URLSession.bytes()"] = .method { recv, args in
             guard case .opaque(_, let any) = recv,
                   let session = any as? URLSession
@@ -57,6 +61,7 @@ struct URLSessionModule: BuiltinModule {
                 throw RuntimeError.invalid("URLSession.bytes(from:): \(error)")
             }
         }
+#endif
 
         // `URLResponse.expectedContentLength` is `Int64` — narrow to
         // Int for script consumption.
