@@ -28,11 +28,12 @@ struct URLSessionModule: BuiltinModule {
         // 0..<256) and the response. Lets script code do
         // `for await b in stream { … }` over real async byte data.
         //
-        // On Apple platforms we use the native `URLSession.bytes(from:)`
-        // and forward each byte. swift-corelibs-foundation doesn't ship
-        // that method, so on Linux we fetch the full payload via
-        // `data(from:)` and re-emit it byte-by-byte — same script-side
-        // API, no real streaming benefit, but scripts behave identically.
+        // Apple ships `URLSession.bytes(from:)` natively; on Linux we
+        // pump chunks through a delegate-driven `AsyncThrowingStream<Data>`
+        // (see `URLSessionLinuxStreaming.swift`) and walk each chunk's
+        // bytes between yields. Both branches are real streams — no
+        // platform buffers the full payload before the script sees the
+        // first byte — so memory stays flat regardless of payload size.
         i.bridges["func URLSession.bytes()"] = .method { recv, args in
             guard case .opaque(_, let any) = recv,
                   let session = any as? URLSession
@@ -54,13 +55,28 @@ struct URLSessionModule: BuiltinModule {
                     return .int(Int(byte))
                 }
 #else
-                let (data, response) = try await session.data(from: url)
-                var idx = data.startIndex
+                // The receiver session is ignored on Linux: swift-corelibs
+                // URLSession can't have a delegate attached after the fact,
+                // so the streaming helper spins up a one-shot session per
+                // call. Same cost shape as `data(from:)` would have had.
+                _ = session
+                let (chunks, response) = try await linuxStreamingDataChunks(url: url)
+                var chunkIterator = chunks.makeAsyncIterator()
+                var currentChunk: Data?
+                var currentIndex = 0
                 let stream = AsyncStreamBox {
-                    guard idx < data.endIndex else { return nil }
-                    let byte = data[idx]
-                    idx = data.index(after: idx)
-                    return .int(Int(byte))
+                    while true {
+                        if let chunk = currentChunk, currentIndex < chunk.endIndex {
+                            let byte = chunk[currentIndex]
+                            currentIndex = chunk.index(after: currentIndex)
+                            return .int(Int(byte))
+                        }
+                        guard let nextChunk = try await chunkIterator.next() else {
+                            return nil
+                        }
+                        currentChunk = nextChunk
+                        currentIndex = nextChunk.startIndex
+                    }
                 }
 #endif
                 return .tuple(
