@@ -24,9 +24,10 @@ struct MathBuiltinTests {
         #expect(r == .double(1024.0))
     }
 
+#if canImport(Darwin)
     @Test func piConstant() async throws {
-        // `Double.pi` is stdlib (no import); the bare `pi` global comes
-        // from Foundation in our interpreter.
+        // `Double.pi` rides on the auto-generated stdlib bridge, which
+        // is gated to canImport(Darwin) — see StdlibBridge.
         let interp = Interpreter()
         let r = try await interp.eval("Double.pi")
         guard case .double(let v) = r else {
@@ -34,6 +35,7 @@ struct MathBuiltinTests {
         }
         #expect(abs(v - .pi) < 1e-15)
     }
+#endif
 
     @Test func pythagoras() async throws {
         // sqrt(3*3 + 4*4) == 5

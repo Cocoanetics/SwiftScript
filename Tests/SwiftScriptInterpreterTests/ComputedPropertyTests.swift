@@ -65,6 +65,8 @@ struct ComputedPropertyTests {
         }
     }
 
+#if canImport(Darwin)
+    // Uses `Double.pi` from the auto-generated stdlib bridge (Apple-only).
     @Test func computedAlongsideMethods() async throws {
         let interp = Interpreter()
         // A struct with both a computed property and a method, exercised
@@ -82,4 +84,5 @@ struct ComputedPropertyTests {
         // π · 36
         #expect(abs(v - .pi * 36) < 1e-12)
     }
+#endif
 }

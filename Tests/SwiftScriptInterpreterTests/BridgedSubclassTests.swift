@@ -2,6 +2,10 @@ import Testing
 import Foundation
 @testable import SwiftScriptInterpreter
 
+// Foundation bridge is gated to Apple platforms — see
+// `Sources/SwiftScriptInterpreter/Modules/FoundationBridge/`.
+#if canImport(Darwin)
+
 /// Script classes that "subclass" a bridged Foundation type are modeled
 /// as wrappers: the instance holds both script fields and a real native
 /// value (`bridgedBase`). Member lookup falls through to the bridged
@@ -74,3 +78,5 @@ struct BridgedSubclassTests {
         #expect(captured == "true\n")
     }
 }
+
+#endif

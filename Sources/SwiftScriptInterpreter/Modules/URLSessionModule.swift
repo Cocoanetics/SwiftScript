@@ -27,10 +27,12 @@ struct URLSessionModule: BuiltinModule {
         // returns a tuple of an AsyncStream of bytes (each a `.int`
         // 0..<256) and the response. Lets script code do
         // `for await b in stream { … }` over real async byte data.
-        // swift-corelibs-foundation doesn't ship `URLSession.bytes(from:)`,
-        // so the bridge is Apple-only; on Linux the call falls through
-        // to a `cannot find 'URLSession.bytes' in scope` runtime error.
-#if canImport(Darwin)
+        //
+        // On Apple platforms we use the native `URLSession.bytes(from:)`
+        // and forward each byte. swift-corelibs-foundation doesn't ship
+        // that method, so on Linux we fetch the full payload via
+        // `data(from:)` and re-emit it byte-by-byte — same script-side
+        // API, no real streaming benefit, but scripts behave identically.
         i.bridges["func URLSession.bytes()"] = .method { recv, args in
             guard case .opaque(_, let any) = recv,
                   let session = any as? URLSession
@@ -44,12 +46,23 @@ struct URLSessionModule: BuiltinModule {
                 throw RuntimeError.invalid("URLSession.bytes(from:): expected a URL argument")
             }
             do {
+#if canImport(Darwin)
                 let (bytes, response) = try await session.bytes(from: url)
                 var iterator = bytes.makeAsyncIterator()
                 let stream = AsyncStreamBox {
                     guard let byte = try await iterator.next() else { return nil }
                     return .int(Int(byte))
                 }
+#else
+                let (data, response) = try await session.data(from: url)
+                var idx = data.startIndex
+                let stream = AsyncStreamBox {
+                    guard idx < data.endIndex else { return nil }
+                    let byte = data[idx]
+                    idx = data.index(after: idx)
+                    return .int(Int(byte))
+                }
+#endif
                 return .tuple(
                     [
                         .opaque(typeName: "AsyncStream", value: stream),
@@ -61,7 +74,6 @@ struct URLSessionModule: BuiltinModule {
                 throw RuntimeError.invalid("URLSession.bytes(from:): \(error)")
             }
         }
-#endif
 
         // `URLResponse.expectedContentLength` is `Int64` — narrow to
         // Int for script consumption.
