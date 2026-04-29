@@ -20,7 +20,7 @@ print("hypot:   ", hypot(3.0, 4.0))
 ## Install
 
 ```bash
-git clone https://github.com/odrobnik/SwiftScript.git
+git clone https://github.com/Cocoanetics/SwiftScript.git
 cd SwiftScript
 swift build -c release
 cp .build/release/swift-script /usr/local/bin/

@@ -20,7 +20,14 @@ public struct FoundationModule: BuiltinModule {
         //   bash Tools/regen-foundation-bridge.sh
         // Includes opaque-type comparators driven off `Equatable`/
         // `Comparable` conformances harvested from the symbol graph.
+        // Gated to Apple platforms — the symbol graph is extracted
+        // from Apple's Foundation, and most of the surface
+        // (`AttributedString.FormattingOptions`, `Calendar.RecurrenceRule`,
+        // `Date.ComponentsFormatStyle`, etc.) doesn't exist or has a
+        // different shape on swift-corelibs-foundation.
+#if canImport(Darwin)
         registerGenerated(into: i)
+#endif
     }
 
     // MARK: - C math globals
