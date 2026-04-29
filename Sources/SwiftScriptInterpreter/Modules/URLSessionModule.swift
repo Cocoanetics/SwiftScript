@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 /// URLSession bridge — what's left after auto-generation drains the
 /// rest. The symbol-graph generator now emits:

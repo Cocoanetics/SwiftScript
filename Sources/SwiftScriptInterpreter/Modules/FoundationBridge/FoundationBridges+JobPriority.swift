@@ -4,19 +4,10 @@
 import Foundation
 
 extension FoundationBridges {
-    nonisolated(unsafe) static let jobPriority: [String: Bridge] = {
-#if os(macOS)
-        return [
-            "init JobPriority(_:)": .`init` { args in
-                guard args.count == 1 else {
-                    throw RuntimeError.invalid("init JobPriority(_:): expected 1 argument(s), got \(args.count)")
-                }
-                return boxOpaque(JobPriority(try unboxOpaque(args[0], as: TaskPriority.self, typeName: "TaskPriority")), typeName: "JobPriority")
-            },
-        ]
-#else
-        return [:]
-#endif
-    }()
+    // `JobPriority(_:)` has no public initializer on either macOS or iOS,
+    // so the bridge generator's emitted init is unbuildable. Leave the
+    // bucket empty until the symbol-graph filter learns to skip
+    // initializers without accessible designated inits.
+    nonisolated(unsafe) static let jobPriority: [String: Bridge] = [:]
 }
 #endif
