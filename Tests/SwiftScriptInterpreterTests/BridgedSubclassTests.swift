@@ -59,6 +59,12 @@ struct BridgedSubclassTests {
         #expect(captured == "true\n")
     }
 
+    // `URL(string: "")` returns nil on Apple but constructs a non-nil
+    // empty URL on swift-corelibs-foundation, so the failable-init
+    // round-trip behaves differently. The behavior tested here is the
+    // bridged-subclass propagation of nil, which we can only assert on
+    // a platform where the underlying init actually fails.
+#if canImport(Darwin)
     @Test func failableInitReturnsNilOnFailure() async throws {
         let interp = Interpreter()
         var captured = ""
@@ -73,5 +79,6 @@ struct BridgedSubclassTests {
             """#)
         #expect(captured == "true\n")
     }
+#endif
 }
 

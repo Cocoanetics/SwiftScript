@@ -97,6 +97,59 @@ extension FoundationModule {
     /// skip those on Linux since most reference Apple-only types.
     func registerGenerated(into i: Interpreter) {
         for (k, v) in FoundationBridges.all { i.bridges[k] = v }
+        registerLinuxGenericBridges(into: i)
+    }
+
+    /// Generic-decode bridges that the Apple aggregator inlines into
+    /// `registerGenerated`. They can't live in the auto-generated
+    /// per-type files because they capture the interpreter via
+    /// `[weak i]` and need access to `ScriptCodable`.
+    private func registerLinuxGenericBridges(into i: Interpreter) {
+        i.bridges["func JSONDecoder.decode<T: Decodable>(_: T.Type, from: Data) throws -> T"] = .method { [weak i] receiver, args in
+            guard let interp = i else {
+                throw RuntimeError.invalid("JSONDecoder.decode: interpreter unavailable")
+            }
+            guard args.count == 2 else {
+                throw RuntimeError.invalid("JSONDecoder.decode: expected 2 argument(s), got \(args.count)")
+            }
+            let recv: JSONDecoder = try unboxOpaque(receiver, as: JSONDecoder.self, typeName: "JSONDecoder")
+            guard case .opaque(typeName: "Metatype", let typeAny) = args[0],
+                  let typeName = typeAny as? String
+            else {
+                throw RuntimeError.invalid("JSONDecoder.decode: first argument must be a type (`T.self`)")
+            }
+            let data: Data = try unboxOpaque(args[1], as: Data.self, typeName: "Data")
+            do {
+                recv.userInfo[.scriptInterpreter] = interp
+                recv.userInfo[.scriptTargetType] = typeName
+                return try recv.decode(ScriptCodable.self, from: data).value
+            } catch {
+                throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+            }
+        }
+
+        i.bridges["func PropertyListDecoder.decode<T: Decodable>(_: T.Type, from: Data) throws -> T"] = .method { [weak i] receiver, args in
+            guard let interp = i else {
+                throw RuntimeError.invalid("PropertyListDecoder.decode: interpreter unavailable")
+            }
+            guard args.count == 2 else {
+                throw RuntimeError.invalid("PropertyListDecoder.decode: expected 2 argument(s), got \(args.count)")
+            }
+            let recv: PropertyListDecoder = try unboxOpaque(receiver, as: PropertyListDecoder.self, typeName: "PropertyListDecoder")
+            guard case .opaque(typeName: "Metatype", let typeAny) = args[0],
+                  let typeName = typeAny as? String
+            else {
+                throw RuntimeError.invalid("PropertyListDecoder.decode: first argument must be a type (`T.self`)")
+            }
+            let data: Data = try unboxOpaque(args[1], as: Data.self, typeName: "Data")
+            do {
+                recv.userInfo[.scriptInterpreter] = interp
+                recv.userInfo[.scriptTargetType] = typeName
+                return try recv.decode(ScriptCodable.self, from: data).value
+            } catch {
+                throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+            }
+        }
     }
 }
 #endif
