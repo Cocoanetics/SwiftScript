@@ -628,6 +628,104 @@ func isThrowing(_ sym: SymbolGraph.Symbol) -> Bool {
     return fragments.contains { $0.kind == "keyword" && $0.spelling == "throws" }
 }
 
+/// Single parsed parameter from a method's declarationFragments —
+/// label spelling (`"_"` or `"from"`) plus the declared type spelling
+/// (`"T"`, `"T.Type"`, `"Data"`).
+struct GenericFragmentParam {
+    let labelClause: String   // "_" / "from"
+    let type: String          // "T" / "T.Type" / "Data"
+}
+
+struct GenericFragmentParse {
+    let params: [GenericFragmentParam]
+    let returnType: String
+}
+
+/// Hand-walk the symbol's declarationFragments to pull out the
+/// labelled parameter list and return type. Used by the generic-method
+/// pass when `resolveSignature` rejects T-typed slots.
+///
+/// The parser is character-aware inside `text` fragments because
+/// SwiftDocC bundles `.Type, ` and `) ` style separators into a single
+/// `text` fragment alongside grammar punctuation; we have to split
+/// them carefully.
+func parseGenericMethodFragments(_ frags: [SymbolGraph.Fragment]) -> GenericFragmentParse? {
+    // Find the `(` that opens the parameter list. SwiftDocC sometimes
+    // emits this fragment as `>(` (the close of the generic clause +
+    // the open paren); treat any `(` inside a text fragment as the
+    // start.
+    var i = 0
+    while i < frags.count {
+        if frags[i].kind == "text", frags[i].spelling.contains("(") { i += 1; break }
+        i += 1
+    }
+    guard i <= frags.count else { return nil }
+
+    var params: [GenericFragmentParam] = []
+    var label = ""
+    var typeText = ""
+    var inType = false
+    var done = false
+
+    while i < frags.count, !done {
+        let f = frags[i]
+        switch f.kind {
+        case "externalParam":
+            label = f.spelling
+        case "internalParam":
+            break
+        case "text":
+            for ch in f.spelling {
+                if !inType {
+                    if ch == ":" { inType = true; continue }
+                    // skip leading whitespace before type
+                } else {
+                    if ch == "," {
+                        params.append(GenericFragmentParam(
+                            labelClause: label.isEmpty ? "_" : label,
+                            type: typeText.trimmingCharacters(in: .whitespaces)
+                        ))
+                        label = ""; typeText = ""; inType = false
+                    } else if ch == ")" {
+                        params.append(GenericFragmentParam(
+                            labelClause: label.isEmpty ? "_" : label,
+                            type: typeText.trimmingCharacters(in: .whitespaces)
+                        ))
+                        done = true
+                        break
+                    } else {
+                        typeText.append(ch)
+                    }
+                }
+            }
+        default:
+            if inType { typeText += f.spelling }
+        }
+        i += 1
+    }
+
+    // After `)`: find `-> ReturnType`, skipping `throws`/`async`
+    // keywords and stopping before any `where` clause.
+    var returnType = "Void"
+    while i < frags.count {
+        let f = frags[i]
+        if f.kind == "text", f.spelling.contains("->") {
+            i += 1
+            var rt = ""
+            while i < frags.count {
+                let g = frags[i]
+                if g.kind == "keyword", g.spelling == "where" { break }
+                rt += g.spelling
+                i += 1
+            }
+            returnType = rt.trimmingCharacters(in: .whitespaces)
+            break
+        }
+        i += 1
+    }
+    return GenericFragmentParse(params: params, returnType: returnType)
+}
+
 /// True if the method has unbound generic parameters or a `where`
 /// clause — we can't bridge these because the call site can't pick
 /// concrete witnesses. Detected via the `swiftGenerics` field (most
@@ -1119,6 +1217,124 @@ for annotated in prioritizedSymbols {
             isThrowing: isThrowing(sym),
             tupleElements: sig.returnTupleElements
         )))
+
+    default:
+        continue
+    }
+}
+
+// MARK: - Generic-method pass (Encodable / Decodable)
+//
+// The main switch above skips `isGeneric(sym)` symbols because the
+// generator can't pick concrete witnesses. For a small set of well-
+// known constraints (`Encodable`, `Decodable`) the type-erasure
+// strategy is fixed: wrap any Value in `ScriptCodable`. We detect the
+// shape here and emit a generic-keyed entry whose body calls the real
+// Foundation API on the wrapped Value. The runtime's signature matcher
+// dispatches to it at call time — see `tryGenericMethodDispatch`.
+
+for annotated in prioritizedSymbols {
+    let sym = annotated.symbol
+    guard sym.kind.identifier == "swift.method",
+          sym.pathComponents.count == 2,
+          isGeneric(sym),
+          !isMutating(sym),
+          !isDeprecated(sym),
+          !isAsync(sym)
+    else { continue }
+    let path = sym.pathComponents.joined(separator: ".")
+    if blocklist.contains(path) { continue }
+    if !autoAllowlist, !allowlist.contains(path) { continue }
+
+    let receiverTypeName = sym.pathComponents[0]
+    let methodName = sym.names.title.split(separator: "(").first.map(String.init) ?? sym.names.title
+
+    let generics = sym.swiftGenerics?.parameters ?? []
+    let allConstraints = sym.swiftGenerics?.constraints ?? []
+    guard generics.count == 1 else { continue }
+    let genericName = generics[0].name
+    let conformances = allConstraints.filter {
+        $0.kind == "conformance" && $0.lhs == genericName
+    }
+    guard conformances.count == 1 else { continue }
+    let constraintRHS = conformances[0].rhs
+
+    guard let frags = sym.declarationFragments,
+          let parsed = parseGenericMethodFragments(frags)
+    else { continue }
+
+    let emitGroup = emitGroupFor(symbol: sym, module: annotated.module)
+    let recvUnbox = "let recv: \(receiverTypeName) = try unboxOpaque(receiver, as: \(receiverTypeName).self, typeName: \"\(receiverTypeName)\")"
+
+    func emitGenericEntry(claimKey: String, bucket: EmitBucket, code: String) {
+        guard !registeredKeys.contains(claimKey) else { return }
+        emitted.append(EmitEntry(symbolPath: path, group: emitGroup, bucket: bucket, code: code))
+        seenPaths.insert(path)
+        registeredKeys.insert(claimKey)
+    }
+
+    switch constraintRHS {
+    case "Encodable":
+        // `func X.encode<T: Encodable>(_: T) throws -> Data`
+        guard parsed.params.count == 1, parsed.params[0].type == genericName else { continue }
+        guard parsed.returnType == "Data" else { continue }
+        let key = "func \(receiverTypeName).\(methodName)<\(genericName): Encodable>(\(parsed.params[0].labelClause): \(genericName)) throws -> Data"
+        let claimKey = "generic-method:\(key)"
+        let code = """
+                \"\(key)\": .method { receiver, args in
+                    guard args.count == 1 else {
+                        throw RuntimeError.invalid("\(receiverTypeName).\(methodName): expected 1 argument(s), got \\(args.count)")
+                    }
+                    \(recvUnbox)
+                    do {
+                        return .opaque(typeName: "Data", value: try recv.encode(ScriptCodable(args[0])))
+                    } catch {
+                        throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+                    }
+                },
+        """
+        emitGenericEntry(claimKey: claimKey, bucket: .type(receiverTypeName), code: code)
+
+    case "Decodable":
+        // `func X.decode<T: Decodable>(_: T.Type, from: Data) throws -> T`
+        guard parsed.params.count == 2,
+              parsed.params[0].type == "\(genericName).Type",
+              parsed.params[1].type == "Data"
+        else { continue }
+        guard parsed.returnType == genericName else { continue }
+        let p0Label = parsed.params[0].labelClause
+        let p1Label = parsed.params[1].labelClause
+        let key = "func \(receiverTypeName).\(methodName)<\(genericName): Decodable>(\(p0Label): \(genericName).Type, \(p1Label): Data) throws -> \(genericName)"
+        let claimKey = "generic-method:\(key)"
+        // Decode body captures `[weak i]` to thread the interpreter
+        // through `ScriptCodable.userInfo`, so it lives in the runtime
+        // bucket (the manifest's register function) rather than a
+        // static-let dict.
+        let code = """
+                i.bridges["\(key)"] = .method { [weak i] receiver, args in
+                    guard let interp = i else {
+                        throw RuntimeError.invalid("\(receiverTypeName).\(methodName): interpreter unavailable")
+                    }
+                    guard args.count == 2 else {
+                        throw RuntimeError.invalid("\(receiverTypeName).\(methodName): expected 2 argument(s), got \\(args.count)")
+                    }
+                    \(recvUnbox)
+                    guard case .opaque(typeName: "Metatype", let typeAny) = args[0],
+                          let typeName = typeAny as? String
+                    else {
+                        throw RuntimeError.invalid("\(receiverTypeName).\(methodName): first argument must be a type (`T.self`)")
+                    }
+                    let data: Data = try unboxOpaque(args[1], as: Data.self, typeName: "Data")
+                    do {
+                        recv.userInfo[.scriptInterpreter] = interp
+                        recv.userInfo[.scriptTargetType] = typeName
+                        return try recv.decode(ScriptCodable.self, from: data).value
+                    } catch {
+                        throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+                    }
+                }
+        """
+        emitGenericEntry(claimKey: claimKey, bucket: .runtime, code: code)
 
     default:
         continue

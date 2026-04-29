@@ -41,73 +41,13 @@ struct JSONModule: BuiltinModule {
             .opaque(typeName: "PropertyListDecoder", value: PropertyListDecoder())
         }
 
-        // `encode(_:)` — same shape on every encoder type. We unwrap
-        // the receiver, build a `ScriptCodable` around the value, and
-        // hand it to Foundation. Strategies the user set on the
-        // encoder propagate naturally because we hold the real instance.
-        let encodeBody: @Sendable (Value, [Value]) async throws -> Value = { recv, args in
-            guard args.count == 1 else {
-                throw RuntimeError.invalid("encode: expected 1 argument")
-            }
-            guard case .opaque(_, let any) = recv else {
-                throw RuntimeError.invalid("encode: bad receiver")
-            }
-            do {
-                if let enc = any as? JSONEncoder {
-                    return .opaque(typeName: "Data", value: try enc.encode(ScriptCodable(args[0])))
-                }
-                if let enc = any as? PropertyListEncoder {
-                    return .opaque(typeName: "Data", value: try enc.encode(ScriptCodable(args[0])))
-                }
-                throw RuntimeError.invalid("encode: unknown encoder type")
-            } catch {
-                throw RuntimeError.invalid("encode: \(error)")
-            }
-        }
-        i.bridges["func JSONEncoder.encode()"]         = .method { try await encodeBody($0, $1) }
-        i.bridges["func PropertyListEncoder.encode()"] = .method { try await encodeBody($0, $1) }
-
-        // `decode(_:from:)` — symmetric. We thread the target type
-        // and interpreter through `userInfo` so the bridge knows what
-        // shape to coerce the JSON/PList tree into.
-        let decodeBody: @Sendable (Value, [Value], Interpreter?) async throws -> Value = { recv, args, interp in
-            guard let interp else {
-                throw RuntimeError.invalid("decode: interpreter unavailable")
-            }
-            guard args.count == 2 else {
-                throw RuntimeError.invalid("decode(_:from:): expected 2 arguments")
-            }
-            guard case .opaque(typeName: "Metatype", let typeAny) = args[0],
-                  let typeName = typeAny as? String
-            else {
-                throw RuntimeError.invalid("decode: first argument must be a type (`T.self`)")
-            }
-            guard case .opaque(typeName: "Data", let dataAny) = args[1],
-                  let data = dataAny as? Data
-            else {
-                throw RuntimeError.invalid("decode: second argument must be Data")
-            }
-            guard case .opaque(_, let recvAny) = recv else {
-                throw RuntimeError.invalid("decode: bad receiver")
-            }
-            do {
-                if let dec = recvAny as? JSONDecoder {
-                    dec.userInfo[.scriptInterpreter] = interp
-                    dec.userInfo[.scriptTargetType] = typeName
-                    return try dec.decode(ScriptCodable.self, from: data).value
-                }
-                if let dec = recvAny as? PropertyListDecoder {
-                    dec.userInfo[.scriptInterpreter] = interp
-                    dec.userInfo[.scriptTargetType] = typeName
-                    return try dec.decode(ScriptCodable.self, from: data).value
-                }
-                throw RuntimeError.invalid("decode: unknown decoder type")
-            } catch {
-                throw RuntimeError.invalid("decode: \(error)")
-            }
-        }
-        i.bridges["func JSONDecoder.decode()"]         = .method { [weak i] in try await decodeBody($0, $1, i) }
-        i.bridges["func PropertyListDecoder.decode()"] = .method { [weak i] in try await decodeBody($0, $1, i) }
+        // `encode<T: Encodable>(_:)` and `decode<T: Decodable>(_:from:)`
+        // are auto-generated from the Foundation symbol graph in
+        // `FoundationBridges+JSONEncoder.swift` /
+        // `FoundationBridges+PropertyListEncoder.swift` (encode side)
+        // and the manifest's runtime block (decode side, since it
+        // captures the interpreter for `userInfo` threading). The
+        // hand-rolled versions used to live here.
 
         // Configurable strategies — surface the common ones as static
         // values on the nested types. The user assigns them to the

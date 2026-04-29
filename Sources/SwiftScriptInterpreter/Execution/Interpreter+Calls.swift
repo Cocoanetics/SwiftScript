@@ -334,6 +334,20 @@ extension Interpreter {
                     args.append(try await evaluate(closure: extra.closure, in: scope))
                 }
             }
+            // Generic-constrained bridge candidates first
+            // (`func JSONEncoder.encode<T: Encodable>(_: T) ...`).
+            // Falls through to the non-generic dispatch below if no
+            // candidate matches the call's labels and arg types.
+            let argLabels: [String?] = call.arguments.map { $0.label?.text }
+                + Array(repeating: nil as String?, count: max(0, args.count - call.arguments.count))
+            if let result = try await tryGenericMethodDispatch(
+                receiver: receiver,
+                methodName: methodName,
+                args: args,
+                labels: argLabels
+            ) {
+                return result
+            }
             return try await invokeMethod(
                 methodName,
                 on: receiver,

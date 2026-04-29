@@ -44,7 +44,28 @@ extension Interpreter {
         set {
             _bridges = newValue
             _bridgedTypeNamesCache = nil
+            _genericIndex = nil
         }
+    }
+
+    /// Lazy index of generic-constrained bridges grouped by
+    /// `"Type.method"`. Built from the subset of `bridges` keys whose
+    /// declaration contains a generic clause (`<...>`). Rebuilt
+    /// whenever `bridges` is reassigned. Invalid keys are dropped
+    /// silently — they'd surface as missing bridges at call time.
+    var genericMethodCandidates: [String: [(Signature, Bridge)]] {
+        if let cached = _genericIndex { return cached }
+        var index: [String: [(Signature, Bridge)]] = [:]
+        for (key, bridge) in _bridges {
+            // Only entries with generic clauses; cheap pre-filter.
+            guard key.contains("<") else { continue }
+            guard let sig = try? Signature.parse(key) else { continue }
+            guard sig.isGeneric, let member = sig.memberName else { continue }
+            let bucket = "\(sig.receiver).\(member)"
+            index[bucket, default: []].append((sig, bridge))
+        }
+        _genericIndex = index
+        return index
     }
 
     /// Set of type names that appear as the type prefix of any bridge

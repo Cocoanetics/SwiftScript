@@ -42,6 +42,12 @@ public final class Interpreter {
     /// Cache for `bridgedTypeNames` — invalidated by `bridges` setter.
     var _bridgedTypeNamesCache: (count: Int, types: Set<String>)?
 
+    /// Index of generic-constrained bridges: keyed by `"Type.member"`,
+    /// each entry is a list of (parsed signature, bridge body) pairs
+    /// — multiple overloads share a bucket. Built lazily on first
+    /// access from the keys of `bridges` that mention `<...>`.
+    var _genericIndex: [String: [(Signature, Bridge)]]?
+
     /// `typealias Foo = Bar` declarations. Looked up at type-resolution
     /// sites (coerce, struct/enum init dispatch, isTypeName, …).
     var typeAliases: [String: TypeSyntax] = [:]

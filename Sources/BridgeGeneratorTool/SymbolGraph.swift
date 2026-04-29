@@ -29,8 +29,14 @@ struct SymbolGraph: Decodable {
 
         struct SwiftGenerics: Decodable {
             let parameters: [GenericParameter]?
+            let constraints: [Constraint]?
             struct GenericParameter: Decodable {
                 let name: String
+            }
+            struct Constraint: Decodable {
+                let kind: String         // "conformance" | "sameType" | "superclass"
+                let lhs: String
+                let rhs: String
             }
         }
 
