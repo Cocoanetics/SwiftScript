@@ -40,15 +40,7 @@ let package = Package(
             dependencies: [
                 "SwiftScriptInterpreter",
             ],
-            path: "Sources/swift-script",
-            // The CLI is a thin top-level-await wrapper around the
-            // interpreter. Swift 6 strict concurrency rejects the
-            // top-level `let result = try await interp.eval(...)` because
-            // `Value` isn't Sendable and the return crosses the implicit
-            // MainActor boundary — but rewriting the CLI to please the
-            // checker just for that one line isn't worth it. The library
-            // itself remains in Swift 6 mode.
-            swiftSettings: [.swiftLanguageMode(.v5)]
+            path: "Sources/swift-script"
         ),
         // Generator: reads `swift-symbolgraph-extract` JSON, filters by an
         // allowlist + value-shaped signature predicate, emits Swift bridge

@@ -1,7 +1,16 @@
 import SwiftSyntax
 import SwiftScriptAST
 
-public final class Interpreter {
+/// `@unchecked Sendable`: the interpreter holds extensive mutable state
+/// (scopes, bridge tables, struct/class/enum defs) and is **not**
+/// thread-safe in any meaningful sense. The conformance is here so
+/// callers in async / nonisolated contexts can hop the interpreter
+/// across suspension points without tripping Swift 6 strict-concurrency
+/// checks. The contract is the usual one: one logical caller at a
+/// time. A script is single-threaded; concurrency inside the script
+/// (`Task { … }`, async bridges) goes through the same instance from
+/// the same logical owner.
+public final class Interpreter: @unchecked Sendable {
     public let rootScope: Scope
     public var output: (String) -> Void
 

@@ -4,14 +4,12 @@ extension Interpreter {
         registerMathBuiltins()
         registerIOBuiltins()
         // Auto-generated bridges harvested from the Swift stdlib symbol
-        // graph (`Int.max`, `Double.pi`, `Int.advanced(by:)`, …).
-        // Apple-only: the symbol graph was extracted on macOS and includes
-        // SDK-specific corners (`String.propertyList`,
-        // `OperationQueue.SchedulerTimeType`, `LocalizedStringResource`)
-        // that don't exist on swift-corelibs-foundation.
-#if canImport(Darwin)
+        // graph (`Int.max`, `Double.pi`, `Int.advanced(by:)`, …). The
+        // dict aggregator and per-comparator gating in
+        // `StdlibBridges.swift` keep the Apple-only entries
+        // (`String.propertyList`, `LocalizedStringResource`,
+        // `OperationQueue.SchedulerTimeType`, …) out of the Linux build.
         registerGeneratedStdlib(into: self)
-#endif
 
         // Always-on extras (not in Swift's stdlib, but useful for math
         // scripts): gcd, factorial, .clamped, .median, etc.

@@ -18,16 +18,15 @@ public struct FoundationModule: BuiltinModule {
         registerStringMethods(into: i)
         // Auto-generated Foundation bridges. Regenerate via
         //   bash Tools/regen-foundation-bridge.sh
-        // Includes opaque-type comparators driven off `Equatable`/
-        // `Comparable` conformances harvested from the symbol graph.
-        // Gated to Apple platforms — the symbol graph is extracted
-        // from Apple's Foundation, and most of the surface
-        // (`AttributedString.FormattingOptions`, `Calendar.RecurrenceRule`,
-        // `Date.ComponentsFormatStyle`, etc.) doesn't exist or has a
-        // different shape on swift-corelibs-foundation.
-#if canImport(Darwin)
+        //
+        // The symbol graph was harvested from Apple's Foundation, which
+        // is a strict superset of swift-corelibs-foundation. Apple gets
+        // the full surface (~200 types + Equatable/Comparable
+        // comparators); Linux gets the subset that compiles against
+        // scl-Foundation. Both register through the same entry point —
+        // see `FoundationBridges.swift` (Apple) and
+        // `FoundationBridgesLinux.swift` (Linux).
         registerGenerated(into: i)
-#endif
     }
 
     // MARK: - C math globals
