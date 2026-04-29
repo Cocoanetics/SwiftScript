@@ -1,6 +1,6 @@
-// Auto-generated Linux aggregator — references the subset of
-// FoundationBridges that compiles on swift-corelibs-foundation.
-// Apple-only bridges live in `FoundationBridges.swift` (gated).
+// Linux aggregator — references the subset of FoundationBridges that
+// compiles on swift-corelibs-foundation. Apple-only bridges live in
+// `FoundationBridges.swift` (gated whole-file).
 #if !canImport(Darwin)
 import Foundation
 #if canImport(FoundationNetworking)
@@ -21,12 +21,9 @@ enum FoundationBridges {
             FoundationBridges.dateInterval,
             FoundationBridges.decimal,
             FoundationBridges.duration,
-            FoundationBridges.errorUserInfoKey,
             FoundationBridges.fileAttributeKey,
             FoundationBridges.fileAttributeType,
             FoundationBridges.fileManager,
-            FoundationBridges.hTTPCookiePropertyKey,
-            FoundationBridges.hTTPCookieStringPolicy,
             FoundationBridges.hTTPURLResponse,
             FoundationBridges.indexPath,
             FoundationBridges.indexSet,
@@ -54,21 +51,13 @@ enum FoundationBridges {
             FoundationBridges.nSDataSearchOptions,
             FoundationBridges.nSDataWritingOptions,
             FoundationBridges.nSEnumerationOptions,
-            FoundationBridges.nSExceptionName,
             FoundationBridges.nSLocaleKey,
-            FoundationBridges.nSNotificationName,
-            FoundationBridges.nSOrderedCollectionDifferenceCalculationOptions,
-            FoundationBridges.nSPointerFunctionsOptions,
             FoundationBridges.nSRegularExpressionMatchingFlags,
             FoundationBridges.nSRegularExpressionMatchingOptions,
             FoundationBridges.nSRegularExpressionOptions,
             FoundationBridges.nSSortOptions,
             FoundationBridges.nSStringCompareOptions,
             FoundationBridges.nSStringEncodingConversionOptions,
-            FoundationBridges.nSStringEnumerationOptions,
-            FoundationBridges.nSTextCheckingKey,
-            FoundationBridges.nSTextCheckingResultCheckingType,
-            FoundationBridges.netServiceOptions,
             FoundationBridges.notification,
             FoundationBridges.notificationQueueNotificationCoalescing,
             FoundationBridges.objectIdentifier,
@@ -76,7 +65,6 @@ enum FoundationBridges {
             FoundationBridges.pOSIXError,
             FoundationBridges.personNameComponents,
             FoundationBridges.processInfo,
-            FoundationBridges.processInfoActivityOptions,
             FoundationBridges.propertyListDecoder,
             FoundationBridges.propertyListEncoder,
             FoundationBridges.propertyListSerializationMutabilityOptions,
@@ -90,13 +78,11 @@ enum FoundationBridges {
             FoundationBridges.uRLFileResourceType,
             FoundationBridges.uRLQueryItem,
             FoundationBridges.uRLRequest,
-            FoundationBridges.uRLResourceKey,
             FoundationBridges.uRLResponse,
             FoundationBridges.uRLSession,
             FoundationBridges.uUID,
             FoundationBridges.unsafeMutableRawPointer,
             FoundationBridges.unsafeRawPointer,
-            FoundationBridges.inux,
         ]
         return dicts.reduce(into: [:]) { acc, dict in
             for (k, v) in dict { acc[k] = v }
@@ -105,11 +91,10 @@ enum FoundationBridges {
 }
 
 extension FoundationModule {
-    /// Linux-side `registerGenerated` — minimal version that just
-    /// installs the aggregated bridges. The Apple-side equivalent
-    /// in `FoundationBridges.swift` also installs comparators for
-    /// dozens of opaque types; on Linux we skip those for now,
-    /// since most reference Apple-only types anyway.
+    /// Linux-side `registerGenerated` — installs the aggregated
+    /// bridges. Apple-side equivalent in `FoundationBridges.swift`
+    /// also installs comparators for dozens of opaque types; we
+    /// skip those on Linux since most reference Apple-only types.
     func registerGenerated(into i: Interpreter) {
         for (k, v) in FoundationBridges.all { i.bridges[k] = v }
     }
