@@ -24,22 +24,12 @@ struct JSONModule: BuiltinModule {
     let name = "JSON"
 
     func register(into i: Interpreter) {
-        // Encoders/Decoders carry a real Foundation instance as their
-        // `.opaque` payload, so configuration set from script
-        // (`outputFormatting`, `dateEncodingStrategy`, …) propagates to
-        // the actual coder.
-        i.bridges["init JSONEncoder()"] = .`init` { _ in
-            .opaque(typeName: "JSONEncoder", value: JSONEncoder())
-        }
-        i.bridges["init JSONDecoder()"] = .`init` { _ in
-            .opaque(typeName: "JSONDecoder", value: JSONDecoder())
-        }
-        i.bridges["init PropertyListEncoder()"] = .`init` { _ in
-            .opaque(typeName: "PropertyListEncoder", value: PropertyListEncoder())
-        }
-        i.bridges["init PropertyListDecoder()"] = .`init` { _ in
-            .opaque(typeName: "PropertyListDecoder", value: PropertyListDecoder())
-        }
+        // The no-arg inits (`JSONEncoder()`, `JSONDecoder()`,
+        // `PropertyListEncoder()`, `PropertyListDecoder()`) auto-
+        // generate from the symbol graph now that the bridge generator
+        // promotes these classes — see
+        // `FoundationBridges+JSONEncoder.swift` etc. They used to be
+        // hand-rolled here.
 
         // `encode<T: Encodable>(_:)` and `decode<T: Decodable>(_:from:)`
         // are auto-generated from the Foundation symbol graph in

@@ -4,6 +4,12 @@ import Foundation
 
 extension FoundationBridges {
     nonisolated(unsafe) static let propertyListEncoder: [String: Bridge] = [
+    "init PropertyListEncoder()": .`init` { args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("init PropertyListEncoder(): expected 0 argument(s), got \(args.count)")
+        }
+        return boxOpaque(PropertyListEncoder(), typeName: "PropertyListEncoder")
+    },
         "func PropertyListEncoder.encode<Value: Encodable>(_: Value) throws -> Data": .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("PropertyListEncoder.encode: expected 1 argument(s), got \(args.count)")

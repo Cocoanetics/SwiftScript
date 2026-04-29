@@ -194,6 +194,35 @@ let primitiveBridges: [String: BridgedType] = [
 /// nested-typealias struct).
 nonisolated(unsafe) var bridgedTypes: [String: BridgedType] = primitiveBridges
 
+/// Types we auto-promote into `bridgedTypes` regardless of whether
+/// the symbol graph reports `Equatable` conformance. Two cases:
+///
+///   - **Reference types** we want bridged (`URLSession`, `JSONEncoder`,
+///     `FileManager`, …). Most don't conform to Equatable.
+///   - **OptionSet-shaped nested types** under bridged classes
+///     (`JSONEncoder.OutputFormatting`, …). Their conformance comes
+///     through the `OptionSet` protocol which the symbol graph encodes
+///     differently from a direct Equatable conformance.
+///
+/// Keep this list short: each class drags in an inheritance chain whose
+/// method names can shadow `NSObject` and break the bridge dispatcher.
+/// When adding one, regen and watch for compile errors in the per-type
+/// file before keeping the addition.
+let bridgeableTypeAllowlist: Set<String> = [
+    // Reference-type Foundation classes
+    "URLSession",
+    "URLResponse",
+    "HTTPURLResponse",
+    "JSONEncoder",
+    "JSONDecoder",
+    "PropertyListEncoder",
+    "PropertyListDecoder",
+    "FileManager",
+    "ProcessInfo",
+    // OptionSet-style nested types under bridged classes
+    "JSONEncoder.OutputFormatting",
+]
+
 /// Names of types we explicitly DON'T auto-promote, even if they
 /// conform to Equatable. Useful when the type is structurally modelled
 /// elsewhere (e.g. we model `Array`/`Set`/`Dictionary` via dedicated
@@ -504,6 +533,7 @@ struct EmitConfig {
     let returnType: BridgedType?
     let isOptional: Bool
     let isThrowing: Bool
+    let isAsync: Bool
     let tupleElements: [BridgedType]
 }
 
@@ -516,6 +546,7 @@ func renderRuntimeEmit(_ c: EmitConfig) -> String {
         returnType: c.returnType,
         isOptional: c.isOptional,
         isThrowing: c.isThrowing,
+        isAsync: c.isAsync,
         tupleElements: c.tupleElements
     )
     var bodyLines: [String] = []
@@ -544,6 +575,7 @@ func renderEmit(_ c: EmitConfig) -> String {
         returnType: c.returnType,
         isOptional: c.isOptional,
         isThrowing: c.isThrowing,
+        isAsync: c.isAsync,
         tupleElements: c.tupleElements
     )
     var bodyLines: [String] = []
@@ -844,9 +876,10 @@ func buildReturnExpr(
     returnType: BridgedType?,
     isOptional: Bool,
     isThrowing: Bool = false,
+    isAsync: Bool = false,
     tupleElements: [BridgedType] = []
 ) -> String {
-    let prefix = isThrowing ? "try " : ""
+    let prefix = (isThrowing ? "try " : "") + (isAsync ? "await " : "")
 
     func core() -> String {
         if !tupleElements.isEmpty {
@@ -955,8 +988,14 @@ for annotated in allSymbols {
     // Stick to value types — auto-promoting reference-type classes
     // pulls in the entire NSObject hierarchy, where method names collide
     // with `NSObject` itself (e.g. ambiguous `superclass`). Specific
-    // Foundation classes worth bridging can be added by allowlist.
-    guard kind == "swift.struct" else { continue }
+    // Foundation classes that we WANT to bridge are listed by name in
+    // `bridgeableTypeAllowlist`.
+    let typeName0 = sym.pathComponents.joined(separator: ".")
+    if kind == "swift.class" {
+        guard bridgeableTypeAllowlist.contains(typeName0) else { continue }
+    } else if kind != "swift.struct" {
+        continue
+    }
     // Top-level (`URL`) and one-level-nested (`String.Encoding`) are
     // both fine. We use the dotted name as the spelling so the bridge
     // emits `String.Encoding` consistently.
@@ -970,7 +1009,14 @@ for annotated in allSymbols {
     // as opaque without the witness — Swift refuses to infer it.
     if let params = sym.swiftGenerics?.parameters, !params.isEmpty { continue }
     let conformances = conformancesByUSR[usr] ?? []
-    guard conformances.contains(equatableUSR) else { continue }
+    // Allowlisted types skip the Equatable requirement (reference-type
+    // Foundation classes typically don't conform; OptionSet-style
+    // nested structs route their Equatable conformance through
+    // OptionSet which the symbol graph encodes differently). Structs
+    // not on the list still need direct Equatable so we don't bridge
+    // every value-type in the SDK.
+    let isAllowed = bridgeableTypeAllowlist.contains(typeName)
+    guard isAllowed || conformances.contains(equatableUSR) else { continue }
     bridgedTypes[usr] = opaqueBridge(typeName)
 }
 
@@ -1073,14 +1119,14 @@ for annotated in prioritizedSymbols {
             returnType: sig.returnType,
             isOptional: sig.returnIsOptional,
             isThrowing: isThrowing(sym),
+            isAsync: isAsync(sym),
             tupleElements: sig.returnTupleElements
         )))
 
     case "swift.method" where sym.pathComponents.count == 2 &&
                               !isMutating(sym) &&
                               !isDeprecated(sym) &&
-                              !isGeneric(sym) &&
-                              !isAsync(sym):
+                              !isGeneric(sym):
         let rawReceiver = sym.pathComponents[0]
         let receiverTypeName = receiverAliases[rawReceiver] ?? rawReceiver
         guard let recvType = bridgeableReceivers[receiverTypeName] else {
@@ -1103,6 +1149,7 @@ for annotated in prioritizedSymbols {
             returnType: sig.returnType,
             isOptional: sig.returnIsOptional,
             isThrowing: isThrowing(sym),
+            isAsync: isAsync(sym),
             tupleElements: sig.returnTupleElements
         )))
 
@@ -1139,6 +1186,7 @@ for annotated in prioritizedSymbols {
             returnType: recvType,
             isOptional: failable,
             isThrowing: isThrowing(sym),
+            isAsync: isAsync(sym),
             tupleElements: []
         )))
 
@@ -1168,6 +1216,7 @@ for annotated in prioritizedSymbols {
             returnType: propType.bridge,
             isOptional: propType.isOptional,
             isThrowing: false,
+            isAsync: false,
             tupleElements: []
         )))
 
@@ -1215,6 +1264,7 @@ for annotated in prioritizedSymbols {
             returnType: sig.returnType,
             isOptional: sig.returnIsOptional,
             isThrowing: isThrowing(sym),
+            isAsync: isAsync(sym),
             tupleElements: sig.returnTupleElements
         )))
 

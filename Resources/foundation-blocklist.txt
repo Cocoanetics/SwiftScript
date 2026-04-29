@@ -66,3 +66,36 @@ URLResourceKey.applicationIsScriptableKey
 URLResourceKey.tagNamesKey
 URLResourceKey.quarantinePropertiesKey
 NSHFSTypeOfFile(_:)
+
+# `FileManager.default` and its instance methods stay hand-rolled in
+# Interpreter+FileIO.swift — they dispatch through a `.structValue`
+# sentinel rather than the standard `.opaque` receiver flow, and the
+# auto-bridge skips a couple of the actually-used methods (e.g.
+# `contentsOfDirectory(atPath:)`). Block here so the hand-rolled
+# sentinel wins the lookup.
+FileManager.default
+
+# Among the URLSession async overloads, prefer the simpler URL-based
+# variants. Blocking the URLRequest-based ones lets the (from: URL)
+# overload win the deduper.
+URLSession.data(for:)
+URLSession.data(for:delegate:)
+URLSession.data(from:delegate:)
+URLSession.bytes(for:)
+URLSession.bytes(for:delegate:)
+URLSession.bytes(from:delegate:)
+URLSession.download(for:)
+URLSession.download(for:delegate:)
+URLSession.download(from:delegate:)
+URLSession.download(resumeFrom:)
+URLSession.download(resumeFrom:delegate:)
+URLSession.upload(for:from:)
+URLSession.upload(for:from:delegate:)
+URLSession.upload(for:fromFile:delegate:)
+
+# More macOS-only entries surfaced by class promotion.
+FileManager.homeDirectoryForCurrentUser
+FileManager.homeDirectory(forUser:)
+ProcessInfo.automaticTerminationSupportEnabled
+ProcessInfo.userName
+ProcessInfo.fullUserName

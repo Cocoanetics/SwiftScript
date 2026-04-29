@@ -26,14 +26,14 @@ extension FoundationBridges {
     "static let NSExceptionName.portReceiveException": .staticValue(boxOpaque(NSExceptionName.portReceiveException, typeName: "NSExceptionName")),
     "static let NSExceptionName.oldStyleException": .staticValue(boxOpaque(NSExceptionName.oldStyleException, typeName: "NSExceptionName")),
     "static let NSExceptionName.inconsistentArchiveException": .staticValue(boxOpaque(NSExceptionName.inconsistentArchiveException, typeName: "NSExceptionName")),
+    "static let NSExceptionName.characterConversionException": .staticValue(boxOpaque(NSExceptionName.characterConversionException, typeName: "NSExceptionName")),
+    "static let NSExceptionName.parseErrorException": .staticValue(boxOpaque(NSExceptionName.parseErrorException, typeName: "NSExceptionName")),
     "static let NSExceptionName.invocationOperationVoidResultException": .staticValue(boxOpaque(NSExceptionName.invocationOperationVoidResultException, typeName: "NSExceptionName")),
     "static let NSExceptionName.invocationOperationCancelledException": .staticValue(boxOpaque(NSExceptionName.invocationOperationCancelledException, typeName: "NSExceptionName")),
     "var NSExceptionName.hashValue": .computed { receiver in
         let recv: NSExceptionName = try unboxOpaque(receiver, as: NSExceptionName.self, typeName: "NSExceptionName")
         return .int(recv.hashValue)
     },
-    "static let NSExceptionName.characterConversionException": .staticValue(boxOpaque(NSExceptionName.characterConversionException, typeName: "NSExceptionName")),
-    "static let NSExceptionName.parseErrorException": .staticValue(boxOpaque(NSExceptionName.parseErrorException, typeName: "NSExceptionName")),
     "static let NSExceptionName.undefinedKeyException": .staticValue(boxOpaque(NSExceptionName.undefinedKeyException, typeName: "NSExceptionName")),
     "init NSExceptionName(_:)": .`init` { args in
         guard args.count == 1 else {
