@@ -1,0 +1,149 @@
+# SwiftScript
+
+A tree-walking interpreter for a Swift-flavored scripting language, written in
+Swift. Parses real Swift syntax via [swift-syntax](https://github.com/swiftlang/swift-syntax)
+and walks the AST directly — no codegen, no compiler. Comes with a `swift-script`
+CLI for running `.swift` files or one-line expressions.
+
+The goal: write small "Swifty" scripts that start instantly, without the
+multi-second cold-start of `swift run` or a fresh `swiftc` build.
+
+```swift
+#!/usr/bin/env swift-script
+
+let data = [4.0, 2.0, 5.0, 8.0, 1.0, 9.0, 3.0]
+print("median:  ", data.median())
+print("stdDev:  ", data.stdDev())
+print("hypot:   ", hypot(3.0, 4.0))
+```
+
+## Install
+
+```bash
+git clone https://github.com/odrobnik/SwiftScript.git
+cd SwiftScript
+swift build -c release
+cp .build/release/swift-script /usr/local/bin/
+```
+
+## Use
+
+```bash
+swift-script script.swift              # run a file
+swift-script script.swift arg1 arg2    # forwards CLI args via CommandLine.arguments
+swift-script -e '1 + 2 * 3'            # evaluate a single expression
+```
+
+Or with a shebang:
+
+```swift
+#!/usr/bin/env swift-script
+print("hello from a script")
+```
+
+## What works
+
+A useful subset of Swift, large enough that most "small utility" scripts run
+unchanged:
+
+- **Language core**: `let`/`var`, control flow (`if`/`else`/`guard`/`while`/
+  `repeat`/`for`-in/`switch` with pattern matching), tuples, optionals (`?`/`!`/
+  `if let`/`guard let`/`??`), ranges, string interpolation, `defer`, `throw`/
+  `try`/`catch`/`do`.
+- **Functions & closures**: argument labels, default values, `inout`,
+  variadics, trailing closures, `@autoclosure`, generic parameters with
+  `Comparable`/`Equatable` constraints.
+- **Types**: `struct`, `class` (single inheritance, `super`, `required init`,
+  `willSet`/`didSet`), `enum` (raw values, associated values, methods),
+  `protocol` (declared and used in annotations — dynamic dispatch by runtime
+  value, not statically checked), `typealias`, `extension` on builtins and on
+  user types, key paths.
+- **Stdlib**: `Int`, `Double`, `Bool`, `String`, `Array`, `Dictionary`, `Set`,
+  `Optional`, `Range`/`ClosedRange`, `Result`, `Mirror`, the usual operators
+  and methods (`map`/`filter`/`reduce`/`sorted`/`compactMap`/etc.).
+- **Foundation bridges** (auto-generated from Apple's symbol graphs): `URL`,
+  `URLSession`, `URLComponents`, `Data`, `Date`, `DateFormatter`, `Calendar`,
+  `JSONEncoder`/`JSONDecoder` (with script-side `Codable`), `FileManager`,
+  `ProcessInfo`, `UUID`, `RegEx`, format styles, and several hundred more.
+  Around 200 generated bridge files cover most read-only Foundation APIs you
+  reach for in scripts.
+- **Async**: `async`/`await`, `Task`, async bridged builtins (e.g. URLSession
+  data tasks). Every step of evaluation is async, so script-side `await`
+  actually suspends.
+- **Extras**: `MathExtras` (gcd/lcm/factorial/binomial/clamped/signum),
+  `Statistics` (mean/median/variance/stdDev/percentile), `Concurrency`,
+  `MirrorModule`.
+
+See [`Examples/`](Examples/) for runnable scripts, including 40-odd
+"LLM probe" scripts in `Examples/llm_probes/` that exercise the surface area
+end-to-end.
+
+## What does NOT work
+
+This is an interpreter, not a Swift compiler. Things that intentionally don't
+work — and won't:
+
+- **Static type checking.** Type annotations are honored at coercion time
+  (assignments, returns, arguments), but there is no type inference engine and
+  no compile-time type errors. Mismatches surface as runtime errors.
+- **Protocol witness checking.** Protocols are accepted in annotations but
+  conformance isn't verified — dispatch is dynamic. `extension Foo: P { ... }`
+  works, but the compiler won't tell you if `Foo` is missing a requirement.
+- **Generics beyond the basics.** Generic functions with simple constraints
+  work; full generic specialization, conditional conformances, opaque return
+  types (`some P`), and primary associated types do not.
+- **Property wrappers, result builders, macros, actors.** Not implemented.
+- **Objective-C interop / `@objc` / KVO / `NotificationCenter` selectors.**
+  The Foundation bridge is value-shaped: methods that return values, not
+  ones that need a real Objective-C runtime.
+- **Multi-file scripts.** One file at a time. No `import` of other `.swift`
+  files (only of bridged modules like `Foundation`).
+- **SwiftPM packages at runtime.** You can't `import` a third-party package
+  from a script. The interpreter only sees the bridges it ships with.
+- **`Sendable` / strict concurrency.** Async works but the type system is not
+  concurrency-checked.
+
+If a script fails with `cannot find 'X' in scope` or an unimplemented-feature
+error, that's the boundary you've hit.
+
+## Project layout
+
+- `Sources/SwiftScriptAST/` — parser facade over swift-syntax + diagnostics
+- `Sources/SwiftScriptInterpreter/` — the tree-walking evaluator
+  - `API/Interpreter.swift` — entry point (`eval(_:)` is async)
+  - `Execution/` — one file per language feature
+  - `Modules/` — built-in modules and the auto-generated Foundation bridge
+  - `Builtins/` — math, I/O, registry
+- `Sources/swift-script/` — the CLI binary
+- `Sources/BridgeGeneratorTool/` — reads `swift-symbolgraph-extract` JSON,
+  filters by allowlist, emits bridge code (run via `Tools/regen-foundation-bridge.sh`)
+- `Tests/` — 400+ unit tests, organized by feature area
+- `Examples/` — runnable sample scripts
+
+## Embedding
+
+The interpreter is also a library (`SwiftScriptInterpreter`):
+
+```swift
+import SwiftScriptInterpreter
+
+let interp = Interpreter()
+let value = try await interp.eval("1 + 2 * 3")
+print(value)  // 7
+```
+
+`eval(_:)` is `async` — there is no sync wrapper. If you need to call it from
+sync code, hop through a `Task`.
+
+## Platforms
+
+- **macOS 26+** — primary development target, all features.
+- **iOS 26+** — library targets build; the `swift-script` CLI is macOS/Linux
+  only.
+- **Linux** — library and CLI build against swift-corelibs-foundation. The
+  Foundation bridge surface is narrower on Linux; some bridges (anything that
+  depends on Apple-only Foundation types) are gated out.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
