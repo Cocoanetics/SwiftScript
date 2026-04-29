@@ -280,18 +280,18 @@ extension FoundationBridges {
         }
         return boxOpaque(URL(fileURLWithPath: try unboxString(args[0]), isDirectory: try unboxBool(args[1])), typeName: "URL")
     },
-    "init URL(resolvingAliasFileAt:)": .`init` { args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("init URL(resolvingAliasFileAt:): expected 1 argument(s), got \(args.count)")
-        }
-        do {
-            return boxOpaque(try URL(resolvingAliasFileAt: try unboxOpaque(args[0], as: URL.self, typeName: "URL")), typeName: "URL")
-        } catch {
-            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
-        }
-    },
         ]
 #if canImport(Darwin)
+        d["init URL(resolvingAliasFileAt:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("init URL(resolvingAliasFileAt:): expected 1 argument(s), got \(args.count)")
+            }
+            do {
+                return boxOpaque(try URL(resolvingAliasFileAt: try unboxOpaque(args[0], as: URL.self, typeName: "URL")), typeName: "URL")
+            } catch {
+                throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+            }
+        }
         d["func URL.checkPromisedItemIsReachable()"] = .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("URL.checkPromisedItemIsReachable: expected 0 argument(s), got \(args.count)")
