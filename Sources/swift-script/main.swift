@@ -64,7 +64,7 @@ interpreter.bridges["static let CommandLine.arguments"] =
     .staticValue(.array(scriptArgs.map { .string($0) }))
 
 do {
-    let result = try interpreter.evalSync(source, fileName: fileName)
+    let result = try await interpreter.eval(source, fileName: fileName)
     if isInline, case .void = result {
         // nothing to print
     } else if isInline {

@@ -1,6 +1,5 @@
 import SwiftSyntax
 import SwiftScriptAST
-import Dispatch
 
 public final class Interpreter {
     public let rootScope: Scope
@@ -150,54 +149,6 @@ public final class Interpreter {
             last = try await execute(item: item, in: rootScope)
         }
         return last
-    }
-
-    /// Sync wrapper for callers (CLI, simple test harnesses) that don't
-    /// run inside an async context. Drives the async eval to completion
-    /// on a background task and blocks the current thread until it
-    /// finishes. Surfacing async-only builtins under `@MainActor` from
-    /// here would deadlock — those callers need to `await eval(_:)`
-    /// directly.
-    @discardableResult
-    public func evalSync(_ source: String, fileName: String = "<input>") throws -> Value {
-        let box = ResultBox()
-        let semaphore = DispatchSemaphore(value: 0)
-        let captured = SyncEvalRequest(source: source, fileName: fileName, interpreter: self, box: box, semaphore: semaphore)
-        Task.detached {
-            await captured.run()
-        }
-        semaphore.wait()
-        return try box.take()
-    }
-}
-
-/// Reference-typed result holder — mutated from the detached task,
-/// read by the calling thread after the semaphore wakes us. The class
-/// has unchecked-Sendable conformance because the semaphore enforces
-/// a happens-before edge that the type-system doesn't see.
-final class ResultBox: @unchecked Sendable {
-    private var result: Result<Value, Error>?
-    func set(_ r: Result<Value, Error>) { result = r }
-    func take() throws -> Value { try result!.get() }
-}
-
-/// Sendable bundle of arguments + collaborators for the detached eval
-/// task. Bundled so the closure captures only one Sendable thing.
-struct SyncEvalRequest: @unchecked Sendable {
-    let source: String
-    let fileName: String
-    let interpreter: Interpreter
-    let box: ResultBox
-    let semaphore: DispatchSemaphore
-
-    func run() async {
-        do {
-            let v = try await interpreter.eval(source, fileName: fileName)
-            box.set(.success(v))
-        } catch {
-            box.set(.failure(error))
-        }
-        semaphore.signal()
     }
 }
 
