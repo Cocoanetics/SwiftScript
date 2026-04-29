@@ -28,12 +28,11 @@ struct URLSessionModule: BuiltinModule {
         // 0..<256) and the response. Lets script code do
         // `for await b in stream { … }` over real async byte data.
         //
-        // Apple ships `URLSession.bytes(from:)` natively; on Linux we
-        // pump chunks through a delegate-driven `AsyncThrowingStream<Data>`
-        // (see `URLSessionLinuxStreaming.swift`) and walk each chunk's
-        // bytes between yields. Both branches are real streams — no
-        // platform buffers the full payload before the script sees the
-        // first byte — so memory stays flat regardless of payload size.
+        // Single uniform path: Apple's native `URLSession.bytes(from:)`
+        // and the Linux polyfill in `URLSessionLinuxStreaming.swift` both
+        // return `(AsyncSequence of UInt8, URLResponse)`, so the bridge
+        // doesn't need to fork. Both stream — memory stays flat
+        // regardless of payload size.
         i.bridges["func URLSession.bytes()"] = .method { recv, args in
             guard case .opaque(_, let any) = recv,
                   let session = any as? URLSession
@@ -47,38 +46,12 @@ struct URLSessionModule: BuiltinModule {
                 throw RuntimeError.invalid("URLSession.bytes(from:): expected a URL argument")
             }
             do {
-#if canImport(Darwin)
                 let (bytes, response) = try await session.bytes(from: url)
                 var iterator = bytes.makeAsyncIterator()
                 let stream = AsyncStreamBox {
                     guard let byte = try await iterator.next() else { return nil }
                     return .int(Int(byte))
                 }
-#else
-                // The receiver session is ignored on Linux: swift-corelibs
-                // URLSession can't have a delegate attached after the fact,
-                // so the streaming helper spins up a one-shot session per
-                // call. Same cost shape as `data(from:)` would have had.
-                _ = session
-                let (chunks, response) = try await linuxStreamingDataChunks(url: url)
-                var chunkIterator = chunks.makeAsyncIterator()
-                var currentChunk: Data?
-                var currentIndex = 0
-                let stream = AsyncStreamBox {
-                    while true {
-                        if let chunk = currentChunk, currentIndex < chunk.endIndex {
-                            let byte = chunk[currentIndex]
-                            currentIndex = chunk.index(after: currentIndex)
-                            return .int(Int(byte))
-                        }
-                        guard let nextChunk = try await chunkIterator.next() else {
-                            return nil
-                        }
-                        currentChunk = nextChunk
-                        currentIndex = nextChunk.startIndex
-                    }
-                }
-#endif
                 return .tuple(
                     [
                         .opaque(typeName: "AsyncStream", value: stream),

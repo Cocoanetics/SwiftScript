@@ -77,6 +77,36 @@ final class StreamingURLDataDelegate: NSObject, URLSessionDataDelegate, @uncheck
     }
 }
 
+/// Linux-side polyfill that matches Apple's `URLSession.bytes(from:)`
+/// shape — `(AsyncSequence of UInt8, URLResponse)` — so the call site in
+/// `URLSessionModule` doesn't need to fork on platform. Implemented by
+/// fanning out the chunk stream from `linuxStreamingDataChunks` into a
+/// per-byte stream; both directions stream, so memory stays flat.
+extension URLSession {
+    func bytes(
+        from url: URL
+    ) async throws -> (AsyncThrowingStream<UInt8, Error>, URLResponse) {
+        // `self` is intentionally ignored — the streaming helper spins
+        // up its own session because swift-corelibs URLSession can't
+        // attach a delegate to an existing session.
+        let (chunks, response) = try await linuxStreamingDataChunks(url: url)
+        let byteStream = AsyncThrowingStream<UInt8, Error> { continuation in
+            let pump = Task {
+                do {
+                    for try await chunk in chunks {
+                        for byte in chunk { continuation.yield(byte) }
+                    }
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+            continuation.onTermination = { @Sendable _ in pump.cancel() }
+        }
+        return (byteStream, response)
+    }
+}
+
 /// Kicks off `url`'s data task and returns the response (resolved as
 /// soon as headers arrive) plus a stream of body chunks. The session
 /// is owned by the stream's `onTermination` so it lives exactly as
