@@ -18,6 +18,11 @@ guard args.count >= 2 else { usage() }
 let source: String
 let fileName: String
 let isInline: Bool
+// Script-side `CommandLine.arguments`: index 0 is the script path
+// (or `<expression>` for `-e`), then any extra positional args the
+// user passed on the command line. Mirrors Swift's behaviour where
+// `args[0]` is the executable/script identifier.
+let scriptArgs: [String]
 
 switch args[1] {
 case "-e":
@@ -25,6 +30,7 @@ case "-e":
     source = args[2]
     fileName = "<expression>"
     isInline = true
+    scriptArgs = ["<expression>"] + Array(args.dropFirst(3))
 case "-h", "--help":
     usage()
 default:
@@ -45,7 +51,17 @@ default:
     }
     fileName = args[1]
     isInline = false
+    scriptArgs = [args[1]] + Array(args.dropFirst(2))
 }
+
+interpreter.scriptArguments = scriptArgs
+// Surface `CommandLine.arguments` to the script. Registered here
+// (rather than as part of the always-on stdlib bridges) because the
+// argv list comes from the host's CLI parsing and isn't known at
+// interpreter-init time. Static-let semantics is fine — script
+// argv is fixed for the lifetime of one run.
+interpreter.bridges["static let CommandLine.arguments"] =
+    .staticValue(.array(scriptArgs.map { .string($0) }))
 
 do {
     let result = try interpreter.evalSync(source, fileName: fileName)

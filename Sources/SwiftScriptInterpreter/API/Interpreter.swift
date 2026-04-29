@@ -66,6 +66,12 @@ public final class Interpreter {
     /// `register(module:)` idempotent.
     var registeredModules: Set<String> = []
 
+    /// Script-side `CommandLine.arguments`. Populated by the host
+    /// (`swift-script` main) before evaluation; index 0 is the script
+    /// path or `<expression>` sentinel, followed by any positional
+    /// arguments the user passed on the CLI.
+    public var scriptArguments: [String] = []
+
     /// Modules whose import name (`Foundation`, `Darwin`, …) has appeared
     /// in an `import` statement at the top of a script. Foundation-side
     /// builtins gate their availability on this set so unimported uses
