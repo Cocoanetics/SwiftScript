@@ -99,3 +99,17 @@ FileManager.homeDirectory(forUser:)
 ProcessInfo.automaticTerminationSupportEnabled
 ProcessInfo.userName
 ProcessInfo.fullUserName
+
+# Symbols that compile-error in the auto-generated body because the
+# bare reference is ambiguous (Swift sees both an instance member and
+# a static factory with the same name). Blocking until the generator
+# learns to disambiguate via explicit type-spelling.
+Date.HTTPFormatStyle.http
+
+# More macOS-only / unavailable-in-iOS entries surfaced by the
+# nested-type promotion pass.
+NSNotification.Name.NSAppleEventManagerWillProcessFirstEvent
+NSNotification.Name.NSClassDescriptionNeededForClass
+NSURL.BookmarkCreationOptions.withSecurityScope
+NSURL.BookmarkCreationOptions.securityScopeAllowOnlyReadAccess
+NSURL.BookmarkResolutionOptions.withSecurityScope

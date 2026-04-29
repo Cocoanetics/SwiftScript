@@ -1123,11 +1123,11 @@ for annotated in prioritizedSymbols {
             tupleElements: sig.returnTupleElements
         )))
 
-    case "swift.method" where sym.pathComponents.count == 2 &&
+    case "swift.method" where (2...3).contains(sym.pathComponents.count) &&
                               !isMutating(sym) &&
                               !isDeprecated(sym) &&
                               !isGeneric(sym):
-        let rawReceiver = sym.pathComponents[0]
+        let rawReceiver = sym.pathComponents.dropLast().joined(separator: ".")
         let receiverTypeName = receiverAliases[rawReceiver] ?? rawReceiver
         guard let recvType = bridgeableReceivers[receiverTypeName] else {
             skippedReasons[path] = "unbridged receiver '\(rawReceiver)'"; continue
@@ -1153,8 +1153,8 @@ for annotated in prioritizedSymbols {
             tupleElements: sig.returnTupleElements
         )))
 
-    case "swift.init" where sym.pathComponents.count == 2 && !isDeprecated(sym) && !isGeneric(sym) && !isAsync(sym):
-        let rawReceiver = sym.pathComponents[0]
+    case "swift.init" where (2...3).contains(sym.pathComponents.count) && !isDeprecated(sym) && !isGeneric(sym) && !isAsync(sym):
+        let rawReceiver = sym.pathComponents.dropLast().joined(separator: ".")
         let receiverTypeName = receiverAliases[rawReceiver] ?? rawReceiver
         guard let recvType = bridgeableReceivers[receiverTypeName] else {
             skippedReasons[path] = "unbridged init owner '\(rawReceiver)'"; continue
@@ -1190,13 +1190,13 @@ for annotated in prioritizedSymbols {
             tupleElements: []
         )))
 
-    case "swift.property" where sym.pathComponents.count == 2 && !isDeprecated(sym) && !isAsync(sym):
-        let rawReceiver = sym.pathComponents[0]
+    case "swift.property" where (2...3).contains(sym.pathComponents.count) && !isDeprecated(sym) && !isAsync(sym):
+        let rawReceiver = sym.pathComponents.dropLast().joined(separator: ".")
         let receiverTypeName = receiverAliases[rawReceiver] ?? rawReceiver
         guard let recvType = bridgeableReceivers[receiverTypeName] else {
             skippedReasons[path] = "unbridged owning type '\(rawReceiver)'"; continue
         }
-        let memberName = sym.pathComponents[1]
+        let memberName = sym.pathComponents.last!
         let key = "computed:\(receiverTypeName).\(memberName)"
         if !claim(key, clashLabel: "\(receiverTypeName).\(memberName)") { continue }
         guard let propType = extractType(
@@ -1220,15 +1220,15 @@ for annotated in prioritizedSymbols {
             tupleElements: []
         )))
 
-    case "swift.type.property" where sym.pathComponents.count == 2 && !isDeprecated(sym) && !isAsync(sym):
+    case "swift.type.property" where (2...3).contains(sym.pathComponents.count) && !isDeprecated(sym) && !isAsync(sym):
         // The odd one out: emits a `registerStaticValue(value: …)` call
         // (no closure body), so it bypasses `renderEmit`.
-        let rawReceiver = sym.pathComponents[0]
+        let rawReceiver = sym.pathComponents.dropLast().joined(separator: ".")
         let receiverTypeName = receiverAliases[rawReceiver] ?? rawReceiver
         guard let recvType = bridgeableReceivers[receiverTypeName] else {
             skippedReasons[path] = "unbridged owning type '\(rawReceiver)'"; continue
         }
-        let memberName = sym.pathComponents[1]
+        let memberName = sym.pathComponents.last!
         let key = "static:\(receiverTypeName).\(memberName)"
         if !claim(key, clashLabel: "\(receiverTypeName).\(memberName)") { continue }
         guard let propType = extractType(
@@ -1242,8 +1242,8 @@ for annotated in prioritizedSymbols {
             \"static let \(receiverTypeName).\(memberName)\": .staticValue(\(valueExpr)),
         """)
 
-    case "swift.type.method" where sym.pathComponents.count == 2 && !isDeprecated(sym) && !isGeneric(sym) && !isAsync(sym):
-        let rawReceiver = sym.pathComponents[0]
+    case "swift.type.method" where (2...3).contains(sym.pathComponents.count) && !isDeprecated(sym) && !isGeneric(sym) && !isAsync(sym):
+        let rawReceiver = sym.pathComponents.dropLast().joined(separator: ".")
         let receiverTypeName = receiverAliases[rawReceiver] ?? rawReceiver
         guard bridgeableReceivers[receiverTypeName] != nil else {
             skippedReasons[path] = "unbridged owning type '\(rawReceiver)'"; continue
@@ -1286,7 +1286,7 @@ for annotated in prioritizedSymbols {
 for annotated in prioritizedSymbols {
     let sym = annotated.symbol
     guard sym.kind.identifier == "swift.method",
-          sym.pathComponents.count == 2,
+          (2...3).contains(sym.pathComponents.count),
           isGeneric(sym),
           !isMutating(sym),
           !isDeprecated(sym),
@@ -1296,7 +1296,7 @@ for annotated in prioritizedSymbols {
     if blocklist.contains(path) { continue }
     if !autoAllowlist, !allowlist.contains(path) { continue }
 
-    let receiverTypeName = sym.pathComponents[0]
+    let receiverTypeName = sym.pathComponents.dropLast().joined(separator: ".")
     let methodName = sym.names.title.split(separator: "(").first.map(String.init) ?? sym.names.title
 
     let generics = sym.swiftGenerics?.parameters ?? []

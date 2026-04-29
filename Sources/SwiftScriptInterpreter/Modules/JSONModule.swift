@@ -39,15 +39,12 @@ struct JSONModule: BuiltinModule {
         // captures the interpreter for `userInfo` threading). The
         // hand-rolled versions used to live here.
 
-        // Configurable strategies — surface the common ones as static
-        // values on the nested types. The user assigns them to the
-        // encoder/decoder via property setters wired below.
-        i.bridges["static let JSONEncoder.OutputFormatting.prettyPrinted"] =
-            .staticValue(.opaque(typeName: "JSONEncoder.OutputFormatting", value: JSONEncoder.OutputFormatting.prettyPrinted))
-        i.bridges["static let JSONEncoder.OutputFormatting.sortedKeys"] =
-            .staticValue(.opaque(typeName: "JSONEncoder.OutputFormatting", value: JSONEncoder.OutputFormatting.sortedKeys))
-        i.bridges["static let JSONEncoder.OutputFormatting.withoutEscapingSlashes"] =
-            .staticValue(.opaque(typeName: "JSONEncoder.OutputFormatting", value: JSONEncoder.OutputFormatting.withoutEscapingSlashes))
+        // OptionSet cases (`JSONEncoder.OutputFormatting.prettyPrinted`,
+        // …) auto-generate now that the bridge generator handles
+        // 3-level paths. The DateEncodingStrategy / DateDecodingStrategy
+        // values are enum cases (not static lets) so they still need
+        // to be hand-rolled here — the symbol-graph case-extraction
+        // path is a separate gap.
         i.bridges["static let JSONEncoder.DateEncodingStrategy.iso8601"] =
             .staticValue(.opaque(typeName: "JSONEncoder.DateEncodingStrategy", value: JSONEncoder.DateEncodingStrategy.iso8601))
         i.bridges["static let JSONEncoder.DateEncodingStrategy.secondsSince1970"] =
