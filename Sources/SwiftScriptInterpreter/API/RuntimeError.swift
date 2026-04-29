@@ -31,7 +31,7 @@ public enum RuntimeError: Error, CustomStringConvertible {
 }
 
 /// Non-local exit thrown by `return` and caught by the function call frame.
-struct ReturnSignal: Error, @unchecked Sendable {
+struct ReturnSignal: Error {
     let value: Value
 }
 
@@ -47,7 +47,7 @@ struct ContinueSignal: Error { let label: String? }
 /// host async/throwing code and be caught with normal Swift `catch`
 /// clauses. The thrown enum / struct payload is available as `value`,
 /// with convenience accessors for the most common shapes.
-public struct ScriptError: Error, CustomStringConvertible, @unchecked Sendable {
+public struct ScriptError: Error, CustomStringConvertible {
     public let value: Value
 
     public init(_ value: Value) {

@@ -1,7 +1,15 @@
 import SwiftSyntax
 import Foundation
 
-public indirect enum Value {
+/// `@unchecked Sendable`: `Value` carries `Function` (closures), `Any`
+/// (opaque host values), and class instances — none of which Swift can
+/// prove Sendable. The conformance is here so script values can flow
+/// through async / nonisolated host code without forcing every caller
+/// to wrap in detached tasks. Like `Interpreter`'s same conformance,
+/// the contract is "one logical owner at a time": a single script is
+/// single-threaded, and concurrency inside it routes through the same
+/// `Interpreter`.
+public indirect enum Value: @unchecked Sendable {
     case int(Int)
     case double(Double)
     case string(String)
