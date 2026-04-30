@@ -125,15 +125,17 @@ JobPriority.init(_:)
 String.Index.debugDescription
 UnsafeCurrentTask.escalatePriority(_:)
 
-# Apple-side overloads whose signature differs from scl's:
-#   • `AttributedString.init(localized:)` takes
-#     `LocalizedStringResource` on Apple but the scl init list
-#     doesn't include the `localized:` label.
-#   • `PersonNameComponents.init(from:)` is Decoder-shaped on
-#     Apple, scl's init list differs.
-#   • `NSTextCheckingKey.init(rawValue:)` — scl uses unlabeled.
-# Skip until the generator can intersect signatures, not just names.
+# Apple-side overloads whose signature differs from scl's. Match on
+# the `init(label:)` form Apple's symbol-graph uses (not the rendered
+# bridge key, which strips labels). Skip until the generator can
+# intersect signatures, not just names.
 AttributedString.init(localized:)
-PersonNameComponents.init(from:)
+AttributedString.init(localized:locale:)
+AttributedString.init(localized:options:locale:)
+AttributedString.init(localized:options:)
+AttributedString.init(localized:table:bundle:locale:comment:)
+PersonNameComponents.init(_:)
+PersonNameComponents.init(_:strategy:)
 NSTextCheckingKey.init(rawValue:)
 URL.init(resource:)
+UnsafeCurrentTask.escalatePriority(to:)

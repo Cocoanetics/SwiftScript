@@ -71,16 +71,6 @@ extension FoundationBridges {
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         return .string(recv.debugDescription)
     },
-    "init PersonNameComponents(_:)": .`init` { args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("init PersonNameComponents(_:): expected 1 argument(s), got \(args.count)")
-        }
-        do {
-            return boxOpaque(try PersonNameComponents(try unboxString(args[0])), typeName: "PersonNameComponents")
-        } catch {
-            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
-        }
-    },
         ]
         #if canImport(Darwin)
     d["var PersonNameComponents.hashValue: Int"] = .computed { receiver in

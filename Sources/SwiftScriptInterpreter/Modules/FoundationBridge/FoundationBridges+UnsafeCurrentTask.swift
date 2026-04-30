@@ -38,13 +38,5 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
-    "func UnsafeCurrentTask.escalatePriority()": .method { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("UnsafeCurrentTask.escalatePriority: expected 1 argument(s), got \(args.count)")
-        }
-        let recv: UnsafeCurrentTask = try unboxOpaque(receiver, as: UnsafeCurrentTask.self, typeName: "UnsafeCurrentTask")
-        recv.escalatePriority(to: try unboxOpaque(args[0], as: TaskPriority.self, typeName: "TaskPriority"))
-            return .void
-    },
     ]
 }
