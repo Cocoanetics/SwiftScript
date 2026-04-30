@@ -77,6 +77,20 @@ let package = Package(
             dependencies: [],
             path: "Sources/BridgeGeneratorTool"
         ),
+        // Walks a swift-corelibs-foundation source tree (or any other
+        // Swift package) and emits the public-member set as a flat
+        // text file. The bridge generator consumes that file to
+        // classify each Apple-side bridge as cross-platform vs Apple-
+        // only, eliminating the hand-curated Apple/Linux gating files.
+        // Run via `Tools/regen-foundation-bridge.sh`.
+        .executableTarget(
+            name: "SCLSymbolExtractor",
+            dependencies: [
+                .product(name: "SwiftSyntax", package: "swift-syntax"),
+                .product(name: "SwiftParser", package: "swift-syntax"),
+            ],
+            path: "Sources/SCLSymbolExtractor"
+        ),
         .testTarget(
             name: "SwiftScriptInterpreterTests",
             dependencies: ["SwiftScriptInterpreter", "SwiftScriptAST"],

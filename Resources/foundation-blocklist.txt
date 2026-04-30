@@ -108,3 +108,11 @@ NSNotification.Name.NSClassDescriptionNeededForClass
 NSURL.BookmarkCreationOptions.withSecurityScope
 NSURL.BookmarkCreationOptions.securityScopeAllowOnlyReadAccess
 NSURL.BookmarkResolutionOptions.withSecurityScope
+
+# `JobPriority(TaskPriority)` — symbol-graph reports a public init,
+# but the actual designated init is `internal`, so the auto-bridge
+# fails to compile with "cannot be constructed because it has no
+# accessible initializers". Block until either the SDK exposes a
+# public ctor or the generator learns to consult `accessLevel` on
+# every member.
+JobPriority.init(_:)

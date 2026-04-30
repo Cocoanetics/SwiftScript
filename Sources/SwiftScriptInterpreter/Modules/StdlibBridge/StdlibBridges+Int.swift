@@ -63,6 +63,13 @@ extension StdlibBridges {
         }
         return .int(Int(bigEndian: try unboxInt(args[0])))
     },
+    "func Int.isMultiple()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Int.isMultiple: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Int = try unboxInt(receiver)
+        return .bool(recv.isMultiple(of: try unboxInt(args[0])))
+    },
     "static let Int.bitWidth": .staticValue(.int(Int.bitWidth)),
     "var Int.leadingZeroBitCount: Int": .computed { receiver in
         let recv: Int = try unboxInt(receiver)

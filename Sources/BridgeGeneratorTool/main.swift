@@ -22,6 +22,13 @@ struct CLI {
     var allowlist: URL?
     var autoAllowlist: Bool = false
     var blocklist: URL?
+    /// Optional set of `Type.member` symbols extracted from a cross-
+    /// platform reference (swift-corelibs-foundation). When supplied,
+    /// every emitted bridge entry whose owning type/member is *not* in
+    /// this set gets wrapped in `#if canImport(Darwin)` so it stays out
+    /// of the Linux/Windows build. Without it, every entry is treated
+    /// as cross-platform — preserving the prior behavior.
+    var sclSymbols: URL?
     var outputStdlib: URL?
     var outputFoundation: URL?
 }
@@ -39,6 +46,8 @@ func parseArgs() -> CLI {
             cli.autoAllowlist = true
         case "--blocklist":
             if let v = args.next() { cli.blocklist = URL(fileURLWithPath: v) }
+        case "--scl-symbols":
+            if let v = args.next() { cli.sclSymbols = URL(fileURLWithPath: v) }
         case "--output-stdlib":
             if let v = args.next() { cli.outputStdlib = URL(fileURLWithPath: v) }
         case "--output-foundation":
@@ -91,6 +100,83 @@ if let url = cli.allowlist {
 }
 let blocklist: Set<String> = cli.blocklist.map { parseList($0, kind: "blocklist") } ?? []
 let autoAllowlist = cli.autoAllowlist
+
+/// Cross-platform symbol oracle (swift-corelibs-foundation extract).
+/// Each entry is either `Type.member` (cross-platform) or
+/// `Type.member\tUNAVAILABLE` (declared in scl source but marked
+/// `@available(*, unavailable)`, treated as Apple-only). Members
+/// without a matching key are also Apple-only.
+struct SCLOracle {
+    /// Available cross-platform `(typeName, memberName)` pairs.
+    let crossPlatform: Set<String>
+
+    /// `nil` means no oracle was provided — treat everything as cross-
+    /// platform (legacy behavior, no `#if canImport(Darwin)` gating).
+    static func load(_ url: URL?) -> SCLOracle? {
+        guard let url else { return nil }
+        do {
+            let contents = try String(contentsOf: url, encoding: .utf8)
+            var keep: Set<String> = []
+            for line in contents.split(whereSeparator: \.isNewline) {
+                let trimmed = line.trimmingCharacters(in: .whitespaces)
+                if trimmed.isEmpty || trimmed.hasPrefix("#") { continue }
+                let parts = trimmed.components(separatedBy: "\t")
+                if parts.count >= 2 && parts[1] == "UNAVAILABLE" { continue }
+                keep.insert(parts[0])
+            }
+            return SCLOracle(crossPlatform: keep)
+        } catch {
+            FileHandle.standardError.write(Data("error reading scl symbols: \(error)\n".utf8))
+            exit(1)
+        }
+    }
+
+    /// True when the `Type.member` pair is in the cross-platform set.
+    /// Top-level free functions (no owning type) are reported via
+    /// `typeName == ""` and are always treated as cross-platform —
+    /// scl doesn't enumerate top-level Foundation funcs as cleanly,
+    /// and the existing portable C-math globals show no false-Apple.
+    func isCrossPlatform(typeName: String, memberName: String) -> Bool {
+        if typeName.isEmpty { return true }
+        // Stdlib types (Int, Double, String, Bool, Array, Dictionary)
+        // are always cross-platform — scl is Foundation-only.
+        if stdlibCrossPlatformOwners.contains(typeName) { return true }
+        // Check the type as-is.
+        if crossPlatform.contains("\(typeName).\(memberName)") { return true }
+        // scl-foundation declares many Foundation members on the
+        // NS-prefixed reference type (e.g. NSURL.path, NSFileManager.
+        // contentsOfDirectory) while Apple's symbol-graph reports them
+        // on the Swift-native value-typed overlay (URL.path, FileManager.
+        // contentsOfDirectory). Try the NS-prefixed form as a fallback so
+        // we don't misclassify these as Apple-only. Nested-type spellings
+        // like `Locale.LanguageCode` get NS-prefixed at the root.
+        let nsCandidate: String
+        if let dot = typeName.firstIndex(of: ".") {
+            nsCandidate = "NS\(typeName[..<dot])\(typeName[dot...]).\(memberName)"
+        } else {
+            nsCandidate = "NS\(typeName).\(memberName)"
+        }
+        return crossPlatform.contains(nsCandidate)
+    }
+}
+
+/// Owners that exist in the standard library, not in Foundation. The
+/// scl extract doesn't catalog these, so the classifier whitelists
+/// them as cross-platform.
+let stdlibCrossPlatformOwners: Set<String> = [
+    "Int", "Double", "String", "Bool", "Array", "Dictionary", "Set",
+    "Range", "ClosedRange", "Optional", "Result", "Character",
+    "Substring", "String.Index", "Mirror", "ObjectIdentifier",
+    "OpaquePointer", "UnsafeRawPointer", "UnsafeMutableRawPointer",
+    "UnsafeCurrentTask", "TaskPriority", "UnownedTaskExecutor",
+]
+
+let sclOracle = SCLOracle.load(cli.sclSymbols)
+if sclOracle != nil {
+    FileHandle.standardError.write(Data(
+        "scl oracle: \(sclOracle!.crossPlatform.count) cross-platform symbols loaded\n".utf8
+    ))
+}
 
 /// A symbol paired with the module it was extracted from. We need the
 /// module name to route the emit — stdlib bridges register at startup;
@@ -984,11 +1070,79 @@ enum EmitBucket {
     case type(String)
     case runtime
 }
+/// Whether the emit needs `#if canImport(Darwin)` gating.
+enum Platform {
+    case crossPlatform
+    case appleOnly
+}
+
 struct EmitEntry {
     let symbolPath: String   // "sqrt(_:)" or "String.foo(...)"
     let group: EmitGroup
     let bucket: EmitBucket
     let code: String
+    let platform: Platform
+}
+
+/// Parse a bridge entry's display key (e.g. `"var URL.path: String"` or
+/// `"init URL(_:)"` or `"static func URL.allocate()"`) into a
+/// `(typeName, memberName)` pair. Returns nil for free-function entries
+/// that have no owning type. Used to look the entry up in the scl
+/// oracle for cross-platform classification.
+func ownerAndMember(forBridgeKey key: String) -> (String, String)? {
+    // Normalize `"static let X.foo"` and similar prefixes — the trailing
+    // tokens are what matter.
+    var s = key
+    for prefix in ["static let ", "static var ", "static func ",
+                   "let ", "var ", "func ", "init "] {
+        if s.hasPrefix(prefix) { s.removeFirst(prefix.count); break }
+    }
+    // For `init URL(_:)` form: the type name precedes the `(`.
+    if let openParen = s.firstIndex(of: "("), key.hasPrefix("init ") {
+        return (String(s[..<openParen]), "init")
+    }
+    // Strip trailing `: ReturnType` and trailing `()` argument lists.
+    if let colon = s.firstIndex(of: ":") { s = String(s[..<colon]) }
+    if let openParen = s.firstIndex(of: "(") { s = String(s[..<openParen]) }
+    s = s.trimmingCharacters(in: .whitespaces)
+    // Split on the LAST `.` so nested types like `String.Index.foo`
+    // resolve owner=`String.Index`, member=`foo`.
+    guard let lastDot = s.lastIndex(of: ".") else { return nil }
+    let owner = String(s[..<lastDot])
+    let member = String(s[s.index(after: lastDot)...])
+    return (owner, member)
+}
+
+/// Pull the first double-quoted string out of an emitted code chunk.
+/// Per-type bridge entries always start with `    "<bridge key>":`,
+/// so the first quoted run is the user-facing bridge key.
+func extractBridgeKey(fromCode code: String) -> String? {
+    guard let openQuote = code.firstIndex(of: "\"") else { return nil }
+    var idx = code.index(after: openQuote)
+    while idx < code.endIndex {
+        let ch = code[idx]
+        if ch == "\\" {
+            idx = code.index(after: idx)
+            if idx < code.endIndex { idx = code.index(after: idx) }
+            continue
+        }
+        if ch == "\"" {
+            return String(code[code.index(after: openQuote)..<idx])
+        }
+        idx = code.index(after: idx)
+    }
+    return nil
+}
+
+/// Classify a bridge key against the scl oracle. Without an oracle,
+/// every entry is cross-platform (legacy behavior).
+func platform(forBridgeKey key: String) -> Platform {
+    guard let oracle = sclOracle else { return .crossPlatform }
+    guard let (owner, member) = ownerAndMember(forBridgeKey: key) else {
+        return .crossPlatform
+    }
+    return oracle.isCrossPlatform(typeName: owner, memberName: member)
+        ? .crossPlatform : .appleOnly
 }
 
 var emitted: [EmitEntry] = []
@@ -1154,7 +1308,15 @@ for annotated in prioritizedSymbols {
     /// Helper: append an emit entry and mark all the bookkeeping in one
     /// step so the per-kind blocks below stay tight.
     func record(_ key: String, bucket: EmitBucket, code: String) {
-        emitted.append(EmitEntry(symbolPath: path, group: emitGroup, bucket: bucket, code: code))
+        // The internal `key` is a claim key (used for dedup, not always
+        // the same as the dict-literal key). Extract the actual bridge
+        // key from the emitted code so the classifier sees the user-
+        // facing form (`"var URL.path: String"`, etc.).
+        let bridgeKey = extractBridgeKey(fromCode: code) ?? key
+        emitted.append(EmitEntry(
+            symbolPath: path, group: emitGroup, bucket: bucket, code: code,
+            platform: platform(forBridgeKey: bridgeKey)
+        ))
         seenPaths.insert(path)
         registeredKeys.insert(key)
     }
@@ -1307,7 +1469,8 @@ for annotated in prioritizedSymbols {
             if !registeredKeys.contains(setterClaim) {
                 emitted.append(EmitEntry(
                     symbolPath: path, group: emitGroup,
-                    bucket: .type(receiverTypeName), code: setterCode
+                    bucket: .type(receiverTypeName), code: setterCode,
+                    platform: platform(forBridgeKey: "var \(receiverTypeName).\(memberName)")
                 ))
                 registeredKeys.insert(setterClaim)
             }
@@ -1411,7 +1574,10 @@ for annotated in prioritizedSymbols {
 
     func emitGenericEntry(claimKey: String, bucket: EmitBucket, code: String) {
         guard !registeredKeys.contains(claimKey) else { return }
-        emitted.append(EmitEntry(symbolPath: path, group: emitGroup, bucket: bucket, code: code))
+        emitted.append(EmitEntry(
+            symbolPath: path, group: emitGroup, bucket: bucket, code: code,
+            platform: platform(forBridgeKey: claimKey)
+        ))
         seenPaths.insert(path)
         registeredKeys.insert(claimKey)
     }
@@ -1518,9 +1684,13 @@ for (usr, bridge) in bridgedTypes {
             },
     """
     let group: EmitGroup = usr.hasPrefix("s:10Foundation") || usr.hasPrefix("c:") ? .foundation : .stdlib
+    // Array-literal init mirrors the underlying type's platform —
+    // OptionSet types living in scl get cross-platform; Apple-only
+    // ones get gated.
     emitted.append(EmitEntry(
         symbolPath: "\(typeName)(arrayLiteral:)",
-        group: group, bucket: .type(typeName), code: code
+        group: group, bucket: .type(typeName), code: code,
+        platform: platform(forBridgeKey: "init \(typeName)(arrayLiteral:)")
     ))
     registeredKeys.insert(claimKey)
 }
@@ -1563,8 +1733,14 @@ for (usr, bridge) in bridgedTypes {
     // Comparators are runtime-time (writing to `opaqueComparators`,
     // not the bridges table), so they live in the manifest's runtime
     // block rather than a per-type dict.
+    // Comparator references the type itself; classify by whether the
+    // owning type appears in the scl extract.
+    let comparatorPlatform: Platform =
+        sclOracle?.crossPlatform.contains { $0.hasPrefix("\(typeName).") } == true
+        ? .crossPlatform : (sclOracle == nil ? .crossPlatform : .appleOnly)
     emitted.append(EmitEntry(
-        symbolPath: "\(typeName).==", group: group, bucket: .runtime, code: code
+        symbolPath: "\(typeName).==", group: group, bucket: .runtime, code: code,
+        platform: comparatorPlatform
     ))
 }
 
@@ -1598,21 +1774,110 @@ func filenameSlug(for typeName: String) -> String {
     typeName.split(separator: ".").joined()
 }
 
-/// Render a per-type bridge file: `static let <name>: [String: Bridge]`.
-/// `nonisolated(unsafe)` opts the global out of the strict-concurrency
-/// shared-state check — `Bridge`'s closure cases aren't `@Sendable`,
-/// so the dict can't be plain `Sendable`. The dict is read-only after
-/// init, so the bypass is safe in practice.
-func renderPerTypeFile(namespace: String, typeName: String, entries: [String]) -> String {
+/// Convert a dict-literal-form entry (`"<key>": <body>,`) to assignment
+/// form (`d["<key>"] = <body>`) so it can live inside a `#if`-gated
+/// block of a closure-built dict. Used for Apple-only entries since
+/// Swift doesn't allow `#if` inside an array/dict literal.
+func toAssignmentForm(_ entry: String) -> String {
+    let s = entry
+    // Find leading whitespace (preserved in the output).
+    let prefixWS = s.prefix(while: { $0 == " " || $0 == "\t" })
+    let rest = s.dropFirst(prefixWS.count)
+    guard rest.hasPrefix("\"") else { return entry }  // Unexpected shape; bail.
+    // Walk the key respecting escape sequences.
+    var idx = rest.index(after: rest.startIndex)
+    while idx < rest.endIndex {
+        let ch = rest[idx]
+        if ch == "\\" {
+            idx = rest.index(after: idx)
+            if idx < rest.endIndex { idx = rest.index(after: idx) }
+            continue
+        }
+        if ch == "\"" { break }
+        idx = rest.index(after: idx)
+    }
+    guard idx < rest.endIndex else { return entry }
+    let quotedKey = rest[rest.startIndex...idx]
+    let afterKey = rest[rest.index(after: idx)...]
+    // Skip ":" and following whitespace.
+    var bodyStart = afterKey.startIndex
+    while bodyStart < afterKey.endIndex,
+          afterKey[bodyStart] == ":" || afterKey[bodyStart] == " "
+    {
+        bodyStart = afterKey.index(after: bodyStart)
+    }
+    var body = String(afterKey[bodyStart...])
+    // Strip trailing comma (allowing trailing whitespace/newlines after).
+    if let lastComma = body.lastIndex(of: ",") {
+        let after = body[body.index(after: lastComma)...]
+        if after.allSatisfy({ $0.isWhitespace || $0.isNewline }) {
+            body = String(body[..<lastComma]) + String(after)
+        }
+    }
+    return "\(prefixWS)d[\(quotedKey)] = \(body)"
+}
+
+/// Per-type entries split by platform classification.
+struct PlatformedEntries {
+    var crossPlatform: [String] = []   // dict-literal form
+    var appleOnly: [String] = []       // dict-literal form (will be converted)
+    var isEmpty: Bool { crossPlatform.isEmpty && appleOnly.isEmpty }
+}
+
+/// Render a per-type bridge file. Always emits a closure-built dict so
+/// Apple-only entries can live inside `#if canImport(Darwin)` blocks
+/// without reshaping the file. `nonisolated(unsafe)` opts the global
+/// out of the strict-concurrency shared-state check — `Bridge`'s closure
+/// cases aren't `@Sendable`, so the dict can't be plain `Sendable`. The
+/// dict is read-only after init, so the bypass is safe in practice.
+func renderPerTypeFile(
+    namespace: String, typeName: String, entries: PlatformedEntries
+) -> String {
     let dictName = staticLetName(for: typeName)
-    let body = entries.isEmpty ? "    // (no entries)" : entries.joined(separator: "\n")
+    if entries.appleOnly.isEmpty {
+        // Pure cross-platform dict — emit the literal form directly.
+        // `[:]` (not `[]`) is the empty-dict literal Swift accepts.
+        let crossBody = entries.crossPlatform.isEmpty
+            ? "        // (no entries)\n        :"
+            : entries.crossPlatform.joined(separator: "\n")
+        if entries.crossPlatform.isEmpty {
+            return """
+            \(autogenBanner)import Foundation
+
+            extension \(namespace) {
+                nonisolated(unsafe) static let \(dictName): [String: Bridge] = [:]
+            }
+
+            """
+        }
+        return """
+        \(autogenBanner)import Foundation
+
+        extension \(namespace) {
+            nonisolated(unsafe) static let \(dictName): [String: Bridge] = [
+        \(crossBody)
+            ]
+        }
+
+        """
+    }
+    let appleBody = entries.appleOnly.map(toAssignmentForm).joined(separator: "\n")
+    // When there are no cross-platform entries we still need a starter
+    // dict for the Apple-only `d["..."] = ...` assignments — use `[:]`.
+    let dictInit = entries.crossPlatform.isEmpty
+        ? "        var d: [String: Bridge] = [:]"
+        : "        var d: [String: Bridge] = [\n\(entries.crossPlatform.joined(separator: "\n"))\n        ]"
     return """
     \(autogenBanner)import Foundation
 
     extension \(namespace) {
-        nonisolated(unsafe) static let \(dictName): [String: Bridge] = [
-    \(body)
-        ]
+        nonisolated(unsafe) static let \(dictName): [String: Bridge] = {
+    \(dictInit)
+            #if canImport(Darwin)
+    \(appleBody)
+            #endif
+            return d
+        }()
     }
 
     """
@@ -1662,22 +1927,37 @@ func renderManifest(
 
 /// Group the type-bucket emits by their `typeName`, preserving the
 /// order in which they were added (which is the priority-sorted order
-/// from the symbol walk).
-func groupedByType(_ entries: [EmitEntry]) -> [(String, [String])] {
+/// from the symbol walk). Each group's entries are partitioned into
+/// cross-platform (kept in the dict literal) and Apple-only (emitted
+/// inside `#if canImport(Darwin)` as assignment statements).
+func groupedByType(_ entries: [EmitEntry]) -> [(String, PlatformedEntries)] {
     var order: [String] = []
-    var bodies: [String: [String]] = [:]
+    var bodies: [String: PlatformedEntries] = [:]
     for entry in entries {
         guard case .type(let name) = entry.bucket else { continue }
         if bodies[name] == nil { order.append(name) }
-        bodies[name, default: []].append(entry.code)
+        var current = bodies[name] ?? PlatformedEntries()
+        switch entry.platform {
+        case .crossPlatform: current.crossPlatform.append(entry.code)
+        case .appleOnly:     current.appleOnly.append(entry.code)
+        }
+        bodies[name] = current
     }
     return order.map { ($0, bodies[$0]!) }
 }
 
+/// Runtime-time bodies (globals, comparators). Apple-only entries get
+/// wrapped in `#if canImport(Darwin)` so Linux/Windows builds skip
+/// them entirely.
 func runtimeBodies(_ entries: [EmitEntry]) -> [String] {
     entries.compactMap { entry in
-        if case .runtime = entry.bucket { return entry.code }
-        return nil
+        guard case .runtime = entry.bucket else { return nil }
+        switch entry.platform {
+        case .crossPlatform:
+            return entry.code
+        case .appleOnly:
+            return "#if canImport(Darwin)\n\(entry.code)\n#endif"
+        }
     }
 }
 
@@ -1694,7 +1974,7 @@ func writeOutputs(
     namespace: String,
     extensionTarget: String,
     methodName: String,
-    types: [(String, [String])],
+    types: [(String, PlatformedEntries)],
     runtime: [String],
     outputDir: URL
 ) throws -> Int {
@@ -1718,7 +1998,7 @@ func writeOutputs(
         )
         let contents = renderPerTypeFile(namespace: namespace, typeName: typeName, entries: entries)
         try contents.write(to: file, atomically: true, encoding: .utf8)
-        count += entries.count
+        count += entries.crossPlatform.count + entries.appleOnly.count
     }
     let manifest = outputDir.appendingPathComponent("\(namespace).swift")
     let manifestContents = renderManifest(

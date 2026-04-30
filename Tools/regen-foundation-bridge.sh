@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
-# Regenerate Sources/SwiftScriptInterpreter/Modules/FoundationBridge.generated.swift
-# by re-extracting Foundation symbol graphs and feeding them through the
-# BridgeGeneratorTool.
+# Regenerate the Foundation + stdlib bridge files. The generator
+# extracts Apple's Foundation symbol graph and classifies each
+# emitted bridge entry as cross-platform or Apple-only by checking
+# it against a swift-corelibs-foundation extract — anything that
+# isn't in scl gets gated behind `#if canImport(Darwin)` so Linux
+# and Windows builds skip it. No hand-editing of generated files
+# is needed.
 #
-# Re-run any time the allowlist or generator logic changes.
+# Re-run after generator/blocklist changes, or after refreshing
+# the scl extract.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -25,10 +30,6 @@ extract() {
     >/dev/null 2>&1 || true
 }
 
-# Foundation supplies the value-typed overlay (CharacterSet, URL, Date,
-# Data) and StringProtocol extensions; Swift stdlib supplies Int/Double
-# numeric methods. The extractor writes `<Module>.symbols.json` plus
-# cross-module graphs (`Foundation@Swift.symbols.json` etc.).
 extract Foundation
 extract Swift
 
@@ -37,9 +38,24 @@ for f in "$SG_DIR"/*.symbols.json; do
   SG_ARGS+=("--symbol-graph" "$f")
 done
 
+# scl-foundation extract — refresh by running
+# `Tools/refresh-scl-symbols.sh /path/to/swift-corelibs-foundation`
+# (commits Resources/foundation-symbols-scl.txt). The extract is
+# checked into the repo so regen contributors don't need a local
+# scl-foundation clone.
+SCL_SYMBOLS="Resources/foundation-symbols-scl.txt"
+SCL_ARGS=()
+if [[ -f "$SCL_SYMBOLS" ]]; then
+  SCL_ARGS+=("--scl-symbols" "$SCL_SYMBOLS")
+else
+  echo "warning: $SCL_SYMBOLS not found; emitting all symbols as cross-platform"
+  echo "         (run Tools/refresh-scl-symbols.sh to generate it)"
+fi
+
 echo "running BridgeGeneratorTool..."
 swift run -q BridgeGeneratorTool \
   "${SG_ARGS[@]}" \
+  "${SCL_ARGS[@]}" \
   --auto-allowlist \
   --blocklist Resources/foundation-blocklist.txt \
   --output-stdlib Sources/SwiftScriptInterpreter/Modules/StdlibBridge.generated.swift \

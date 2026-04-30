@@ -3,30 +3,34 @@
 import Foundation
 
 extension StdlibBridges {
-    nonisolated(unsafe) static let unicodeCanonicalCombiningClass: [String: Bridge] = [
-    "static let Unicode.CanonicalCombiningClass.notReordered": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.notReordered, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.overlay": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.overlay, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.nukta": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.nukta, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.kanaVoicing": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.kanaVoicing, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.virama": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.virama, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.attachedBelowLeft": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.attachedBelowLeft, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.attachedBelow": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.attachedBelow, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.attachedAbove": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.attachedAbove, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.attachedAboveRight": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.attachedAboveRight, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.belowLeft": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.belowLeft, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.below": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.below, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.belowRight": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.belowRight, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.left": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.left, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.right": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.right, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.aboveLeft": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.aboveLeft, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.above": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.above, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.aboveRight": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.aboveRight, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.doubleBelow": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.doubleBelow, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.doubleAbove": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.doubleAbove, typeName: "Unicode.CanonicalCombiningClass")),
-    "static let Unicode.CanonicalCombiningClass.iotaSubscript": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.iotaSubscript, typeName: "Unicode.CanonicalCombiningClass")),
-    "var Unicode.CanonicalCombiningClass.hashValue: Int": .computed { receiver in
+    nonisolated(unsafe) static let unicodeCanonicalCombiningClass: [String: Bridge] = {
+        var d: [String: Bridge] = [:]
+        #if canImport(Darwin)
+    d["static let Unicode.CanonicalCombiningClass.notReordered"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.notReordered, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.overlay"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.overlay, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.nukta"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.nukta, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.kanaVoicing"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.kanaVoicing, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.virama"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.virama, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.attachedBelowLeft"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.attachedBelowLeft, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.attachedBelow"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.attachedBelow, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.attachedAbove"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.attachedAbove, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.attachedAboveRight"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.attachedAboveRight, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.belowLeft"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.belowLeft, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.below"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.below, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.belowRight"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.belowRight, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.left"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.left, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.right"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.right, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.aboveLeft"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.aboveLeft, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.above"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.above, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.aboveRight"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.aboveRight, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.doubleBelow"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.doubleBelow, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.doubleAbove"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.doubleAbove, typeName: "Unicode.CanonicalCombiningClass"))
+    d["static let Unicode.CanonicalCombiningClass.iotaSubscript"] = .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.iotaSubscript, typeName: "Unicode.CanonicalCombiningClass"))
+    d["var Unicode.CanonicalCombiningClass.hashValue: Int"] = .computed { receiver in
         let recv: Unicode.CanonicalCombiningClass = try unboxOpaque(receiver, as: Unicode.CanonicalCombiningClass.self, typeName: "Unicode.CanonicalCombiningClass")
         return .int(recv.hashValue)
-    },
-    ]
+    }
+        #endif
+        return d
+    }()
 }

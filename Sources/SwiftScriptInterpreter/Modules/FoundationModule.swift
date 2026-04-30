@@ -19,13 +19,13 @@ public struct FoundationModule: BuiltinModule {
         // Auto-generated Foundation bridges. Regenerate via
         //   bash Tools/regen-foundation-bridge.sh
         //
-        // The symbol graph was harvested from Apple's Foundation, which
-        // is a strict superset of swift-corelibs-foundation. Apple gets
-        // the full surface (~200 types + Equatable/Comparable
-        // comparators); Linux gets the subset that compiles against
-        // scl-Foundation. Both register through the same entry point —
-        // see `FoundationBridges.swift` (Apple) and
-        // `FoundationBridgesLinux.swift` (Linux).
+        // The symbol graph is harvested from Apple's Foundation, then
+        // each entry is classified against an extract of swift-
+        // corelibs-foundation (`Resources/foundation-symbols-scl.txt`):
+        // entries that exist on both sides are emitted unconditionally,
+        // entries that only exist on Apple are wrapped in
+        // `#if canImport(Darwin)` blocks. The same per-type files
+        // therefore work on macOS, iOS, Linux, and Windows.
         registerGenerated(into: i)
     }
 
