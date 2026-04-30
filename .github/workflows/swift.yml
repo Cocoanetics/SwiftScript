@@ -21,7 +21,10 @@ concurrency:
 jobs:
 
   build-macos:
-    runs-on: macos-latest
+    # `macos-26` runner is required: the package targets `.macOS("26.0")`
+    # and the auto-generated Foundation bridges call macOS-26-only APIs
+    # unconditionally, so the test bundle dyld-refuses on older runners.
+    runs-on: macos-26
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
@@ -31,17 +34,13 @@ jobs:
           xcode-version: "26.0"
       - name: Verify Swift version
         run: swift --version
-      # Build the package and the test bundle. We can't run `swift test`
-      # here: GitHub's `macos-latest` image is macOS 14/15, but the package
-      # has `.macOS("26.0")` and the auto-generated Foundation bridges call
-      # macOS-26-only APIs unconditionally — so the test xctest bundle is
-      # built for macOS 26 and dyld refuses to load it on the runner.
-      # Tests are exercised on a developer machine with macOS 26 instead.
       - name: Build (macOS)
         run: swift build --build-tests -v
+      - name: Test (macOS)
+        run: swift test -v --skip-build
 
   build-ios:
-    runs-on: macos-latest
+    runs-on: macos-26
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
@@ -49,13 +48,12 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: "26.0"
-      - name: Build (iOS) — library targets only
+      - name: Test (iOS Simulator)
         run: |
-          xcodebuild \
+          xcodebuild test \
             -scheme SwiftScriptInterpreter \
-            -destination 'generic/platform=iOS' \
-            -skipPackagePluginValidation \
-            build
+            -destination 'platform=iOS Simulator,OS=latest,name=iPhone 17' \
+            -skipPackagePluginValidation
 
   build-linux:
     runs-on: ubuntu-latest
