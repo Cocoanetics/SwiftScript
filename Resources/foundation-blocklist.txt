@@ -149,3 +149,20 @@ String.init(localized:)
 String.init(localized:locale:)
 String.init(localized:options:locale:)
 String.init(localized:table:bundle:locale:comment:)
+
+# AttributedString init/method overloads with Apple-only labels.
+# scl's AttributedString.filter takes a different argument set, and
+# `inheritedByAddedText:` doesn't exist there.
+AttributedString.init(_:attributes:)
+AttributedString.init(_:including:)
+AttributedString.AttributeContainer.filter(runBoundaries:inheritedByAddedText:invalidationConditions:)
+AttributedString.AttributeContainer.filter(runBoundaries:inheritedByAddedText:)
+
+# Apple-only String comparator factories.
+String.StandardComparator.localized
+String.StandardComparator.localizedStandard
+
+# Foundation overlay extras that exist on Apple but not in
+# swift-foundation as of the pinned scl revision.
+URL.Template
+DiscontiguousAttributedSubstring

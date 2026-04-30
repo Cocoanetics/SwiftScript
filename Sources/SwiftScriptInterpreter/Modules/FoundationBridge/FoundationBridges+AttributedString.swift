@@ -42,12 +42,6 @@ extension FoundationBridges {
         }
         return boxOpaque(AttributedString(stringLiteral: try unboxString(args[0])), typeName: "AttributedString")
     },
-    "init AttributedString(_:attributes:)": .`init` { args in
-        guard args.count == 2 else {
-            throw RuntimeError.invalid("init AttributedString(_:attributes:): expected 2 argument(s), got \(args.count)")
-        }
-        return boxOpaque(AttributedString(try unboxString(args[0]), attributes: try unboxOpaque(args[1], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
-    },
         ]
         #if canImport(Darwin)
     d["var AttributedString.hashValue: Int"] = .computed { receiver in

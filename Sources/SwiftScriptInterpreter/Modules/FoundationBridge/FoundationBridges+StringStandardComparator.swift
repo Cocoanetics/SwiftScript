@@ -8,8 +8,6 @@ import FoundationNetworking
 extension FoundationBridges {
     nonisolated(unsafe) static let stringStandardComparator: [String: Bridge] = {
         var d: [String: Bridge] = [
-    "static let String.StandardComparator.localizedStandard": .staticValue(boxOpaque(String.StandardComparator.localizedStandard, typeName: "String.StandardComparator")),
-    "static let String.StandardComparator.localized": .staticValue(boxOpaque(String.StandardComparator.localized, typeName: "String.StandardComparator")),
     "static let String.StandardComparator.lexical": .staticValue(boxOpaque(String.StandardComparator.lexical, typeName: "String.StandardComparator")),
     "init String.StandardComparator(_:)": .`init` { args in
         guard args.count == 1 else {
