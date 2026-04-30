@@ -41,13 +41,19 @@ jobs:
 
   build-ios:
     runs-on: macos-26
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v6
       - name: Select Xcode 26.0
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: "26.0"
+      # `macos-26` ships with Xcode 26 but the iOS 26 simulator runtime
+      # isn't preinstalled — `xcodebuild` lists the iOS destination as
+      # "Ineligible: iOS 26.0 is not installed". Pull it down before
+      # the build step. Adds ~5 min on first run.
+      - name: Install iOS Simulator runtime
+        run: sudo xcodebuild -downloadPlatform iOS
       # Use the auto-generated `<Package>-Package` umbrella scheme —
       # the library scheme `SwiftScriptInterpreter` doesn't define a
       # test action. Split build/test into two steps so the Actions UI
