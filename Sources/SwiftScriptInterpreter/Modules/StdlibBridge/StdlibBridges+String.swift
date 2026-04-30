@@ -59,12 +59,6 @@ extension StdlibBridges {
         }
         return .optional(nil)
     },
-    "init String(localized:)": .`init` { args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("init String(localized:): expected 1 argument(s), got \(args.count)")
-        }
-        return .string(String(localized: try unboxOpaque(args[0], as: LocalizedStringResource.self, typeName: "LocalizedStringResource")))
-    },
     "static func String.localizedName()": .staticMethod { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("String.localizedName: expected 1 argument(s), got \(args.count)")

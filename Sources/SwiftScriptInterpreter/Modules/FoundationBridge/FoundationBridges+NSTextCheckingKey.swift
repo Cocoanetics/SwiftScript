@@ -7,14 +7,7 @@ import FoundationNetworking
 
 extension FoundationBridges {
     nonisolated(unsafe) static let nSTextCheckingKey: [String: Bridge] = {
-        var d: [String: Bridge] = [
-    "init NSTextCheckingKey(_:)": .`init` { args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("init NSTextCheckingKey(_:): expected 1 argument(s), got \(args.count)")
-        }
-        return boxOpaque(NSTextCheckingKey(try unboxString(args[0])), typeName: "NSTextCheckingKey")
-    },
-        ]
+        var d: [String: Bridge] = [:]
         #if canImport(Darwin)
     d["var NSTextCheckingKey.hashValue: Int"] = .computed { receiver in
         let recv: NSTextCheckingKey = try unboxOpaque(receiver, as: NSTextCheckingKey.self, typeName: "NSTextCheckingKey")

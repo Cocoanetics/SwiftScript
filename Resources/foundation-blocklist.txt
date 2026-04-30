@@ -136,6 +136,16 @@ AttributedString.init(localized:options:)
 AttributedString.init(localized:table:bundle:locale:comment:)
 PersonNameComponents.init(_:)
 PersonNameComponents.init(_:strategy:)
+NSTextCheckingKey.init(_:)
 NSTextCheckingKey.init(rawValue:)
 URL.init(resource:)
+URL.init(resolvingAliasFileAt:options:)
 UnsafeCurrentTask.escalatePriority(to:)
+# Foundation-overlay String/Int/Double extensions referencing
+# Apple-only types (LocalizedStringResource etc.). The stdlib
+# whitelist auto-passes String members, so these need explicit
+# blocking.
+String.init(localized:)
+String.init(localized:locale:)
+String.init(localized:options:locale:)
+String.init(localized:table:bundle:locale:comment:)
