@@ -81,27 +81,14 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       # SwiftyLab/setup-swift is the unified macOS/Linux/Windows
-      # toolchain installer. Per its README, Swift 5.10+ does not
-      # support toolchain caching on Windows — so the install step
-      # itself runs every time (~3-4 min). Pin a specific patch
-      # version so swift-syntax binary deps don't refetch on minor
-      # bumps.
+      # toolchain installer. Pin to a specific patch so the version
+      # is deterministic across runs.
       - name: Setup Swift
         uses: SwiftyLab/setup-swift@latest
         with:
           swift-version: "6.3.1"
       - name: Verify Swift version
         run: swift --version
-      # Cache the SwiftPM build dir keyed on Package.resolved so the
-      # ~10 min swift-syntax compile only runs when deps change.
-      - name: Cache SwiftPM build
-        uses: actions/cache@v4
-        with:
-          path: |
-            .build
-          key: windows-swiftpm-${{ hashFiles('Package.resolved', 'Package.swift') }}
-          restore-keys: |
-            windows-swiftpm-
       - name: Build (Windows)
         run: swift build --build-tests -v
         continue-on-error: true
