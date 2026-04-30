@@ -1803,16 +1803,21 @@ for (usr, bridge) in bridgedTypes {
     // Comparators are runtime-time (writing to `opaqueComparators`,
     // not the bridges table), so they live in the manifest's runtime
     // block rather than a per-type dict.
-    // Comparator references the type itself; classify by whether the
-    // owning type exists on the cross-platform side. Reference-type
-    // Foundation classes (URLSession, URLResponse, HTTPURLResponse,
-    // FileManager …) are typealiases for AnyObject on Linux's scl
-    // and don't conform to Equatable — `isTypeCrossPlatform` only
-    // returns true for value types in scl, so those comparators get
-    // gated automatically.
-    let comparatorPlatform: Platform =
-        (sclOracle?.isTypeCrossPlatform(typeName) ?? true)
-        ? .crossPlatform : .appleOnly
+    // Comparator references the type itself. Reference-type Foundation
+    // classes from the bridgeable allowlist (FileManager, ProcessInfo,
+    // URLSession, …) are NSObject-Equatable on Apple but not value-
+    // comparable on Linux/scl (they're typealiased to NSXxx classes
+    // without an Equatable conformance the auto-comparator can use).
+    // Force those to Apple-only regardless of scl type-presence.
+    let comparatorPlatform: Platform
+    if bridgeableTypeAllowlist.contains(typeName)
+        && bridgedClassTypeNames.contains(typeName)
+    {
+        comparatorPlatform = .appleOnly
+    } else {
+        comparatorPlatform = (sclOracle?.isTypeCrossPlatform(typeName) ?? true)
+            ? .crossPlatform : .appleOnly
+    }
     emitted.append(EmitEntry(
         symbolPath: "\(typeName).==", group: group, bucket: .runtime, code: code,
         platform: comparatorPlatform

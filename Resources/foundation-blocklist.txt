@@ -166,3 +166,29 @@ String.StandardComparator.localizedStandard
 # swift-foundation as of the pinned scl revision.
 URL.Template
 DiscontiguousAttributedSubstring
+
+# URL static directory shortcuts (.cachesDirectory, .documentsDirectory,
+# .applicationDirectory, …) — added in macOS 13/iOS 16 Foundation
+# overlay. scl-foundation main has them but Swift 6.3's bundled
+# Foundation lags. Block until the toolchain catches up.
+URL.cachesDirectory
+URL.documentsDirectory
+URL.applicationDirectory
+URL.applicationSupportDirectory
+URL.desktopDirectory
+URL.downloadsDirectory
+URL.libraryDirectory
+URL.moviesDirectory
+URL.musicDirectory
+URL.picturesDirectory
+URL.sharedPublicDirectory
+URL.userDirectory
+URL.bookmarkData
+URL.writeBookmarkData
+
+# Date.HTTPFormatStyle / DateComponents.HTTPFormatStyle / .ISO8601FormatStyle
+# — same version skew. Recent additions still unreleased on Linux.
+Date.HTTPFormatStyle
+DateComponents.HTTPFormatStyle
+DateComponents.ISO8601FormatStyle
+NotificationCenter.ObservationToken

@@ -178,18 +178,6 @@ extension FoundationBridges {
     },
     "static let URL.homeDirectory": .staticValue(boxOpaque(URL.homeDirectory, typeName: "URL")),
     "static let URL.temporaryDirectory": .staticValue(boxOpaque(URL.temporaryDirectory, typeName: "URL")),
-    "static let URL.cachesDirectory": .staticValue(boxOpaque(URL.cachesDirectory, typeName: "URL")),
-    "static let URL.applicationDirectory": .staticValue(boxOpaque(URL.applicationDirectory, typeName: "URL")),
-    "static let URL.libraryDirectory": .staticValue(boxOpaque(URL.libraryDirectory, typeName: "URL")),
-    "static let URL.userDirectory": .staticValue(boxOpaque(URL.userDirectory, typeName: "URL")),
-    "static let URL.documentsDirectory": .staticValue(boxOpaque(URL.documentsDirectory, typeName: "URL")),
-    "static let URL.desktopDirectory": .staticValue(boxOpaque(URL.desktopDirectory, typeName: "URL")),
-    "static let URL.applicationSupportDirectory": .staticValue(boxOpaque(URL.applicationSupportDirectory, typeName: "URL")),
-    "static let URL.downloadsDirectory": .staticValue(boxOpaque(URL.downloadsDirectory, typeName: "URL")),
-    "static let URL.moviesDirectory": .staticValue(boxOpaque(URL.moviesDirectory, typeName: "URL")),
-    "static let URL.musicDirectory": .staticValue(boxOpaque(URL.musicDirectory, typeName: "URL")),
-    "static let URL.picturesDirectory": .staticValue(boxOpaque(URL.picturesDirectory, typeName: "URL")),
-    "static let URL.sharedPublicDirectory": .staticValue(boxOpaque(URL.sharedPublicDirectory, typeName: "URL")),
     "var URL.description: String": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return .string(recv.description)
