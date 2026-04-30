@@ -419,7 +419,7 @@ AttributedString.==
 AttributedString.append
 AttributedString.characters
 AttributedString.encode
-AttributedString.endIndex
+AttributedString.endIndex	UNAVAILABLE
 AttributedString.init
 AttributedString.insert
 AttributedString.mergeAttributes
@@ -429,7 +429,7 @@ AttributedString.replaceAttributes
 AttributedString.replaceSubrange
 AttributedString.runs
 AttributedString.setAttributes
-AttributedString.startIndex
+AttributedString.startIndex	UNAVAILABLE
 AttributedString.subscript
 AttributedString.transform
 AttributedString.transformingAttributes
