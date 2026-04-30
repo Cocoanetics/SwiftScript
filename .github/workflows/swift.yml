@@ -49,9 +49,13 @@ jobs:
         with:
           xcode-version: "26.0"
       - name: Test (iOS Simulator)
+        # `SwiftScriptInterpreter` is the library scheme — it doesn't
+        # define a test action. SwiftPM auto-generates a
+        # `<Package>-Package` umbrella scheme that includes every target
+        # plus the test target, so use that.
         run: |
           xcodebuild test \
-            -scheme SwiftScriptInterpreter \
+            -scheme SwiftScript-Package \
             -destination 'platform=iOS Simulator,OS=latest,name=iPhone 17' \
             -skipPackagePluginValidation
 
