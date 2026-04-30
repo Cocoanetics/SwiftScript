@@ -48,13 +48,19 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: "26.0"
-      - name: Test (iOS Simulator)
-        # `SwiftScriptInterpreter` is the library scheme — it doesn't
-        # define a test action. SwiftPM auto-generates a
-        # `<Package>-Package` umbrella scheme that includes every target
-        # plus the test target, so use that.
+      # Use the auto-generated `<Package>-Package` umbrella scheme —
+      # the library scheme `SwiftScriptInterpreter` doesn't define a
+      # test action. Split build/test into two steps so the Actions UI
+      # shows where time is spent (matches the macOS / Linux pattern).
+      - name: Build (iOS Simulator)
         run: |
-          xcodebuild test \
+          xcodebuild build-for-testing \
+            -scheme SwiftScript-Package \
+            -destination 'platform=iOS Simulator,OS=latest,name=iPhone 17' \
+            -skipPackagePluginValidation
+      - name: Test (iOS Simulator)
+        run: |
+          xcodebuild test-without-building \
             -scheme SwiftScript-Package \
             -destination 'platform=iOS Simulator,OS=latest,name=iPhone 17' \
             -skipPackagePluginValidation
