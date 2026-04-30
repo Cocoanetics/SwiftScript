@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSComparisonPredicateOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [
+    nonisolated(unsafe) static let nSComparisonPredicateOptions: [String: Bridge] = [
     "init NSComparisonPredicate.Options()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSComparisonPredicate.Options(): expected 0 argument(s), got \(args.count)")
@@ -30,13 +30,14 @@ extension FoundationBridges {
             }
             return boxOpaque(result, typeName: "NSComparisonPredicate.Options")
         },
-        ]
-        #if canImport(Darwin)
-    d["var NSComparisonPredicate.Options.isEmpty: Bool"] = .computed { receiver in
+    "var NSComparisonPredicate.Options.isEmpty: Bool": .computed { receiver in
         let recv: NSComparisonPredicate.Options = try unboxOpaque(receiver, as: NSComparisonPredicate.Options.self, typeName: "NSComparisonPredicate.Options")
         return .bool(recv.isEmpty)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSComparisonPredicateOptions: [String: Bridge] = [:]
+}
+#endif

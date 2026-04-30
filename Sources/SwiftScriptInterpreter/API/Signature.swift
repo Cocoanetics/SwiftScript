@@ -98,14 +98,9 @@ extension Signature {
         let (receiver, rest) = splitAtTypeEnd(body)
         let (failableMark, afterMark) = peelOptional(rest)
         let isFailable = failableMark
-        // Wrap as: extension <Receiver> { init<...>(...) {} }
-        // But init can't carry generics in extension easily — wrap as
-        // a struct decl instead.
-        let src = """
-        struct __Probe \(afterMark.starts(with: "<") ? "<" : "")\(probeGenericsAndParams(afterMark)) {}
-        """
-        // Simpler: build a function form and reuse the parser.
-        // Actually easiest: wrap as a static func returning the type.
+        // Easiest: wrap the init signature as a static func returning
+        // the type and reuse the function-parsing path. (We previously
+        // tried `struct __Probe<…>` but switched to function form.)
         let funcSrc = "func __probe\(afterMark) -> \(receiver) { fatalError() }"
         let parsed = Parser.parse(source: funcSrc)
         guard let fnDecl = parsed.statements.first?.item.as(FunctionDeclSyntax.self) else {

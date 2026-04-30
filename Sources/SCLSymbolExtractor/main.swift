@@ -104,8 +104,12 @@ final class PublicMemberVisitor: SyntaxVisitor {
         return false
     }
 
-    /// Detect `@available(*, unavailable, ...)` on a declaration. scl
-    /// uses this to mark APIs that exist on Apple but aren't ported.
+    /// Detect `@available(*, unavailable, ...)` or `@available(*,
+    /// deprecated, ...)` on a declaration. scl uses both — `unavailable`
+    /// for APIs that are intentionally not implemented; `deprecated`
+    /// for ones that exist but emit a warning ("won't be returned by
+    /// scl"). Either way the bridge generator should treat them as
+    /// Apple-only so the Linux build stays warning-free.
     private static func isUnavailable(_ attributes: AttributeListSyntax?) -> Bool {
         guard let attributes else { return false }
         for attr in attributes {
@@ -117,6 +121,7 @@ final class PublicMemberVisitor: SyntaxVisitor {
             for arg in args {
                 if case .token(let t) = arg.argument,
                    t.tokenKind == .keyword(.unavailable)
+                    || t.tokenKind == .keyword(.deprecated)
                 {
                     return true
                 }

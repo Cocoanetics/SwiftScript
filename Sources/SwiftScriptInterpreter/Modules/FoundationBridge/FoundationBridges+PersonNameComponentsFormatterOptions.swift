@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let personNameComponentsFormatterOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [
+    nonisolated(unsafe) static let personNameComponentsFormatterOptions: [String: Bridge] = [
     "init PersonNameComponentsFormatter.Options()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init PersonNameComponentsFormatter.Options(): expected 0 argument(s), got \(args.count)")
@@ -28,13 +28,14 @@ extension FoundationBridges {
             }
             return boxOpaque(result, typeName: "PersonNameComponentsFormatter.Options")
         },
-        ]
-        #if canImport(Darwin)
-    d["var PersonNameComponentsFormatter.Options.isEmpty: Bool"] = .computed { receiver in
+    "var PersonNameComponentsFormatter.Options.isEmpty: Bool": .computed { receiver in
         let recv: PersonNameComponentsFormatter.Options = try unboxOpaque(receiver, as: PersonNameComponentsFormatter.Options.self, typeName: "PersonNameComponentsFormatter.Options")
         return .bool(recv.isEmpty)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let personNameComponentsFormatterOptions: [String: Bridge] = [:]
+}
+#endif

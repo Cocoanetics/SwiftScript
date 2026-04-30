@@ -809,7 +809,7 @@ extension Interpreter {
             // Strict element type for `Set<T>`: insert/remove must match.
             let setElementType = scope.lookup(varName)?.declaredType
                 .flatMap { $0.as(IdentifierTypeSyntax.self) }
-                .flatMap { $0.genericArgumentClause?.arguments.first?.argument.as(TypeSyntax.self) }
+                .flatMap { $0.genericArgumentClause?.arguments.first.map { TypeSyntax($0.argument) } }
             let result: Value
             switch (m, args.count) {
             case ("insert", 1):

@@ -667,7 +667,7 @@ Bundle.sharedFrameworksPath
 Bundle.sharedFrameworksURL
 Bundle.sharedSupportPath
 Bundle.sharedSupportURL
-Bundle.unload
+Bundle.unload	UNAVAILABLE
 Bundle.url
 Bundle.urls
 ByteCountFormatStyle.
@@ -1296,7 +1296,7 @@ Date.addingTimeInterval
 Date.advanced
 Date.compare
 Date.customMirror
-Date.customPlaygroundQuickLook
+Date.customPlaygroundQuickLook	UNAVAILABLE
 Date.debugDescription
 Date.description
 Date.distance
@@ -2022,8 +2022,8 @@ FileHandle.acceptConnectionInBackgroundAndNotify	UNAVAILABLE
 FileHandle.availableData
 FileHandle.close
 FileHandle.closeFile
-FileHandle.fileDescriptor
 FileHandle.fileDescriptor	UNAVAILABLE
+FileHandle.fileDescriptor
 FileHandle.init
 FileHandle.nullDevice
 FileHandle.offset
@@ -2081,9 +2081,10 @@ FileManager.linkItem
 FileManager.mountedVolumeURLs
 FileManager.moveItem
 FileManager.removeItem
-FileManager.replaceItem
 FileManager.replaceItem	UNAVAILABLE
+FileManager.replaceItem
 FileManager.replaceItemAt
+FileManager.replaceItemAt	UNAVAILABLE
 FileManager.setAttributes
 FileManager.string
 FileManager.subpaths
@@ -2610,12 +2611,14 @@ Locale.availableNumberingSystems
 Locale.calendar
 Locale.canonicalIdentifier
 Locale.canonicalLanguageIdentifier
+Locale.characterDirection	UNAVAILABLE
 Locale.characterDirection
 Locale.collation
 Locale.collationIdentifier
 Locale.collatorIdentifier
 Locale.commonISOCurrencyCodes
 Locale.components
+Locale.components	UNAVAILABLE
 Locale.currency
 Locale.currencyCode
 Locale.currencySymbol
@@ -2632,11 +2635,15 @@ Locale.hash
 Locale.hourCycle
 Locale.identifier
 Locale.init
+Locale.isoCurrencyCodes	UNAVAILABLE
 Locale.isoCurrencyCodes
 Locale.isoLanguageCodes
+Locale.isoLanguageCodes	UNAVAILABLE
 Locale.isoRegionCodes
+Locale.isoRegionCodes	UNAVAILABLE
 Locale.language
 Locale.languageCode
+Locale.lineDirection	UNAVAILABLE
 Locale.lineDirection
 Locale.localizedString
 Locale.measurementSystem
@@ -3328,6 +3335,7 @@ NSArray.indexOfObject
 NSArray.indexOfObjectIdentical
 NSArray.indexesOfObjects
 NSArray.init
+NSArray.init	UNAVAILABLE
 NSArray.isEqual
 NSArray.lastObject
 NSArray.makeIterator
@@ -3342,6 +3350,7 @@ NSArray.sortedArrayHint
 NSArray.subarray
 NSArray.subscript
 NSArray.supportsSecureCoding
+NSArray.write	UNAVAILABLE
 NSArray.write
 NSArray.Iterator.
 NSArray.Iterator.next
@@ -3578,7 +3587,7 @@ NSCoder.withDecodedUnsafeBufferPointer
 NSCoder.withDecodedUnsafeBytes
 NSCoder.DecodingFailurePolicy.
 NSCoding.
-NSComparisonPredicate.
+NSComparisonPredicate.	UNAVAILABLE
 NSComparisonPredicate.comparisonPredicateModifier	UNAVAILABLE
 NSComparisonPredicate.init	UNAVAILABLE
 NSComparisonPredicate.leftExpression	UNAVAILABLE
@@ -3785,6 +3794,7 @@ NSDictionary.enumerateKeysAndObjects
 NSDictionary.getObjects
 NSDictionary.hash
 NSDictionary.init
+NSDictionary.init	UNAVAILABLE
 NSDictionary.isEqual
 NSDictionary.keyEnumerator
 NSDictionary.keysOfEntries
@@ -3847,7 +3857,7 @@ NSExceptionName.decimalNumberUnderflowException
 NSExceptionName.fileHandleOperationException
 NSExceptionName.init
 NSExceptionName.rawValue
-NSExpression.
+NSExpression.	UNAVAILABLE
 NSExpression.`false`	UNAVAILABLE
 NSExpression.`true`	UNAVAILABLE
 NSExpression.allowEvaluation	UNAVAILABLE
@@ -3879,8 +3889,8 @@ NSIndexPath.adding
 NSIndexPath.compare
 NSIndexPath.copy
 NSIndexPath.encode
-NSIndexPath.getIndexes	UNAVAILABLE
 NSIndexPath.getIndexes
+NSIndexPath.getIndexes	UNAVAILABLE
 NSIndexPath.hash
 NSIndexPath.index
 NSIndexPath.init
@@ -4287,7 +4297,7 @@ NSOrderedSet.set
 NSOrderedSet.sortedArray
 NSOrderedSet.subscript
 NSOrderedSet.supportsSecureCoding
-NSOrthography.
+NSOrthography.	UNAVAILABLE
 NSOrthography.alLScripts	UNAVAILABLE
 NSOrthography.allLanguages	UNAVAILABLE
 NSOrthography.copy
@@ -4320,10 +4330,10 @@ NSPredicate.
 NSPredicate.allowEvaluation	UNAVAILABLE
 NSPredicate.copy
 NSPredicate.evaluate
-NSPredicate.init
 NSPredicate.init	UNAVAILABLE
+NSPredicate.init
 NSPredicate.isEqual
-NSPredicate.predicateFormat
+NSPredicate.predicateFormat	UNAVAILABLE
 NSPredicate.withSubstitutionVariables	UNAVAILABLE
 NSRange.==
 NSRange.contains
@@ -4452,7 +4462,7 @@ NSString.appendingPathExtension
 NSString.applyingTransform
 NSString.availableStringEncodings
 NSString.boolValue
-NSString.cString
+NSString.cString	UNAVAILABLE
 NSString.canBeConverted
 NSString.capitalized
 NSString.caseInsensitiveCompare
@@ -4535,7 +4545,7 @@ NSString.supportsSecureCoding
 NSString.trimmingCharacters
 NSString.unixPath
 NSString.uppercased
-NSString.utf8String
+NSString.utf8String	UNAVAILABLE
 NSString.write
 NSString.EncodingConversionOptions.
 NSString.EncodingConversionOptions.allowLossy
@@ -4802,8 +4812,8 @@ NotificationCenter._addObserver
 NotificationCenter._post
 NotificationCenter._removeObserver
 NotificationCenter.`default`
-NotificationCenter.addObserver	UNAVAILABLE
 NotificationCenter.addObserver
+NotificationCenter.addObserver	UNAVAILABLE
 NotificationCenter.description
 NotificationCenter.init
 NotificationCenter.messages
@@ -5138,7 +5148,7 @@ PersonNameComponents.namePrefix
 PersonNameComponents.nameSuffix
 PersonNameComponents.nickname
 PersonNameComponents.phoneticRepresentation
-PersonNameComponentsFormatter.
+PersonNameComponentsFormatter.	UNAVAILABLE
 PersonNameComponentsFormatter.annotatedString	UNAVAILABLE
 PersonNameComponentsFormatter.init	UNAVAILABLE
 PersonNameComponentsFormatter.isPhonetic
@@ -5594,7 +5604,7 @@ PredicateExpressions.VariableID.encode
 PredicateExpressions.VariableID.init
 Process.
 Process.arguments
-Process.currentDirectoryPath
+Process.currentDirectoryPath	UNAVAILABLE
 Process.currentDirectoryURL
 Process.didTerminateNotification
 Process.environment
@@ -5602,9 +5612,9 @@ Process.executableURL
 Process.init
 Process.interrupt
 Process.isRunning
-Process.launch
-Process.launchPath
-Process.launchedProcess
+Process.launch	UNAVAILABLE
+Process.launchPath	UNAVAILABLE
+Process.launchedProcess	UNAVAILABLE
 Process.processHandle
 Process.processIdentifier
 Process.qualityOfService
@@ -5921,8 +5931,8 @@ Set._unconditionallyBridgeFromObjectiveC
 Slice.Regions
 Slice.regions
 Slice.withUnsafeBytes
-SocketPort.
 SocketPort.	UNAVAILABLE
+SocketPort.
 SocketPort.`protocol`
 SocketPort.address
 SocketPort.delegate
@@ -6029,6 +6039,7 @@ String._unconditionallyBridgeFromObjectiveC
 String.availableStringEncodings
 String.data
 String.defaultCStringEncoding
+String.init	UNAVAILABLE
 String.init
 String.localizedName
 String.localizedNameOfStringEncoding	UNAVAILABLE
@@ -6144,10 +6155,10 @@ StringProtocol.getBytes	UNAVAILABLE
 StringProtocol.getBytes
 StringProtocol.getCString
 StringProtocol.getFileSystemRepresentation	UNAVAILABLE
-StringProtocol.getLineStart
 StringProtocol.getLineStart	UNAVAILABLE
-StringProtocol.getParagraphStart
+StringProtocol.getLineStart
 StringProtocol.getParagraphStart	UNAVAILABLE
+StringProtocol.getParagraphStart
 StringProtocol.hash
 StringProtocol.lastPathComponent	UNAVAILABLE
 StringProtocol.lengthOfBytes
@@ -6346,7 +6357,7 @@ URL.cachesDirectory
 URL.checkPromisedItemIsReachable
 URL.checkResourceIsReachable
 URL.currentDirectory
-URL.customPlaygroundQuickLook
+URL.customPlaygroundQuickLook	UNAVAILABLE
 URL.dataRepresentation
 URL.debugDescription
 URL.deleteLastPathComponent
@@ -6572,7 +6583,7 @@ URLProtectionSpace.`protocol`
 URLProtectionSpace.authenticationMethod
 URLProtectionSpace.copy
 URLProtectionSpace.description
-URLProtectionSpace.distinguishedNames
+URLProtectionSpace.distinguishedNames	UNAVAILABLE
 URLProtectionSpace.host
 URLProtectionSpace.init
 URLProtectionSpace.isProxy
@@ -6886,8 +6897,8 @@ URLSession.downloadTask
 URLSession.finishTasksAndInvalidate
 URLSession.flush
 URLSession.getAllTasks
-URLSession.getTasksWithCompletionHandler	UNAVAILABLE
 URLSession.getTasksWithCompletionHandler
+URLSession.getTasksWithCompletionHandler	UNAVAILABLE
 URLSession.init
 URLSession.invalidateAndCancel
 URLSession.reset
@@ -6914,7 +6925,7 @@ URLSessionConfiguration.httpMaximumConnectionsPerHost
 URLSessionConfiguration.httpShouldSetCookies
 URLSessionConfiguration.httpShouldUsePipelining
 URLSessionConfiguration.identifier
-URLSessionConfiguration.init
+URLSessionConfiguration.init	UNAVAILABLE
 URLSessionConfiguration.isDiscretionary
 URLSessionConfiguration.multipathServiceType	UNAVAILABLE
 URLSessionConfiguration.networkServiceType
@@ -6960,7 +6971,7 @@ URLSessionTask.countOfBytesSent
 URLSessionTask.currentRequest
 URLSessionTask.defaultPriority
 URLSessionTask.delegate
-URLSessionTask.earliestBeginDate
+URLSessionTask.earliestBeginDate	UNAVAILABLE
 URLSessionTask.error
 URLSessionTask.highPriority
 URLSessionTask.init
@@ -7477,6 +7488,7 @@ XMLNode.element
 XMLNode.endIndex
 XMLNode.index
 XMLNode.init
+XMLNode.init	UNAVAILABLE
 XMLNode.kind
 XMLNode.level
 XMLNode.localName

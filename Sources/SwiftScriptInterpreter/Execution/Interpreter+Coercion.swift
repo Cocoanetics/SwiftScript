@@ -160,7 +160,7 @@ extension Interpreter {
         // wording swiftc emits.
         if let identType = type.as(IdentifierTypeSyntax.self),
            identType.name.text == "Set",
-           let element = identType.genericArgumentClause?.arguments.first?.argument.as(TypeSyntax.self),
+           let element = identType.genericArgumentClause?.arguments.first.map({ TypeSyntax($0.argument) }),
            case .array(let elements) = value
         {
             let elementSpelling = element.description.trimmingCharacters(in: .whitespaces)
@@ -321,9 +321,7 @@ extension Interpreter {
             // whether `Set` itself is bridged.
             if let args = ident.genericArgumentClause {
                 for arg in args.arguments {
-                    if let typeArg = arg.argument.as(TypeSyntax.self) {
-                        try validateType(typeArg)
-                    }
+                    try validateType(TypeSyntax(arg.argument))
                 }
             }
             let name = ident.name.text
