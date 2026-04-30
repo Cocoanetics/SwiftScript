@@ -5,7 +5,6 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
     nonisolated(unsafe) static let stringEncoding: [String: Bridge] = [
     "static let String.Encoding.ascii": .staticValue(boxOpaque(String.Encoding.ascii, typeName: "String.Encoding")),
@@ -41,8 +40,3 @@ extension FoundationBridges {
     },
     ]
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let stringEncoding: [String: Bridge] = [:]
-}
-#endif

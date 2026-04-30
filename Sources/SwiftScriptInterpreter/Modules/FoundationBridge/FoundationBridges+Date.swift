@@ -8,6 +8,14 @@ import FoundationNetworking
 extension FoundationBridges {
     nonisolated(unsafe) static let date: [String: Bridge] = {
         var d: [String: Bridge] = [
+    "func Date.formatted()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("Date.formatted: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
+        return .string(recv.formatted())
+    },
+    "static let Date.timeIntervalBetween1970AndReferenceDate": .staticValue(.double(Date.timeIntervalBetween1970AndReferenceDate)),
     "static let Date.timeIntervalSinceReferenceDate": .staticValue(.double(Date.timeIntervalSinceReferenceDate)),
     "init Date()": .`init` { args in
         guard args.count == 0 else {
@@ -29,9 +37,21 @@ extension FoundationBridges {
     },
     "static let Date.distantFuture": .staticValue(boxOpaque(Date.distantFuture, typeName: "Date")),
     "static let Date.distantPast": .staticValue(boxOpaque(Date.distantPast, typeName: "Date")),
+    "static let Date.now": .staticValue(boxOpaque(Date.now, typeName: "Date")),
+    "var Date.debugDescription: String": .computed { receiver in
+        let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
+        return .string(recv.debugDescription)
+    },
     "var Date.description: String": .computed { receiver in
         let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
         return .string(recv.description)
+    },
+    "func Date.ISO8601Format()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.ISO8601Format: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
+        return .string(recv.ISO8601Format(try unboxOpaque(args[0], as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")))
     },
     "init Date(timeIntervalSinceNow:)": .`init` { args in
         guard args.count == 1 else {
@@ -65,6 +85,20 @@ extension FoundationBridges {
         let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
         return boxOpaque(recv.addingTimeInterval(try toDouble(args[0])), typeName: "Date")
     },
+    "func Date.distance()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.distance: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
+        return .double(recv.distance(to: try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
+    },
+    "func Date.advanced()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.advanced: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
+        return boxOpaque(recv.advanced(by: try toDouble(args[0])), typeName: "Date")
+    },
     "init Date(timeInterval:since:)": .`init` { args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("init Date(timeInterval:since:): expected 2 argument(s), got \(args.count)")
@@ -73,43 +107,9 @@ extension FoundationBridges {
     },
         ]
         #if canImport(Darwin)
-    d["func Date.formatted()"] = .method { receiver, args in
-        guard args.count == 0 else {
-            throw RuntimeError.invalid("Date.formatted: expected 0 argument(s), got \(args.count)")
-        }
-        let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
-        return .string(recv.formatted())
-    }
-    d["static let Date.timeIntervalBetween1970AndReferenceDate"] = .staticValue(.double(Date.timeIntervalBetween1970AndReferenceDate))
-    d["static let Date.now"] = .staticValue(boxOpaque(Date.now, typeName: "Date"))
     d["var Date.hashValue: Int"] = .computed { receiver in
         let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
         return .int(recv.hashValue)
-    }
-    d["var Date.debugDescription: String"] = .computed { receiver in
-        let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
-        return .string(recv.debugDescription)
-    }
-    d["func Date.ISO8601Format()"] = .method { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("Date.ISO8601Format: expected 1 argument(s), got \(args.count)")
-        }
-        let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
-        return .string(recv.ISO8601Format(try unboxOpaque(args[0], as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")))
-    }
-    d["func Date.distance()"] = .method { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("Date.distance: expected 1 argument(s), got \(args.count)")
-        }
-        let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
-        return .double(recv.distance(to: try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
-    }
-    d["func Date.advanced()"] = .method { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("Date.advanced: expected 1 argument(s), got \(args.count)")
-        }
-        let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
-        return boxOpaque(recv.advanced(by: try toDouble(args[0])), typeName: "Date")
     }
         #endif
         return d

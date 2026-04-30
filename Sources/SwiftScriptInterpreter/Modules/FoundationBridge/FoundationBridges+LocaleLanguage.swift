@@ -5,13 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let localeLanguage: [String: Bridge] = [
-    "var Locale.Language.hashValue: Int": .computed { receiver in
-        let recv: Locale.Language = try unboxOpaque(receiver, as: Locale.Language.self, typeName: "Locale.Language")
-        return .int(recv.hashValue)
-    },
+    nonisolated(unsafe) static let localeLanguage: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Locale.Language.parent: Locale.Language?": .computed { receiver in
         let recv: Locale.Language = try unboxOpaque(receiver, as: Locale.Language.self, typeName: "Locale.Language")
         if let _v = recv.parent {
@@ -68,10 +64,13 @@ extension FoundationBridges {
         }
         return boxOpaque(Locale.Language(identifier: try unboxString(args[0])), typeName: "Locale.Language")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var Locale.Language.hashValue: Int"] = .computed { receiver in
+        let recv: Locale.Language = try unboxOpaque(receiver, as: Locale.Language.self, typeName: "Locale.Language")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let localeLanguage: [String: Bridge] = [:]
-}
-#endif

@@ -5,20 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let stringStyle: [String: Bridge] = [
-    "var StringStyle.hashValue: Int": .computed { receiver in
-        let recv: StringStyle = try unboxOpaque(receiver, as: StringStyle.self, typeName: "StringStyle")
-        return .int(recv.hashValue)
-    },
-    "func StringStyle.locale()": .method { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("StringStyle.locale: expected 1 argument(s), got \(args.count)")
-        }
-        let recv: StringStyle = try unboxOpaque(receiver, as: StringStyle.self, typeName: "StringStyle")
-        return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "StringStyle")
-    },
+    nonisolated(unsafe) static let stringStyle: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "func StringStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("StringStyle.format: expected 1 argument(s), got \(args.count)")
@@ -26,10 +15,20 @@ extension FoundationBridges {
         let recv: StringStyle = try unboxOpaque(receiver, as: StringStyle.self, typeName: "StringStyle")
         return .string(recv.format(try unboxString(args[0])))
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var StringStyle.hashValue: Int"] = .computed { receiver in
+        let recv: StringStyle = try unboxOpaque(receiver, as: StringStyle.self, typeName: "StringStyle")
+        return .int(recv.hashValue)
+    }
+    d["func StringStyle.locale()"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("StringStyle.locale: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: StringStyle = try unboxOpaque(receiver, as: StringStyle.self, typeName: "StringStyle")
+        return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "StringStyle")
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let stringStyle: [String: Bridge] = [:]
-}
-#endif

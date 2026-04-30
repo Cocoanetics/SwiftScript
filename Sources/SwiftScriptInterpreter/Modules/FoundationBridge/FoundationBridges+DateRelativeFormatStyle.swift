@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateRelativeFormatStyle: [String: Bridge] = [
+    nonisolated(unsafe) static let dateRelativeFormatStyle: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Date.RelativeFormatStyle.capitalizationContext: FormatStyleCapitalizationContext": .computed { receiver in
         let recv: Date.RelativeFormatStyle = try unboxOpaque(receiver, as: Date.RelativeFormatStyle.self, typeName: "Date.RelativeFormatStyle")
         return boxOpaque(recv.capitalizationContext, typeName: "FormatStyleCapitalizationContext")
@@ -19,10 +19,6 @@ extension FoundationBridges {
     "var Date.RelativeFormatStyle.calendar: Calendar": .computed { receiver in
         let recv: Date.RelativeFormatStyle = try unboxOpaque(receiver, as: Date.RelativeFormatStyle.self, typeName: "Date.RelativeFormatStyle")
         return boxOpaque(recv.calendar, typeName: "Calendar")
-    },
-    "var Date.RelativeFormatStyle.hashValue: Int": .computed { receiver in
-        let recv: Date.RelativeFormatStyle = try unboxOpaque(receiver, as: Date.RelativeFormatStyle.self, typeName: "Date.RelativeFormatStyle")
-        return .int(recv.hashValue)
     },
     "func Date.RelativeFormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
@@ -44,10 +40,13 @@ extension FoundationBridges {
         }
         return boxOpaque(Date.RelativeFormatStyle(locale: try unboxOpaque(args[0], as: Locale.self, typeName: "Locale"), calendar: try unboxOpaque(args[1], as: Calendar.self, typeName: "Calendar"), capitalizationContext: try unboxOpaque(args[2], as: FormatStyleCapitalizationContext.self, typeName: "FormatStyleCapitalizationContext")), typeName: "Date.RelativeFormatStyle")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var Date.RelativeFormatStyle.hashValue: Int"] = .computed { receiver in
+        let recv: Date.RelativeFormatStyle = try unboxOpaque(receiver, as: Date.RelativeFormatStyle.self, typeName: "Date.RelativeFormatStyle")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let dateRelativeFormatStyle: [String: Bridge] = [:]
-}
-#endif

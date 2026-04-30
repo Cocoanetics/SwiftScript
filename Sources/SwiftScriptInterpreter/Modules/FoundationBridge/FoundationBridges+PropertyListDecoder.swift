@@ -5,7 +5,6 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
     nonisolated(unsafe) static let propertyListDecoder: [String: Bridge] = [
     "init PropertyListDecoder()": .`init` { args in
@@ -16,8 +15,3 @@ extension FoundationBridges {
     },
     ]
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let propertyListDecoder: [String: Bridge] = [:]
-}
-#endif

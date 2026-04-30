@@ -5,18 +5,14 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let attributeContainer: [String: Bridge] = [
+    nonisolated(unsafe) static let attributeContainer: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "init AttributeContainer()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init AttributeContainer(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(AttributeContainer(), typeName: "AttributeContainer")
-    },
-    "var AttributeContainer.hashValue: Int": .computed { receiver in
-        let recv: AttributeContainer = try unboxOpaque(receiver, as: AttributeContainer.self, typeName: "AttributeContainer")
-        return .int(recv.hashValue)
     },
     "var AttributeContainer.description: String": .computed { receiver in
         let recv: AttributeContainer = try unboxOpaque(receiver, as: AttributeContainer.self, typeName: "AttributeContainer")
@@ -36,10 +32,13 @@ extension FoundationBridges {
         let recv: AttributeContainer = try unboxOpaque(receiver, as: AttributeContainer.self, typeName: "AttributeContainer")
         return boxOpaque(recv.merging(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributeContainer")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var AttributeContainer.hashValue: Int"] = .computed { receiver in
+        let recv: AttributeContainer = try unboxOpaque(receiver, as: AttributeContainer.self, typeName: "AttributeContainer")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let attributeContainer: [String: Bridge] = [:]
-}
-#endif

@@ -5,7 +5,6 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
     nonisolated(unsafe) static let attributedStringIndex: [String: Bridge] = [
     "func AttributedString.Index.isValid()": .method { receiver, args in
@@ -17,8 +16,3 @@ extension FoundationBridges {
     },
     ]
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let attributedStringIndex: [String: Bridge] = [:]
-}
-#endif

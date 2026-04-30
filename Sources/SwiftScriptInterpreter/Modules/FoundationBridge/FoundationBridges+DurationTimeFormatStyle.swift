@@ -5,16 +5,12 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let durationTimeFormatStyle: [String: Bridge] = [
+    nonisolated(unsafe) static let durationTimeFormatStyle: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Duration.TimeFormatStyle.locale: Locale": .computed { receiver in
         let recv: Duration.TimeFormatStyle = try unboxOpaque(receiver, as: Duration.TimeFormatStyle.self, typeName: "Duration.TimeFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
-    },
-    "var Duration.TimeFormatStyle.hashValue: Int": .computed { receiver in
-        let recv: Duration.TimeFormatStyle = try unboxOpaque(receiver, as: Duration.TimeFormatStyle.self, typeName: "Duration.TimeFormatStyle")
-        return .int(recv.hashValue)
     },
     "var Duration.TimeFormatStyle.grouping: NumberFormatStyleConfiguration.Grouping": .computed { receiver in
         let recv: Duration.TimeFormatStyle = try unboxOpaque(receiver, as: Duration.TimeFormatStyle.self, typeName: "Duration.TimeFormatStyle")
@@ -51,10 +47,13 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var Duration.TimeFormatStyle.hashValue: Int"] = .computed { receiver in
+        let recv: Duration.TimeFormatStyle = try unboxOpaque(receiver, as: Duration.TimeFormatStyle.self, typeName: "Duration.TimeFormatStyle")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let durationTimeFormatStyle: [String: Bridge] = [:]
-}
-#endif

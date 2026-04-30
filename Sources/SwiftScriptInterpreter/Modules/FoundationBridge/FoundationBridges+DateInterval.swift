@@ -8,6 +8,14 @@ import FoundationNetworking
 extension FoundationBridges {
     nonisolated(unsafe) static let dateInterval: [String: Bridge] = {
         var d: [String: Bridge] = [
+    "var DateInterval.start: Date": .computed { receiver in
+        let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
+        return boxOpaque(recv.start, typeName: "Date")
+    },
+    "var DateInterval.end: Date": .computed { receiver in
+        let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
+        return boxOpaque(recv.end, typeName: "Date")
+    },
     "var DateInterval.duration: Double": .computed { receiver in
         let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
         return .double(recv.duration)
@@ -17,6 +25,14 @@ extension FoundationBridges {
             throw RuntimeError.invalid("init DateInterval(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(DateInterval(), typeName: "DateInterval")
+    },
+    "var DateInterval.description: String": .computed { receiver in
+        let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
+        return .string(recv.description)
+    },
+    "var DateInterval.debugDescription: String": .computed { receiver in
+        let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
+        return .string(recv.debugDescription)
     },
     "func DateInterval.intersects()": .method { receiver, args in
         guard args.count == 1 else {
@@ -56,25 +72,9 @@ extension FoundationBridges {
     },
         ]
         #if canImport(Darwin)
-    d["var DateInterval.start: Date"] = .computed { receiver in
-        let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
-        return boxOpaque(recv.start, typeName: "Date")
-    }
-    d["var DateInterval.end: Date"] = .computed { receiver in
-        let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
-        return boxOpaque(recv.end, typeName: "Date")
-    }
     d["var DateInterval.hashValue: Int"] = .computed { receiver in
         let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
         return .int(recv.hashValue)
-    }
-    d["var DateInterval.description: String"] = .computed { receiver in
-        let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
-        return .string(recv.description)
-    }
-    d["var DateInterval.debugDescription: String"] = .computed { receiver in
-        let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
-        return .string(recv.debugDescription)
     }
         #endif
         return d

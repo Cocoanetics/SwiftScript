@@ -5,22 +5,14 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let byteCountFormatStyleUnits: [String: Bridge] = [
+    nonisolated(unsafe) static let byteCountFormatStyleUnits: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "init ByteCountFormatStyle.Units()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init ByteCountFormatStyle.Units(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(ByteCountFormatStyle.Units(), typeName: "ByteCountFormatStyle.Units")
-    },
-    "var ByteCountFormatStyle.Units.hashValue: Int": .computed { receiver in
-        let recv: ByteCountFormatStyle.Units = try unboxOpaque(receiver, as: ByteCountFormatStyle.Units.self, typeName: "ByteCountFormatStyle.Units")
-        return .int(recv.hashValue)
-    },
-    "var ByteCountFormatStyle.Units.isEmpty: Bool": .computed { receiver in
-        let recv: ByteCountFormatStyle.Units = try unboxOpaque(receiver, as: ByteCountFormatStyle.Units.self, typeName: "ByteCountFormatStyle.Units")
-        return .bool(recv.isEmpty)
     },
     "static let ByteCountFormatStyle.Units.bytes": .staticValue(boxOpaque(ByteCountFormatStyle.Units.bytes, typeName: "ByteCountFormatStyle.Units")),
     "static let ByteCountFormatStyle.Units.kb": .staticValue(boxOpaque(ByteCountFormatStyle.Units.kb, typeName: "ByteCountFormatStyle.Units")),
@@ -32,7 +24,6 @@ extension FoundationBridges {
     "static let ByteCountFormatStyle.Units.zb": .staticValue(boxOpaque(ByteCountFormatStyle.Units.zb, typeName: "ByteCountFormatStyle.Units")),
     "static let ByteCountFormatStyle.Units.ybOrHigher": .staticValue(boxOpaque(ByteCountFormatStyle.Units.ybOrHigher, typeName: "ByteCountFormatStyle.Units")),
     "static let ByteCountFormatStyle.Units.all": .staticValue(boxOpaque(ByteCountFormatStyle.Units.all, typeName: "ByteCountFormatStyle.Units")),
-    "static let ByteCountFormatStyle.Units.default": .staticValue(boxOpaque(ByteCountFormatStyle.Units.default, typeName: "ByteCountFormatStyle.Units")),
         "init ByteCountFormatStyle.Units(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("ByteCountFormatStyle.Units(arrayLiteral:): expected array literal")
@@ -46,10 +37,18 @@ extension FoundationBridges {
             }
             return boxOpaque(result, typeName: "ByteCountFormatStyle.Units")
         },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var ByteCountFormatStyle.Units.hashValue: Int"] = .computed { receiver in
+        let recv: ByteCountFormatStyle.Units = try unboxOpaque(receiver, as: ByteCountFormatStyle.Units.self, typeName: "ByteCountFormatStyle.Units")
+        return .int(recv.hashValue)
+    }
+    d["var ByteCountFormatStyle.Units.isEmpty: Bool"] = .computed { receiver in
+        let recv: ByteCountFormatStyle.Units = try unboxOpaque(receiver, as: ByteCountFormatStyle.Units.self, typeName: "ByteCountFormatStyle.Units")
+        return .bool(recv.isEmpty)
+    }
+    d["static let ByteCountFormatStyle.Units.default"] = .staticValue(boxOpaque(ByteCountFormatStyle.Units.default, typeName: "ByteCountFormatStyle.Units"))
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let byteCountFormatStyleUnits: [String: Bridge] = [:]
-}
-#endif

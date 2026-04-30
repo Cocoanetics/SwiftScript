@@ -5,16 +5,12 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let currencyFormatStyleConfigurationSignDisplayStrategy: [String: Bridge] = [
+    nonisolated(unsafe) static let currencyFormatStyleConfigurationSignDisplayStrategy: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "static let CurrencyFormatStyleConfiguration.SignDisplayStrategy.automatic": .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.SignDisplayStrategy.automatic, typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy")),
     "static let CurrencyFormatStyleConfiguration.SignDisplayStrategy.never": .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.SignDisplayStrategy.never, typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy")),
     "static let CurrencyFormatStyleConfiguration.SignDisplayStrategy.accounting": .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.SignDisplayStrategy.accounting, typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy")),
-    "var CurrencyFormatStyleConfiguration.SignDisplayStrategy.hashValue: Int": .computed { receiver in
-        let recv: CurrencyFormatStyleConfiguration.SignDisplayStrategy = try unboxOpaque(receiver, as: CurrencyFormatStyleConfiguration.SignDisplayStrategy.self, typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy")
-        return .int(recv.hashValue)
-    },
     "static func CurrencyFormatStyleConfiguration.SignDisplayStrategy.always()": .staticMethod { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("CurrencyFormatStyleConfiguration.SignDisplayStrategy.always: expected 1 argument(s), got \(args.count)")
@@ -27,10 +23,13 @@ extension FoundationBridges {
         }
         return boxOpaque(CurrencyFormatStyleConfiguration.SignDisplayStrategy.accountingAlways(showZero: try unboxBool(args[0])), typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var CurrencyFormatStyleConfiguration.SignDisplayStrategy.hashValue: Int"] = .computed { receiver in
+        let recv: CurrencyFormatStyleConfiguration.SignDisplayStrategy = try unboxOpaque(receiver, as: CurrencyFormatStyleConfiguration.SignDisplayStrategy.self, typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let currencyFormatStyleConfigurationSignDisplayStrategy: [String: Bridge] = [:]
-}
-#endif

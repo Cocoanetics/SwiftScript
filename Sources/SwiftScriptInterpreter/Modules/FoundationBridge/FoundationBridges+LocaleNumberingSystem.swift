@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let localeNumberingSystem: [String: Bridge] = [
+    nonisolated(unsafe) static let localeNumberingSystem: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Locale.NumberingSystem.identifier: String": .computed { receiver in
         let recv: Locale.NumberingSystem = try unboxOpaque(receiver, as: Locale.NumberingSystem.self, typeName: "Locale.NumberingSystem")
         return .string(recv.identifier)
@@ -15,10 +15,6 @@ extension FoundationBridges {
     "var Locale.NumberingSystem.debugDescription: String": .computed { receiver in
         let recv: Locale.NumberingSystem = try unboxOpaque(receiver, as: Locale.NumberingSystem.self, typeName: "Locale.NumberingSystem")
         return .string(recv.debugDescription)
-    },
-    "var Locale.NumberingSystem.hashValue: Int": .computed { receiver in
-        let recv: Locale.NumberingSystem = try unboxOpaque(receiver, as: Locale.NumberingSystem.self, typeName: "Locale.NumberingSystem")
-        return .int(recv.hashValue)
     },
     "init Locale.NumberingSystem(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
@@ -32,10 +28,13 @@ extension FoundationBridges {
         }
         return boxOpaque(Locale.NumberingSystem(try unboxString(args[0])), typeName: "Locale.NumberingSystem")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var Locale.NumberingSystem.hashValue: Int"] = .computed { receiver in
+        let recv: Locale.NumberingSystem = try unboxOpaque(receiver, as: Locale.NumberingSystem.self, typeName: "Locale.NumberingSystem")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let localeNumberingSystem: [String: Bridge] = [:]
-}
-#endif

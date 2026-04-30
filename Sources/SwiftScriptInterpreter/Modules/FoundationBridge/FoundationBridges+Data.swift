@@ -14,6 +14,10 @@ extension FoundationBridges {
         }
         return boxOpaque(Data(), typeName: "Data")
     },
+    "var Data.count: Int": .computed { receiver in
+        let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
+        return .int(recv.count)
+    },
     "var Data.description: String": .computed { receiver in
         let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
         return .string(recv.description)
@@ -33,6 +37,13 @@ extension FoundationBridges {
             throw RuntimeError.invalid("init Data(count:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Data(count: try unboxInt(args[0])), typeName: "Data")
+    },
+    "func Data.advanced()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Data.advanced: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
+        return boxOpaque(recv.advanced(by: try unboxInt(args[0])), typeName: "Data")
     },
     "func Data.base64EncodedString()": .method { receiver, args in
         guard args.count == 0 else {
@@ -95,20 +106,9 @@ extension FoundationBridges {
         let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
         return .int(recv.underestimatedCount)
     }
-    d["var Data.count: Int"] = .computed { receiver in
-        let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
-        return .int(recv.count)
-    }
     d["var Data.hashValue: Int"] = .computed { receiver in
         let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
         return .int(recv.hashValue)
-    }
-    d["func Data.advanced()"] = .method { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("Data.advanced: expected 1 argument(s), got \(args.count)")
-        }
-        let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
-        return boxOpaque(recv.advanced(by: try unboxInt(args[0])), typeName: "Data")
     }
         #endif
         return d

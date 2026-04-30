@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let localeSubdivision: [String: Bridge] = [
+    nonisolated(unsafe) static let localeSubdivision: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Locale.Subdivision.identifier: String": .computed { receiver in
         let recv: Locale.Subdivision = try unboxOpaque(receiver, as: Locale.Subdivision.self, typeName: "Locale.Subdivision")
         return .string(recv.identifier)
@@ -15,10 +15,6 @@ extension FoundationBridges {
     "var Locale.Subdivision.debugDescription: String": .computed { receiver in
         let recv: Locale.Subdivision = try unboxOpaque(receiver, as: Locale.Subdivision.self, typeName: "Locale.Subdivision")
         return .string(recv.debugDescription)
-    },
-    "var Locale.Subdivision.hashValue: Int": .computed { receiver in
-        let recv: Locale.Subdivision = try unboxOpaque(receiver, as: Locale.Subdivision.self, typeName: "Locale.Subdivision")
-        return .int(recv.hashValue)
     },
     "init Locale.Subdivision(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
@@ -38,10 +34,13 @@ extension FoundationBridges {
         }
         return boxOpaque(Locale.Subdivision.subdivision(for: try unboxOpaque(args[0], as: Locale.Region.self, typeName: "Locale.Region")), typeName: "Locale.Subdivision")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var Locale.Subdivision.hashValue: Int"] = .computed { receiver in
+        let recv: Locale.Subdivision = try unboxOpaque(receiver, as: Locale.Subdivision.self, typeName: "Locale.Subdivision")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let localeSubdivision: [String: Bridge] = [:]
-}
-#endif

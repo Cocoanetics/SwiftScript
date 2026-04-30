@@ -102,6 +102,13 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+    "var URLComponents.encodedHost: String?": .computed { receiver in
+        let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+        if let _v = recv.encodedHost {
+            return .optional(.string(_v))
+        }
+        return .optional(nil)
+    },
     "var URLComponents.percentEncodedPath: String": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         return .string(recv.percentEncodedPath)
@@ -119,6 +126,14 @@ extension FoundationBridges {
             return .optional(.string(_v))
         }
         return .optional(nil)
+    },
+    "var URLComponents.description: String": .computed { receiver in
+        let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+        return .string(recv.description)
+    },
+    "var URLComponents.debugDescription: String": .computed { receiver in
+        let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+        return .string(recv.debugDescription)
     },
     "init URLComponents(string:)": .`init` { args in
         guard args.count == 1 else {
@@ -149,24 +164,9 @@ extension FoundationBridges {
     },
         ]
         #if canImport(Darwin)
-    d["var URLComponents.encodedHost: String?"] = .computed { receiver in
-        let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
-        if let _v = recv.encodedHost {
-            return .optional(.string(_v))
-        }
-        return .optional(nil)
-    }
     d["var URLComponents.hashValue: Int"] = .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         return .int(recv.hashValue)
-    }
-    d["var URLComponents.description: String"] = .computed { receiver in
-        let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
-        return .string(recv.description)
-    }
-    d["var URLComponents.debugDescription: String"] = .computed { receiver in
-        let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
-        return .string(recv.debugDescription)
     }
         #endif
         return d

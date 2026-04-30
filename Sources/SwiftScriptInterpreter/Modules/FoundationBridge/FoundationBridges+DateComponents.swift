@@ -113,6 +113,13 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+    "var DateComponents.dayOfYear: Int?": .computed { receiver in
+        let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+        if let _v = recv.dayOfYear {
+            return .optional(.int(_v))
+        }
+        return .optional(nil)
+    },
     "var DateComponents.yearForWeekOfYear: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.yearForWeekOfYear {
@@ -123,6 +130,13 @@ extension FoundationBridges {
     "var DateComponents.isLeapMonth: Bool?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.isLeapMonth {
+            return .optional(.bool(_v))
+        }
+        return .optional(nil)
+    },
+    "var DateComponents.isRepeatedDay: Bool?": .computed { receiver in
+        let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+        if let _v = recv.isRepeatedDay {
             return .optional(.bool(_v))
         }
         return .optional(nil)
@@ -138,6 +152,14 @@ extension FoundationBridges {
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         return .bool(recv.isValidDate)
     },
+    "var DateComponents.description: String": .computed { receiver in
+        let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+        return .string(recv.description)
+    },
+    "var DateComponents.debugDescription: String": .computed { receiver in
+        let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+        return .string(recv.debugDescription)
+    },
     "func DateComponents.isValidDate()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("DateComponents.isValidDate: expected 1 argument(s), got \(args.count)")
@@ -147,31 +169,9 @@ extension FoundationBridges {
     },
         ]
         #if canImport(Darwin)
-    d["var DateComponents.dayOfYear: Int?"] = .computed { receiver in
-        let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
-        if let _v = recv.dayOfYear {
-            return .optional(.int(_v))
-        }
-        return .optional(nil)
-    }
-    d["var DateComponents.isRepeatedDay: Bool?"] = .computed { receiver in
-        let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
-        if let _v = recv.isRepeatedDay {
-            return .optional(.bool(_v))
-        }
-        return .optional(nil)
-    }
     d["var DateComponents.hashValue: Int"] = .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         return .int(recv.hashValue)
-    }
-    d["var DateComponents.description: String"] = .computed { receiver in
-        let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
-        return .string(recv.description)
-    }
-    d["var DateComponents.debugDescription: String"] = .computed { receiver in
-        let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
-        return .string(recv.debugDescription)
     }
         #endif
         return d

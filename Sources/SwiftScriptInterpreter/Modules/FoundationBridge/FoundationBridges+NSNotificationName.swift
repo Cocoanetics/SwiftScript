@@ -27,11 +27,17 @@ extension FoundationBridges {
     d["static let NSNotification.Name.NSFileHandleReadToEndOfFileCompletion"] = .staticValue(boxOpaque(NSNotification.Name.NSFileHandleReadToEndOfFileCompletion, typeName: "NSNotification.Name"))
     d["static let NSNotification.Name.NSFileHandleConnectionAccepted"] = .staticValue(boxOpaque(NSNotification.Name.NSFileHandleConnectionAccepted, typeName: "NSNotification.Name"))
     d["static let NSNotification.Name.NSFileHandleDataAvailable"] = .staticValue(boxOpaque(NSNotification.Name.NSFileHandleDataAvailable, typeName: "NSNotification.Name"))
+    d["static let NSNotification.Name.NSMetadataQueryDidStartGathering"] = .staticValue(boxOpaque(NSNotification.Name.NSMetadataQueryDidStartGathering, typeName: "NSNotification.Name"))
+    d["static let NSNotification.Name.NSMetadataQueryGatheringProgress"] = .staticValue(boxOpaque(NSNotification.Name.NSMetadataQueryGatheringProgress, typeName: "NSNotification.Name"))
+    d["static let NSNotification.Name.NSMetadataQueryDidFinishGathering"] = .staticValue(boxOpaque(NSNotification.Name.NSMetadataQueryDidFinishGathering, typeName: "NSNotification.Name"))
+    d["static let NSNotification.Name.NSMetadataQueryDidUpdate"] = .staticValue(boxOpaque(NSNotification.Name.NSMetadataQueryDidUpdate, typeName: "NSNotification.Name"))
     d["static let NSNotification.Name.NSProcessInfoPowerStateDidChange"] = .staticValue(boxOpaque(NSNotification.Name.NSProcessInfoPowerStateDidChange, typeName: "NSNotification.Name"))
     d["var NSNotification.Name.hashValue: Int"] = .computed { receiver in
         let recv: NSNotification.Name = try unboxOpaque(receiver, as: NSNotification.Name.self, typeName: "NSNotification.Name")
         return .int(recv.hashValue)
     }
+    d["static let NSNotification.Name.NSUbiquityIdentityDidChange"] = .staticValue(boxOpaque(NSNotification.Name.NSUbiquityIdentityDidChange, typeName: "NSNotification.Name"))
+    d["static let NSNotification.Name.NSHTTPCookieManagerCookiesChanged"] = .staticValue(boxOpaque(NSNotification.Name.NSHTTPCookieManagerCookiesChanged, typeName: "NSNotification.Name"))
     d["static let NSNotification.Name.NSUndoManagerCheckpoint"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerCheckpoint, typeName: "NSNotification.Name"))
     d["static let NSNotification.Name.NSUndoManagerWillUndoChange"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerWillUndoChange, typeName: "NSNotification.Name"))
     d["static let NSNotification.Name.NSUndoManagerWillRedoChange"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerWillRedoChange, typeName: "NSNotification.Name"))
@@ -40,12 +46,6 @@ extension FoundationBridges {
     d["static let NSNotification.Name.NSUndoManagerDidOpenUndoGroup"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerDidOpenUndoGroup, typeName: "NSNotification.Name"))
     d["static let NSNotification.Name.NSUndoManagerWillCloseUndoGroup"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerWillCloseUndoGroup, typeName: "NSNotification.Name"))
     d["static let NSNotification.Name.NSUndoManagerDidCloseUndoGroup"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerDidCloseUndoGroup, typeName: "NSNotification.Name"))
-    d["static let NSNotification.Name.NSUbiquityIdentityDidChange"] = .staticValue(boxOpaque(NSNotification.Name.NSUbiquityIdentityDidChange, typeName: "NSNotification.Name"))
-    d["static let NSNotification.Name.NSMetadataQueryDidStartGathering"] = .staticValue(boxOpaque(NSNotification.Name.NSMetadataQueryDidStartGathering, typeName: "NSNotification.Name"))
-    d["static let NSNotification.Name.NSMetadataQueryGatheringProgress"] = .staticValue(boxOpaque(NSNotification.Name.NSMetadataQueryGatheringProgress, typeName: "NSNotification.Name"))
-    d["static let NSNotification.Name.NSMetadataQueryDidFinishGathering"] = .staticValue(boxOpaque(NSNotification.Name.NSMetadataQueryDidFinishGathering, typeName: "NSNotification.Name"))
-    d["static let NSNotification.Name.NSMetadataQueryDidUpdate"] = .staticValue(boxOpaque(NSNotification.Name.NSMetadataQueryDidUpdate, typeName: "NSNotification.Name"))
-    d["static let NSNotification.Name.NSHTTPCookieManagerCookiesChanged"] = .staticValue(boxOpaque(NSNotification.Name.NSHTTPCookieManagerCookiesChanged, typeName: "NSNotification.Name"))
     d["static let NSNotification.Name.NSSystemClockDidChange"] = .staticValue(boxOpaque(NSNotification.Name.NSSystemClockDidChange, typeName: "NSNotification.Name"))
         #endif
         return d

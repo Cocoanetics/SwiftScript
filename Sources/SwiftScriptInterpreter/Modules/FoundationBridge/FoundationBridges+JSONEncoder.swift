@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let jSONEncoder: [String: Bridge] = [
+    nonisolated(unsafe) static let jSONEncoder: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var JSONEncoder.outputFormatting: JSONEncoder.OutputFormatting": .computed { receiver in
         let recv: JSONEncoder = try unboxOpaque(receiver, as: JSONEncoder.self, typeName: "JSONEncoder")
         return boxOpaque(recv.outputFormatting, typeName: "JSONEncoder.OutputFormatting")
@@ -22,7 +22,9 @@ extension FoundationBridges {
         }
         return boxOpaque(JSONEncoder(), typeName: "JSONEncoder")
     },
-        "func JSONEncoder.encode<T: Encodable>(_: T) throws -> Data": .method { receiver, args in
+        ]
+        #if canImport(Darwin)
+        d["func JSONEncoder.encode<T: Encodable>(_: T) throws -> Data"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("JSONEncoder.encode: expected 1 argument(s), got \(args.count)")
             }
@@ -32,11 +34,8 @@ extension FoundationBridges {
             } catch {
                 throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
             }
-        },
-    ]
+        }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let jSONEncoder: [String: Bridge] = [:]
-}
-#endif

@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let localeVariant: [String: Bridge] = [
+    nonisolated(unsafe) static let localeVariant: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Locale.Variant.identifier: String": .computed { receiver in
         let recv: Locale.Variant = try unboxOpaque(receiver, as: Locale.Variant.self, typeName: "Locale.Variant")
         return .string(recv.identifier)
@@ -17,10 +17,6 @@ extension FoundationBridges {
         return .string(recv.debugDescription)
     },
     "static let Locale.Variant.posix": .staticValue(boxOpaque(Locale.Variant.posix, typeName: "Locale.Variant")),
-    "var Locale.Variant.hashValue: Int": .computed { receiver in
-        let recv: Locale.Variant = try unboxOpaque(receiver, as: Locale.Variant.self, typeName: "Locale.Variant")
-        return .int(recv.hashValue)
-    },
     "init Locale.Variant(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Variant(stringLiteral:): expected 1 argument(s), got \(args.count)")
@@ -33,10 +29,13 @@ extension FoundationBridges {
         }
         return boxOpaque(Locale.Variant(try unboxString(args[0])), typeName: "Locale.Variant")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var Locale.Variant.hashValue: Int"] = .computed { receiver in
+        let recv: Locale.Variant = try unboxOpaque(receiver, as: Locale.Variant.self, typeName: "Locale.Variant")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let localeVariant: [String: Bridge] = [:]
-}
-#endif

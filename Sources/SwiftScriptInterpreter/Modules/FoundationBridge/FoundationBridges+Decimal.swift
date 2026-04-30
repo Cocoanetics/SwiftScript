@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let decimal: [String: Bridge] = [
+    nonisolated(unsafe) static let decimal: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Decimal.description: String": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .string(recv.description)
@@ -80,10 +80,6 @@ extension FoundationBridges {
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return boxOpaque(recv.nextDown, typeName: "Decimal")
     },
-    "var Decimal.hashValue: Int": .computed { receiver in
-        let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
-        return .int(recv.hashValue)
-    },
     "var Decimal.magnitude: Decimal": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return boxOpaque(recv.magnitude, typeName: "Decimal")
@@ -95,7 +91,6 @@ extension FoundationBridges {
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .string(recv.formatted())
     },
-    "static let Decimal.zero": .staticValue(boxOpaque(Decimal.zero, typeName: "Decimal")),
     "init Decimal()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init Decimal(): expected 0 argument(s), got \(args.count)")
@@ -178,10 +173,14 @@ extension FoundationBridges {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var Decimal.hashValue: Int"] = .computed { receiver in
+        let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
+        return .int(recv.hashValue)
+    }
+    d["static let Decimal.zero"] = .staticValue(boxOpaque(Decimal.zero, typeName: "Decimal"))
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let decimal: [String: Bridge] = [:]
-}
-#endif

@@ -5,13 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let numberFormatStyleConfigurationPrecision: [String: Bridge] = [
-    "var NumberFormatStyleConfiguration.Precision.hashValue: Int": .computed { receiver in
-        let recv: NumberFormatStyleConfiguration.Precision = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.Precision.self, typeName: "NumberFormatStyleConfiguration.Precision")
-        return .int(recv.hashValue)
-    },
+    nonisolated(unsafe) static let numberFormatStyleConfigurationPrecision: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "static func NumberFormatStyleConfiguration.Precision.significantDigits()": .staticMethod { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NumberFormatStyleConfiguration.Precision.significantDigits: expected 1 argument(s), got \(args.count)")
@@ -36,10 +32,13 @@ extension FoundationBridges {
         }
         return boxOpaque(NumberFormatStyleConfiguration.Precision.integerAndFractionLength(integer: try unboxInt(args[0]), fraction: try unboxInt(args[1])), typeName: "NumberFormatStyleConfiguration.Precision")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var NumberFormatStyleConfiguration.Precision.hashValue: Int"] = .computed { receiver in
+        let recv: NumberFormatStyleConfiguration.Precision = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.Precision.self, typeName: "NumberFormatStyleConfiguration.Precision")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let numberFormatStyleConfigurationPrecision: [String: Bridge] = [:]
-}
-#endif

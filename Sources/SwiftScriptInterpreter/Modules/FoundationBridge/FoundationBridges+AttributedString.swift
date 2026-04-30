@@ -18,6 +18,18 @@ extension FoundationBridges {
         }
         return boxOpaque(AttributedString(), typeName: "AttributedString")
     },
+    "var AttributedString.startIndex: AttributedString.Index": .computed { receiver in
+        let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        return boxOpaque(recv.startIndex, typeName: "AttributedString.Index")
+    },
+    "var AttributedString.endIndex: AttributedString.Index": .computed { receiver in
+        let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        return boxOpaque(recv.endIndex, typeName: "AttributedString.Index")
+    },
+    "var AttributedString.runs: AttributedString.Runs": .computed { receiver in
+        let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        return boxOpaque(recv.runs, typeName: "AttributedString.Runs")
+    },
     "init AttributedString(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init AttributedString(_:): expected 1 argument(s), got \(args.count)")
@@ -38,21 +50,9 @@ extension FoundationBridges {
     },
         ]
         #if canImport(Darwin)
-    d["var AttributedString.startIndex: AttributedString.Index"] = .computed { receiver in
-        let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
-        return boxOpaque(recv.startIndex, typeName: "AttributedString.Index")
-    }
-    d["var AttributedString.endIndex: AttributedString.Index"] = .computed { receiver in
-        let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
-        return boxOpaque(recv.endIndex, typeName: "AttributedString.Index")
-    }
     d["var AttributedString.hashValue: Int"] = .computed { receiver in
         let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
         return .int(recv.hashValue)
-    }
-    d["var AttributedString.runs: AttributedString.Runs"] = .computed { receiver in
-        let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
-        return boxOpaque(recv.runs, typeName: "AttributedString.Runs")
     }
     d["func AttributedString.inflected()"] = .method { receiver, args in
         guard args.count == 0 else {

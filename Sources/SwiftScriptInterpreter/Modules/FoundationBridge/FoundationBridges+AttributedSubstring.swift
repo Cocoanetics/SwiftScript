@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let attributedSubstring: [String: Bridge] = [
+    nonisolated(unsafe) static let attributedSubstring: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var AttributedSubstring.description: String": .computed { receiver in
         let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
         return .string(recv.description)
@@ -34,42 +34,41 @@ extension FoundationBridges {
         let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
         return boxOpaque(recv.runs, typeName: "AttributedString.Runs")
     },
-    "var AttributedSubstring.hashValue: Int": .computed { receiver in
+        ]
+        #if canImport(Darwin)
+    d["var AttributedSubstring.hashValue: Int"] = .computed { receiver in
         let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
         return .int(recv.hashValue)
-    },
-    "func AttributedSubstring.settingAttributes()": .method { receiver, args in
+    }
+    d["func AttributedSubstring.settingAttributes()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("AttributedSubstring.settingAttributes: expected 1 argument(s), got \(args.count)")
         }
         let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
         return boxOpaque(recv.settingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
-    },
-    "func AttributedSubstring.index()": .method { receiver, args in
+    }
+    d["func AttributedSubstring.index()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("AttributedSubstring.index: expected 1 argument(s), got \(args.count)")
         }
         let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
         return boxOpaque(recv.index(afterCharacter: try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index")), typeName: "AttributedString.Index")
-    },
-    "func AttributedSubstring.mergingAttributes()": .method { receiver, args in
+    }
+    d["func AttributedSubstring.mergingAttributes()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("AttributedSubstring.mergingAttributes: expected 1 argument(s), got \(args.count)")
         }
         let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
         return boxOpaque(recv.mergingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
-    },
-    "func AttributedSubstring.replacingAttributes()": .method { receiver, args in
+    }
+    d["func AttributedSubstring.replacingAttributes()"] = .method { receiver, args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("AttributedSubstring.replacingAttributes: expected 2 argument(s), got \(args.count)")
         }
         let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
         return boxOpaque(recv.replacingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"), with: try unboxOpaque(args[1], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
-    },
-    ]
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let attributedSubstring: [String: Bridge] = [:]
-}
-#endif

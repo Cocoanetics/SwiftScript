@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let localeRegion: [String: Bridge] = [
+    nonisolated(unsafe) static let localeRegion: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Locale.Region.debugDescription: String": .computed { receiver in
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         return .string(recv.debugDescription)
@@ -17,10 +17,6 @@ extension FoundationBridges {
         return .string(recv.identifier)
     },
     "static let Locale.Region.unknown": .staticValue(boxOpaque(Locale.Region.unknown, typeName: "Locale.Region")),
-    "var Locale.Region.hashValue: Int": .computed { receiver in
-        let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
-        return .int(recv.hashValue)
-    },
     "static let Locale.Region.afghanistan": .staticValue(boxOpaque(Locale.Region.afghanistan, typeName: "Locale.Region")),
     "static let Locale.Region.ålandIslands": .staticValue(boxOpaque(Locale.Region.ålandIslands, typeName: "Locale.Region")),
     "static let Locale.Region.albania": .staticValue(boxOpaque(Locale.Region.albania, typeName: "Locale.Region")),
@@ -313,10 +309,13 @@ extension FoundationBridges {
         }
         return boxOpaque(Locale.Region(try unboxString(args[0])), typeName: "Locale.Region")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var Locale.Region.hashValue: Int"] = .computed { receiver in
+        let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let localeRegion: [String: Bridge] = [:]
-}
-#endif

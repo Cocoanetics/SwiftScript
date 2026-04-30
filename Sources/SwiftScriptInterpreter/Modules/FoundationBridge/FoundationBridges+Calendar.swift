@@ -33,6 +33,10 @@ extension FoundationBridges {
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .string(recv.description)
     },
+    "var Calendar.debugDescription: String": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .string(recv.debugDescription)
+    },
     "var Calendar.amSymbol: String": .computed { receiver in
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .string(recv.amSymbol)
@@ -86,24 +90,7 @@ extension FoundationBridges {
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .bool(recv.isDateInWeekend(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
     },
-    "func Calendar.isDate()": .method { receiver, args in
-        guard args.count == 2 else {
-            throw RuntimeError.invalid("Calendar.isDate: expected 2 argument(s), got \(args.count)")
-        }
-        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
-        return .bool(recv.isDate(try unboxOpaque(args[0], as: Date.self, typeName: "Date"), inSameDayAs: try unboxOpaque(args[1], as: Date.self, typeName: "Date")))
-    },
-        ]
-        #if canImport(Darwin)
-    d["var Calendar.hashValue: Int"] = .computed { receiver in
-        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
-        return .int(recv.hashValue)
-    }
-    d["var Calendar.debugDescription: String"] = .computed { receiver in
-        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
-        return .string(recv.debugDescription)
-    }
-    d["func Calendar.dateIntervalOfWeekend()"] = .method { receiver, args in
+    "func Calendar.dateIntervalOfWeekend()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Calendar.dateIntervalOfWeekend: expected 1 argument(s), got \(args.count)")
         }
@@ -112,15 +99,22 @@ extension FoundationBridges {
             return .optional(boxOpaque(_v, typeName: "DateInterval"))
         }
         return .optional(nil)
-    }
-    d["func Calendar.dateComponents()"] = .method { receiver, args in
+    },
+    "func Calendar.dateComponents()": .method { receiver, args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("Calendar.dateComponents: expected 2 argument(s), got \(args.count)")
         }
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return boxOpaque(recv.dateComponents(in: try unboxOpaque(args[0], as: TimeZone.self, typeName: "TimeZone"), from: try unboxOpaque(args[1], as: Date.self, typeName: "Date")), typeName: "DateComponents")
-    }
-    d["func Calendar.nextWeekend()"] = .method { receiver, args in
+    },
+    "func Calendar.isDate()": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("Calendar.isDate: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .bool(recv.isDate(try unboxOpaque(args[0], as: Date.self, typeName: "Date"), inSameDayAs: try unboxOpaque(args[1], as: Date.self, typeName: "Date")))
+    },
+    "func Calendar.nextWeekend()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Calendar.nextWeekend: expected 1 argument(s), got \(args.count)")
         }
@@ -129,6 +123,12 @@ extension FoundationBridges {
             return .optional(boxOpaque(_v, typeName: "DateInterval"))
         }
         return .optional(nil)
+    },
+        ]
+        #if canImport(Darwin)
+    d["var Calendar.hashValue: Int"] = .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .int(recv.hashValue)
     }
         #endif
         return d

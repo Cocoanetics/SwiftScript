@@ -22,6 +22,10 @@ extension FoundationBridges {
         let recv: UUID = try unboxOpaque(receiver, as: UUID.self, typeName: "UUID")
         return .string(recv.description)
     },
+    "var UUID.debugDescription: String": .computed { receiver in
+        let recv: UUID = try unboxOpaque(receiver, as: UUID.self, typeName: "UUID")
+        return .string(recv.debugDescription)
+    },
     "init UUID(uuidString:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init UUID(uuidString:): expected 1 argument(s), got \(args.count)")
@@ -33,10 +37,6 @@ extension FoundationBridges {
     },
         ]
         #if canImport(Darwin)
-    d["var UUID.debugDescription: String"] = .computed { receiver in
-        let recv: UUID = try unboxOpaque(receiver, as: UUID.self, typeName: "UUID")
-        return .string(recv.debugDescription)
-    }
     d["var UUID.hashValue: Int"] = .computed { receiver in
         let recv: UUID = try unboxOpaque(receiver, as: UUID.self, typeName: "UUID")
         return .int(recv.hashValue)

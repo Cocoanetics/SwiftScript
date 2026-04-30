@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateAnchoredRelativeFormatStyle: [String: Bridge] = [
+    nonisolated(unsafe) static let dateAnchoredRelativeFormatStyle: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Date.AnchoredRelativeFormatStyle.anchor: Date": .computed { receiver in
         let recv: Date.AnchoredRelativeFormatStyle = try unboxOpaque(receiver, as: Date.AnchoredRelativeFormatStyle.self, typeName: "Date.AnchoredRelativeFormatStyle")
         return boxOpaque(recv.anchor, typeName: "Date")
@@ -23,10 +23,6 @@ extension FoundationBridges {
     "var Date.AnchoredRelativeFormatStyle.calendar: Calendar": .computed { receiver in
         let recv: Date.AnchoredRelativeFormatStyle = try unboxOpaque(receiver, as: Date.AnchoredRelativeFormatStyle.self, typeName: "Date.AnchoredRelativeFormatStyle")
         return boxOpaque(recv.calendar, typeName: "Calendar")
-    },
-    "var Date.AnchoredRelativeFormatStyle.hashValue: Int": .computed { receiver in
-        let recv: Date.AnchoredRelativeFormatStyle = try unboxOpaque(receiver, as: Date.AnchoredRelativeFormatStyle.self, typeName: "Date.AnchoredRelativeFormatStyle")
-        return .int(recv.hashValue)
     },
     "func Date.AnchoredRelativeFormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
@@ -68,10 +64,13 @@ extension FoundationBridges {
         }
         return boxOpaque(Date.AnchoredRelativeFormatStyle(anchor: try unboxOpaque(args[0], as: Date.self, typeName: "Date"), locale: try unboxOpaque(args[1], as: Locale.self, typeName: "Locale"), calendar: try unboxOpaque(args[2], as: Calendar.self, typeName: "Calendar"), capitalizationContext: try unboxOpaque(args[3], as: FormatStyleCapitalizationContext.self, typeName: "FormatStyleCapitalizationContext")), typeName: "Date.AnchoredRelativeFormatStyle")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var Date.AnchoredRelativeFormatStyle.hashValue: Int"] = .computed { receiver in
+        let recv: Date.AnchoredRelativeFormatStyle = try unboxOpaque(receiver, as: Date.AnchoredRelativeFormatStyle.self, typeName: "Date.AnchoredRelativeFormatStyle")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let dateAnchoredRelativeFormatStyle: [String: Bridge] = [:]
-}
-#endif

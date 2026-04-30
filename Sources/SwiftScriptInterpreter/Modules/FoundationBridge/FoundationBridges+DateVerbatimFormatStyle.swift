@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateVerbatimFormatStyle: [String: Bridge] = [
+    nonisolated(unsafe) static let dateVerbatimFormatStyle: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Date.VerbatimFormatStyle.timeZone: TimeZone": .computed { receiver in
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return boxOpaque(recv.timeZone, typeName: "TimeZone")
@@ -22,10 +22,6 @@ extension FoundationBridges {
             return .optional(boxOpaque(_v, typeName: "Locale"))
         }
         return .optional(nil)
-    },
-    "var Date.VerbatimFormatStyle.hashValue: Int": .computed { receiver in
-        let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
-        return .int(recv.hashValue)
     },
     "var Date.VerbatimFormatStyle.parseStrategy: Date.ParseStrategy": .computed { receiver in
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
@@ -65,10 +61,13 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var Date.VerbatimFormatStyle.hashValue: Int"] = .computed { receiver in
+        let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let dateVerbatimFormatStyle: [String: Bridge] = [:]
-}
-#endif

@@ -5,67 +5,13 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let cocoaError: [String: Bridge] = [
-    "static let CocoaError.xpcConnectionInterrupted": .staticValue(boxOpaque(CocoaError.xpcConnectionInterrupted, typeName: "CocoaError.Code")),
-    "static let CocoaError.xpcConnectionInvalid": .staticValue(boxOpaque(CocoaError.xpcConnectionInvalid, typeName: "CocoaError.Code")),
-    "static let CocoaError.xpcConnectionReplyInvalid": .staticValue(boxOpaque(CocoaError.xpcConnectionReplyInvalid, typeName: "CocoaError.Code")),
-    "static let CocoaError.ubiquitousFileUnavailable": .staticValue(boxOpaque(CocoaError.ubiquitousFileUnavailable, typeName: "CocoaError.Code")),
-    "static let CocoaError.ubiquitousFileNotUploadedDueToQuota": .staticValue(boxOpaque(CocoaError.ubiquitousFileNotUploadedDueToQuota, typeName: "CocoaError.Code")),
-    "static let CocoaError.ubiquitousFileUbiquityServerNotAvailable": .staticValue(boxOpaque(CocoaError.ubiquitousFileUbiquityServerNotAvailable, typeName: "CocoaError.Code")),
-    "static let CocoaError.userActivityHandoffFailed": .staticValue(boxOpaque(CocoaError.userActivityHandoffFailed, typeName: "CocoaError.Code")),
-    "static let CocoaError.userActivityConnectionUnavailable": .staticValue(boxOpaque(CocoaError.userActivityConnectionUnavailable, typeName: "CocoaError.Code")),
-    "static let CocoaError.userActivityRemoteApplicationTimedOut": .staticValue(boxOpaque(CocoaError.userActivityRemoteApplicationTimedOut, typeName: "CocoaError.Code")),
-    "static let CocoaError.userActivityHandoffUserInfoTooLarge": .staticValue(boxOpaque(CocoaError.userActivityHandoffUserInfoTooLarge, typeName: "CocoaError.Code")),
-    "static let CocoaError.coderReadCorrupt": .staticValue(boxOpaque(CocoaError.coderReadCorrupt, typeName: "CocoaError.Code")),
-    "static let CocoaError.coderValueNotFound": .staticValue(boxOpaque(CocoaError.coderValueNotFound, typeName: "CocoaError.Code")),
-    "static let CocoaError.coderInvalidValue": .staticValue(boxOpaque(CocoaError.coderInvalidValue, typeName: "CocoaError.Code")),
-    "var CocoaError.isUbiquitousFileError: Bool": .computed { receiver in
-        let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
-        return .bool(recv.isUbiquitousFileError)
-    },
-    "var CocoaError.isUserActivityError: Bool": .computed { receiver in
-        let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
-        return .bool(recv.isUserActivityError)
-    },
-    "var CocoaError.isXPCConnectionError: Bool": .computed { receiver in
-        let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
-        return .bool(recv.isXPCConnectionError)
-    },
-    "var CocoaError.errorCode: Int": .computed { receiver in
-        let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
-        return .int(recv.errorCode)
-    },
+    nonisolated(unsafe) static let cocoaError: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "static let CocoaError.errorDomain": .staticValue(.string(CocoaError.errorDomain)),
-    "var CocoaError.localizedDescription: String": .computed { receiver in
-        let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
-        return .string(recv.localizedDescription)
-    },
     "var CocoaError.hashValue: Int": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .int(recv.hashValue)
-    },
-    "var CocoaError.filePath: String?": .computed { receiver in
-        let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
-        if let _v = recv.filePath {
-            return .optional(.string(_v))
-        }
-        return .optional(nil)
-    },
-    "var CocoaError.stringEncoding: String.Encoding?": .computed { receiver in
-        let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
-        if let _v = recv.stringEncoding {
-            return .optional(boxOpaque(_v, typeName: "String.Encoding"))
-        }
-        return .optional(nil)
-    },
-    "var CocoaError.url: URL?": .computed { receiver in
-        let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
-        if let _v = recv.url {
-            return .optional(boxOpaque(_v, typeName: "URL"))
-        }
-        return .optional(nil)
     },
     "static let CocoaError.fileNoSuchFile": .staticValue(boxOpaque(CocoaError.fileNoSuchFile, typeName: "CocoaError.Code")),
     "static let CocoaError.fileLocking": .staticValue(boxOpaque(CocoaError.fileLocking, typeName: "CocoaError.Code")),
@@ -100,6 +46,19 @@ extension FoundationBridges {
     "static let CocoaError.propertyListReadStream": .staticValue(boxOpaque(CocoaError.propertyListReadStream, typeName: "CocoaError.Code")),
     "static let CocoaError.propertyListWriteStream": .staticValue(boxOpaque(CocoaError.propertyListWriteStream, typeName: "CocoaError.Code")),
     "static let CocoaError.propertyListWriteInvalid": .staticValue(boxOpaque(CocoaError.propertyListWriteInvalid, typeName: "CocoaError.Code")),
+    "static let CocoaError.xpcConnectionInterrupted": .staticValue(boxOpaque(CocoaError.xpcConnectionInterrupted, typeName: "CocoaError.Code")),
+    "static let CocoaError.xpcConnectionInvalid": .staticValue(boxOpaque(CocoaError.xpcConnectionInvalid, typeName: "CocoaError.Code")),
+    "static let CocoaError.xpcConnectionReplyInvalid": .staticValue(boxOpaque(CocoaError.xpcConnectionReplyInvalid, typeName: "CocoaError.Code")),
+    "static let CocoaError.ubiquitousFileUnavailable": .staticValue(boxOpaque(CocoaError.ubiquitousFileUnavailable, typeName: "CocoaError.Code")),
+    "static let CocoaError.ubiquitousFileNotUploadedDueToQuota": .staticValue(boxOpaque(CocoaError.ubiquitousFileNotUploadedDueToQuota, typeName: "CocoaError.Code")),
+    "static let CocoaError.ubiquitousFileUbiquityServerNotAvailable": .staticValue(boxOpaque(CocoaError.ubiquitousFileUbiquityServerNotAvailable, typeName: "CocoaError.Code")),
+    "static let CocoaError.userActivityHandoffFailed": .staticValue(boxOpaque(CocoaError.userActivityHandoffFailed, typeName: "CocoaError.Code")),
+    "static let CocoaError.userActivityConnectionUnavailable": .staticValue(boxOpaque(CocoaError.userActivityConnectionUnavailable, typeName: "CocoaError.Code")),
+    "static let CocoaError.userActivityRemoteApplicationTimedOut": .staticValue(boxOpaque(CocoaError.userActivityRemoteApplicationTimedOut, typeName: "CocoaError.Code")),
+    "static let CocoaError.userActivityHandoffUserInfoTooLarge": .staticValue(boxOpaque(CocoaError.userActivityHandoffUserInfoTooLarge, typeName: "CocoaError.Code")),
+    "static let CocoaError.coderReadCorrupt": .staticValue(boxOpaque(CocoaError.coderReadCorrupt, typeName: "CocoaError.Code")),
+    "static let CocoaError.coderValueNotFound": .staticValue(boxOpaque(CocoaError.coderValueNotFound, typeName: "CocoaError.Code")),
+    "static let CocoaError.coderInvalidValue": .staticValue(boxOpaque(CocoaError.coderInvalidValue, typeName: "CocoaError.Code")),
     "var CocoaError.isCoderError: Bool": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .bool(recv.isCoderError)
@@ -124,10 +83,50 @@ extension FoundationBridges {
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .bool(recv.isValidationError)
     },
-    ]
+    "var CocoaError.isUbiquitousFileError: Bool": .computed { receiver in
+        let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
+        return .bool(recv.isUbiquitousFileError)
+    },
+    "var CocoaError.isUserActivityError: Bool": .computed { receiver in
+        let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
+        return .bool(recv.isUserActivityError)
+    },
+    "var CocoaError.isXPCConnectionError: Bool": .computed { receiver in
+        let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
+        return .bool(recv.isXPCConnectionError)
+    },
+        ]
+        #if canImport(Darwin)
+    d["var CocoaError.errorCode: Int"] = .computed { receiver in
+        let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
+        return .int(recv.errorCode)
+    }
+    d["var CocoaError.localizedDescription: String"] = .computed { receiver in
+        let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
+        return .string(recv.localizedDescription)
+    }
+    d["var CocoaError.filePath: String?"] = .computed { receiver in
+        let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
+        if let _v = recv.filePath {
+            return .optional(.string(_v))
+        }
+        return .optional(nil)
+    }
+    d["var CocoaError.stringEncoding: String.Encoding?"] = .computed { receiver in
+        let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
+        if let _v = recv.stringEncoding {
+            return .optional(boxOpaque(_v, typeName: "String.Encoding"))
+        }
+        return .optional(nil)
+    }
+    d["var CocoaError.url: URL?"] = .computed { receiver in
+        let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
+        if let _v = recv.url {
+            return .optional(boxOpaque(_v, typeName: "URL"))
+        }
+        return .optional(nil)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let cocoaError: [String: Bridge] = [:]
-}
-#endif

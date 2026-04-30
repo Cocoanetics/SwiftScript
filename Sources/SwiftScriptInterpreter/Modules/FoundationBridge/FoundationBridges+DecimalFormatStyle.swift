@@ -5,17 +5,12 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let decimalFormatStyle: [String: Bridge] = [
-    "static let Decimal.FormatStyle.number": .staticValue(boxOpaque(Decimal.FormatStyle.number, typeName: "Decimal.FormatStyle")),
+    nonisolated(unsafe) static let decimalFormatStyle: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Decimal.FormatStyle.locale: Locale": .computed { receiver in
         let recv: Decimal.FormatStyle = try unboxOpaque(receiver, as: Decimal.FormatStyle.self, typeName: "Decimal.FormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
-    },
-    "var Decimal.FormatStyle.hashValue: Int": .computed { receiver in
-        let recv: Decimal.FormatStyle = try unboxOpaque(receiver, as: Decimal.FormatStyle.self, typeName: "Decimal.FormatStyle")
-        return .int(recv.hashValue)
     },
     "init Decimal.FormatStyle(locale:)": .`init` { args in
         guard args.count == 1 else {
@@ -79,10 +74,14 @@ extension FoundationBridges {
         let recv: Decimal.FormatStyle = try unboxOpaque(receiver, as: Decimal.FormatStyle.self, typeName: "Decimal.FormatStyle")
         return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Decimal.FormatStyle")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["static let Decimal.FormatStyle.number"] = .staticValue(boxOpaque(Decimal.FormatStyle.number, typeName: "Decimal.FormatStyle"))
+    d["var Decimal.FormatStyle.hashValue: Int"] = .computed { receiver in
+        let recv: Decimal.FormatStyle = try unboxOpaque(receiver, as: Decimal.FormatStyle.self, typeName: "Decimal.FormatStyle")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let decimalFormatStyle: [String: Bridge] = [:]
-}
-#endif

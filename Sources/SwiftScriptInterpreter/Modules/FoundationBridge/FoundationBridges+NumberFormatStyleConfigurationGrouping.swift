@@ -5,23 +5,22 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let numberFormatStyleConfigurationGrouping: [String: Bridge] = [
+    nonisolated(unsafe) static let numberFormatStyleConfigurationGrouping: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "static let NumberFormatStyleConfiguration.Grouping.automatic": .staticValue(boxOpaque(NumberFormatStyleConfiguration.Grouping.automatic, typeName: "NumberFormatStyleConfiguration.Grouping")),
     "static let NumberFormatStyleConfiguration.Grouping.never": .staticValue(boxOpaque(NumberFormatStyleConfiguration.Grouping.never, typeName: "NumberFormatStyleConfiguration.Grouping")),
     "var NumberFormatStyleConfiguration.Grouping.description: String": .computed { receiver in
         let recv: NumberFormatStyleConfiguration.Grouping = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.Grouping.self, typeName: "NumberFormatStyleConfiguration.Grouping")
         return .string(recv.description)
     },
-    "var NumberFormatStyleConfiguration.Grouping.hashValue: Int": .computed { receiver in
+        ]
+        #if canImport(Darwin)
+    d["var NumberFormatStyleConfiguration.Grouping.hashValue: Int"] = .computed { receiver in
         let recv: NumberFormatStyleConfiguration.Grouping = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.Grouping.self, typeName: "NumberFormatStyleConfiguration.Grouping")
         return .int(recv.hashValue)
-    },
-    ]
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let numberFormatStyleConfigurationGrouping: [String: Bridge] = [:]
-}
-#endif

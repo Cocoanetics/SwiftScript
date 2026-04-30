@@ -5,13 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let fileAttributeKey: [String: Bridge] = [
-    "var FileAttributeKey.hashValue: Int": .computed { receiver in
-        let recv: FileAttributeKey = try unboxOpaque(receiver, as: FileAttributeKey.self, typeName: "FileAttributeKey")
-        return .int(recv.hashValue)
-    },
+    nonisolated(unsafe) static let fileAttributeKey: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "static let FileAttributeKey.type": .staticValue(boxOpaque(FileAttributeKey.type, typeName: "FileAttributeKey")),
     "static let FileAttributeKey.size": .staticValue(boxOpaque(FileAttributeKey.size, typeName: "FileAttributeKey")),
     "static let FileAttributeKey.modificationDate": .staticValue(boxOpaque(FileAttributeKey.modificationDate, typeName: "FileAttributeKey")),
@@ -48,10 +44,13 @@ extension FoundationBridges {
         }
         return boxOpaque(FileAttributeKey(rawValue: try unboxString(args[0])), typeName: "FileAttributeKey")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var FileAttributeKey.hashValue: Int"] = .computed { receiver in
+        let recv: FileAttributeKey = try unboxOpaque(receiver, as: FileAttributeKey.self, typeName: "FileAttributeKey")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let fileAttributeKey: [String: Bridge] = [:]
-}
-#endif

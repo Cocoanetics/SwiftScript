@@ -9,6 +9,12 @@ extension FoundationBridges {
     nonisolated(unsafe) static let timeZone: [String: Bridge] = {
         var d: [String: Bridge] = [
     "static let TimeZone.timeZoneDataVersion": .staticValue(.string(TimeZone.timeZoneDataVersion)),
+    "static let TimeZone.current": .staticValue(boxOpaque(TimeZone.current, typeName: "TimeZone")),
+    "static let TimeZone.autoupdatingCurrent": .staticValue(boxOpaque(TimeZone.autoupdatingCurrent, typeName: "TimeZone")),
+    "var TimeZone.identifier: String": .computed { receiver in
+        let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
+        return .string(recv.identifier)
+    },
     "var TimeZone.nextDaylightSavingTimeTransition: Date?": .computed { receiver in
         let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
         if let _v = recv.nextDaylightSavingTimeTransition {
@@ -16,9 +22,14 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+    "static let TimeZone.gmt": .staticValue(boxOpaque(TimeZone.gmt, typeName: "TimeZone")),
     "var TimeZone.description: String": .computed { receiver in
         let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
         return .string(recv.description)
+    },
+    "var TimeZone.debugDescription: String": .computed { receiver in
+        let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
+        return .string(recv.debugDescription)
     },
     "init TimeZone(identifier:)": .`init` { args in
         guard args.count == 1 else {
@@ -90,20 +101,9 @@ extension FoundationBridges {
     },
         ]
         #if canImport(Darwin)
-    d["static let TimeZone.current"] = .staticValue(boxOpaque(TimeZone.current, typeName: "TimeZone"))
-    d["static let TimeZone.autoupdatingCurrent"] = .staticValue(boxOpaque(TimeZone.autoupdatingCurrent, typeName: "TimeZone"))
-    d["var TimeZone.identifier: String"] = .computed { receiver in
-        let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
-        return .string(recv.identifier)
-    }
-    d["static let TimeZone.gmt"] = .staticValue(boxOpaque(TimeZone.gmt, typeName: "TimeZone"))
     d["var TimeZone.hashValue: Int"] = .computed { receiver in
         let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
         return .int(recv.hashValue)
-    }
-    d["var TimeZone.debugDescription: String"] = .computed { receiver in
-        let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
-        return .string(recv.debugDescription)
     }
         #endif
         return d

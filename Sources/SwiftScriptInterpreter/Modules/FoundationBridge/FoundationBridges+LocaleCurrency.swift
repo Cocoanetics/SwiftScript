@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let localeCurrency: [String: Bridge] = [
+    nonisolated(unsafe) static let localeCurrency: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Locale.Currency.identifier: String": .computed { receiver in
         let recv: Locale.Currency = try unboxOpaque(receiver, as: Locale.Currency.self, typeName: "Locale.Currency")
         return .string(recv.identifier)
@@ -15,10 +15,6 @@ extension FoundationBridges {
     "var Locale.Currency.debugDescription: String": .computed { receiver in
         let recv: Locale.Currency = try unboxOpaque(receiver, as: Locale.Currency.self, typeName: "Locale.Currency")
         return .string(recv.debugDescription)
-    },
-    "var Locale.Currency.hashValue: Int": .computed { receiver in
-        let recv: Locale.Currency = try unboxOpaque(receiver, as: Locale.Currency.self, typeName: "Locale.Currency")
-        return .int(recv.hashValue)
     },
     "var Locale.Currency.isISOCurrency: Bool": .computed { receiver in
         let recv: Locale.Currency = try unboxOpaque(receiver, as: Locale.Currency.self, typeName: "Locale.Currency")
@@ -37,10 +33,13 @@ extension FoundationBridges {
         }
         return boxOpaque(Locale.Currency(try unboxString(args[0])), typeName: "Locale.Currency")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var Locale.Currency.hashValue: Int"] = .computed { receiver in
+        let recv: Locale.Currency = try unboxOpaque(receiver, as: Locale.Currency.self, typeName: "Locale.Currency")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let localeCurrency: [String: Bridge] = [:]
-}
-#endif

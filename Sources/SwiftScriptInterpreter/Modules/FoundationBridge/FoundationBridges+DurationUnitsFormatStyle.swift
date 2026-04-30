@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let durationUnitsFormatStyle: [String: Bridge] = [
+    nonisolated(unsafe) static let durationUnitsFormatStyle: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Duration.UnitsFormatStyle.locale: Locale": .computed { receiver in
         let recv: Duration.UnitsFormatStyle = try unboxOpaque(receiver, as: Duration.UnitsFormatStyle.self, typeName: "Duration.UnitsFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
@@ -18,10 +18,6 @@ extension FoundationBridges {
             return .optional(.int(_v))
         }
         return .optional(nil)
-    },
-    "var Duration.UnitsFormatStyle.hashValue: Int": .computed { receiver in
-        let recv: Duration.UnitsFormatStyle = try unboxOpaque(receiver, as: Duration.UnitsFormatStyle.self, typeName: "Duration.UnitsFormatStyle")
-        return .int(recv.hashValue)
     },
     "func Duration.UnitsFormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
@@ -47,10 +43,13 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var Duration.UnitsFormatStyle.hashValue: Int"] = .computed { receiver in
+        let recv: Duration.UnitsFormatStyle = try unboxOpaque(receiver, as: Duration.UnitsFormatStyle.self, typeName: "Duration.UnitsFormatStyle")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let durationUnitsFormatStyle: [String: Bridge] = [:]
-}
-#endif

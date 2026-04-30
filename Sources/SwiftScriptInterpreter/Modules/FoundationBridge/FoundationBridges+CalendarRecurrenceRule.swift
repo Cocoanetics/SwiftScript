@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let calendarRecurrenceRule: [String: Bridge] = [
+    nonisolated(unsafe) static let calendarRecurrenceRule: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Calendar.RecurrenceRule.calendar: Calendar": .computed { receiver in
         let recv: Calendar.RecurrenceRule = try unboxOpaque(receiver, as: Calendar.RecurrenceRule.self, typeName: "Calendar.RecurrenceRule")
         return boxOpaque(recv.calendar, typeName: "Calendar")
@@ -15,10 +15,6 @@ extension FoundationBridges {
     "var Calendar.RecurrenceRule.interval: Int": .computed { receiver in
         let recv: Calendar.RecurrenceRule = try unboxOpaque(receiver, as: Calendar.RecurrenceRule.self, typeName: "Calendar.RecurrenceRule")
         return .int(recv.interval)
-    },
-    "var Calendar.RecurrenceRule.hashValue: Int": .computed { receiver in
-        let recv: Calendar.RecurrenceRule = try unboxOpaque(receiver, as: Calendar.RecurrenceRule.self, typeName: "Calendar.RecurrenceRule")
-        return .int(recv.hashValue)
     },
     "static func Calendar.RecurrenceRule.weekly()": .staticMethod { args in
         guard args.count == 2 else {
@@ -56,10 +52,13 @@ extension FoundationBridges {
         }
         return boxOpaque(Calendar.RecurrenceRule.yearly(calendar: try unboxOpaque(args[0], as: Calendar.self, typeName: "Calendar"), interval: try unboxInt(args[1])), typeName: "Calendar.RecurrenceRule")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var Calendar.RecurrenceRule.hashValue: Int"] = .computed { receiver in
+        let recv: Calendar.RecurrenceRule = try unboxOpaque(receiver, as: Calendar.RecurrenceRule.self, typeName: "Calendar.RecurrenceRule")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let calendarRecurrenceRule: [String: Bridge] = [:]
-}
-#endif

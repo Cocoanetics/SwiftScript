@@ -5,18 +5,14 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let jSONEncoderOutputFormatting: [String: Bridge] = [
+    nonisolated(unsafe) static let jSONEncoderOutputFormatting: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "init JSONEncoder.OutputFormatting()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init JSONEncoder.OutputFormatting(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(JSONEncoder.OutputFormatting(), typeName: "JSONEncoder.OutputFormatting")
-    },
-    "var JSONEncoder.OutputFormatting.isEmpty: Bool": .computed { receiver in
-        let recv: JSONEncoder.OutputFormatting = try unboxOpaque(receiver, as: JSONEncoder.OutputFormatting.self, typeName: "JSONEncoder.OutputFormatting")
-        return .bool(recv.isEmpty)
     },
     "static let JSONEncoder.OutputFormatting.prettyPrinted": .staticValue(boxOpaque(JSONEncoder.OutputFormatting.prettyPrinted, typeName: "JSONEncoder.OutputFormatting")),
     "static let JSONEncoder.OutputFormatting.sortedKeys": .staticValue(boxOpaque(JSONEncoder.OutputFormatting.sortedKeys, typeName: "JSONEncoder.OutputFormatting")),
@@ -34,10 +30,13 @@ extension FoundationBridges {
             }
             return boxOpaque(result, typeName: "JSONEncoder.OutputFormatting")
         },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var JSONEncoder.OutputFormatting.isEmpty: Bool"] = .computed { receiver in
+        let recv: JSONEncoder.OutputFormatting = try unboxOpaque(receiver, as: JSONEncoder.OutputFormatting.self, typeName: "JSONEncoder.OutputFormatting")
+        return .bool(recv.isEmpty)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let jSONEncoderOutputFormatting: [String: Bridge] = [:]
-}
-#endif

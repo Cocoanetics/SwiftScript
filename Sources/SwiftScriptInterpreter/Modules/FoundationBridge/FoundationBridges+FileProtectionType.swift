@@ -5,13 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let fileProtectionType: [String: Bridge] = [
-    "var FileProtectionType.hashValue: Int": .computed { receiver in
-        let recv: FileProtectionType = try unboxOpaque(receiver, as: FileProtectionType.self, typeName: "FileProtectionType")
-        return .int(recv.hashValue)
-    },
+    nonisolated(unsafe) static let fileProtectionType: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "static let FileProtectionType.none": .staticValue(boxOpaque(FileProtectionType.none, typeName: "FileProtectionType")),
     "static let FileProtectionType.complete": .staticValue(boxOpaque(FileProtectionType.complete, typeName: "FileProtectionType")),
     "static let FileProtectionType.completeUnlessOpen": .staticValue(boxOpaque(FileProtectionType.completeUnlessOpen, typeName: "FileProtectionType")),
@@ -22,10 +18,13 @@ extension FoundationBridges {
         }
         return boxOpaque(FileProtectionType(rawValue: try unboxString(args[0])), typeName: "FileProtectionType")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var FileProtectionType.hashValue: Int"] = .computed { receiver in
+        let recv: FileProtectionType = try unboxOpaque(receiver, as: FileProtectionType.self, typeName: "FileProtectionType")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let fileProtectionType: [String: Bridge] = [:]
-}
-#endif

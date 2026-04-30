@@ -5,10 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateISO8601FormatStyle: [String: Bridge] = [
-    "static let Date.ISO8601FormatStyle.iso8601": .staticValue(boxOpaque(Date.ISO8601FormatStyle.iso8601, typeName: "Date.ISO8601FormatStyle")),
+    nonisolated(unsafe) static let dateISO8601FormatStyle: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Date.ISO8601FormatStyle.includingFractionalSeconds: Bool": .computed { receiver in
         let recv: Date.ISO8601FormatStyle = try unboxOpaque(receiver, as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")
         return .bool(recv.includingFractionalSeconds)
@@ -44,10 +43,6 @@ extension FoundationBridges {
         }
         let recv: Date.ISO8601FormatStyle = try unboxOpaque(receiver, as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")
         return boxOpaque(recv.day(), typeName: "Date.ISO8601FormatStyle")
-    },
-    "var Date.ISO8601FormatStyle.hashValue: Int": .computed { receiver in
-        let recv: Date.ISO8601FormatStyle = try unboxOpaque(receiver, as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")
-        return .int(recv.hashValue)
     },
     "var Date.ISO8601FormatStyle.parseStrategy: Date.ISO8601FormatStyle": .computed { receiver in
         let recv: Date.ISO8601FormatStyle = try unboxOpaque(receiver, as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")
@@ -90,10 +85,14 @@ extension FoundationBridges {
         }
         return boxOpaque(Date.ISO8601FormatStyle(includingFractionalSeconds: try unboxBool(args[0]), timeZone: try unboxOpaque(args[1], as: TimeZone.self, typeName: "TimeZone")), typeName: "Date.ISO8601FormatStyle")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["static let Date.ISO8601FormatStyle.iso8601"] = .staticValue(boxOpaque(Date.ISO8601FormatStyle.iso8601, typeName: "Date.ISO8601FormatStyle"))
+    d["var Date.ISO8601FormatStyle.hashValue: Int"] = .computed { receiver in
+        let recv: Date.ISO8601FormatStyle = try unboxOpaque(receiver, as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let dateISO8601FormatStyle: [String: Bridge] = [:]
-}
-#endif

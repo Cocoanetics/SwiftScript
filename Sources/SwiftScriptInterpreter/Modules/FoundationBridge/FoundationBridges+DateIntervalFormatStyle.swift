@@ -5,10 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateIntervalFormatStyle: [String: Bridge] = [
-    "static let Date.IntervalFormatStyle.interval": .staticValue(boxOpaque(Date.IntervalFormatStyle.interval, typeName: "Date.IntervalFormatStyle")),
+    nonisolated(unsafe) static let dateIntervalFormatStyle: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Date.IntervalFormatStyle.locale: Locale": .computed { receiver in
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
@@ -20,10 +19,6 @@ extension FoundationBridges {
     "var Date.IntervalFormatStyle.calendar: Calendar": .computed { receiver in
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return boxOpaque(recv.calendar, typeName: "Calendar")
-    },
-    "var Date.IntervalFormatStyle.hashValue: Int": .computed { receiver in
-        let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
-        return .int(recv.hashValue)
     },
     "func Date.IntervalFormatStyle.year()": .method { receiver, args in
         guard args.count == 0 else {
@@ -94,10 +89,14 @@ extension FoundationBridges {
         }
         return boxOpaque(Date.IntervalFormatStyle(locale: try unboxOpaque(args[0], as: Locale.self, typeName: "Locale"), calendar: try unboxOpaque(args[1], as: Calendar.self, typeName: "Calendar"), timeZone: try unboxOpaque(args[2], as: TimeZone.self, typeName: "TimeZone")), typeName: "Date.IntervalFormatStyle")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["static let Date.IntervalFormatStyle.interval"] = .staticValue(boxOpaque(Date.IntervalFormatStyle.interval, typeName: "Date.IntervalFormatStyle"))
+    d["var Date.IntervalFormatStyle.hashValue: Int"] = .computed { receiver in
+        let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let dateIntervalFormatStyle: [String: Bridge] = [:]
-}
-#endif

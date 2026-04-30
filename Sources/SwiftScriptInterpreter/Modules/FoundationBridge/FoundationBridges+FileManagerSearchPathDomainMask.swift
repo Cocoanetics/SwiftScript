@@ -5,18 +5,14 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let fileManagerSearchPathDomainMask: [String: Bridge] = [
+    nonisolated(unsafe) static let fileManagerSearchPathDomainMask: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "init FileManager.SearchPathDomainMask()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init FileManager.SearchPathDomainMask(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(FileManager.SearchPathDomainMask(), typeName: "FileManager.SearchPathDomainMask")
-    },
-    "var FileManager.SearchPathDomainMask.isEmpty: Bool": .computed { receiver in
-        let recv: FileManager.SearchPathDomainMask = try unboxOpaque(receiver, as: FileManager.SearchPathDomainMask.self, typeName: "FileManager.SearchPathDomainMask")
-        return .bool(recv.isEmpty)
     },
     "static let FileManager.SearchPathDomainMask.userDomainMask": .staticValue(boxOpaque(FileManager.SearchPathDomainMask.userDomainMask, typeName: "FileManager.SearchPathDomainMask")),
     "static let FileManager.SearchPathDomainMask.localDomainMask": .staticValue(boxOpaque(FileManager.SearchPathDomainMask.localDomainMask, typeName: "FileManager.SearchPathDomainMask")),
@@ -36,10 +32,13 @@ extension FoundationBridges {
             }
             return boxOpaque(result, typeName: "FileManager.SearchPathDomainMask")
         },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var FileManager.SearchPathDomainMask.isEmpty: Bool"] = .computed { receiver in
+        let recv: FileManager.SearchPathDomainMask = try unboxOpaque(receiver, as: FileManager.SearchPathDomainMask.self, typeName: "FileManager.SearchPathDomainMask")
+        return .bool(recv.isEmpty)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let fileManagerSearchPathDomainMask: [String: Bridge] = [:]
-}
-#endif

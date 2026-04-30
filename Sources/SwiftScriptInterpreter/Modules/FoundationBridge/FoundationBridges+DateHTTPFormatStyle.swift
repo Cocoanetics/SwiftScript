@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateHTTPFormatStyle: [String: Bridge] = [
+    nonisolated(unsafe) static let dateHTTPFormatStyle: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Date.HTTPFormatStyle.parseStrategy: Date.HTTPFormatStyle": .computed { receiver in
         let recv: Date.HTTPFormatStyle = try unboxOpaque(receiver, as: Date.HTTPFormatStyle.self, typeName: "Date.HTTPFormatStyle")
         return boxOpaque(recv.parseStrategy, typeName: "Date.HTTPFormatStyle")
@@ -17,10 +17,6 @@ extension FoundationBridges {
             throw RuntimeError.invalid("init Date.HTTPFormatStyle(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(Date.HTTPFormatStyle(), typeName: "Date.HTTPFormatStyle")
-    },
-    "var Date.HTTPFormatStyle.hashValue: Int": .computed { receiver in
-        let recv: Date.HTTPFormatStyle = try unboxOpaque(receiver, as: Date.HTTPFormatStyle.self, typeName: "Date.HTTPFormatStyle")
-        return .int(recv.hashValue)
     },
     "func Date.HTTPFormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
@@ -40,10 +36,13 @@ extension FoundationBridges {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var Date.HTTPFormatStyle.hashValue: Int"] = .computed { receiver in
+        let recv: Date.HTTPFormatStyle = try unboxOpaque(receiver, as: Date.HTTPFormatStyle.self, typeName: "Date.HTTPFormatStyle")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let dateHTTPFormatStyle: [String: Bridge] = [:]
-}
-#endif

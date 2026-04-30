@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let discontiguousAttributedSubstring: [String: Bridge] = [
+    nonisolated(unsafe) static let discontiguousAttributedSubstring: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var DiscontiguousAttributedSubstring.base: AttributedString": .computed { receiver in
         let recv: DiscontiguousAttributedSubstring = try unboxOpaque(receiver, as: DiscontiguousAttributedSubstring.self, typeName: "DiscontiguousAttributedSubstring")
         return boxOpaque(recv.base, typeName: "AttributedString")
@@ -16,18 +16,17 @@ extension FoundationBridges {
         let recv: DiscontiguousAttributedSubstring = try unboxOpaque(receiver, as: DiscontiguousAttributedSubstring.self, typeName: "DiscontiguousAttributedSubstring")
         return .string(recv.description)
     },
-    "var DiscontiguousAttributedSubstring.hashValue: Int": .computed { receiver in
-        let recv: DiscontiguousAttributedSubstring = try unboxOpaque(receiver, as: DiscontiguousAttributedSubstring.self, typeName: "DiscontiguousAttributedSubstring")
-        return .int(recv.hashValue)
-    },
     "var DiscontiguousAttributedSubstring.runs: AttributedString.Runs": .computed { receiver in
         let recv: DiscontiguousAttributedSubstring = try unboxOpaque(receiver, as: DiscontiguousAttributedSubstring.self, typeName: "DiscontiguousAttributedSubstring")
         return boxOpaque(recv.runs, typeName: "AttributedString.Runs")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var DiscontiguousAttributedSubstring.hashValue: Int"] = .computed { receiver in
+        let recv: DiscontiguousAttributedSubstring = try unboxOpaque(receiver, as: DiscontiguousAttributedSubstring.self, typeName: "DiscontiguousAttributedSubstring")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let discontiguousAttributedSubstring: [String: Bridge] = [:]
-}
-#endif

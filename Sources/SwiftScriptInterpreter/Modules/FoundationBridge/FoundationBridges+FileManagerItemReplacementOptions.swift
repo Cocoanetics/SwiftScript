@@ -5,18 +5,14 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let fileManagerItemReplacementOptions: [String: Bridge] = [
+    nonisolated(unsafe) static let fileManagerItemReplacementOptions: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "init FileManager.ItemReplacementOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init FileManager.ItemReplacementOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(FileManager.ItemReplacementOptions(), typeName: "FileManager.ItemReplacementOptions")
-    },
-    "var FileManager.ItemReplacementOptions.isEmpty: Bool": .computed { receiver in
-        let recv: FileManager.ItemReplacementOptions = try unboxOpaque(receiver, as: FileManager.ItemReplacementOptions.self, typeName: "FileManager.ItemReplacementOptions")
-        return .bool(recv.isEmpty)
     },
     "static let FileManager.ItemReplacementOptions.usingNewMetadataOnly": .staticValue(boxOpaque(FileManager.ItemReplacementOptions.usingNewMetadataOnly, typeName: "FileManager.ItemReplacementOptions")),
     "static let FileManager.ItemReplacementOptions.withoutDeletingBackupItem": .staticValue(boxOpaque(FileManager.ItemReplacementOptions.withoutDeletingBackupItem, typeName: "FileManager.ItemReplacementOptions")),
@@ -33,10 +29,13 @@ extension FoundationBridges {
             }
             return boxOpaque(result, typeName: "FileManager.ItemReplacementOptions")
         },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var FileManager.ItemReplacementOptions.isEmpty: Bool"] = .computed { receiver in
+        let recv: FileManager.ItemReplacementOptions = try unboxOpaque(receiver, as: FileManager.ItemReplacementOptions.self, typeName: "FileManager.ItemReplacementOptions")
+        return .bool(recv.isEmpty)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let fileManagerItemReplacementOptions: [String: Bridge] = [:]
-}
-#endif

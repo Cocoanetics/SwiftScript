@@ -5,10 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateFormatStyle: [String: Bridge] = [
-    "static let Date.FormatStyle.dateTime": .staticValue(boxOpaque(Date.FormatStyle.dateTime, typeName: "Date.FormatStyle")),
+    nonisolated(unsafe) static let dateFormatStyle: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Date.FormatStyle.locale: Locale": .computed { receiver in
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
@@ -24,10 +23,6 @@ extension FoundationBridges {
     "var Date.FormatStyle.capitalizationContext: FormatStyleCapitalizationContext": .computed { receiver in
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
         return boxOpaque(recv.capitalizationContext, typeName: "FormatStyleCapitalizationContext")
-    },
-    "var Date.FormatStyle.hashValue: Int": .computed { receiver in
-        let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
-        return .int(recv.hashValue)
     },
     "var Date.FormatStyle.parseStrategy: Date.FormatStyle": .computed { receiver in
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
@@ -168,10 +163,14 @@ extension FoundationBridges {
         }
         return boxOpaque(Date.FormatStyle(locale: try unboxOpaque(args[0], as: Locale.self, typeName: "Locale"), calendar: try unboxOpaque(args[1], as: Calendar.self, typeName: "Calendar"), timeZone: try unboxOpaque(args[2], as: TimeZone.self, typeName: "TimeZone"), capitalizationContext: try unboxOpaque(args[3], as: FormatStyleCapitalizationContext.self, typeName: "FormatStyleCapitalizationContext")), typeName: "Date.FormatStyle")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["static let Date.FormatStyle.dateTime"] = .staticValue(boxOpaque(Date.FormatStyle.dateTime, typeName: "Date.FormatStyle"))
+    d["var Date.FormatStyle.hashValue: Int"] = .computed { receiver in
+        let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let dateFormatStyle: [String: Bridge] = [:]
-}
-#endif

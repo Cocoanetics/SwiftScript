@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let numberFormatStyleConfigurationNotation: [String: Bridge] = [
+    nonisolated(unsafe) static let numberFormatStyleConfigurationNotation: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "static let NumberFormatStyleConfiguration.Notation.scientific": .staticValue(boxOpaque(NumberFormatStyleConfiguration.Notation.scientific, typeName: "NumberFormatStyleConfiguration.Notation")),
     "static let NumberFormatStyleConfiguration.Notation.automatic": .staticValue(boxOpaque(NumberFormatStyleConfiguration.Notation.automatic, typeName: "NumberFormatStyleConfiguration.Notation")),
     "static let NumberFormatStyleConfiguration.Notation.compactName": .staticValue(boxOpaque(NumberFormatStyleConfiguration.Notation.compactName, typeName: "NumberFormatStyleConfiguration.Notation")),
@@ -15,14 +15,13 @@ extension FoundationBridges {
         let recv: NumberFormatStyleConfiguration.Notation = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.Notation.self, typeName: "NumberFormatStyleConfiguration.Notation")
         return .string(recv.description)
     },
-    "var NumberFormatStyleConfiguration.Notation.hashValue: Int": .computed { receiver in
+        ]
+        #if canImport(Darwin)
+    d["var NumberFormatStyleConfiguration.Notation.hashValue: Int"] = .computed { receiver in
         let recv: NumberFormatStyleConfiguration.Notation = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.Notation.self, typeName: "NumberFormatStyleConfiguration.Notation")
         return .int(recv.hashValue)
-    },
-    ]
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let numberFormatStyleConfigurationNotation: [String: Bridge] = [:]
-}
-#endif

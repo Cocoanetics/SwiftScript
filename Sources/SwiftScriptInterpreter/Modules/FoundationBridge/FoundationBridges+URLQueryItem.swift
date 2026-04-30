@@ -19,19 +19,19 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+    "var URLQueryItem.description: String": .computed { receiver in
+        let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
+        return .string(recv.description)
+    },
+    "var URLQueryItem.debugDescription: String": .computed { receiver in
+        let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
+        return .string(recv.debugDescription)
+    },
         ]
         #if canImport(Darwin)
     d["var URLQueryItem.hashValue: Int"] = .computed { receiver in
         let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
         return .int(recv.hashValue)
-    }
-    d["var URLQueryItem.description: String"] = .computed { receiver in
-        let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
-        return .string(recv.description)
-    }
-    d["var URLQueryItem.debugDescription: String"] = .computed { receiver in
-        let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
-        return .string(recv.debugDescription)
     }
         #endif
         return d

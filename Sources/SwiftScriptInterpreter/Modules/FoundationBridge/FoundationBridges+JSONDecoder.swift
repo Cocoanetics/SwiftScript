@@ -5,7 +5,6 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
     nonisolated(unsafe) static let jSONDecoder: [String: Bridge] = [
     "var JSONDecoder.allowsJSON5: Bool": .computed { receiver in
@@ -32,8 +31,3 @@ extension FoundationBridges {
     },
     ]
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let jSONDecoder: [String: Bridge] = [:]
-}
-#endif

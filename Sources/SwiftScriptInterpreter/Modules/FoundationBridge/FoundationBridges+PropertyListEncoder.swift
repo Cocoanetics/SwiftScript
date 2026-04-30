@@ -5,16 +5,18 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let propertyListEncoder: [String: Bridge] = [
+    nonisolated(unsafe) static let propertyListEncoder: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "init PropertyListEncoder()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init PropertyListEncoder(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(PropertyListEncoder(), typeName: "PropertyListEncoder")
     },
-        "func PropertyListEncoder.encode<Value: Encodable>(_: Value) throws -> Data": .method { receiver, args in
+        ]
+        #if canImport(Darwin)
+        d["func PropertyListEncoder.encode<Value: Encodable>(_: Value) throws -> Data"] = .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("PropertyListEncoder.encode: expected 1 argument(s), got \(args.count)")
             }
@@ -24,11 +26,8 @@ extension FoundationBridges {
             } catch {
                 throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
             }
-        },
-    ]
+        }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let propertyListEncoder: [String: Bridge] = [:]
-}
-#endif

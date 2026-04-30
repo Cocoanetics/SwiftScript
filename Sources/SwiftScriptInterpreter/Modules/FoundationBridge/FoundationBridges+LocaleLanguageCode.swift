@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let localeLanguageCode: [String: Bridge] = [
+    nonisolated(unsafe) static let localeLanguageCode: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Locale.LanguageCode.debugDescription: String": .computed { receiver in
         let recv: Locale.LanguageCode = try unboxOpaque(receiver, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode")
         return .string(recv.debugDescription)
@@ -20,10 +20,6 @@ extension FoundationBridges {
     "static let Locale.LanguageCode.uncoded": .staticValue(boxOpaque(Locale.LanguageCode.uncoded, typeName: "Locale.LanguageCode")),
     "static let Locale.LanguageCode.multiple": .staticValue(boxOpaque(Locale.LanguageCode.multiple, typeName: "Locale.LanguageCode")),
     "static let Locale.LanguageCode.unavailable": .staticValue(boxOpaque(Locale.LanguageCode.unavailable, typeName: "Locale.LanguageCode")),
-    "var Locale.LanguageCode.hashValue: Int": .computed { receiver in
-        let recv: Locale.LanguageCode = try unboxOpaque(receiver, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode")
-        return .int(recv.hashValue)
-    },
     "static let Locale.LanguageCode.ainu": .staticValue(boxOpaque(Locale.LanguageCode.ainu, typeName: "Locale.LanguageCode")),
     "static let Locale.LanguageCode.albanian": .staticValue(boxOpaque(Locale.LanguageCode.albanian, typeName: "Locale.LanguageCode")),
     "static let Locale.LanguageCode.amharic": .staticValue(boxOpaque(Locale.LanguageCode.amharic, typeName: "Locale.LanguageCode")),
@@ -147,10 +143,13 @@ extension FoundationBridges {
         }
         return boxOpaque(Locale.LanguageCode(try unboxString(args[0])), typeName: "Locale.LanguageCode")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var Locale.LanguageCode.hashValue: Int"] = .computed { receiver in
+        let recv: Locale.LanguageCode = try unboxOpaque(receiver, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let localeLanguageCode: [String: Bridge] = [:]
-}
-#endif

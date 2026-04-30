@@ -41,10 +41,33 @@ fi
 
 echo "extracting public symbols from scl-foundation (rev: $SCL_REV)..."
 
+# Build args: scl-foundation + the swift-foundation checkout it
+# depends on. swift-foundation owns FoundationEssentials/Internat-
+# ionalization (JSON, Date/Number formatting, Locale, …) — the bulk
+# of the cross-platform Foundation surface lives there now.
+EXTRACT_ARGS=(
+  --source "$SCL_PATH/Sources/Foundation"
+  --source "$SCL_PATH/Sources/FoundationNetworking"
+  --source "$SCL_PATH/Sources/FoundationXML"
+)
+SF_PATH="$SCL_PATH/.build/checkouts/swift-foundation"
+if [[ -d "$SF_PATH/Sources/FoundationEssentials" ]]; then
+  EXTRACT_ARGS+=(
+    --source "$SF_PATH/Sources/FoundationEssentials"
+    --source "$SF_PATH/Sources/FoundationInternationalization"
+  )
+  SF_REV="unknown"
+  if [[ -d "$SF_PATH/.git" ]] || [[ -f "$SF_PATH/../../workspace-state.json" ]]; then
+    SF_REV="$(cd "$SF_PATH" && git rev-parse --short HEAD 2>/dev/null || echo unknown)"
+  fi
+  echo "  + swift-foundation (rev: $SF_REV)"
+else
+  echo "  warning: $SF_PATH not found — run 'swift build' inside scl-foundation first"
+  echo "           to fetch the swift-foundation dependency."
+fi
+
 swift run -q SCLSymbolExtractor \
-  --source "$SCL_PATH/Sources/Foundation" \
-  --source "$SCL_PATH/Sources/FoundationNetworking" \
-  --source "$SCL_PATH/Sources/FoundationXML" \
+  "${EXTRACT_ARGS[@]}" \
   --output "$OUTPUT.tmp"
 
 # Prepend a header with provenance.

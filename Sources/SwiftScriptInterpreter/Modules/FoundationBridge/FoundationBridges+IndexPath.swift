@@ -14,6 +14,32 @@ extension FoundationBridges {
         }
         return boxOpaque(IndexPath(), typeName: "IndexPath")
     },
+    "func IndexPath.dropLast()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("IndexPath.dropLast: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
+        return boxOpaque(recv.dropLast(), typeName: "IndexPath")
+    },
+    "var IndexPath.count: Int": .computed { receiver in
+        let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
+        return .int(recv.count)
+    },
+    "var IndexPath.description: String": .computed { receiver in
+        let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
+        return .string(recv.description)
+    },
+    "var IndexPath.debugDescription: String": .computed { receiver in
+        let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
+        return .string(recv.debugDescription)
+    },
+    "func IndexPath.appending()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexPath.appending: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
+        return boxOpaque(recv.appending(try unboxOpaque(args[0], as: IndexPath.self, typeName: "IndexPath")), typeName: "IndexPath")
+    },
         ]
         #if canImport(Darwin)
     d["var IndexPath.isEmpty: Bool"] = .computed { receiver in
@@ -24,35 +50,9 @@ extension FoundationBridges {
         let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
         return .int(recv.underestimatedCount)
     }
-    d["func IndexPath.dropLast()"] = .method { receiver, args in
-        guard args.count == 0 else {
-            throw RuntimeError.invalid("IndexPath.dropLast: expected 0 argument(s), got \(args.count)")
-        }
-        let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
-        return boxOpaque(recv.dropLast(), typeName: "IndexPath")
-    }
-    d["var IndexPath.count: Int"] = .computed { receiver in
-        let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
-        return .int(recv.count)
-    }
     d["var IndexPath.hashValue: Int"] = .computed { receiver in
         let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
         return .int(recv.hashValue)
-    }
-    d["var IndexPath.description: String"] = .computed { receiver in
-        let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
-        return .string(recv.description)
-    }
-    d["var IndexPath.debugDescription: String"] = .computed { receiver in
-        let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
-        return .string(recv.debugDescription)
-    }
-    d["func IndexPath.appending()"] = .method { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("IndexPath.appending: expected 1 argument(s), got \(args.count)")
-        }
-        let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
-        return boxOpaque(recv.appending(try unboxOpaque(args[0], as: IndexPath.self, typeName: "IndexPath")), typeName: "IndexPath")
     }
         #endif
         return d

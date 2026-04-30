@@ -5,17 +5,15 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let notificationCenterObservationToken: [String: Bridge] = [
-    "var NotificationCenter.ObservationToken.hashValue: Int": .computed { receiver in
+    nonisolated(unsafe) static let notificationCenterObservationToken: [String: Bridge] = {
+        var d: [String: Bridge] = [:]
+        #if canImport(Darwin)
+    d["var NotificationCenter.ObservationToken.hashValue: Int"] = .computed { receiver in
         let recv: NotificationCenter.ObservationToken = try unboxOpaque(receiver, as: NotificationCenter.ObservationToken.self, typeName: "NotificationCenter.ObservationToken")
         return .int(recv.hashValue)
-    },
-    ]
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let notificationCenterObservationToken: [String: Bridge] = [:]
-}
-#endif

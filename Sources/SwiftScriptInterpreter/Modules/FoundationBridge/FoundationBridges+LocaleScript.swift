@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let localeScript: [String: Bridge] = [
+    nonisolated(unsafe) static let localeScript: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Locale.Script.identifier: String": .computed { receiver in
         let recv: Locale.Script = try unboxOpaque(receiver, as: Locale.Script.self, typeName: "Locale.Script")
         return .string(recv.identifier)
@@ -17,10 +17,6 @@ extension FoundationBridges {
         return .string(recv.debugDescription)
     },
     "static let Locale.Script.unknown": .staticValue(boxOpaque(Locale.Script.unknown, typeName: "Locale.Script")),
-    "var Locale.Script.hashValue: Int": .computed { receiver in
-        let recv: Locale.Script = try unboxOpaque(receiver, as: Locale.Script.self, typeName: "Locale.Script")
-        return .int(recv.hashValue)
-    },
     "static let Locale.Script.adlam": .staticValue(boxOpaque(Locale.Script.adlam, typeName: "Locale.Script")),
     "static let Locale.Script.arabic": .staticValue(boxOpaque(Locale.Script.arabic, typeName: "Locale.Script")),
     "static let Locale.Script.arabicNastaliq": .staticValue(boxOpaque(Locale.Script.arabicNastaliq, typeName: "Locale.Script")),
@@ -74,10 +70,13 @@ extension FoundationBridges {
         }
         return boxOpaque(Locale.Script(try unboxString(args[0])), typeName: "Locale.Script")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var Locale.Script.hashValue: Int"] = .computed { receiver in
+        let recv: Locale.Script = try unboxOpaque(receiver, as: Locale.Script.self, typeName: "Locale.Script")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let localeScript: [String: Bridge] = [:]
-}
-#endif

@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let localeComponents: [String: Bridge] = [
+    nonisolated(unsafe) static let localeComponents: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Locale.Components.collation: Locale.Collation?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.collation {
@@ -64,10 +64,6 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
-    "var Locale.Components.hashValue: Int": .computed { receiver in
-        let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
-        return .int(recv.hashValue)
-    },
     "init Locale.Components(identifier:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Components(identifier:): expected 1 argument(s), got \(args.count)")
@@ -80,10 +76,13 @@ extension FoundationBridges {
         }
         return boxOpaque(Locale.Components(locale: try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Locale.Components")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var Locale.Components.hashValue: Int"] = .computed { receiver in
+        let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let localeComponents: [String: Bridge] = [:]
-}
-#endif

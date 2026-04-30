@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateParseStrategy: [String: Bridge] = [
+    nonisolated(unsafe) static let dateParseStrategy: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var Date.ParseStrategy.isLenient: Bool": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return .bool(recv.isLenient)
@@ -35,10 +35,6 @@ extension FoundationBridges {
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return .string(recv.format)
     },
-    "var Date.ParseStrategy.hashValue: Int": .computed { receiver in
-        let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
-        return .int(recv.hashValue)
-    },
     "func Date.ParseStrategy.parse()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.ParseStrategy.parse: expected 1 argument(s), got \(args.count)")
@@ -50,10 +46,13 @@ extension FoundationBridges {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["var Date.ParseStrategy.hashValue: Int"] = .computed { receiver in
+        let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let dateParseStrategy: [String: Bridge] = [:]
-}
-#endif

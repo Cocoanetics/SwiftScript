@@ -29,19 +29,44 @@ enum StdlibBridges {
 extension Interpreter {
     func registerGeneratedStdlib(into i: Interpreter) {
         for (k, v) in StdlibBridges.all { i.bridges[k] = v }
-        i.registerComparator(on: "UnsafeMutableRawPointer") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? UnsafeMutableRawPointer,
-              case .opaque(_, let b) = rhs, let lb = b as? UnsafeMutableRawPointer
-        else { throw RuntimeError.invalid("UnsafeMutableRawPointer comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
+#if canImport(Darwin)
+        i.registerComparator(on: "CodingUserInfoKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? CodingUserInfoKey,
+              case .opaque(_, let b) = rhs, let lb = b as? CodingUserInfoKey
+        else { throw RuntimeError.invalid("CodingUserInfoKey comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "NotificationCenter.ObservationToken") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NotificationCenter.ObservationToken,
+              case .opaque(_, let b) = rhs, let lb = b as? NotificationCenter.ObservationToken
+        else { throw RuntimeError.invalid("NotificationCenter.ObservationToken comparison: bad payloads") }
+        return la == lb ? 0 : -1
         }
 
 #if canImport(Darwin)
-        i.registerComparator(on: "RunLoop.SchedulerTimeType") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? RunLoop.SchedulerTimeType,
-              case .opaque(_, let b) = rhs, let lb = b as? RunLoop.SchedulerTimeType
-        else { throw RuntimeError.invalid("RunLoop.SchedulerTimeType comparison: bad payloads") }
+        i.registerComparator(on: "ContinuousClock.Instant") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ContinuousClock.Instant,
+              case .opaque(_, let b) = rhs, let lb = b as? ContinuousClock.Instant
+        else { throw RuntimeError.invalid("ContinuousClock.Instant comparison: bad payloads") }
         return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+#endif
+
+        i.registerComparator(on: "String.StandardComparator") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? String.StandardComparator,
+              case .opaque(_, let b) = rhs, let lb = b as? String.StandardComparator
+        else { throw RuntimeError.invalid("String.StandardComparator comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "RegexWordBoundaryKind") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? RegexWordBoundaryKind,
+              case .opaque(_, let b) = rhs, let lb = b as? RegexWordBoundaryKind
+        else { throw RuntimeError.invalid("RegexWordBoundaryKind comparison: bad payloads") }
+        return la == lb ? 0 : -1
         }
 #endif
 
@@ -55,15 +80,6 @@ extension Interpreter {
 #endif
 
 #if canImport(Darwin)
-        i.registerComparator(on: "RegexSemanticLevel") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? RegexSemanticLevel,
-              case .opaque(_, let b) = rhs, let lb = b as? RegexSemanticLevel
-        else { throw RuntimeError.invalid("RegexSemanticLevel comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
         i.registerComparator(on: "AnyIndex") { lhs, rhs in
             guard case .opaque(_, let a) = lhs, let la = a as? AnyIndex,
               case .opaque(_, let b) = rhs, let lb = b as? AnyIndex
@@ -73,22 +89,48 @@ extension Interpreter {
 #endif
 
 #if canImport(Darwin)
-        i.registerComparator(on: "Duration.UnitsFormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Duration.UnitsFormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Duration.UnitsFormatStyle
-        else { throw RuntimeError.invalid("Duration.UnitsFormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
+        i.registerComparator(on: "Duration") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Duration,
+              case .opaque(_, let b) = rhs, let lb = b as? Duration
+        else { throw RuntimeError.invalid("Duration comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
         }
 #endif
 
-#if canImport(Darwin)
-        i.registerComparator(on: "NotificationCenter.ObservationToken") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NotificationCenter.ObservationToken,
-              case .opaque(_, let b) = rhs, let lb = b as? NotificationCenter.ObservationToken
-        else { throw RuntimeError.invalid("NotificationCenter.ObservationToken comparison: bad payloads") }
+        i.registerComparator(on: "UnsafeRawPointer") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? UnsafeRawPointer,
+              case .opaque(_, let b) = rhs, let lb = b as? UnsafeRawPointer
+        else { throw RuntimeError.invalid("UnsafeRawPointer comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+        i.registerComparator(on: "UnsafeMutableRawPointer") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? UnsafeMutableRawPointer,
+              case .opaque(_, let b) = rhs, let lb = b as? UnsafeMutableRawPointer
+        else { throw RuntimeError.invalid("UnsafeMutableRawPointer comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+        i.registerComparator(on: "String.Encoding") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? String.Encoding,
+              case .opaque(_, let b) = rhs, let lb = b as? String.Encoding
+        else { throw RuntimeError.invalid("String.Encoding comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
-#endif
+
+        i.registerComparator(on: "String.Index") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? String.Index,
+              case .opaque(_, let b) = rhs, let lb = b as? String.Index
+        else { throw RuntimeError.invalid("String.Index comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+        i.registerComparator(on: "Decimal.FormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Decimal.FormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Decimal.FormatStyle
+        else { throw RuntimeError.invalid("Decimal.FormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
 
 #if canImport(Darwin)
         i.registerComparator(on: "String.LocalizationValue") { lhs, rhs in
@@ -100,42 +142,10 @@ extension Interpreter {
 #endif
 
 #if canImport(Darwin)
-        i.registerComparator(on: "SuspendingClock.Instant") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? SuspendingClock.Instant,
-              case .opaque(_, let b) = rhs, let lb = b as? SuspendingClock.Instant
-        else { throw RuntimeError.invalid("SuspendingClock.Instant comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-#endif
-
-        i.registerComparator(on: "TaskPriority") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? TaskPriority,
-              case .opaque(_, let b) = rhs, let lb = b as? TaskPriority
-        else { throw RuntimeError.invalid("TaskPriority comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "ContinuousClock.Instant") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ContinuousClock.Instant,
-              case .opaque(_, let b) = rhs, let lb = b as? ContinuousClock.Instant
-        else { throw RuntimeError.invalid("ContinuousClock.Instant comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-#endif
-
-        i.registerComparator(on: "UnsafeCurrentTask") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? UnsafeCurrentTask,
-              case .opaque(_, let b) = rhs, let lb = b as? UnsafeCurrentTask
-        else { throw RuntimeError.invalid("UnsafeCurrentTask comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "CodingUserInfoKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? CodingUserInfoKey,
-              case .opaque(_, let b) = rhs, let lb = b as? CodingUserInfoKey
-        else { throw RuntimeError.invalid("CodingUserInfoKey comparison: bad payloads") }
+        i.registerComparator(on: "NotificationCenter.Publisher") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NotificationCenter.Publisher,
+              case .opaque(_, let b) = rhs, let lb = b as? NotificationCenter.Publisher
+        else { throw RuntimeError.invalid("NotificationCenter.Publisher comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 #endif
@@ -150,90 +160,6 @@ extension Interpreter {
 #endif
 
 #if canImport(Darwin)
-        i.registerComparator(on: "Duration") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Duration,
-              case .opaque(_, let b) = rhs, let lb = b as? Duration
-        else { throw RuntimeError.invalid("Duration comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-#endif
-
-        i.registerComparator(on: "OpaquePointer") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? OpaquePointer,
-              case .opaque(_, let b) = rhs, let lb = b as? OpaquePointer
-        else { throw RuntimeError.invalid("OpaquePointer comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "String.StandardComparator") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? String.StandardComparator,
-              case .opaque(_, let b) = rhs, let lb = b as? String.StandardComparator
-        else { throw RuntimeError.invalid("String.StandardComparator comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "String.Index") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? String.Index,
-              case .opaque(_, let b) = rhs, let lb = b as? String.Index
-        else { throw RuntimeError.invalid("String.Index comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "Decimal.FormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Decimal.FormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Decimal.FormatStyle
-        else { throw RuntimeError.invalid("Decimal.FormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "Duration.TimeFormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Duration.TimeFormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Duration.TimeFormatStyle
-        else { throw RuntimeError.invalid("Duration.TimeFormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "ObjectIdentifier") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ObjectIdentifier,
-              case .opaque(_, let b) = rhs, let lb = b as? ObjectIdentifier
-        else { throw RuntimeError.invalid("ObjectIdentifier comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NotificationCenter.Publisher") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NotificationCenter.Publisher,
-              case .opaque(_, let b) = rhs, let lb = b as? NotificationCenter.Publisher
-        else { throw RuntimeError.invalid("NotificationCenter.Publisher comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "String.Comparator") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? String.Comparator,
-              case .opaque(_, let b) = rhs, let lb = b as? String.Comparator
-        else { throw RuntimeError.invalid("String.Comparator comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "RegexWordBoundaryKind") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? RegexWordBoundaryKind,
-              case .opaque(_, let b) = rhs, let lb = b as? RegexWordBoundaryKind
-        else { throw RuntimeError.invalid("RegexWordBoundaryKind comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
         i.registerComparator(on: "Unicode.CanonicalCombiningClass") { lhs, rhs in
             guard case .opaque(_, let a) = lhs, let la = a as? Unicode.CanonicalCombiningClass,
               case .opaque(_, let b) = rhs, let lb = b as? Unicode.CanonicalCombiningClass
@@ -242,10 +168,72 @@ extension Interpreter {
         }
 #endif
 
+        i.registerComparator(on: "Duration.TimeFormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Duration.TimeFormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Duration.TimeFormatStyle
+        else { throw RuntimeError.invalid("Duration.TimeFormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "TaskPriority") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? TaskPriority,
+              case .opaque(_, let b) = rhs, let lb = b as? TaskPriority
+        else { throw RuntimeError.invalid("TaskPriority comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "RegexSemanticLevel") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? RegexSemanticLevel,
+              case .opaque(_, let b) = rhs, let lb = b as? RegexSemanticLevel
+        else { throw RuntimeError.invalid("RegexSemanticLevel comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "RunLoop.SchedulerTimeType") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? RunLoop.SchedulerTimeType,
+              case .opaque(_, let b) = rhs, let lb = b as? RunLoop.SchedulerTimeType
+        else { throw RuntimeError.invalid("RunLoop.SchedulerTimeType comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "SuspendingClock.Instant") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? SuspendingClock.Instant,
+              case .opaque(_, let b) = rhs, let lb = b as? SuspendingClock.Instant
+        else { throw RuntimeError.invalid("SuspendingClock.Instant comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+#endif
+
+        i.registerComparator(on: "String.Comparator") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? String.Comparator,
+              case .opaque(_, let b) = rhs, let lb = b as? String.Comparator
+        else { throw RuntimeError.invalid("String.Comparator comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Duration.UnitsFormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Duration.UnitsFormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Duration.UnitsFormatStyle
+        else { throw RuntimeError.invalid("Duration.UnitsFormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
         i.registerComparator(on: "UnownedTaskExecutor") { lhs, rhs in
             guard case .opaque(_, let a) = lhs, let la = a as? UnownedTaskExecutor,
               case .opaque(_, let b) = rhs, let lb = b as? UnownedTaskExecutor
         else { throw RuntimeError.invalid("UnownedTaskExecutor comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "OpaquePointer") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? OpaquePointer,
+              case .opaque(_, let b) = rhs, let lb = b as? OpaquePointer
+        else { throw RuntimeError.invalid("OpaquePointer comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
@@ -258,20 +246,18 @@ extension Interpreter {
         }
 #endif
 
-#if canImport(Darwin)
-        i.registerComparator(on: "String.Encoding") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? String.Encoding,
-              case .opaque(_, let b) = rhs, let lb = b as? String.Encoding
-        else { throw RuntimeError.invalid("String.Encoding comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "UnsafeRawPointer") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? UnsafeRawPointer,
-              case .opaque(_, let b) = rhs, let lb = b as? UnsafeRawPointer
-        else { throw RuntimeError.invalid("UnsafeRawPointer comparison: bad payloads") }
+        i.registerComparator(on: "ObjectIdentifier") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ObjectIdentifier,
+              case .opaque(_, let b) = rhs, let lb = b as? ObjectIdentifier
+        else { throw RuntimeError.invalid("ObjectIdentifier comparison: bad payloads") }
         return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+        i.registerComparator(on: "UnsafeCurrentTask") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? UnsafeCurrentTask,
+              case .opaque(_, let b) = rhs, let lb = b as? UnsafeCurrentTask
+        else { throw RuntimeError.invalid("UnsafeCurrentTask comparison: bad payloads") }
+        return la == lb ? 0 : -1
         }
     }
 }

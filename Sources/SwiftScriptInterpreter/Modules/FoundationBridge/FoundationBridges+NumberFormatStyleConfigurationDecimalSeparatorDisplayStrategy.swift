@@ -5,23 +5,22 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let numberFormatStyleConfigurationDecimalSeparatorDisplayStrategy: [String: Bridge] = [
+    nonisolated(unsafe) static let numberFormatStyleConfigurationDecimalSeparatorDisplayStrategy: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "static let NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.automatic": .staticValue(boxOpaque(NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.automatic, typeName: "NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy")),
     "static let NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.always": .staticValue(boxOpaque(NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.always, typeName: "NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy")),
     "var NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.description: String": .computed { receiver in
         let recv: NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.self, typeName: "NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy")
         return .string(recv.description)
     },
-    "var NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.hashValue: Int": .computed { receiver in
+        ]
+        #if canImport(Darwin)
+    d["var NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.hashValue: Int"] = .computed { receiver in
         let recv: NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.self, typeName: "NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy")
         return .int(recv.hashValue)
-    },
-    ]
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let numberFormatStyleConfigurationDecimalSeparatorDisplayStrategy: [String: Bridge] = [:]
-}
-#endif

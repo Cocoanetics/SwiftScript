@@ -5,11 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateComponentsISO8601FormatStyle: [String: Bridge] = [
-    "static let DateComponents.ISO8601FormatStyle.iso8601": .staticValue(boxOpaque(DateComponents.ISO8601FormatStyle.iso8601, typeName: "DateComponents.ISO8601FormatStyle")),
-    "static let DateComponents.ISO8601FormatStyle.iso8601Components": .staticValue(boxOpaque(DateComponents.ISO8601FormatStyle.iso8601Components, typeName: "DateComponents.ISO8601FormatStyle")),
+    nonisolated(unsafe) static let dateComponentsISO8601FormatStyle: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "var DateComponents.ISO8601FormatStyle.includingFractionalSeconds: Bool": .computed { receiver in
         let recv: DateComponents.ISO8601FormatStyle = try unboxOpaque(receiver, as: DateComponents.ISO8601FormatStyle.self, typeName: "DateComponents.ISO8601FormatStyle")
         return .bool(recv.includingFractionalSeconds)
@@ -17,10 +15,6 @@ extension FoundationBridges {
     "var DateComponents.ISO8601FormatStyle.timeZone: TimeZone": .computed { receiver in
         let recv: DateComponents.ISO8601FormatStyle = try unboxOpaque(receiver, as: DateComponents.ISO8601FormatStyle.self, typeName: "DateComponents.ISO8601FormatStyle")
         return boxOpaque(recv.timeZone, typeName: "TimeZone")
-    },
-    "var DateComponents.ISO8601FormatStyle.hashValue: Int": .computed { receiver in
-        let recv: DateComponents.ISO8601FormatStyle = try unboxOpaque(receiver, as: DateComponents.ISO8601FormatStyle.self, typeName: "DateComponents.ISO8601FormatStyle")
-        return .int(recv.hashValue)
     },
     "func DateComponents.ISO8601FormatStyle.year()": .method { receiver, args in
         guard args.count == 0 else {
@@ -85,10 +79,15 @@ extension FoundationBridges {
         }
         return boxOpaque(DateComponents.ISO8601FormatStyle(includingFractionalSeconds: try unboxBool(args[0]), timeZone: try unboxOpaque(args[1], as: TimeZone.self, typeName: "TimeZone")), typeName: "DateComponents.ISO8601FormatStyle")
     },
-    ]
+        ]
+        #if canImport(Darwin)
+    d["static let DateComponents.ISO8601FormatStyle.iso8601"] = .staticValue(boxOpaque(DateComponents.ISO8601FormatStyle.iso8601, typeName: "DateComponents.ISO8601FormatStyle"))
+    d["static let DateComponents.ISO8601FormatStyle.iso8601Components"] = .staticValue(boxOpaque(DateComponents.ISO8601FormatStyle.iso8601Components, typeName: "DateComponents.ISO8601FormatStyle"))
+    d["var DateComponents.ISO8601FormatStyle.hashValue: Int"] = .computed { receiver in
+        let recv: DateComponents.ISO8601FormatStyle = try unboxOpaque(receiver, as: DateComponents.ISO8601FormatStyle.self, typeName: "DateComponents.ISO8601FormatStyle")
+        return .int(recv.hashValue)
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let dateComponentsISO8601FormatStyle: [String: Bridge] = [:]
-}
-#endif

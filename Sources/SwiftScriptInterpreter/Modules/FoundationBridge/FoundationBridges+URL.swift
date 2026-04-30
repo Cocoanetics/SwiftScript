@@ -122,6 +122,10 @@ extension FoundationBridges {
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return boxOpaque(recv.standardized, typeName: "URL")
     },
+    "var URL.standardizedFileURL: URL": .computed { receiver in
+        let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
+        return boxOpaque(recv.standardizedFileURL, typeName: "URL")
+    },
     "func URL.resolvingSymlinksInPath()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("URL.resolvingSymlinksInPath: expected 0 argument(s), got \(args.count)")
@@ -140,9 +144,59 @@ extension FoundationBridges {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
     },
+    "func URL.checkPromisedItemIsReachable()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("URL.checkPromisedItemIsReachable: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
+        do {
+            return .bool(try recv.checkPromisedItemIsReachable())
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
+    "func URL.startAccessingSecurityScopedResource()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("URL.startAccessingSecurityScopedResource: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
+        return .bool(recv.startAccessingSecurityScopedResource())
+    },
+    "func URL.stopAccessingSecurityScopedResource()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("URL.stopAccessingSecurityScopedResource: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
+        recv.stopAccessingSecurityScopedResource()
+            return .void
+    },
+    "static func URL.currentDirectory()": .staticMethod { args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("URL.currentDirectory: expected 0 argument(s), got \(args.count)")
+        }
+        return boxOpaque(URL.currentDirectory(), typeName: "URL")
+    },
+    "static let URL.homeDirectory": .staticValue(boxOpaque(URL.homeDirectory, typeName: "URL")),
+    "static let URL.temporaryDirectory": .staticValue(boxOpaque(URL.temporaryDirectory, typeName: "URL")),
+    "static let URL.cachesDirectory": .staticValue(boxOpaque(URL.cachesDirectory, typeName: "URL")),
+    "static let URL.applicationDirectory": .staticValue(boxOpaque(URL.applicationDirectory, typeName: "URL")),
+    "static let URL.libraryDirectory": .staticValue(boxOpaque(URL.libraryDirectory, typeName: "URL")),
+    "static let URL.userDirectory": .staticValue(boxOpaque(URL.userDirectory, typeName: "URL")),
+    "static let URL.documentsDirectory": .staticValue(boxOpaque(URL.documentsDirectory, typeName: "URL")),
+    "static let URL.desktopDirectory": .staticValue(boxOpaque(URL.desktopDirectory, typeName: "URL")),
+    "static let URL.applicationSupportDirectory": .staticValue(boxOpaque(URL.applicationSupportDirectory, typeName: "URL")),
+    "static let URL.downloadsDirectory": .staticValue(boxOpaque(URL.downloadsDirectory, typeName: "URL")),
+    "static let URL.moviesDirectory": .staticValue(boxOpaque(URL.moviesDirectory, typeName: "URL")),
+    "static let URL.musicDirectory": .staticValue(boxOpaque(URL.musicDirectory, typeName: "URL")),
+    "static let URL.picturesDirectory": .staticValue(boxOpaque(URL.picturesDirectory, typeName: "URL")),
+    "static let URL.sharedPublicDirectory": .staticValue(boxOpaque(URL.sharedPublicDirectory, typeName: "URL")),
     "var URL.description: String": .computed { receiver in
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return .string(recv.description)
+    },
+    "var URL.debugDescription: String": .computed { receiver in
+        let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
+        return .string(recv.debugDescription)
     },
     "init URL(string:)": .`init` { args in
         guard args.count == 1 else {
@@ -230,6 +284,25 @@ extension FoundationBridges {
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return boxOpaque(recv.appendingPathExtension(try unboxString(args[0])), typeName: "URL")
     },
+    "static func URL.bookmarkData()": .staticMethod { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("URL.bookmarkData: expected 1 argument(s), got \(args.count)")
+        }
+        do {
+            return boxOpaque(try URL.bookmarkData(withContentsOf: try unboxOpaque(args[0], as: URL.self, typeName: "URL")), typeName: "Data")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
+    "static func URL.homeDirectory()": .staticMethod { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("URL.homeDirectory: expected 1 argument(s), got \(args.count)")
+        }
+        if let _v = URL.homeDirectory(forUser: try unboxString(args[0])) {
+            return .optional(boxOpaque(_v, typeName: "URL"))
+        }
+        return .optional(nil)
+    },
     "init URL(fileReferenceLiteralResourceName:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init URL(fileReferenceLiteralResourceName:): expected 1 argument(s), got \(args.count)")
@@ -251,93 +324,7 @@ extension FoundationBridges {
         }
         return boxOpaque(URL(fileURLWithPath: try unboxString(args[0]), isDirectory: try unboxBool(args[1])), typeName: "URL")
     },
-        ]
-        #if canImport(Darwin)
-    d["var URL.standardizedFileURL: URL"] = .computed { receiver in
-        let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
-        return boxOpaque(recv.standardizedFileURL, typeName: "URL")
-    }
-    d["func URL.checkPromisedItemIsReachable()"] = .method { receiver, args in
-        guard args.count == 0 else {
-            throw RuntimeError.invalid("URL.checkPromisedItemIsReachable: expected 0 argument(s), got \(args.count)")
-        }
-        let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
-        do {
-            return .bool(try recv.checkPromisedItemIsReachable())
-        } catch {
-            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
-        }
-    }
-    d["func URL.startAccessingSecurityScopedResource()"] = .method { receiver, args in
-        guard args.count == 0 else {
-            throw RuntimeError.invalid("URL.startAccessingSecurityScopedResource: expected 0 argument(s), got \(args.count)")
-        }
-        let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
-        return .bool(recv.startAccessingSecurityScopedResource())
-    }
-    d["func URL.stopAccessingSecurityScopedResource()"] = .method { receiver, args in
-        guard args.count == 0 else {
-            throw RuntimeError.invalid("URL.stopAccessingSecurityScopedResource: expected 0 argument(s), got \(args.count)")
-        }
-        let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
-        recv.stopAccessingSecurityScopedResource()
-            return .void
-    }
-    d["var URL.hashValue: Int"] = .computed { receiver in
-        let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
-        return .int(recv.hashValue)
-    }
-    d["static func URL.currentDirectory()"] = .staticMethod { args in
-        guard args.count == 0 else {
-            throw RuntimeError.invalid("URL.currentDirectory: expected 0 argument(s), got \(args.count)")
-        }
-        return boxOpaque(URL.currentDirectory(), typeName: "URL")
-    }
-    d["static let URL.homeDirectory"] = .staticValue(boxOpaque(URL.homeDirectory, typeName: "URL"))
-    d["static let URL.temporaryDirectory"] = .staticValue(boxOpaque(URL.temporaryDirectory, typeName: "URL"))
-    d["static let URL.cachesDirectory"] = .staticValue(boxOpaque(URL.cachesDirectory, typeName: "URL"))
-    d["static let URL.applicationDirectory"] = .staticValue(boxOpaque(URL.applicationDirectory, typeName: "URL"))
-    d["static let URL.libraryDirectory"] = .staticValue(boxOpaque(URL.libraryDirectory, typeName: "URL"))
-    d["static let URL.userDirectory"] = .staticValue(boxOpaque(URL.userDirectory, typeName: "URL"))
-    d["static let URL.documentsDirectory"] = .staticValue(boxOpaque(URL.documentsDirectory, typeName: "URL"))
-    d["static let URL.desktopDirectory"] = .staticValue(boxOpaque(URL.desktopDirectory, typeName: "URL"))
-    d["static let URL.applicationSupportDirectory"] = .staticValue(boxOpaque(URL.applicationSupportDirectory, typeName: "URL"))
-    d["static let URL.downloadsDirectory"] = .staticValue(boxOpaque(URL.downloadsDirectory, typeName: "URL"))
-    d["static let URL.moviesDirectory"] = .staticValue(boxOpaque(URL.moviesDirectory, typeName: "URL"))
-    d["static let URL.musicDirectory"] = .staticValue(boxOpaque(URL.musicDirectory, typeName: "URL"))
-    d["static let URL.picturesDirectory"] = .staticValue(boxOpaque(URL.picturesDirectory, typeName: "URL"))
-    d["static let URL.sharedPublicDirectory"] = .staticValue(boxOpaque(URL.sharedPublicDirectory, typeName: "URL"))
-    d["var URL.debugDescription: String"] = .computed { receiver in
-        let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
-        return .string(recv.debugDescription)
-    }
-    d["func URL.formatted()"] = .method { receiver, args in
-        guard args.count == 0 else {
-            throw RuntimeError.invalid("URL.formatted: expected 0 argument(s), got \(args.count)")
-        }
-        let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
-        return .string(recv.formatted())
-    }
-    d["static func URL.bookmarkData()"] = .staticMethod { args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("URL.bookmarkData: expected 1 argument(s), got \(args.count)")
-        }
-        do {
-            return boxOpaque(try URL.bookmarkData(withContentsOf: try unboxOpaque(args[0], as: URL.self, typeName: "URL")), typeName: "Data")
-        } catch {
-            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
-        }
-    }
-    d["static func URL.homeDirectory()"] = .staticMethod { args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("URL.homeDirectory: expected 1 argument(s), got \(args.count)")
-        }
-        if let _v = URL.homeDirectory(forUser: try unboxString(args[0])) {
-            return .optional(boxOpaque(_v, typeName: "URL"))
-        }
-        return .optional(nil)
-    }
-    d["static func URL.writeBookmarkData()"] = .staticMethod { args in
+    "static func URL.writeBookmarkData()": .staticMethod { args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("URL.writeBookmarkData: expected 2 argument(s), got \(args.count)")
         }
@@ -347,6 +334,19 @@ extension FoundationBridges {
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
+    },
+        ]
+        #if canImport(Darwin)
+    d["var URL.hashValue: Int"] = .computed { receiver in
+        let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
+        return .int(recv.hashValue)
+    }
+    d["func URL.formatted()"] = .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("URL.formatted: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
+        return .string(recv.formatted())
     }
         #endif
         return d

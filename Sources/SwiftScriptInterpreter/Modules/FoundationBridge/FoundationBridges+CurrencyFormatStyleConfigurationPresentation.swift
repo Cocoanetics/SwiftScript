@@ -5,21 +5,20 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let currencyFormatStyleConfigurationPresentation: [String: Bridge] = [
+    nonisolated(unsafe) static let currencyFormatStyleConfigurationPresentation: [String: Bridge] = {
+        var d: [String: Bridge] = [
     "static let CurrencyFormatStyleConfiguration.Presentation.narrow": .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.Presentation.narrow, typeName: "CurrencyFormatStyleConfiguration.Presentation")),
     "static let CurrencyFormatStyleConfiguration.Presentation.standard": .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.Presentation.standard, typeName: "CurrencyFormatStyleConfiguration.Presentation")),
     "static let CurrencyFormatStyleConfiguration.Presentation.isoCode": .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.Presentation.isoCode, typeName: "CurrencyFormatStyleConfiguration.Presentation")),
     "static let CurrencyFormatStyleConfiguration.Presentation.fullName": .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.Presentation.fullName, typeName: "CurrencyFormatStyleConfiguration.Presentation")),
-    "var CurrencyFormatStyleConfiguration.Presentation.hashValue: Int": .computed { receiver in
+        ]
+        #if canImport(Darwin)
+    d["var CurrencyFormatStyleConfiguration.Presentation.hashValue: Int"] = .computed { receiver in
         let recv: CurrencyFormatStyleConfiguration.Presentation = try unboxOpaque(receiver, as: CurrencyFormatStyleConfiguration.Presentation.self, typeName: "CurrencyFormatStyleConfiguration.Presentation")
         return .int(recv.hashValue)
-    },
-    ]
+    }
+        #endif
+        return d
+    }()
 }
-#else
-extension FoundationBridges {
-    nonisolated(unsafe) static let currencyFormatStyleConfigurationPresentation: [String: Bridge] = [:]
-}
-#endif
