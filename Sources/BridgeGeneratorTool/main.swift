@@ -1154,6 +1154,15 @@ func ownerAndMember(forBridgeKey key: String) -> (String, String)? {
     if let openParen = s.firstIndex(of: "("), key.hasPrefix("init ") {
         return (String(s[..<openParen]), "init")
     }
+    // Strip generic parameter list (`<T: Encodable>`) before any
+    // colon-based stripping — the `:` inside the generic constraint
+    // would otherwise truncate the member name to `encode<T`.
+    if let openAngle = s.firstIndex(of: "<"),
+       let closeAngle = s.firstIndex(of: ">"),
+       openAngle < closeAngle
+    {
+        s = String(s[..<openAngle]) + String(s[s.index(after: closeAngle)...])
+    }
     // Strip trailing `: ReturnType` and trailing `()` argument lists.
     if let colon = s.firstIndex(of: ":") { s = String(s[..<colon]) }
     if let openParen = s.firstIndex(of: "(") { s = String(s[..<openParen]) }
@@ -1650,9 +1659,16 @@ for annotated in prioritizedSymbols {
 
     func emitGenericEntry(claimKey: String, bucket: EmitBucket, code: String) {
         guard !registeredKeys.contains(claimKey) else { return }
+        // Same trick as `record()`: claim keys carry an internal
+        // prefix (`"generic-method:func JSONEncoder.encode<…>"`) that
+        // doesn't match anything in scl. Pull the user-facing bridge
+        // key out of the emitted code so the classifier sees
+        // `"func JSONEncoder.encode<…>"` and can resolve to the
+        // matching scl member.
+        let bridgeKey = extractBridgeKey(fromCode: code) ?? claimKey
         emitted.append(EmitEntry(
             symbolPath: path, group: emitGroup, bucket: bucket, code: code,
-            platform: platform(forBridgeKey: claimKey)
+            platform: platform(forBridgeKey: bridgeKey)
         ))
         seenPaths.insert(path)
         registeredKeys.insert(claimKey)
