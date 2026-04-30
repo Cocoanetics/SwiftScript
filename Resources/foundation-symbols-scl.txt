@@ -6,6 +6,144 @@
 # per line, with an optional UNAVAILABLE marker when scl declares
 # the symbol but marks it @available(*, unavailable).
 
+.%	UNAVAILABLE
+.%=	UNAVAILABLE
+.===
+.NSClassFromString
+.NSContainsRect
+.NSDecimalAdd
+.NSDecimalCompact
+.NSDecimalCompare
+.NSDecimalCopy
+.NSDecimalDivide
+.NSDecimalIsNotANumber
+.NSDecimalMultiply
+.NSDecimalMultiplyByPowerOf10
+.NSDecimalNormalize
+.NSDecimalPower
+.NSDecimalRound
+.NSDecimalString
+.NSDecimalSubtract
+.NSDivideRect
+.NSEdgeInsetsEqual
+.NSEdgeInsetsMake
+.NSEqualPoints
+.NSEqualRanges
+.NSEqualRects
+.NSEqualSizes
+.NSFullUserName
+.NSGetSizeAndAlignment
+.NSHeight
+.NSHomeDirectory
+.NSHomeDirectoryForUser
+.NSInsetRect
+.NSIntegralRect
+.NSIntegralRectWithOptions
+.NSIntersectionRange
+.NSIntersectionRect
+.NSIntersectsRect
+.NSIsEmptyRect
+.NSLocalizedString
+.NSLocationInRange
+.NSLog
+.NSLogv
+.NSMakePoint
+.NSMakeRange
+.NSMakeRect
+.NSMakeSize
+.NSMaxRange
+.NSMaxX
+.NSMaxY
+.NSMidX
+.NSMidY
+.NSMinX
+.NSMinY
+.NSMouseInRect
+.NSOffsetRect
+.NSPageSize
+.NSPointFromCGPoint
+.NSPointFromString
+.NSPointInRect
+.NSPointToCGPoint
+.NSRangeFromString
+.NSRectFromCGRect
+.NSRectFromString
+.NSRectToCGRect
+.NSRoundDownToMultipleOfPageSize
+.NSRoundUpToMultipleOfPageSize
+.NSSearchPathForDirectoriesInDomains
+.NSSizeFromCGSize
+.NSSizeFromString
+.NSSizeToCGSize
+.NSStringFromClass
+.NSStringFromPoint
+.NSStringFromRange
+.NSStringFromRect
+.NSStringFromSize
+.NSStringToDecimal
+.NSTemporaryDirectory
+.NSUnionRange
+.NSUnionRect
+.NSUserName
+.NSWidth
+._convertErrorToNSError
+._convertNSErrorToError
+._swift_Foundation_getErrorDefaultUserInfo
+.acos
+.acosh
+.asin
+.asinh
+.atan
+.atan2
+.atanh
+.cbrt
+.copysign
+.cos
+.cosh
+.erf
+.erfc
+.exp
+.exp2
+.expm1
+.fdim
+.fmax
+.fmin
+.fpclassify	UNAVAILABLE
+.frexp
+.hypot
+.ilogb
+.isfinite	UNAVAILABLE
+.isinf	UNAVAILABLE
+.isnan	UNAVAILABLE
+.isnormal	UNAVAILABLE
+.j0
+.j1
+.jn
+.ldexp
+.lgamma
+.log
+.log10
+.log1p
+.log2
+.logb
+.modf
+.nan
+.nearbyint
+.nextafter
+.pow
+.remquo
+.rint
+.scalbn
+.signbit	UNAVAILABLE
+.sin
+.sinh
+.tan
+.tanh
+.tgamma
+.y0
+.y1
+.yn
+AffineTransform.
 AffineTransform.ReferenceType
 AffineTransform._bridgeToObjectiveC
 AffineTransform._conditionallyBridgeFromObjectiveC
@@ -32,6 +170,7 @@ AffineTransform.tX
 AffineTransform.tY
 AffineTransform.transform
 AffineTransform.translate
+AlignmentOptions.
 AlignmentOptions.alignAllEdgesInward
 AlignmentOptions.alignAllEdgesNearest
 AlignmentOptions.alignAllEdgesOutward
@@ -65,6 +204,7 @@ Array._bridgeToObjectiveC
 Array._conditionallyBridgeFromObjectiveC
 Array._forceBridgeFromObjectiveC
 Array._unconditionallyBridgeFromObjectiveC
+BlockOperation.
 BlockOperation.addExecutionBlock
 BlockOperation.executionBlocks
 BlockOperation.init
@@ -74,6 +214,7 @@ Bool._conditionallyBridgeFromObjectiveC
 Bool._forceBridgeFromObjectiveC
 Bool._unconditionallyBridgeFromObjectiveC
 Bool.init
+Bundle.
 Bundle._supportsFHSBundles
 Bundle._supportsFreestandingBundles
 Bundle.allBundles
@@ -118,6 +259,7 @@ Bundle.sharedSupportURL
 Bundle.unload
 Bundle.url
 Bundle.urls
+ByteCountFormatter.
 ByteCountFormatter.allowedUnits
 ByteCountFormatter.allowsNonnumericFormatting
 ByteCountFormatter.countStyle
@@ -130,6 +272,8 @@ ByteCountFormatter.init
 ByteCountFormatter.isAdaptive
 ByteCountFormatter.string
 ByteCountFormatter.zeroPadsFractionDigits
+ByteCountFormatter.CountStyle.
+ByteCountFormatter.Units.
 ByteCountFormatter.Units.init
 ByteCountFormatter.Units.rawValue
 ByteCountFormatter.Units.useAll
@@ -142,6 +286,7 @@ ByteCountFormatter.Units.usePB
 ByteCountFormatter.Units.useTB
 ByteCountFormatter.Units.useYBOrHigher
 ByteCountFormatter.Units.useZB
+CGFloat.
 CGFloat.*
 CGFloat.*=
 CGFloat.+
@@ -208,6 +353,7 @@ CGFloat.significandBitCount
 CGFloat.significandBitPattern
 CGFloat.significandWidth
 CGFloat.ulp
+CGPoint.
 CGPoint.==
 CGPoint.encode
 CGPoint.hash
@@ -215,6 +361,7 @@ CGPoint.init
 CGPoint.x
 CGPoint.y
 CGPoint.zero
+CGRect.
 CGRect.==
 CGRect.contains
 CGRect.divided
@@ -244,6 +391,8 @@ CGRect.standardized
 CGRect.union
 CGRect.width
 CGRect.zero
+CGRectEdge.
+CGSize.
 CGSize.==
 CGSize.encode
 CGSize.hash
@@ -251,6 +400,7 @@ CGSize.height
 CGSize.init
 CGSize.width
 CGSize.zero
+CachedURLResponse.
 CachedURLResponse.copy
 CachedURLResponse.data
 CachedURLResponse.hash
@@ -265,6 +415,7 @@ Calendar._bridgeToObjectiveC
 Calendar._conditionallyBridgeFromObjectiveC
 Calendar._forceBridgeFromObjectiveC
 Calendar._unconditionallyBridgeFromObjectiveC
+CharacterSet.
 CharacterSet.==
 CharacterSet.ReferenceType
 CharacterSet._bridgeToObjectiveC
@@ -353,6 +504,7 @@ CocoaError.Code.userActivityRemoteApplicationTimedOut
 CocoaError.Code.xpcConnectionInterrupted
 CocoaError.Code.xpcConnectionInvalid
 CocoaError.Code.xpcConnectionReplyInvalid
+CustomNSError.
 CustomNSError.errorCode
 Data._bridgeToObjectiveC
 Data._conditionallyBridgeFromObjectiveC
@@ -373,6 +525,7 @@ DateComponents._forceBridgeFromObjectiveC
 DateComponents._getObjectiveCType
 DateComponents._isBridgedToObjectiveC
 DateComponents._unconditionallyBridgeFromObjectiveC
+DateComponentsFormatter.	UNAVAILABLE
 DateComponentsFormatter.allowedUnits
 DateComponentsFormatter.allowsFractionalUnits
 DateComponentsFormatter.calendar
@@ -386,6 +539,8 @@ DateComponentsFormatter.maximumUnitCount
 DateComponentsFormatter.string
 DateComponentsFormatter.unitsStyle
 DateComponentsFormatter.zeroFormattingBehavior
+DateComponentsFormatter.UnitsStyle.
+DateComponentsFormatter.ZeroFormattingBehavior.
 DateComponentsFormatter.ZeroFormattingBehavior.`default`
 DateComponentsFormatter.ZeroFormattingBehavior.dropAll
 DateComponentsFormatter.ZeroFormattingBehavior.dropLeading
@@ -395,6 +550,7 @@ DateComponentsFormatter.ZeroFormattingBehavior.init
 DateComponentsFormatter.ZeroFormattingBehavior.none
 DateComponentsFormatter.ZeroFormattingBehavior.pad
 DateComponentsFormatter.ZeroFormattingBehavior.rawValue
+DateFormatter.
 DateFormatter.amSymbol
 DateFormatter.calendar
 DateFormatter.copy
@@ -433,12 +589,14 @@ DateFormatter.veryShortStandaloneMonthSymbols
 DateFormatter.veryShortStandaloneWeekdaySymbols
 DateFormatter.veryShortWeekdaySymbols
 DateFormatter.weekdaySymbols
+DateFormatter.Style.
 DateInterval._bridgeToObjectiveC
 DateInterval._conditionallyBridgeFromObjectiveC
 DateInterval._forceBridgeFromObjectiveC
 DateInterval._getObjectiveCType
 DateInterval._isBridgedToObjectiveC
 DateInterval._unconditionallyBridgeFromObjectiveC
+DateIntervalFormatter.
 DateIntervalFormatter.calendar
 DateIntervalFormatter.copy
 DateIntervalFormatter.dateStyle
@@ -450,6 +608,7 @@ DateIntervalFormatter.locale
 DateIntervalFormatter.string
 DateIntervalFormatter.timeStyle
 DateIntervalFormatter.timeZone
+DateIntervalFormatter.Style.
 Decimal._bridgeToObjectiveC
 Decimal._conditionallyBridgeFromObjectiveC
 Decimal._forceBridgeFromObjectiveC
@@ -463,6 +622,7 @@ Dictionary._bridgeToObjectiveC
 Dictionary._conditionallyBridgeFromObjectiveC
 Dictionary._forceBridgeFromObjectiveC
 Dictionary._unconditionallyBridgeFromObjectiveC
+Dimension.
 Dimension.baseUnit
 Dimension.converter
 Dimension.encode
@@ -470,6 +630,7 @@ Dimension.init
 Dimension.isEqual
 DispatchData.Regions
 DispatchData.regions
+DispatchData.Region.
 DispatchData.Region.endIndex
 DispatchData.Region.regions
 DispatchData.Region.startIndex
@@ -480,12 +641,15 @@ Double._conditionallyBridgeFromObjectiveC
 Double._forceBridgeFromObjectiveC
 Double._unconditionallyBridgeFromObjectiveC
 Double.init
+EnergyFormatter.
 EnergyFormatter.init
 EnergyFormatter.isForFoodEnergyUse
 EnergyFormatter.numberFormatter
 EnergyFormatter.string
 EnergyFormatter.unitString
 EnergyFormatter.unitStyle
+EnergyFormatter.Unit.
+FileHandle.
 FileHandle._handle
 FileHandle.acceptConnectionInBackgroundAndNotify	UNAVAILABLE
 FileHandle.availableData
@@ -531,10 +695,12 @@ FileManager.replaceItem
 FileManager.replaceItemAt
 FileManager.subpaths
 FileManager.url
+FileManager.DirectoryEnumerator.
 FileManager.DirectoryEnumerator.directoryAttributes
 FileManager.DirectoryEnumerator.fileAttributes
 FileManager.DirectoryEnumerator.level
 FileManager.DirectoryEnumerator.skipDescendants
+FileManager.VolumeEnumerationOptions.
 FileManager.VolumeEnumerationOptions.init
 FileManager.VolumeEnumerationOptions.produceFileReferenceURLs
 FileManager.VolumeEnumerationOptions.rawValue
@@ -544,12 +710,16 @@ Float._conditionallyBridgeFromObjectiveC
 Float._forceBridgeFromObjectiveC
 Float._unconditionallyBridgeFromObjectiveC
 Float.init
+Formatter.
 Formatter.copy
 Formatter.editingString
 Formatter.encode
 Formatter.init
 Formatter.objectValue	UNAVAILABLE
 Formatter.string
+Formatter.Context.
+Formatter.UnitStyle.
+HTTPCookie.
 HTTPCookie.comment
 HTTPCookie.commentURL
 HTTPCookie.cookies
@@ -567,6 +737,8 @@ HTTPCookie.properties
 HTTPCookie.requestHeaderFields
 HTTPCookie.value
 HTTPCookie.version
+HTTPCookie.AcceptPolicy.
+HTTPCookiePropertyKey.
 HTTPCookiePropertyKey.comment
 HTTPCookiePropertyKey.commentURL
 HTTPCookiePropertyKey.discard
@@ -582,6 +754,7 @@ HTTPCookiePropertyKey.rawValue
 HTTPCookiePropertyKey.secure
 HTTPCookiePropertyKey.value
 HTTPCookiePropertyKey.version
+HTTPCookieStorage.
 HTTPCookieStorage.cookieAcceptPolicy
 HTTPCookieStorage.cookies
 HTTPCookieStorage.deleteCookie
@@ -592,6 +765,7 @@ HTTPCookieStorage.setCookies
 HTTPCookieStorage.shared
 HTTPCookieStorage.sharedCookieStorage
 HTTPCookieStorage.sortedCookies
+HTTPURLResponse.
 HTTPURLResponse.allHeaderFields
 HTTPURLResponse.description
 HTTPURLResponse.encode
@@ -599,6 +773,7 @@ HTTPURLResponse.init
 HTTPURLResponse.localizedString
 HTTPURLResponse.statusCode
 HTTPURLResponse.value
+Host.
 Host.address
 Host.addresses
 Host.current
@@ -607,6 +782,7 @@ Host.isEqual
 Host.localizedName
 Host.name
 Host.names
+ISO8601DateFormatter.
 ISO8601DateFormatter.copy
 ISO8601DateFormatter.date
 ISO8601DateFormatter.encode
@@ -615,6 +791,7 @@ ISO8601DateFormatter.init
 ISO8601DateFormatter.string
 ISO8601DateFormatter.supportsSecureCoding
 ISO8601DateFormatter.timeZone
+ISO8601DateFormatter.Options.
 ISO8601DateFormatter.Options.init
 ISO8601DateFormatter.Options.rawValue
 ISO8601DateFormatter.Options.withColonSeparatorInTime
@@ -637,6 +814,7 @@ IndexPath._conditionallyBridgeFromObjectiveC
 IndexPath._forceBridgeFromObjectiveC
 IndexPath._getObjectiveCType
 IndexPath._unconditionallyBridgeFromObjectiveC
+IndexSet.
 IndexSet.==
 IndexSet.Element
 IndexSet.ReferenceType
@@ -681,12 +859,14 @@ IndexSet.subscript
 IndexSet.symmetricDifference
 IndexSet.union
 IndexSet.update
+IndexSet.Index.
 IndexSet.Index.<
 IndexSet.Index.<=
 IndexSet.Index.==
 IndexSet.Index.>
 IndexSet.Index.>=
 IndexSet.Index.description
+IndexSet.RangeView.
 IndexSet.RangeView.==
 IndexSet.RangeView.Index
 IndexSet.RangeView.endIndex
@@ -694,10 +874,12 @@ IndexSet.RangeView.index
 IndexSet.RangeView.makeIterator
 IndexSet.RangeView.startIndex
 IndexSet.RangeView.subscript
+InflectionRule.
 InflectionRule.canInflect
 InflectionRule.canInflectPreferredLocalization
 InflectionRule.encode
 InflectionRule.init
+InputStream.
 InputStream.close
 InputStream.getBuffer
 InputStream.hasBytesAvailable
@@ -737,28 +919,33 @@ Int8._unconditionallyBridgeFromObjectiveC
 Int8.init
 JSONDecoder.DateDecodingStrategy.formatted
 JSONEncoder.DateEncodingStrategy.formatted
+JSONSerialization.
 JSONSerialization.data
 JSONSerialization.isValidJSONObject
 JSONSerialization.jsonObject
 JSONSerialization.writeJSONObject
+JSONSerialization.ReadingOptions.
 JSONSerialization.ReadingOptions.allowFragments
 JSONSerialization.ReadingOptions.fragmentsAllowed
 JSONSerialization.ReadingOptions.init
 JSONSerialization.ReadingOptions.mutableContainers
 JSONSerialization.ReadingOptions.mutableLeaves
 JSONSerialization.ReadingOptions.rawValue
+JSONSerialization.WritingOptions.
 JSONSerialization.WritingOptions.fragmentsAllowed
 JSONSerialization.WritingOptions.init
 JSONSerialization.WritingOptions.prettyPrinted
 JSONSerialization.WritingOptions.rawValue
 JSONSerialization.WritingOptions.sortedKeys
 JSONSerialization.WritingOptions.withoutEscapingSlashes
+LengthFormatter.
 LengthFormatter.init
 LengthFormatter.isForPersonHeightUse
 LengthFormatter.numberFormatter
 LengthFormatter.string
 LengthFormatter.unitString
 LengthFormatter.unitStyle
+LengthFormatter.Unit.
 Locale._bridgeToObjectiveC
 Locale._conditionallyBridgeFromObjectiveC
 Locale._forceBridgeFromObjectiveC
@@ -770,6 +957,7 @@ Locale.isoCurrencyCodes
 Locale.isoLanguageCodes
 Locale.isoRegionCodes
 Locale.lineDirection
+MassFormatter.
 MassFormatter.init
 MassFormatter.isForPersonMassUse
 MassFormatter.numberFormatter
@@ -777,6 +965,8 @@ MassFormatter.string
 MassFormatter.unitString
 MassFormatter.unitStringDisplayedAdjacent
 MassFormatter.unitStyle
+MassFormatter.Unit.
+Measurement.
 Measurement.*
 Measurement.+
 Measurement.-
@@ -798,6 +988,7 @@ Measurement.hash
 Measurement.init
 Measurement.unit
 Measurement.value
+MeasurementFormatter.	UNAVAILABLE
 MeasurementFormatter.encode
 MeasurementFormatter.init
 MeasurementFormatter.locale
@@ -806,11 +997,14 @@ MeasurementFormatter.string
 MeasurementFormatter.supportsSecureCoding
 MeasurementFormatter.unitOptions
 MeasurementFormatter.unitStyle
+MeasurementFormatter.UnitOptions.
 MeasurementFormatter.UnitOptions.init
 MeasurementFormatter.UnitOptions.naturalScale
 MeasurementFormatter.UnitOptions.providedUnit
 MeasurementFormatter.UnitOptions.rawValue
 MeasurementFormatter.UnitOptions.temperatureWithoutUnit
+MessagePort.	UNAVAILABLE
+Morphology.
 Morphology.customPronoun
 Morphology.encode
 Morphology.grammaticalGender
@@ -818,6 +1012,7 @@ Morphology.init
 Morphology.number
 Morphology.partOfSpeech
 Morphology.setCustomPronoun
+Morphology.CustomPronoun.
 Morphology.CustomPronoun.init
 Morphology.CustomPronoun.isSupported
 Morphology.CustomPronoun.objectForm
@@ -826,12 +1021,16 @@ Morphology.CustomPronoun.possessiveForm
 Morphology.CustomPronoun.reflexiveForm
 Morphology.CustomPronoun.requiredKeys
 Morphology.CustomPronoun.subjectForm
+Morphology.GrammaticalGender.
 Morphology.GrammaticalGender.encode
 Morphology.GrammaticalGender.init
+Morphology.GrammaticalNumber.
 Morphology.GrammaticalNumber.encode
 Morphology.GrammaticalNumber.init
+Morphology.PartOfSpeech.
 Morphology.PartOfSpeech.encode
 Morphology.PartOfSpeech.init
+NSAffineTransform.
 NSAffineTransform._StructType
 NSAffineTransform._bridgeToSwift
 NSAffineTransform.append
@@ -849,6 +1048,7 @@ NSAffineTransform.supportsSecureCoding
 NSAffineTransform.transform
 NSAffineTransform.transformStruct
 NSAffineTransform.translateX
+NSAffineTransformStruct.
 NSAffineTransformStruct.init
 NSAffineTransformStruct.m11
 NSAffineTransformStruct.m12
@@ -856,6 +1056,7 @@ NSAffineTransformStruct.m21
 NSAffineTransformStruct.m22
 NSAffineTransformStruct.tX
 NSAffineTransformStruct.tY
+NSArray.
 NSArray._StructType
 NSArray._bridgeToSwift
 NSArray.adding
@@ -892,7 +1093,9 @@ NSArray.subarray
 NSArray.subscript
 NSArray.supportsSecureCoding
 NSArray.write
+NSArray.Iterator.
 NSArray.Iterator.next
+NSAttributedString.
 NSAttributedString.attribute
 NSAttributedString.attributedSubstring
 NSAttributedString.attributes
@@ -907,10 +1110,12 @@ NSAttributedString.length
 NSAttributedString.mutableCopy
 NSAttributedString.string
 NSAttributedString.supportsSecureCoding
+NSAttributedString.EnumerationOptions.
 NSAttributedString.EnumerationOptions.init
 NSAttributedString.EnumerationOptions.longestEffectiveRangeNotRequired
 NSAttributedString.EnumerationOptions.rawValue
 NSAttributedString.EnumerationOptions.reverse
+NSAttributedString.Key.
 NSAttributedString.Key._bridgeToObjectiveC
 NSAttributedString.Key._conditionallyBridgeFromObjectiveC
 NSAttributedString.Key._forceBridgeFromObjectiveC
@@ -921,11 +1126,13 @@ NSAttributedString.Key.init
 NSAttributedString.Key.language
 NSAttributedString.Key.morphology
 NSAttributedString.Key.rawValue
+NSBinarySearchingOptions.
 NSBinarySearchingOptions.firstEqual
 NSBinarySearchingOptions.init
 NSBinarySearchingOptions.insertionIndex
 NSBinarySearchingOptions.lastEqual
 NSBinarySearchingOptions.rawValue
+NSCache.
 NSCache.countLimit
 NSCache.delegate
 NSCache.evictsObjectsWithDiscardedContent
@@ -936,6 +1143,8 @@ NSCache.removeAllObjects
 NSCache.removeObject
 NSCache.setObject
 NSCache.totalCostLimit
+NSCacheDelegate.
+NSCalendar.
 NSCalendar._StructType
 NSCalendar._bridgeToSwift
 NSCalendar.amSymbol
@@ -991,6 +1200,7 @@ NSCalendar.veryShortStandaloneMonthSymbols
 NSCalendar.veryShortStandaloneWeekdaySymbols
 NSCalendar.veryShortWeekdaySymbols
 NSCalendar.weekdaySymbols
+NSCalendar.Identifier.
 NSCalendar.Identifier.<
 NSCalendar.Identifier.ISO8601
 NSCalendar.Identifier.buddhist
@@ -1010,6 +1220,7 @@ NSCalendar.Identifier.japanese
 NSCalendar.Identifier.persian
 NSCalendar.Identifier.rawValue
 NSCalendar.Identifier.republicOfChina
+NSCalendar.Options.
 NSCalendar.Options.init
 NSCalendar.Options.matchFirst
 NSCalendar.Options.matchLast
@@ -1020,6 +1231,7 @@ NSCalendar.Options.matchStrictly
 NSCalendar.Options.rawValue
 NSCalendar.Options.searchBackwards
 NSCalendar.Options.wrapComponents
+NSCalendar.Unit.
 NSCalendar.Unit.calendar
 NSCalendar.Unit.day
 NSCalendar.Unit.era
@@ -1038,6 +1250,7 @@ NSCalendar.Unit.weekday
 NSCalendar.Unit.weekdayOrdinal
 NSCalendar.Unit.year
 NSCalendar.Unit.yearForWeekOfYear
+NSCharacterSet.
 NSCharacterSet._StructType
 NSCharacterSet._bridgeToSwift
 NSCharacterSet.alphanumerics
@@ -1075,6 +1288,7 @@ NSCharacterSet.urlQueryAllowed
 NSCharacterSet.urlUserAllowed
 NSCharacterSet.whitespaces
 NSCharacterSet.whitespacesAndNewlines
+NSCoder.
 NSCoder.allowedClasses
 NSCoder.allowsKeyedCoding
 NSCoder.containsValue
@@ -1111,21 +1325,30 @@ NSCoder.systemVersion
 NSCoder.version
 NSCoder.withDecodedUnsafeBufferPointer
 NSCoder.withDecodedUnsafeBytes
+NSCoder.DecodingFailurePolicy.
+NSCoding.
+NSComparisonPredicate.
 NSComparisonPredicate.comparisonPredicateModifier	UNAVAILABLE
 NSComparisonPredicate.init	UNAVAILABLE
 NSComparisonPredicate.leftExpression	UNAVAILABLE
 NSComparisonPredicate.options	UNAVAILABLE
 NSComparisonPredicate.predicateOperatorType	UNAVAILABLE
 NSComparisonPredicate.rightExpression	UNAVAILABLE
+NSComparisonPredicate.Modifier.
+NSComparisonPredicate.Operator.
+NSComparisonPredicate.Options.
 NSComparisonPredicate.Options.caseInsensitive
 NSComparisonPredicate.Options.diacriticInsensitive
 NSComparisonPredicate.Options.init
 NSComparisonPredicate.Options.normalized
 NSComparisonPredicate.Options.rawValue
+NSCompoundPredicate.
 NSCompoundPredicate.compoundPredicateType
 NSCompoundPredicate.evaluate
 NSCompoundPredicate.init
 NSCompoundPredicate.subpredicates
+NSCompoundPredicate.LogicalType.
+NSCondition.
 NSCondition.broadcast
 NSCondition.init
 NSCondition.lock
@@ -1133,6 +1356,7 @@ NSCondition.name
 NSCondition.signal
 NSCondition.unlock
 NSCondition.wait
+NSConditionLock.
 NSConditionLock.`try`
 NSConditionLock.condition
 NSConditionLock.init
@@ -1140,7 +1364,9 @@ NSConditionLock.lock
 NSConditionLock.name
 NSConditionLock.tryLock
 NSConditionLock.unlock
+NSCopying.
 NSCopying.copy
+NSCountedSet.
 NSCountedSet.add
 NSCountedSet.copy
 NSCountedSet.count
@@ -1150,6 +1376,7 @@ NSCountedSet.isEqual
 NSCountedSet.mutableCopy
 NSCountedSet.remove
 NSCountedSet.removeAllObjects
+NSData.
 NSData.Base64DecodingOptions
 NSData.Base64EncodingOptions
 NSData.ReadingOptions
@@ -1182,6 +1409,7 @@ NSData.subdata
 NSData.subscript
 NSData.supportsSecureCoding
 NSData.write
+NSDate.
 NSDate.<
 NSDate._StructType
 NSDate._bridgeToSwift
@@ -1202,6 +1430,7 @@ NSDate.timeIntervalSince
 NSDate.timeIntervalSince1970
 NSDate.timeIntervalSinceNow
 NSDate.timeIntervalSinceReferenceDate
+NSDateComponents.
 NSDateComponents._StructType
 NSDateComponents._bridgeToSwift
 NSDateComponents.calendar
@@ -1231,6 +1460,7 @@ NSDateComponents.weekday
 NSDateComponents.weekdayOrdinal
 NSDateComponents.year
 NSDateComponents.yearForWeekOfYear
+NSDateInterval.
 NSDateInterval.<
 NSDateInterval._StructType
 NSDateInterval._bridgeToSwift
@@ -1246,6 +1476,7 @@ NSDateInterval.intersects
 NSDateInterval.isEqual
 NSDateInterval.startDate
 NSDateInterval.supportsSecureCoding
+NSDecimalNumber.
 NSDecimalNumber.CalculationError
 NSDecimalNumber.RoundingMode
 NSDecimalNumber.adding
@@ -1278,11 +1509,14 @@ NSDecimalNumber.uint64Value
 NSDecimalNumber.uint8Value
 NSDecimalNumber.uintValue
 NSDecimalNumber.zero
+NSDecimalNumberBehaviors.
+NSDecimalNumberHandler.
 NSDecimalNumberHandler.`default`
 NSDecimalNumberHandler.encode
 NSDecimalNumberHandler.init
 NSDecimalNumberHandler.roundingMode
 NSDecimalNumberHandler.scale
+NSDictionary.
 NSDictionary._StructType
 NSDictionary._bridgeToSwift
 NSDictionary.allKeys
@@ -1311,20 +1545,26 @@ NSDictionary.subscript
 NSDictionary.supportsSecureCoding
 NSDictionary.value
 NSDictionary.write
+NSDictionary.Iterator.
 NSDictionary.Iterator.next
+NSEdgeInsets.
 NSEdgeInsets.bottom
 NSEdgeInsets.init
 NSEdgeInsets.left
 NSEdgeInsets.right
 NSEdgeInsets.top
+NSEnumerationOptions.
 NSEnumerationOptions.concurrent
 NSEnumerationOptions.init
 NSEnumerationOptions.rawValue
 NSEnumerationOptions.reverse
+NSEnumerator.
 NSEnumerator.allObjects
 NSEnumerator.makeIterator
 NSEnumerator.nextObject
+NSEnumerator.Iterator.
 NSEnumerator.Iterator.next
+NSError.
 NSError._code
 NSError._domain
 NSError.code
@@ -1345,6 +1585,7 @@ NSError.setUserInfoValueProvider
 NSError.supportsSecureCoding
 NSError.userInfo
 NSError.userInfoValueProvider
+NSExceptionName.
 NSExceptionName.decimalNumberDivideByZeroException
 NSExceptionName.decimalNumberExactnessException
 NSExceptionName.decimalNumberOverflowException
@@ -1352,6 +1593,7 @@ NSExceptionName.decimalNumberUnderflowException
 NSExceptionName.fileHandleOperationException
 NSExceptionName.init
 NSExceptionName.rawValue
+NSExpression.
 NSExpression.`false`	UNAVAILABLE
 NSExpression.`true`	UNAVAILABLE
 NSExpression.allowEvaluation	UNAVAILABLE
@@ -1372,6 +1614,8 @@ NSExpression.operand	UNAVAILABLE
 NSExpression.predicate	UNAVAILABLE
 NSExpression.right	UNAVAILABLE
 NSExpression.variable	UNAVAILABLE
+NSExpression.ExpressionType.
+NSIndexPath.
 NSIndexPath.<
 NSIndexPath._StructType
 NSIndexPath._bridgeToSwift
@@ -1380,8 +1624,8 @@ NSIndexPath.adding
 NSIndexPath.compare
 NSIndexPath.copy
 NSIndexPath.encode
-NSIndexPath.getIndexes
 NSIndexPath.getIndexes	UNAVAILABLE
+NSIndexPath.getIndexes
 NSIndexPath.hash
 NSIndexPath.index
 NSIndexPath.init
@@ -1389,6 +1633,7 @@ NSIndexPath.isEqual
 NSIndexPath.length
 NSIndexPath.removingLastIndex
 NSIndexPath.supportsSecureCoding
+NSIndexSet.
 NSIndexSet._StructType
 NSIndexSet._bridgeToSwift
 NSIndexSet._toCustomAnyHashable
@@ -1415,8 +1660,10 @@ NSIndexSet.lastIndex
 NSIndexSet.makeIterator
 NSIndexSet.mutableCopy
 NSIndexSet.supportsSecureCoding
+NSIndexSetIterator.
 NSIndexSetIterator.Element
 NSIndexSetIterator.next
+NSKeyedArchiver.
 NSKeyedArchiver._encodePropertyList
 NSKeyedArchiver.allowsKeyedCoding
 NSKeyedArchiver.archiveRootObject
@@ -1436,6 +1683,8 @@ NSKeyedArchiver.outputFormat
 NSKeyedArchiver.requiresSecureCoding
 NSKeyedArchiver.setClassName
 NSKeyedArchiver.systemVersion
+NSKeyedArchiverDelegate.
+NSKeyedUnarchiver.
 NSKeyedUnarchiver.`class`
 NSKeyedUnarchiver.allowedClasses
 NSKeyedUnarchiver.allowsKeyedCoding
@@ -1463,6 +1712,8 @@ NSKeyedUnarchiver.unarchiveTopLevelObjectWithData
 NSKeyedUnarchiver.unarchivedObject
 NSKeyedUnarchiver.withDecodedUnsafeBufferPointer
 NSKeyedUnarchiver.withDecodedUnsafeBytes
+NSKeyedUnarchiverDelegate.
+NSLocale.
 NSLocale.LanguageDirection
 NSLocale._StructType
 NSLocale._bridgeToSwift
@@ -1490,6 +1741,7 @@ NSLocale.preferredLanguages
 NSLocale.supportsSecureCoding
 NSLocale.system
 NSLocale.windowsLocaleCode
+NSLocale.Key.
 NSLocale.Key.alternateQuotationBeginDelimiterKey
 NSLocale.Key.alternateQuotationEndDelimiterKey
 NSLocale.Key.calendar
@@ -1512,12 +1764,16 @@ NSLocale.Key.rawValue
 NSLocale.Key.scriptCode
 NSLocale.Key.usesMetricSystem
 NSLocale.Key.variantCode
+NSLock.
 NSLock.`try`
 NSLock.init
 NSLock.lock
 NSLock.name
 NSLock.unlock
+NSLocking.
 NSLocking.withLock
+NSMachPort.	UNAVAILABLE
+NSMeasurement.
 NSMeasurement._StructType
 NSMeasurement._bridgeToSwift
 NSMeasurement._toCustomAnyHashable
@@ -1533,6 +1789,7 @@ NSMeasurement.isEqual
 NSMeasurement.subtracting
 NSMeasurement.supportsSecureCoding
 NSMeasurement.unit
+NSMutableArray.
 NSMutableArray.add
 NSMutableArray.addObjects
 NSMutableArray.exchangeObject
@@ -1549,6 +1806,7 @@ NSMutableArray.replaceObjects
 NSMutableArray.setArray
 NSMutableArray.sort
 NSMutableArray.subscript
+NSMutableAttributedString.
 NSMutableAttributedString.addAttribute
 NSMutableAttributedString.addAttributes
 NSMutableAttributedString.append
@@ -1563,6 +1821,7 @@ NSMutableAttributedString.removeAttribute
 NSMutableAttributedString.replaceCharacters
 NSMutableAttributedString.setAttributedString
 NSMutableAttributedString.setAttributes
+NSMutableCharacterSet.
 NSMutableCharacterSet.addCharacters
 NSMutableCharacterSet.alphanumeric
 NSMutableCharacterSet.capitalizedLetter
@@ -1583,7 +1842,9 @@ NSMutableCharacterSet.symbol
 NSMutableCharacterSet.uppercaseLetter
 NSMutableCharacterSet.whitespace
 NSMutableCharacterSet.whitespaceAndNewline
+NSMutableCopying.
 NSMutableCopying.mutableCopy
+NSMutableData.
 NSMutableData.append
 NSMutableData.copy
 NSMutableData.increaseLength
@@ -1593,6 +1854,7 @@ NSMutableData.mutableBytes
 NSMutableData.replaceBytes
 NSMutableData.resetBytes
 NSMutableData.setData
+NSMutableDictionary.
 NSMutableDictionary.addEntries
 NSMutableDictionary.init
 NSMutableDictionary.removeAllObjects
@@ -1601,11 +1863,13 @@ NSMutableDictionary.removeObjects
 NSMutableDictionary.setDictionary
 NSMutableDictionary.setObject
 NSMutableDictionary.subscript
+NSMutableIndexSet.
 NSMutableIndexSet.add
 NSMutableIndexSet.copy
 NSMutableIndexSet.remove
 NSMutableIndexSet.removeAllIndexes
 NSMutableIndexSet.shiftIndexesStarting
+NSMutableOrderedSet.
 NSMutableOrderedSet.add
 NSMutableOrderedSet.addObjects
 NSMutableOrderedSet.copy
@@ -1630,6 +1894,7 @@ NSMutableOrderedSet.sortRange
 NSMutableOrderedSet.subscript
 NSMutableOrderedSet.union
 NSMutableOrderedSet.unionSet
+NSMutableSet.
 NSMutableSet.add
 NSMutableSet.addObjects
 NSMutableSet.filter
@@ -1640,6 +1905,7 @@ NSMutableSet.remove
 NSMutableSet.removeAllObjects
 NSMutableSet.setSet
 NSMutableSet.union
+NSMutableString.
 NSMutableString.append
 NSMutableString.applyTransform
 NSMutableString.deleteCharacters
@@ -1648,6 +1914,7 @@ NSMutableString.insert
 NSMutableString.replaceCharacters
 NSMutableString.replaceOccurrences
 NSMutableString.setString
+NSMutableURLRequest.
 NSMutableURLRequest.addValue
 NSMutableURLRequest.allHTTPHeaderFields
 NSMutableURLRequest.allowsCellularAccess
@@ -1664,10 +1931,12 @@ NSMutableURLRequest.networkServiceType
 NSMutableURLRequest.setValue
 NSMutableURLRequest.timeoutInterval
 NSMutableURLRequest.url
+NSNotification.
 NSNotification.copy
 NSNotification.description
 NSNotification.encode
 NSNotification.init
+NSNotification.Name.
 NSNotification.Name.NSCalendarDayChanged
 NSNotification.Name.NSDidBecomeSingleThreaded
 NSNotification.Name.NSSystemTimeZoneDidChange
@@ -1675,12 +1944,14 @@ NSNotification.Name.NSThreadWillExit
 NSNotification.Name.NSWillBecomeMultiThreaded
 NSNotification.Name.init
 NSNotification.Name.rawValue
+NSNull.
 NSNull.copy
 NSNull.description
 NSNull.encode
 NSNull.init
 NSNull.isEqual
 NSNull.supportsSecureCoding
+NSNumber.
 NSNumber.<
 NSNumber._exactBoolValue
 NSNumber.boolValue
@@ -1706,6 +1977,7 @@ NSNumber.uint32Value
 NSNumber.uint64Value
 NSNumber.uint8Value
 NSNumber.uintValue
+NSObject.
 NSObject.==
 NSObject.`self`
 NSObject.classFallbacksForKeyedArchiver
@@ -1726,7 +1998,9 @@ NSObject.isSubclass
 NSObject.mutableCopy
 NSObject.replacementObject
 NSObject.superclass
+NSObjectProtocol.
 NSObjectProtocol.debugDescription
+NSOrderedSet.
 NSOrderedSet.Iterator
 NSOrderedSet.array
 NSOrderedSet.contains
@@ -1757,6 +2031,7 @@ NSOrderedSet.set
 NSOrderedSet.sortedArray
 NSOrderedSet.subscript
 NSOrderedSet.supportsSecureCoding
+NSOrthography.
 NSOrthography.alLScripts	UNAVAILABLE
 NSOrthography.allLanguages	UNAVAILABLE
 NSOrthography.copy
@@ -1764,11 +2039,12 @@ NSOrthography.defaultOrthography	UNAVAILABLE
 NSOrthography.dominantLanguage	UNAVAILABLE
 NSOrthography.dominantScript	UNAVAILABLE
 NSOrthography.encode
-NSOrthography.init	UNAVAILABLE
 NSOrthography.init
+NSOrthography.init	UNAVAILABLE
 NSOrthography.language	UNAVAILABLE
 NSOrthography.languageMap	UNAVAILABLE
 NSOrthography.supportsSecureCoding
+NSPersonNameComponents.
 NSPersonNameComponents._StructType
 NSPersonNameComponents._bridgeToSwift
 NSPersonNameComponents._toCustomAnyHashable
@@ -1784,11 +2060,12 @@ NSPersonNameComponents.nameSuffix
 NSPersonNameComponents.nickname
 NSPersonNameComponents.phoneticRepresentation
 NSPersonNameComponents.supportsSecureCoding
+NSPredicate.
 NSPredicate.allowEvaluation	UNAVAILABLE
 NSPredicate.copy
 NSPredicate.evaluate
-NSPredicate.init
 NSPredicate.init	UNAVAILABLE
+NSPredicate.init
 NSPredicate.isEqual
 NSPredicate.predicateFormat
 NSPredicate.withSubstitutionVariables	UNAVAILABLE
@@ -1807,12 +2084,15 @@ NSRange.playgroundDescription
 NSRange.toRange
 NSRange.union
 NSRange.upperBound
+NSRectEdge.
 NSRectEdge.init
+NSRecursiveLock.
 NSRecursiveLock.`try`
 NSRecursiveLock.init
 NSRecursiveLock.lock
 NSRecursiveLock.name
 NSRecursiveLock.unlock
+NSRegularExpression.
 NSRegularExpression.copy
 NSRegularExpression.encode
 NSRegularExpression.enumerateMatches
@@ -1831,6 +2111,7 @@ NSRegularExpression.replaceMatches
 NSRegularExpression.replacementString
 NSRegularExpression.stringByReplacingMatches
 NSRegularExpression.supportsSecureCoding
+NSRegularExpression.MatchingFlags.
 NSRegularExpression.MatchingFlags.completed
 NSRegularExpression.MatchingFlags.hitEnd
 NSRegularExpression.MatchingFlags.init
@@ -1838,6 +2119,7 @@ NSRegularExpression.MatchingFlags.internalError
 NSRegularExpression.MatchingFlags.progress
 NSRegularExpression.MatchingFlags.rawValue
 NSRegularExpression.MatchingFlags.requiredEnd
+NSRegularExpression.MatchingOptions.
 NSRegularExpression.MatchingOptions.anchored
 NSRegularExpression.MatchingOptions.init
 NSRegularExpression.MatchingOptions.rawValue
@@ -1845,6 +2127,7 @@ NSRegularExpression.MatchingOptions.reportCompletion
 NSRegularExpression.MatchingOptions.reportProgress
 NSRegularExpression.MatchingOptions.withTransparentBounds
 NSRegularExpression.MatchingOptions.withoutAnchoringBounds
+NSRegularExpression.Options.
 NSRegularExpression.Options.allowCommentsAndWhitespace
 NSRegularExpression.Options.anchorsMatchLines
 NSRegularExpression.Options.caseInsensitive
@@ -1855,6 +2138,8 @@ NSRegularExpression.Options.rawValue
 NSRegularExpression.Options.useUnicodeWordBoundaries
 NSRegularExpression.Options.useUnixLineSeparators
 NSRegularExpressionCheckingResult.init
+NSSecureCoding.
+NSSet.
 NSSet.Iterator
 NSSet._StructType
 NSSet._bridgeToSwift
@@ -1882,6 +2167,7 @@ NSSet.objectEnumerator
 NSSet.objects
 NSSet.sortedArray
 NSSet.supportsSecureCoding
+NSSortDescriptor.
 NSSortDescriptor.allowEvaluation	UNAVAILABLE
 NSSortDescriptor.ascending
 NSSortDescriptor.comparator
@@ -1892,10 +2178,12 @@ NSSortDescriptor.init
 NSSortDescriptor.key	UNAVAILABLE
 NSSortDescriptor.keyPath
 NSSortDescriptor.reversedSortDescriptor
+NSSortOptions.
 NSSortOptions.concurrent
 NSSortOptions.init
 NSSortOptions.rawValue
 NSSortOptions.stable
+NSString.
 NSString.<
 NSString.CompareOptions
 NSString._StructType
@@ -1993,10 +2281,12 @@ NSString.unixPath
 NSString.uppercased
 NSString.utf8String
 NSString.write
+NSString.EncodingConversionOptions.
 NSString.EncodingConversionOptions.allowLossy
 NSString.EncodingConversionOptions.externalRepresentation
 NSString.EncodingConversionOptions.init
 NSString.EncodingConversionOptions.rawValue
+NSString.EnumerationOptions.
 NSString.EnumerationOptions.byComposedCharacterSequences
 NSString.EnumerationOptions.byLines
 NSString.EnumerationOptions.byParagraphs
@@ -2007,8 +2297,10 @@ NSString.EnumerationOptions.localized
 NSString.EnumerationOptions.rawValue
 NSString.EnumerationOptions.reverse
 NSString.EnumerationOptions.substringNotRequired
+NSTextCheckingKey.
 NSTextCheckingKey.init
 NSTextCheckingKey.rawValue
+NSTextCheckingResult.
 NSTextCheckingResult.addressCheckingResult
 NSTextCheckingResult.adjustingRanges
 NSTextCheckingResult.copy
@@ -2031,6 +2323,7 @@ NSTextCheckingResult.resultType
 NSTextCheckingResult.spellCheckingResult
 NSTextCheckingResult.supportsSecureCoding
 NSTextCheckingResult.transitInformationCheckingResult
+NSTextCheckingResult.CheckingType.
 NSTextCheckingResult.CheckingType.address
 NSTextCheckingResult.CheckingType.correction
 NSTextCheckingResult.CheckingType.dash
@@ -2046,6 +2339,7 @@ NSTextCheckingResult.CheckingType.regularExpression
 NSTextCheckingResult.CheckingType.replacement
 NSTextCheckingResult.CheckingType.spelling
 NSTextCheckingResult.CheckingType.transitInformation
+NSTimeZone.
 NSTimeZone.NameStyle
 NSTimeZone.`default`
 NSTimeZone.abbreviation
@@ -2069,6 +2363,7 @@ NSTimeZone.secondsFromGMT
 NSTimeZone.supportsSecureCoding
 NSTimeZone.system
 NSTimeZone.timeZoneDataVersion
+NSURL.
 NSURL._StructType
 NSURL._bridgeToSwift
 NSURL.absoluteString
@@ -2118,6 +2413,7 @@ NSURL.standardized
 NSURL.standardizingPath
 NSURL.supportsSecureCoding
 NSURL.user
+NSURLComponents.
 NSURLComponents._StructType
 NSURLComponents._bridgeToSwift
 NSURLComponents.copy
@@ -2150,6 +2446,7 @@ NSURLComponents.scheme
 NSURLComponents.string
 NSURLComponents.url
 NSURLComponents.user
+NSURLQueryItem.
 NSURLQueryItem._StructType
 NSURLQueryItem._bridgeToSwift
 NSURLQueryItem.copy
@@ -2159,6 +2456,7 @@ NSURLQueryItem.isEqual
 NSURLQueryItem.name
 NSURLQueryItem.supportsSecureCoding
 NSURLQueryItem.value
+NSURLRequest.
 NSURLRequest._StructType
 NSURLRequest._bridgeToSwift
 NSURLRequest.allHTTPHeaderFields
@@ -2182,7 +2480,10 @@ NSURLRequest.supportsSecureCoding
 NSURLRequest.timeoutInterval
 NSURLRequest.url
 NSURLRequest.value
+NSURLRequest.CachePolicy.
 NSURLRequest.CachePolicy.reloadIgnoringCacheData
+NSURLRequest.NetworkServiceType.
+NSUUID.
 NSUUID._StructType
 NSUUID._bridgeToSwift
 NSUUID._toCustomAnyHashable
@@ -2196,6 +2497,7 @@ NSUUID.isEqual
 NSUUID.supportsSecureCoding
 NSUUID.uuidString
 NSUnitConverterReciprocal.isEqual
+NSValue.
 NSValue.copy
 NSValue.edgeInsetsValue
 NSValue.encode
@@ -2207,7 +2509,9 @@ NSValue.rangeValue
 NSValue.rectValue
 NSValue.sizeValue
 NSValue.supportsSecureCoding
+NSZone.
 NSZone.init
+Notification.
 Notification.==
 Notification.Name
 Notification.ReferenceType
@@ -2229,19 +2533,23 @@ Notification.Name.NSFileHandleDataAvailable
 Notification.Name.NSFileHandleReadToEndOfFileCompletion
 Notification.Name.NSHTTPCookieManagerCookiesChanged
 Notification.Name.NSURLCredentialStorageChanged
-NotificationCenter.addObserver	UNAVAILABLE
 NotificationCenter.addObserver
+NotificationCenter.addObserver	UNAVAILABLE
 NotificationCenter.post
 NotificationCenter.removeObserver
+NotificationQueue.
 NotificationQueue.`default`
 NotificationQueue.dequeueNotifications
 NotificationQueue.enqueue
 NotificationQueue.init
+NotificationQueue.NotificationCoalescing.
 NotificationQueue.NotificationCoalescing.init
 NotificationQueue.NotificationCoalescing.none
 NotificationQueue.NotificationCoalescing.onName
 NotificationQueue.NotificationCoalescing.onSender
 NotificationQueue.NotificationCoalescing.rawValue
+NotificationQueue.PostingStyle.
+NumberFormatter.
 NumberFormatter.allowsFloats
 NumberFormatter.alwaysShowsDecimalSeparator
 NumberFormatter.copy
@@ -2307,10 +2615,15 @@ NumberFormatter.thousandSeparator
 NumberFormatter.usesGroupingSeparator
 NumberFormatter.usesSignificantDigits
 NumberFormatter.zeroSymbol
+NumberFormatter.PadPosition.
+NumberFormatter.RoundingMode.
+NumberFormatter.Style.
+ObjCBool.
 ObjCBool.boolValue
 ObjCBool.customMirror
 ObjCBool.description
 ObjCBool.init
+Operation.
 Operation.addDependency
 Operation.cancel
 Operation.completionBlock
@@ -2330,6 +2643,8 @@ Operation.removeDependency
 Operation.start
 Operation.waitUntilFinished
 Operation.willChangeValue
+Operation.QueuePriority.
+OperationQueue.
 OperationQueue.addBarrierBlock
 OperationQueue.addOperation
 OperationQueue.addOperations
@@ -2347,6 +2662,7 @@ OperationQueue.progress
 OperationQueue.qualityOfService
 OperationQueue.underlyingQueue
 OperationQueue.waitUntilAllOperationsAreFinished
+OutputStream.
 OutputStream.close
 OutputStream.hasSpaceAvailable
 OutputStream.init
@@ -2364,6 +2680,7 @@ POSIXError._nsError
 POSIXError._nsErrorDomain
 POSIXError.init
 POSIXErrorCode._ErrorType
+PersonNameComponents.
 PersonNameComponents.ReferenceType
 PersonNameComponents._bridgeToObjectiveC
 PersonNameComponents._conditionallyBridgeFromObjectiveC
@@ -2382,6 +2699,7 @@ PersonNameComponents.namePrefix
 PersonNameComponents.nameSuffix
 PersonNameComponents.nickname
 PersonNameComponents.phoneticRepresentation
+PersonNameComponentsFormatter.
 PersonNameComponentsFormatter.annotatedString	UNAVAILABLE
 PersonNameComponentsFormatter.init	UNAVAILABLE
 PersonNameComponentsFormatter.isPhonetic
@@ -2389,12 +2707,16 @@ PersonNameComponentsFormatter.localizedString	UNAVAILABLE
 PersonNameComponentsFormatter.personNameComponents	UNAVAILABLE
 PersonNameComponentsFormatter.string	UNAVAILABLE
 PersonNameComponentsFormatter.style
+PersonNameComponentsFormatter.Options.
 PersonNameComponentsFormatter.Options.init
 PersonNameComponentsFormatter.Options.phonetic
 PersonNameComponentsFormatter.Options.rawValue
+PersonNameComponentsFormatter.Style.
+Pipe.
 Pipe.fileHandleForReading
 Pipe.fileHandleForWriting
 Pipe.init
+Port.
 Port.copy
 Port.delegate
 Port.didBecomeInvalidNotification
@@ -2406,6 +2728,8 @@ Port.reservedSpaceLength
 Port.schedule
 Port.send
 Port.setDelegate
+PortDelegate.
+PortMessage.
 PortMessage.components
 PortMessage.copy
 PortMessage.init
@@ -2413,6 +2737,7 @@ PortMessage.msgid
 PortMessage.receivePort
 PortMessage.send
 PortMessage.sendPort
+Process.
 Process.arguments
 Process.currentDirectoryPath
 Process.currentDirectoryURL
@@ -2439,6 +2764,8 @@ Process.terminationHandler
 Process.terminationReason
 Process.terminationStatus
 Process.waitUntilExit
+Process.TerminationReason.
+Progress.
 Progress.addChild
 Progress.becomeCurrent
 Progress.cancel
@@ -2465,15 +2792,19 @@ Progress.resumingHandler
 Progress.setUserInfoObject
 Progress.totalUnitCount
 Progress.userInfo
+Progress.FileOperationKind.
 Progress.FileOperationKind.copying
 Progress.FileOperationKind.decompressingAfterDownloading
 Progress.FileOperationKind.downloading
 Progress.FileOperationKind.init
 Progress.FileOperationKind.rawValue
 Progress.FileOperationKind.receiving
+ProgressKind.
 ProgressKind.file
 ProgressKind.init
 ProgressKind.rawValue
+ProgressReporting.
+ProgressUserInfoKey.
 ProgressUserInfoKey.estimatedTimeRemainingKey
 ProgressUserInfoKey.fileCompletedCountKey
 ProgressUserInfoKey.fileOperationKindKey
@@ -2482,16 +2813,22 @@ ProgressUserInfoKey.fileURLKey
 ProgressUserInfoKey.init
 ProgressUserInfoKey.rawValue
 ProgressUserInfoKey.throughputKey
+PropertyListSerialization.
 PropertyListSerialization.PropertyListFormat
 PropertyListSerialization.ReadOptions
 PropertyListSerialization.WriteOptions
 PropertyListSerialization.data
 PropertyListSerialization.propertyList
+PropertyListSerialization.MutabilityOptions.
 PropertyListSerialization.MutabilityOptions.init
 PropertyListSerialization.MutabilityOptions.mutableContainers
 PropertyListSerialization.MutabilityOptions.mutableContainersAndLeaves
 PropertyListSerialization.MutabilityOptions.rawValue
+QualityOfService.
 Range.init
+RecoverableError.
+ReferenceConvertible.
+RunLoop.
 RunLoop._add
 RunLoop._observe
 RunLoop._remove
@@ -2507,10 +2844,12 @@ RunLoop.main	UNAVAILABLE
 RunLoop.perform
 RunLoop.remove
 RunLoop.run
+RunLoop.Mode.
 RunLoop.Mode.`default`
 RunLoop.Mode.common
 RunLoop.Mode.init
 RunLoop.Mode.rawValue
+RunLoop._Activities.
 RunLoop._Activities.afterWaiting
 RunLoop._Activities.allActivities
 RunLoop._Activities.beforeSources
@@ -2520,9 +2859,12 @@ RunLoop._Activities.entry
 RunLoop._Activities.exit
 RunLoop._Activities.init
 RunLoop._Activities.rawValue
+RunLoop._Activity.
+RunLoop._Observer.
 RunLoop._Observer.invalidate
 RunLoop._Observer.isValid
 RunLoop._Observer.order
+RunLoop._Source.
 RunLoop._Source.didCancel
 RunLoop._Source.didSchedule
 RunLoop._Source.init
@@ -2531,6 +2873,7 @@ RunLoop._Source.isValid
 RunLoop._Source.order
 RunLoop._Source.perform
 RunLoop._Source.signal
+Scanner.
 Scanner._scanUpToStringSplittingGraphemes
 Scanner.caseSensitive
 Scanner.charactersToBeSkipped
@@ -2562,11 +2905,14 @@ Scanner.scanUpToCharacters
 Scanner.scanUpToCharactersFromSet
 Scanner.scanUpToString
 Scanner.string
+Scanner.NumberRepresentation.
 Set._ObjectType
 Set._bridgeToObjectiveC
 Set._conditionallyBridgeFromObjectiveC
 Set._forceBridgeFromObjectiveC
 Set._unconditionallyBridgeFromObjectiveC
+SocketPort.
+SocketPort.	UNAVAILABLE
 SocketPort.`protocol`
 SocketPort.address
 SocketPort.delegate
@@ -2582,6 +2928,7 @@ SocketPort.send
 SocketPort.setDelegate
 SocketPort.socket
 SocketPort.socketType
+Stream.
 Stream.close
 Stream.delegate
 Stream.getBoundStreams
@@ -2594,6 +2941,7 @@ Stream.schedule
 Stream.setProperty
 Stream.streamError
 Stream.streamStatus
+Stream.Event.
 Stream.Event.endEncountered
 Stream.Event.errorOccurred
 Stream.Event.hasBytesAvailable
@@ -2601,6 +2949,7 @@ Stream.Event.hasSpaceAvailable
 Stream.Event.init
 Stream.Event.openCompleted
 Stream.Event.rawValue
+Stream.PropertyKey.
 Stream.PropertyKey.dataWrittenToMemoryStreamKey
 Stream.PropertyKey.fileCurrentOffsetKey
 Stream.PropertyKey.init
@@ -2608,7 +2957,10 @@ Stream.PropertyKey.networkServiceType
 Stream.PropertyKey.rawValue
 Stream.PropertyKey.socketSecurityLevelKey
 Stream.PropertyKey.socksProxyConfigurationKey
+Stream.Status.
+StreamDelegate.
 StreamDelegate.stream
+StreamNetworkServiceTypeValue.
 StreamNetworkServiceTypeValue.background
 StreamNetworkServiceTypeValue.callSignaling
 StreamNetworkServiceTypeValue.init
@@ -2616,6 +2968,7 @@ StreamNetworkServiceTypeValue.rawValue
 StreamNetworkServiceTypeValue.video
 StreamNetworkServiceTypeValue.voIP
 StreamNetworkServiceTypeValue.voice
+StreamSOCKSProxyConfiguration.
 StreamSOCKSProxyConfiguration.hostKey
 StreamSOCKSProxyConfiguration.init
 StreamSOCKSProxyConfiguration.passwordKey
@@ -2623,10 +2976,12 @@ StreamSOCKSProxyConfiguration.portKey
 StreamSOCKSProxyConfiguration.rawValue
 StreamSOCKSProxyConfiguration.userKey
 StreamSOCKSProxyConfiguration.versionKey
+StreamSOCKSProxyVersion.
 StreamSOCKSProxyVersion.init
 StreamSOCKSProxyVersion.rawValue
 StreamSOCKSProxyVersion.version4
 StreamSOCKSProxyVersion.version5
+StreamSocketSecurityLevel.
 StreamSocketSecurityLevel.init
 StreamSocketSecurityLevel.negotiatedSSL
 StreamSocketSecurityLevel.none
@@ -2690,16 +3045,16 @@ StringProtocol.enumerateSubstringsIn	UNAVAILABLE
 StringProtocol.expandingTildeInPath	UNAVAILABLE
 StringProtocol.fastestEncoding
 StringProtocol.fileSystemRepresentation	UNAVAILABLE
-StringProtocol.folding	UNAVAILABLE
 StringProtocol.folding
-StringProtocol.getBytes	UNAVAILABLE
+StringProtocol.folding	UNAVAILABLE
 StringProtocol.getBytes
+StringProtocol.getBytes	UNAVAILABLE
 StringProtocol.getCString
 StringProtocol.getFileSystemRepresentation	UNAVAILABLE
-StringProtocol.getLineStart
 StringProtocol.getLineStart	UNAVAILABLE
-StringProtocol.getParagraphStart
+StringProtocol.getLineStart
 StringProtocol.getParagraphStart	UNAVAILABLE
+StringProtocol.getParagraphStart
 StringProtocol.hash
 StringProtocol.lastPathComponent	UNAVAILABLE
 StringProtocol.lengthOfBytes
@@ -2750,6 +3105,7 @@ StringProtocol.uppercaseStringWith	UNAVAILABLE
 StringProtocol.utf16Count	UNAVAILABLE
 StringProtocol.writeToFile	UNAVAILABLE
 StringProtocol.writeToURL	UNAVAILABLE
+StringTransform.
 StringTransform.fullwidthToHalfwidth
 StringTransform.hiraganaToKatakana
 StringTransform.init
@@ -2772,6 +3128,7 @@ Substring._bridgeToObjectiveC
 Substring._conditionallyBridgeFromObjectiveC
 Substring._forceBridgeFromObjectiveC
 Substring._unconditionallyBridgeFromObjectiveC
+Thread.
 Thread.callStackReturnAddresses
 Thread.callStackSymbols
 Thread.cancel
@@ -2798,6 +3155,7 @@ TimeZone._conditionallyBridgeFromObjectiveC
 TimeZone._forceBridgeFromObjectiveC
 TimeZone._isBridgedToObjectiveC
 TimeZone._unconditionallyBridgeFromObjectiveC
+Timer.
 Timer.fire
 Timer.fireDate
 Timer.init
@@ -2847,6 +3205,7 @@ URL.resourceSpecifier	UNAVAILABLE
 URL.resourceValues
 URL.setResourceValues
 URL.setTemporaryResourceValue
+URLAuthenticationChallenge.
 URLAuthenticationChallenge.error
 URLAuthenticationChallenge.failureResponse
 URLAuthenticationChallenge.init
@@ -2854,6 +3213,8 @@ URLAuthenticationChallenge.previousFailureCount
 URLAuthenticationChallenge.proposedCredential
 URLAuthenticationChallenge.protectionSpace
 URLAuthenticationChallenge.sender
+URLAuthenticationChallengeSender.
+URLCache.
 URLCache.cachedResponse
 URLCache.currentDiskUsage
 URLCache.currentMemoryUsage
@@ -2866,6 +3227,7 @@ URLCache.removeCachedResponse
 URLCache.removeCachedResponses
 URLCache.shared
 URLCache.storeCachedResponse
+URLCache.StoragePolicy.
 URLComponents.ReferenceType
 URLComponents._ObjectType
 URLComponents._bridgeToObjectiveC
@@ -2873,6 +3235,7 @@ URLComponents._conditionallyBridgeFromObjectiveC
 URLComponents._forceBridgeFromObjectiveC
 URLComponents._getObjectiveCType
 URLComponents._unconditionallyBridgeFromObjectiveC
+URLCredential.
 URLCredential.copy
 URLCredential.encode
 URLCredential.hasPassword
@@ -2882,6 +3245,8 @@ URLCredential.password
 URLCredential.persistence
 URLCredential.supportsSecureCoding
 URLCredential.user
+URLCredential.Persistence.
+URLCredentialStorage.
 URLCredentialStorage.allCredentials
 URLCredentialStorage.credentials
 URLCredentialStorage.defaultCredential
@@ -2892,6 +3257,7 @@ URLCredentialStorage.remove
 URLCredentialStorage.set
 URLCredentialStorage.setDefaultCredential
 URLCredentialStorage.shared
+URLError.
 URLError._nsError
 URLError._nsErrorDomain
 URLError.backgroundSessionInUseByAnotherProcess
@@ -2943,7 +3309,9 @@ URLError.unsupportedURL
 URLError.userAuthenticationRequired
 URLError.userCancelledAuthentication
 URLError.zeroByteResource
+URLError.Code.
 URLError.Code._ErrorType
+URLFileResourceType.
 URLFileResourceType.blockSpecial
 URLFileResourceType.characterSpecial
 URLFileResourceType.directory
@@ -2954,6 +3322,7 @@ URLFileResourceType.regular
 URLFileResourceType.socket
 URLFileResourceType.symbolicLink
 URLFileResourceType.unknown
+URLProtectionSpace.
 URLProtectionSpace.`protocol`
 URLProtectionSpace.authenticationMethod
 URLProtectionSpace.copy
@@ -2967,6 +3336,7 @@ URLProtectionSpace.proxyType
 URLProtectionSpace.realm
 URLProtectionSpace.receivesCredentialSecurely
 URLProtectionSpace.serverTrust	UNAVAILABLE
+URLProtocol.
 URLProtocol.cachedResponse
 URLProtocol.canInit
 URLProtocol.canonicalRequest
@@ -2982,12 +3352,14 @@ URLProtocol.startLoading
 URLProtocol.stopLoading
 URLProtocol.task
 URLProtocol.unregisterClass
+URLProtocolClient.
 URLQueryItem._ObjectType
 URLQueryItem._bridgeToObjectiveC
 URLQueryItem._conditionallyBridgeFromObjectiveC
 URLQueryItem._forceBridgeFromObjectiveC
 URLQueryItem._getObjectiveCType
 URLQueryItem._unconditionallyBridgeFromObjectiveC
+URLRequest.
 URLRequest.==
 URLRequest.CachePolicy
 URLRequest.NetworkServiceType
@@ -3017,6 +3389,7 @@ URLRequest.setValue
 URLRequest.timeoutInterval
 URLRequest.url
 URLRequest.value
+URLResourceKey.
 URLResourceKey.addedToDirectoryDateKey
 URLResourceKey.applicationIsScriptableKey
 URLResourceKey.attributeModificationDateKey
@@ -3118,6 +3491,7 @@ URLResourceKey.volumeTotalCapacityKey
 URLResourceKey.volumeURLForRemountingKey
 URLResourceKey.volumeURLKey
 URLResourceKey.volumeUUIDStringKey
+URLResourceValues.
 URLResourceValues.addedToDirectoryDate
 URLResourceValues.allValues
 URLResourceValues.applicationIsScriptable
@@ -3208,6 +3582,7 @@ URLResourceValues.volumeSupportsZeroRuns
 URLResourceValues.volumeTotalCapacity
 URLResourceValues.volumeURLForRemounting
 URLResourceValues.volumeUUIDString
+URLResponse.
 URLResponse.copy
 URLResponse.encode
 URLResponse.expectedContentLength
@@ -3219,6 +3594,7 @@ URLResponse.suggestedFilename
 URLResponse.supportsSecureCoding
 URLResponse.textEncodingName
 URLResponse.url
+URLSession.
 URLSession.configuration
 URLSession.data
 URLSession.dataTask
@@ -3229,8 +3605,8 @@ URLSession.downloadTask
 URLSession.finishTasksAndInvalidate
 URLSession.flush
 URLSession.getAllTasks
-URLSession.getTasksWithCompletionHandler	UNAVAILABLE
 URLSession.getTasksWithCompletionHandler
+URLSession.getTasksWithCompletionHandler	UNAVAILABLE
 URLSession.init
 URLSession.invalidateAndCancel
 URLSession.reset
@@ -3240,6 +3616,10 @@ URLSession.streamTask	UNAVAILABLE
 URLSession.upload
 URLSession.uploadTask
 URLSession.webSocketTask
+URLSession.AuthChallengeDisposition.
+URLSession.DelayedRequestDisposition.
+URLSession.ResponseDisposition.
+URLSessionConfiguration.
 URLSessionConfiguration.`default`
 URLSessionConfiguration.allowsCellularAccess
 URLSessionConfiguration.background	UNAVAILABLE
@@ -3267,11 +3647,19 @@ URLSessionConfiguration.urlCache
 URLSessionConfiguration.urlCredentialStorage
 URLSessionConfiguration.usesClassicLoadingMode	UNAVAILABLE
 URLSessionConfiguration.waitsForConnectivity	UNAVAILABLE
+URLSessionConfiguration.MultipathServiceType.
+URLSessionDataDelegate.
 URLSessionDataDelegate.urlSession
+URLSessionDataTask.
+URLSessionDelegate.
 URLSessionDelegate.urlSession
+URLSessionDownloadDelegate.
 URLSessionDownloadDelegate.urlSession
+URLSessionDownloadTask.
 URLSessionDownloadTask.cancel
+URLSessionStreamDelegate.
 URLSessionStreamDelegate.urlSession
+URLSessionStreamTask.
 URLSessionStreamTask.captureStreams	UNAVAILABLE
 URLSessionStreamTask.closeRead	UNAVAILABLE
 URLSessionStreamTask.closeWrite	UNAVAILABLE
@@ -3279,6 +3667,7 @@ URLSessionStreamTask.readData	UNAVAILABLE
 URLSessionStreamTask.startSecureConnection	UNAVAILABLE
 URLSessionStreamTask.stopSecureConnection	UNAVAILABLE
 URLSessionStreamTask.write	UNAVAILABLE
+URLSessionTask.
 URLSessionTask.cancel
 URLSessionTask.copy
 URLSessionTask.countOfBytesClientExpectsToReceive
@@ -3304,10 +3693,16 @@ URLSessionTask.state
 URLSessionTask.suspend
 URLSessionTask.taskDescription
 URLSessionTask.taskIdentifier
+URLSessionTask.State.
+URLSessionTaskDelegate.
 URLSessionTaskDelegate.urlSession
+URLSessionTaskMetrics.
 URLSessionTaskMetrics.redirectCount
 URLSessionTaskMetrics.taskInterval
 URLSessionTaskMetrics.transactionMetrics
+URLSessionTaskMetrics.DomainResolutionProtocol.
+URLSessionTaskMetrics.ResourceFetchType.
+URLSessionTaskTransactionMetrics.
 URLSessionTaskTransactionMetrics.connectEndDate
 URLSessionTaskTransactionMetrics.connectStartDate
 URLSessionTaskTransactionMetrics.countOfRequestBodyBytesBeforeEncoding
@@ -3342,6 +3737,9 @@ URLSessionTaskTransactionMetrics.responseEndDate
 URLSessionTaskTransactionMetrics.responseStartDate
 URLSessionTaskTransactionMetrics.secureConnectionEndDate
 URLSessionTaskTransactionMetrics.secureConnectionStartDate
+URLSessionUploadTask.
+URLSessionWebSocketDelegate.
+URLSessionWebSocketTask.
 URLSessionWebSocketTask.cancel
 URLSessionWebSocketTask.closeCode
 URLSessionWebSocketTask.closeReason
@@ -3351,20 +3749,25 @@ URLSessionWebSocketTask.receive
 URLSessionWebSocketTask.resume
 URLSessionWebSocketTask.send
 URLSessionWebSocketTask.sendPing
+URLSessionWebSocketTask.CloseCode.
+URLSessionWebSocketTask.Message.
 UUID._bridgeToObjectiveC
 UUID._conditionallyBridgeFromObjectiveC
 UUID._forceBridgeFromObjectiveC
 UUID._unconditionallyBridgeFromObjectiveC
+Unit.
 Unit.copy
 Unit.encode
 Unit.init
 Unit.isEqual
 Unit.supportsSecureCoding
 Unit.symbol
+UnitAcceleration.
 UnitAcceleration.baseUnit
 UnitAcceleration.gravity
 UnitAcceleration.isEqual
 UnitAcceleration.metersPerSecondSquared
+UnitAngle.
 UnitAngle.arcMinutes
 UnitAngle.arcSeconds
 UnitAngle.baseUnit
@@ -3373,6 +3776,7 @@ UnitAngle.gradians
 UnitAngle.isEqual
 UnitAngle.radians
 UnitAngle.revolutions
+UnitArea.
 UnitArea.acres
 UnitArea.ares
 UnitArea.baseUnit
@@ -3389,13 +3793,16 @@ UnitArea.squareMiles
 UnitArea.squareMillimeters
 UnitArea.squareNanometers
 UnitArea.squareYards
+UnitConcentrationMass.
 UnitConcentrationMass.baseUnit
 UnitConcentrationMass.gramsPerLiter
 UnitConcentrationMass.isEqual
 UnitConcentrationMass.milligramsPerDeciliter
 UnitConcentrationMass.millimolesPerLiter
+UnitConverter.
 UnitConverter.baseUnitValue
 UnitConverter.value
+UnitConverterLinear.
 UnitConverterLinear.baseUnitValue
 UnitConverterLinear.coefficient
 UnitConverterLinear.constant
@@ -3404,9 +3811,11 @@ UnitConverterLinear.init
 UnitConverterLinear.isEqual
 UnitConverterLinear.supportsSecureCoding
 UnitConverterLinear.value
+UnitDispersion.
 UnitDispersion.baseUnit
 UnitDispersion.isEqual
 UnitDispersion.partsPerMillion
+UnitDuration.
 UnitDuration.baseUnit
 UnitDuration.hours
 UnitDuration.isEqual
@@ -3416,6 +3825,7 @@ UnitDuration.minutes
 UnitDuration.nanoseconds
 UnitDuration.picoseconds
 UnitDuration.seconds
+UnitElectricCharge.
 UnitElectricCharge.ampereHours
 UnitElectricCharge.baseUnit
 UnitElectricCharge.coulombs
@@ -3424,6 +3834,7 @@ UnitElectricCharge.kiloampereHours
 UnitElectricCharge.megaampereHours
 UnitElectricCharge.microampereHours
 UnitElectricCharge.milliampereHours
+UnitElectricCurrent.
 UnitElectricCurrent.amperes
 UnitElectricCurrent.baseUnit
 UnitElectricCurrent.isEqual
@@ -3431,6 +3842,7 @@ UnitElectricCurrent.kiloamperes
 UnitElectricCurrent.megaamperes
 UnitElectricCurrent.microamperes
 UnitElectricCurrent.milliamperes
+UnitElectricPotentialDifference.
 UnitElectricPotentialDifference.baseUnit
 UnitElectricPotentialDifference.isEqual
 UnitElectricPotentialDifference.kilovolts
@@ -3438,6 +3850,7 @@ UnitElectricPotentialDifference.megavolts
 UnitElectricPotentialDifference.microvolts
 UnitElectricPotentialDifference.millivolts
 UnitElectricPotentialDifference.volts
+UnitElectricResistance.
 UnitElectricResistance.baseUnit
 UnitElectricResistance.isEqual
 UnitElectricResistance.kiloohms
@@ -3445,6 +3858,7 @@ UnitElectricResistance.megaohms
 UnitElectricResistance.microohms
 UnitElectricResistance.milliohms
 UnitElectricResistance.ohms
+UnitEnergy.
 UnitEnergy.baseUnit
 UnitEnergy.calories
 UnitEnergy.isEqual
@@ -3452,6 +3866,7 @@ UnitEnergy.joules
 UnitEnergy.kilocalories
 UnitEnergy.kilojoules
 UnitEnergy.kilowattHours
+UnitFrequency.
 UnitFrequency.baseUnit
 UnitFrequency.framesPerSecond
 UnitFrequency.gigahertz
@@ -3463,14 +3878,17 @@ UnitFrequency.microhertz
 UnitFrequency.millihertz
 UnitFrequency.nanohertz
 UnitFrequency.terahertz
+UnitFuelEfficiency.
 UnitFuelEfficiency.baseUnit
 UnitFuelEfficiency.isEqual
 UnitFuelEfficiency.litersPer100Kilometers
 UnitFuelEfficiency.milesPerGallon
 UnitFuelEfficiency.milesPerImperialGallon
+UnitIlluminance.
 UnitIlluminance.baseUnit
 UnitIlluminance.isEqual
 UnitIlluminance.lux
+UnitInformationStorage.
 UnitInformationStorage.baseUnit
 UnitInformationStorage.bits
 UnitInformationStorage.bytes
@@ -3508,6 +3926,7 @@ UnitInformationStorage.zebibits
 UnitInformationStorage.zebibytes
 UnitInformationStorage.zettabits
 UnitInformationStorage.zettabytes
+UnitLength.
 UnitLength.astronomicalUnits
 UnitLength.baseUnit
 UnitLength.centimeters
@@ -3532,6 +3951,7 @@ UnitLength.parsecs
 UnitLength.picometers
 UnitLength.scandinavianMiles
 UnitLength.yards
+UnitMass.
 UnitMass.baseUnit
 UnitMass.carats
 UnitMass.centigrams
@@ -3550,6 +3970,7 @@ UnitMass.pounds
 UnitMass.shortTons
 UnitMass.slugs
 UnitMass.stones
+UnitPower.
 UnitPower.baseUnit
 UnitPower.femtowatts
 UnitPower.gigawatts
@@ -3563,6 +3984,7 @@ UnitPower.nanowatts
 UnitPower.picowatts
 UnitPower.terawatts
 UnitPower.watts
+UnitPressure.
 UnitPressure.bars
 UnitPressure.baseUnit
 UnitPressure.gigapascals
@@ -3575,17 +3997,20 @@ UnitPressure.millibars
 UnitPressure.millimetersOfMercury
 UnitPressure.newtonsPerMetersSquared
 UnitPressure.poundsForcePerSquareInch
+UnitSpeed.
 UnitSpeed.baseUnit
 UnitSpeed.isEqual
 UnitSpeed.kilometersPerHour
 UnitSpeed.knots
 UnitSpeed.metersPerSecond
 UnitSpeed.milesPerHour
+UnitTemperature.
 UnitTemperature.baseUnit
 UnitTemperature.celsius
 UnitTemperature.fahrenheit
 UnitTemperature.isEqual
 UnitTemperature.kelvin
+UnitVolume.
 UnitVolume.acreFeet
 UnitVolume.baseUnit
 UnitVolume.bushels
@@ -3619,6 +4044,7 @@ UnitVolume.pints
 UnitVolume.quarts
 UnitVolume.tablespoons
 UnitVolume.teaspoons
+UserDefaults.
 UserDefaults.addSuite
 UserDefaults.argumentDomain
 UserDefaults.array
@@ -3652,6 +4078,7 @@ UserDefaults.synchronize
 UserDefaults.url
 UserDefaults.volatileDomain
 UserDefaults.volatileDomainNames
+XMLDTD.
 XMLDTD.addChild
 XMLDTD.attributeDeclaration
 XMLDTD.childCount
@@ -3667,12 +4094,15 @@ XMLDTD.removeChild
 XMLDTD.replaceChild
 XMLDTD.setChildren
 XMLDTD.systemID
+XMLDTDNode.
 XMLDTDNode.dtdKind
 XMLDTDNode.init
 XMLDTDNode.isExternal
 XMLDTDNode.notationName
 XMLDTDNode.publicID
 XMLDTDNode.systemID
+XMLDTDNode.DTDKind.
+XMLDocument.
 XMLDocument.addChild
 XMLDocument.characterEncoding
 XMLDocument.childCount
@@ -3693,6 +4123,8 @@ XMLDocument.setRootElement
 XMLDocument.validate
 XMLDocument.version
 XMLDocument.xmlData
+XMLDocument.ContentKind.
+XMLElement.
 XMLElement.addAttribute
 XMLElement.addChild
 XMLElement.addNamespace
@@ -3714,6 +4146,7 @@ XMLElement.resolvePrefix
 XMLElement.setAttributesAs	UNAVAILABLE
 XMLElement.setAttributesWith
 XMLElement.setChildren
+XMLNode.
 XMLNode.attribute
 XMLNode.canonicalXMLStringPreservingComments
 XMLNode.child
@@ -3754,8 +4187,11 @@ XMLNode.text
 XMLNode.uri
 XMLNode.xPath
 XMLNode.xmlString
+XMLNode.Index.
 XMLNode.Index.<
 XMLNode.Index.==
+XMLNode.Kind.
+XMLNode.Options.
 XMLNode.Options.documentIncludeContentTypeDeclaration
 XMLNode.Options.documentTidyHTML
 XMLNode.Options.documentTidyXML
@@ -3785,6 +4221,7 @@ XMLNode.Options.nodePromoteSignificantWhitespace
 XMLNode.Options.nodeUseDoubleQuotes
 XMLNode.Options.nodeUseSingleQuotes
 XMLNode.Options.rawValue
+XMLParser.
 XMLParser.abortParsing
 XMLParser.allowedExternalEntityURLs
 XMLParser.columnNumber
@@ -3800,20 +4237,29 @@ XMLParser.shouldProcessNamespaces
 XMLParser.shouldReportNamespacePrefixes
 XMLParser.shouldResolveExternalEntities
 XMLParser.systemID
+XMLParser.ErrorCode.
+XMLParser.ExternalEntityResolvingPolicy.
+XMLParserDelegate.
+_BridgedNSError.
+_BridgedStoredNSError.
 _BridgedStoredNSError.==
 _BridgedStoredNSError.code
 _BridgedStoredNSError.init
 _BridgedStoredNSError.userInfo
+_CFErrorSPIForFoundationXMLUseOnly.
 _CFErrorSPIForFoundationXMLUseOnly._nsObject
 _CFErrorSPIForFoundationXMLUseOnly.init
+_ErrorCodeProtocol.
 _ErrorCodeProtocol.~=
 _FTPURLProtocol.init
 _FoundationNSNumberInitializer.initialize
 _HTTPURLProtocol.init
+_InputStreamSPIForFoundationNetworkingUseOnly.
 _InputStreamSPIForFoundationNetworkingUseOnly.init
 _InputStreamSPIForFoundationNetworkingUseOnly.seek
 _NSCFArray.init
 _NSCFDictionary.init
+_NSCFXMLBridgeForFoundationXMLUseOnly.
 _NSCFXMLBridgeForFoundationXMLUseOnly.CFArrayAppendValue
 _NSCFXMLBridgeForFoundationXMLUseOnly.CFArrayCreateMutable
 _NSCFXMLBridgeForFoundationXMLUseOnly.CFArrayGetCount
@@ -3840,13 +4286,19 @@ _NSCFXMLBridgeForFoundationXMLUseOnly.kCFCopyStringDictionaryKeyCallBacks
 _NSCFXMLBridgeForFoundationXMLUseOnly.kCFErrorLocalizedDescriptionKey
 _NSCFXMLBridgeForFoundationXMLUseOnly.kCFTypeDictionaryValueCallBacks
 _NSCFXMLBridgeForFoundationXMLUseOnly.originalBridge
+_NSNonfileURLContentLoading.
+_NSRange.
 _NSRange.init
 _NSRange.length
 _NSRange.location
 _NativeProtocol.init
 _ObjectiveCBridgeable._bridgeToAnyObject
+_ObjectiveCBridgeableError.
+_StructBridgeable.
+_StructTypeBridgeable.
 _StructTypeBridgeable._bridgeToAny
 _WebSocketURLProtocol.init
+__BridgedNSError.
 __BridgedNSError.==
 __BridgedNSError._code
 __BridgedNSError._domain
@@ -3856,4 +4308,6 @@ __BridgedNSError.init
 __SwiftValue.copy
 __SwiftValue.null
 __SwiftValue.value
+tls_ciphersuite_t.
+tls_protocol_version_t.
 unichar.init

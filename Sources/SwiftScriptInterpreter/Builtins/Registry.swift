@@ -41,6 +41,8 @@ extension Interpreter {
         registerOnImport("Foundation", module: foundationModule)
         registerOnImport("Darwin",     module: foundationModule)
         registerOnImport("Glibc",      module: foundationModule)
+        registerOnImport("ucrt",       module: foundationModule)
+        registerOnImport("WinSDK",     module: foundationModule)
         // Calendar/DateComponents — also Foundation-gated. Hand-rolled
         // because the symbol-graph surface uses `Set<Calendar.Component>`,
         // a generic over an enum that the bridge generator can't model.
@@ -48,6 +50,8 @@ extension Interpreter {
         registerOnImport("Foundation", module: calendarModule)
         registerOnImport("Darwin",     module: calendarModule)
         registerOnImport("Glibc",      module: calendarModule)
+        registerOnImport("ucrt",       module: calendarModule)
+        registerOnImport("WinSDK",     module: calendarModule)
         // JSONEncoder/JSONDecoder + String(data:encoding:) — walk the
         // `Value` tree directly rather than rely on Codable conformance,
         // which the interpreter doesn't model.
@@ -55,12 +59,16 @@ extension Interpreter {
         registerOnImport("Foundation", module: jsonModule)
         registerOnImport("Darwin",     module: jsonModule)
         registerOnImport("Glibc",      module: jsonModule)
+        registerOnImport("ucrt",       module: jsonModule)
+        registerOnImport("WinSDK",     module: jsonModule)
         // URLSession.shared.data(from:) — surface enough to fetch and
         // decode JSON over HTTP. Foundation-gated.
         let urlSessionModule = URLSessionModule()
         registerOnImport("Foundation", module: urlSessionModule)
         registerOnImport("Darwin",     module: urlSessionModule)
         registerOnImport("Glibc",      module: urlSessionModule)
+        registerOnImport("ucrt",       module: urlSessionModule)
+        registerOnImport("WinSDK",     module: urlSessionModule)
     }
 
     func registerBuiltin(name: String, body: @escaping ([Value]) async throws -> Value) {

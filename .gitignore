@@ -12,3 +12,5 @@ DerivedData/
 !.env.example
 Package.resolved
 .swiftpm
+test.swift
+.claude/

@@ -62,3 +62,23 @@ jobs:
         run: swift build --build-tests -v
       - name: Test (Linux)
         run: swift test -v --skip-build
+
+  build-windows:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+      # gha-setup-swift handles toolchain install + PATH on Windows.
+      # Pinning a specific 6.x release keeps cache hits stable; bump
+      # when refreshing toolchain.
+      - name: Setup Swift
+        uses: compnerd/gha-setup-swift@main
+        with:
+          branch: swift-6.0.3-release
+          tag: 6.0.3-RELEASE
+      - name: Verify Swift version
+        run: swift --version
+      - name: Build (Windows)
+        run: swift build --build-tests -v
+      - name: Test (Windows)
+        run: swift test -v --skip-build

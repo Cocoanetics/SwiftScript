@@ -15,7 +15,7 @@ extension Interpreter {
     /// without it, the path is dormant and the call falls through to the
     /// stdlib String builtin which will reject the labeled args.
     func tryStringContentsOfFile(_ call: FunctionCallExprSyntax, in scope: Scope) async throws -> Value? {
-        guard isImported(any: "Foundation", "Darwin", "Glibc") else { return nil }
+        guard isImported(any: "Foundation", "Darwin", "Glibc", "ucrt", "WinSDK") else { return nil }
         guard let ref = call.calledExpression.as(DeclReferenceExprSyntax.self),
               ref.baseName.text == "String",
               let firstArg = call.arguments.first,
@@ -99,7 +99,7 @@ extension Interpreter {
     /// expression we can't otherwise resolve without `String.Encoding`.
     /// Gated on Foundation import.
     func tryStringWriteCall(_ call: FunctionCallExprSyntax, in scope: Scope) async throws -> Value? {
-        guard isImported(any: "Foundation", "Darwin", "Glibc") else { return nil }
+        guard isImported(any: "Foundation", "Darwin", "Glibc", "ucrt", "WinSDK") else { return nil }
         guard let memberAccess = call.calledExpression.as(MemberAccessExprSyntax.self),
               let base = memberAccess.base,
               memberAccess.declName.baseName.text == "write"

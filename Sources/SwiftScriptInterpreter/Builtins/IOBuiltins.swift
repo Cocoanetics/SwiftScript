@@ -113,7 +113,7 @@ extension Interpreter {
             case 1:
                 return .string(args[0].description)
             case 2...:
-                guard self?.isImported(any: "Foundation", "Darwin", "Glibc") == true else {
+                guard self?.isImported(any: "Foundation", "Darwin", "Glibc", "ucrt", "WinSDK") == true else {
                     // Mirror swiftc's wording when the format-init isn't
                     // available because Foundation hasn't been imported.
                     throw RuntimeError.invalid("no exact matches in call to initializer")

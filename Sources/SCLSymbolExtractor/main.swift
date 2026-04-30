@@ -8,8 +8,11 @@
 //
 // Output format (one symbol per line):
 //
-//   Type.memberName                       (cross-platform)
+//   Type.memberName                       (cross-platform member)
 //   Type.memberName  UNAVAILABLE          (declared but @available(*, unavailable))
+//   Type.            (cross-platform type marker; member name empty)
+//   Type.            UNAVAILABLE          (type itself is @available(*, unavailable))
+//   .topLevelFunc                         (cross-platform free function — no owner)
 //
 // The matching is name-only (no signature) — overloads collapse into
 // one entry. That's intentional: the generator only needs to answer
@@ -141,27 +144,57 @@ final class PublicMemberVisitor: SyntaxVisitor {
 
     // MARK: Type containers (push/pop type stack)
 
+    /// Record a type-level marker. `Type.` (with empty member name)
+    /// lets the consumer know whether the *type itself* exists on the
+    /// cross-platform side — separate from per-member presence.
+    private func recordTypeMarker(name: String, unavailable: Bool) {
+        let qualified = (typeStack + [name]).joined(separator: ".")
+        records.insert(SymbolRecord(
+            typeName: qualified, memberName: "", unavailable: unavailable
+        ))
+    }
+
     override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
+        if Self.isPublic(node.modifiers) {
+            recordTypeMarker(name: node.name.text,
+                             unavailable: Self.isUnavailable(node.attributes))
+        }
         push(node.name.text); return .visitChildren
     }
     override func visitPost(_ node: ClassDeclSyntax) { pop() }
 
     override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
+        if Self.isPublic(node.modifiers) {
+            recordTypeMarker(name: node.name.text,
+                             unavailable: Self.isUnavailable(node.attributes))
+        }
         push(node.name.text); return .visitChildren
     }
     override func visitPost(_ node: StructDeclSyntax) { pop() }
 
     override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
+        if Self.isPublic(node.modifiers) {
+            recordTypeMarker(name: node.name.text,
+                             unavailable: Self.isUnavailable(node.attributes))
+        }
         push(node.name.text); return .visitChildren
     }
     override func visitPost(_ node: EnumDeclSyntax) { pop() }
 
     override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
+        if Self.isPublic(node.modifiers) {
+            recordTypeMarker(name: node.name.text,
+                             unavailable: Self.isUnavailable(node.attributes))
+        }
         push(node.name.text); return .visitChildren
     }
     override func visitPost(_ node: ProtocolDeclSyntax) { pop() }
 
     override func visit(_ node: ActorDeclSyntax) -> SyntaxVisitorContinueKind {
+        if Self.isPublic(node.modifiers) {
+            recordTypeMarker(name: node.name.text,
+                             unavailable: Self.isUnavailable(node.attributes))
+        }
         push(node.name.text); return .visitChildren
     }
     override func visitPost(_ node: ActorDeclSyntax) { pop() }
@@ -181,8 +214,17 @@ final class PublicMemberVisitor: SyntaxVisitor {
 
     override func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
         if Self.isPublic(node.modifiers) {
-            record(node.name.text,
-                   unavailable: Self.isUnavailable(node.attributes))
+            let unavail = Self.isUnavailable(node.attributes)
+            if typeStack.isEmpty {
+                // Top-level function — record under empty owner so the
+                // consumer can distinguish "exists at module scope" from
+                // "exists as a method on Type".
+                records.insert(SymbolRecord(
+                    typeName: "", memberName: node.name.text, unavailable: unavail
+                ))
+            } else {
+                record(node.name.text, unavailable: unavail)
+            }
         }
         return .visitChildren  // walk into body for nested types
     }
@@ -252,7 +294,9 @@ for dir in cli.sourceDirs {
 }
 
 // Sort + serialize. UNAVAILABLE marker lets the consumer treat scl-
-// declared-but-unavailable symbols as Apple-only.
+// declared-but-unavailable symbols as Apple-only. Type-level markers
+// have empty memberName → render as `Type.`. Top-level functions have
+// empty typeName → render as `.funcName`.
 var lines: [String] = []
 for record in visitor.records.sorted() {
     let key = "\(record.typeName).\(record.memberName)"

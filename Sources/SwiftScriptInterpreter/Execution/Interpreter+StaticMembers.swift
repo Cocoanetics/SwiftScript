@@ -33,7 +33,7 @@ extension Interpreter {
         case "FileManager":
             // Foundation type with hand-rolled dispatch — only visible
             // after `import Foundation`.
-            return isImported(any: "Foundation", "Darwin", "Glibc")
+            return isImported(any: "Foundation", "Darwin", "Glibc", "ucrt", "WinSDK")
         default:
             return false
         }
@@ -86,7 +86,7 @@ extension Interpreter {
             return v
         }
         switch (typeName, member) {
-        case ("FileManager", "default") where isImported(any: "Foundation", "Darwin", "Glibc"):
+        case ("FileManager", "default") where isImported(any: "Foundation", "Darwin", "Glibc", "ucrt", "WinSDK"):
             return fileManagerSentinel
         // `random(in:)` returns a closure, so it's not a flat `.value` —
         // not a fit for `registerStaticValue`. Stays hand-rolled.

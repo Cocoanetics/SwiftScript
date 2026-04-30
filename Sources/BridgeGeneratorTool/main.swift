@@ -107,8 +107,16 @@ let autoAllowlist = cli.autoAllowlist
 /// `@available(*, unavailable)`, treated as Apple-only). Members
 /// without a matching key are also Apple-only.
 struct SCLOracle {
-    /// Available cross-platform `(typeName, memberName)` pairs.
+    /// Available cross-platform `(typeName, memberName)` pairs. Empty
+    /// memberName entries (`Type.`) are type-level markers; empty
+    /// typeName entries (`.funcName`) are top-level functions.
     let crossPlatform: Set<String>
+    /// Types declared in scl source but with `@available(*, unavailable)`.
+    /// Treated as Apple-only by the classifier even though their type
+    /// marker would otherwise be present.
+    let unavailableTypes: Set<String>
+    /// Top-level functions declared in scl source.
+    let topLevelFunctions: Set<String>
 
     /// `nil` means no oracle was provided — treat everything as cross-
     /// platform (legacy behavior, no `#if canImport(Darwin)` gating).
@@ -117,14 +125,33 @@ struct SCLOracle {
         do {
             let contents = try String(contentsOf: url, encoding: .utf8)
             var keep: Set<String> = []
+            var unavailableTypes: Set<String> = []
+            var topLevelFns: Set<String> = []
             for line in contents.split(whereSeparator: \.isNewline) {
                 let trimmed = line.trimmingCharacters(in: .whitespaces)
                 if trimmed.isEmpty || trimmed.hasPrefix("#") { continue }
                 let parts = trimmed.components(separatedBy: "\t")
-                if parts.count >= 2 && parts[1] == "UNAVAILABLE" { continue }
-                keep.insert(parts[0])
+                let key = parts[0]
+                let unavailable = parts.count >= 2 && parts[1] == "UNAVAILABLE"
+                // Type-level marker: `Type.` (member name empty).
+                if key.hasSuffix(".") {
+                    let typeName = String(key.dropLast())
+                    if unavailable { unavailableTypes.insert(typeName) }
+                    else { keep.insert(key) }
+                    continue
+                }
+                // Top-level function: `.funcName` (type name empty).
+                if key.hasPrefix(".") {
+                    if !unavailable { topLevelFns.insert(String(key.dropFirst())) }
+                    continue
+                }
+                if !unavailable { keep.insert(key) }
             }
-            return SCLOracle(crossPlatform: keep)
+            return SCLOracle(
+                crossPlatform: keep,
+                unavailableTypes: unavailableTypes,
+                topLevelFunctions: topLevelFns
+            )
         } catch {
             FileHandle.standardError.write(Data("error reading scl symbols: \(error)\n".utf8))
             exit(1)
@@ -132,30 +159,44 @@ struct SCLOracle {
     }
 
     /// True when the `Type.member` pair is in the cross-platform set.
-    /// Top-level free functions (no owning type) are reported via
-    /// `typeName == ""` and are always treated as cross-platform —
-    /// scl doesn't enumerate top-level Foundation funcs as cleanly,
-    /// and the existing portable C-math globals show no false-Apple.
     func isCrossPlatform(typeName: String, memberName: String) -> Bool {
-        if typeName.isEmpty { return true }
-        // Stdlib types (Int, Double, String, Bool, Array, Dictionary)
-        // are always cross-platform — scl is Foundation-only.
+        // Top-level free function: look up by name in the function set.
+        if typeName.isEmpty {
+            return topLevelFunctions.contains(memberName)
+        }
+        // Stdlib types (Int, Double, String, Bool, Array, …) — scl is
+        // Foundation-only, so we whitelist them here. Nested stdlib
+        // types like `String.Index` have a few Apple-only extensions
+        // (e.g. `debugDescription`); blocklist those individually.
         if stdlibCrossPlatformOwners.contains(typeName) { return true }
-        // Check the type as-is.
+        // Check the type-member as-is (with NS-prefixed fallback for
+        // scl's NSXxx-keyed members).
         if crossPlatform.contains("\(typeName).\(memberName)") { return true }
-        // scl-foundation declares many Foundation members on the
-        // NS-prefixed reference type (e.g. NSURL.path, NSFileManager.
-        // contentsOfDirectory) while Apple's symbol-graph reports them
-        // on the Swift-native value-typed overlay (URL.path, FileManager.
-        // contentsOfDirectory). Try the NS-prefixed form as a fallback so
-        // we don't misclassify these as Apple-only. Nested-type spellings
-        // like `Locale.LanguageCode` get NS-prefixed at the root.
         let nsCandidate: String
         if let dot = typeName.firstIndex(of: ".") {
             nsCandidate = "NS\(typeName[..<dot])\(typeName[dot...]).\(memberName)"
         } else {
             nsCandidate = "NS\(typeName).\(memberName)"
         }
+        return crossPlatform.contains(nsCandidate)
+    }
+
+    /// True when the type itself exists on the cross-platform side
+    /// (declared in scl source AND not marked unavailable). Used by
+    /// the comparator emitter — emitting a comparator for a type that
+    /// doesn't exist on Linux would break that build.
+    func isTypeCrossPlatform(_ typeName: String) -> Bool {
+        if stdlibCrossPlatformOwners.contains(typeName) { return true }
+        if unavailableTypes.contains(typeName) { return false }
+        if crossPlatform.contains("\(typeName).") { return true }
+        // NS-prefixed fallback.
+        let nsCandidate: String
+        if let dot = typeName.firstIndex(of: ".") {
+            nsCandidate = "NS\(typeName[..<dot])\(typeName[dot...])."
+        } else {
+            nsCandidate = "NS\(typeName)."
+        }
+        if unavailableTypes.contains(String(nsCandidate.dropLast())) { return false }
         return crossPlatform.contains(nsCandidate)
     }
 }
@@ -1734,10 +1775,15 @@ for (usr, bridge) in bridgedTypes {
     // not the bridges table), so they live in the manifest's runtime
     // block rather than a per-type dict.
     // Comparator references the type itself; classify by whether the
-    // owning type appears in the scl extract.
+    // owning type exists on the cross-platform side. Reference-type
+    // Foundation classes (URLSession, URLResponse, HTTPURLResponse,
+    // FileManager …) are typealiases for AnyObject on Linux's scl
+    // and don't conform to Equatable — `isTypeCrossPlatform` only
+    // returns true for value types in scl, so those comparators get
+    // gated automatically.
     let comparatorPlatform: Platform =
-        sclOracle?.crossPlatform.contains { $0.hasPrefix("\(typeName).") } == true
-        ? .crossPlatform : (sclOracle == nil ? .crossPlatform : .appleOnly)
+        (sclOracle?.isTypeCrossPlatform(typeName) ?? true)
+        ? .crossPlatform : .appleOnly
     emitted.append(EmitEntry(
         symbolPath: "\(typeName).==", group: group, bucket: .runtime, code: code,
         platform: comparatorPlatform
@@ -1843,6 +1889,9 @@ func renderPerTypeFile(
         if entries.crossPlatform.isEmpty {
             return """
             \(autogenBanner)import Foundation
+            #if canImport(FoundationNetworking)
+            import FoundationNetworking
+            #endif
 
             extension \(namespace) {
                 nonisolated(unsafe) static let \(dictName): [String: Bridge] = [:]
@@ -1852,6 +1901,9 @@ func renderPerTypeFile(
         }
         return """
         \(autogenBanner)import Foundation
+        #if canImport(FoundationNetworking)
+        import FoundationNetworking
+        #endif
 
         extension \(namespace) {
             nonisolated(unsafe) static let \(dictName): [String: Bridge] = [
@@ -1869,6 +1921,9 @@ func renderPerTypeFile(
         : "        var d: [String: Bridge] = [\n\(entries.crossPlatform.joined(separator: "\n"))\n        ]"
     return """
     \(autogenBanner)import Foundation
+    #if canImport(FoundationNetworking)
+    import FoundationNetworking
+    #endif
 
     extension \(namespace) {
         nonisolated(unsafe) static let \(dictName): [String: Bridge] = {
@@ -1900,6 +1955,9 @@ func renderManifest(
         : runtimeBodies.joined(separator: "\n\n")
     return """
     \(autogenBanner)import Foundation
+    #if canImport(FoundationNetworking)
+    import FoundationNetworking
+    #endif
 
     /// Namespace for the per-type bridge dicts. Each `static let` lives
     /// in its own file (`\(namespace)+<Type>.swift`) and contributes a
