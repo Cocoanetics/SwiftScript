@@ -72,15 +72,15 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v6
-      # gha-setup-swift handles toolchain install + PATH on Windows.
-      # 6.0.3 hits a `cyclic dependency in module 'ucrt'` when swift-
-      # syntax compiles against modern MSVC; the development snapshot
-      # picks up the fix.
+      # SwiftyLab/setup-swift is the unified macOS/Linux/Windows
+      # toolchain installer — better-maintained than gha-setup-swift
+      # for Windows, supports recent 6.3+ releases that fix the
+      # `cyclic dependency in module 'ucrt'` issue swift-syntax hit
+      # on 6.0.3.
       - name: Setup Swift
-        uses: compnerd/gha-setup-swift@main
+        uses: SwiftyLab/setup-swift@latest
         with:
-          branch: development
-          tag: DEVELOPMENT-SNAPSHOT-2024-12-15-a
+          swift-version: "6.3"
       - name: Verify Swift version
         run: swift --version
       - name: Build (Windows)
