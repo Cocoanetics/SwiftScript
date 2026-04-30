@@ -1,8 +1,8 @@
 # SwiftScript
 
-A tree-walking interpreter for a Swift-flavored scripting language, written in
-Swift. Parses real Swift syntax via [swift-syntax](https://github.com/swiftlang/swift-syntax)
-and walks the AST directly — no codegen, no compiler. Comes with a `swift-script`
+A tree-walking interpreter for Swift, written in Swift. Parses real Swift
+syntax via [swift-syntax](https://github.com/swiftlang/swift-syntax) and
+walks the AST directly — no codegen, no compiler. Comes with a `swift-script`
 CLI for running `.swift` files or one-line expressions, and ships as a library
 you can embed in your own Mac, iOS, Linux, or Windows app.
 
