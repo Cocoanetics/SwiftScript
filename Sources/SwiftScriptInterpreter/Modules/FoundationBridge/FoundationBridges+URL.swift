@@ -144,32 +144,6 @@ extension FoundationBridges {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
     },
-    "func URL.checkPromisedItemIsReachable()": .method { receiver, args in
-        guard args.count == 0 else {
-            throw RuntimeError.invalid("URL.checkPromisedItemIsReachable: expected 0 argument(s), got \(args.count)")
-        }
-        let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
-        do {
-            return .bool(try recv.checkPromisedItemIsReachable())
-        } catch {
-            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
-        }
-    },
-    "func URL.startAccessingSecurityScopedResource()": .method { receiver, args in
-        guard args.count == 0 else {
-            throw RuntimeError.invalid("URL.startAccessingSecurityScopedResource: expected 0 argument(s), got \(args.count)")
-        }
-        let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
-        return .bool(recv.startAccessingSecurityScopedResource())
-    },
-    "func URL.stopAccessingSecurityScopedResource()": .method { receiver, args in
-        guard args.count == 0 else {
-            throw RuntimeError.invalid("URL.stopAccessingSecurityScopedResource: expected 0 argument(s), got \(args.count)")
-        }
-        let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
-        recv.stopAccessingSecurityScopedResource()
-            return .void
-    },
     "static func URL.currentDirectory()": .staticMethod { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("URL.currentDirectory: expected 0 argument(s), got \(args.count)")
@@ -272,16 +246,6 @@ extension FoundationBridges {
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return boxOpaque(recv.appendingPathExtension(try unboxString(args[0])), typeName: "URL")
     },
-    "static func URL.bookmarkData()": .staticMethod { args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("URL.bookmarkData: expected 1 argument(s), got \(args.count)")
-        }
-        do {
-            return boxOpaque(try URL.bookmarkData(withContentsOf: try unboxOpaque(args[0], as: URL.self, typeName: "URL")), typeName: "Data")
-        } catch {
-            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
-        }
-    },
     "static func URL.homeDirectory()": .staticMethod { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("URL.homeDirectory: expected 1 argument(s), got \(args.count)")
@@ -311,17 +275,6 @@ extension FoundationBridges {
             throw RuntimeError.invalid("init URL(fileURLWithPath:isDirectory:): expected 2 argument(s), got \(args.count)")
         }
         return boxOpaque(URL(fileURLWithPath: try unboxString(args[0]), isDirectory: try unboxBool(args[1])), typeName: "URL")
-    },
-    "static func URL.writeBookmarkData()": .staticMethod { args in
-        guard args.count == 2 else {
-            throw RuntimeError.invalid("URL.writeBookmarkData: expected 2 argument(s), got \(args.count)")
-        }
-        do {
-            try URL.writeBookmarkData(try unboxOpaque(args[0], as: Data.self, typeName: "Data"), to: try unboxOpaque(args[1], as: URL.self, typeName: "URL"))
-            return .void
-        } catch {
-            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
-        }
     },
         ]
         #if canImport(Darwin)

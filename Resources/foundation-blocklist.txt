@@ -183,8 +183,14 @@ URL.musicDirectory
 URL.picturesDirectory
 URL.sharedPublicDirectory
 URL.userDirectory
-URL.bookmarkData
-URL.writeBookmarkData
+URL.bookmarkData(options:includingResourceValuesForKeys:relativeTo:)
+URL.bookmarkData(withContentsOf:)
+URL.writeBookmarkData(_:to:)
+URL.init(resolvingBookmarkData:options:relativeTo:bookmarkDataIsStale:)
+URL.checkPromisedItemIsReachable()
+URL.startAccessingSecurityScopedResource()
+URL.stopAccessingSecurityScopedResource()
+Locale.exemplarCharacterSet
 
 # Date.HTTPFormatStyle / DateComponents.HTTPFormatStyle / .ISO8601FormatStyle
 # — same version skew. Recent additions still unreleased on Linux.

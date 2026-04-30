@@ -14,13 +14,6 @@ extension FoundationBridges {
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         return .string(recv.identifier)
     },
-    "var Locale.exemplarCharacterSet: CharacterSet?": .computed { receiver in
-        let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
-        if let _v = recv.exemplarCharacterSet {
-            return .optional(boxOpaque(_v, typeName: "CharacterSet"))
-        }
-        return .optional(nil)
-    },
     "var Locale.calendar: Calendar": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         return boxOpaque(recv.calendar, typeName: "Calendar")

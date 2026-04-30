@@ -1265,6 +1265,12 @@ for annotated in allSymbols {
     guard (1...2).contains(sym.pathComponents.count) else { continue }
     let typeName = sym.pathComponents.joined(separator: ".")
     guard !autoPromoteSkip.contains(typeName) else { continue }
+    // Blocklist applies to type promotion too — entries like
+    // `Date.HTTPFormatStyle` (Apple-only nested struct) need to be
+    // skipped here, not just at the per-member emit step, otherwise
+    // the type gets a bridge file and aggregator entry that
+    // reference a type the Linux build can't see.
+    guard !blocklist.contains(typeName) else { continue }
     // Skip types whose declaration itself is deprecated/obsoleted/post-
     // deployment-target — bridging them would force the generated code
     // to reference a deprecated symbol and emit warnings.
