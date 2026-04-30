@@ -412,173 +412,173 @@ AttributeScopes.FoundationAttributes.WritingDirectionAttribute.name
 AttributeScopes.FoundationAttributes.WritingDirectionAttribute.runBoundaries
 AttributeScopes._DefaultScopeRegistration.
 AttributeScopes._DefaultScopeRegistration._attributeScopeType
-AttributedString.
-AttributedString.+
-AttributedString.+=
-AttributedString.==
-AttributedString.append
-AttributedString.characters
-AttributedString.encode
+AttributedString.	UNAVAILABLE
+AttributedString.+	UNAVAILABLE
+AttributedString.+=	UNAVAILABLE
+AttributedString.==	UNAVAILABLE
+AttributedString.append	UNAVAILABLE
+AttributedString.characters	UNAVAILABLE
+AttributedString.encode	UNAVAILABLE
 AttributedString.endIndex	UNAVAILABLE
-AttributedString.init
-AttributedString.insert
-AttributedString.mergeAttributes
-AttributedString.removeSubrange
-AttributedString.removeSubranges
-AttributedString.replaceAttributes
-AttributedString.replaceSubrange
-AttributedString.runs
-AttributedString.setAttributes
+AttributedString.init	UNAVAILABLE
+AttributedString.insert	UNAVAILABLE
+AttributedString.mergeAttributes	UNAVAILABLE
+AttributedString.removeSubrange	UNAVAILABLE
+AttributedString.removeSubranges	UNAVAILABLE
+AttributedString.replaceAttributes	UNAVAILABLE
+AttributedString.replaceSubrange	UNAVAILABLE
+AttributedString.runs	UNAVAILABLE
+AttributedString.setAttributes	UNAVAILABLE
 AttributedString.startIndex	UNAVAILABLE
-AttributedString.subscript
-AttributedString.transform
-AttributedString.transformingAttributes
-AttributedString.unicodeScalars
-AttributedString.utf16
-AttributedString.utf8
-AttributedString.AttributeInvalidationCondition.
-AttributedString.AttributeInvalidationCondition.attributeChanged
-AttributedString.AttributeInvalidationCondition.textChanged
-AttributedString.AttributeMergePolicy.
-AttributedString.AttributeRunBoundaries.
-AttributedString.CharacterView.
-AttributedString.CharacterView.Element
-AttributedString.CharacterView.Index
-AttributedString.CharacterView.count
-AttributedString.CharacterView.distance
-AttributedString.CharacterView.endIndex
-AttributedString.CharacterView.index
-AttributedString.CharacterView.init
-AttributedString.CharacterView.replaceSubrange
-AttributedString.CharacterView.startIndex
-AttributedString.CharacterView.subscript
-AttributedString.Index.
-AttributedString.Index.<
-AttributedString.Index.==
-AttributedString.Index.init
-AttributedString.Index.isValid
-AttributedString.Runs.
-AttributedString.Runs.==
-AttributedString.Runs.Element
-AttributedString.Runs.description
-AttributedString.Runs.distance
-AttributedString.Runs.endIndex
-AttributedString.Runs.index
-AttributedString.Runs.startIndex
-AttributedString.Runs.subscript
-AttributedString.Runs.AttributesSlice1.
-AttributedString.Runs.AttributesSlice1.Element
-AttributedString.Runs.AttributesSlice1.Index
-AttributedString.Runs.AttributesSlice1.endIndex
-AttributedString.Runs.AttributesSlice1.index
-AttributedString.Runs.AttributesSlice1.makeIterator
-AttributedString.Runs.AttributesSlice1.startIndex
-AttributedString.Runs.AttributesSlice1.subscript
-AttributedString.Runs.AttributesSlice1.Iterator.
-AttributedString.Runs.AttributesSlice1.Iterator.Element
-AttributedString.Runs.AttributesSlice1.Iterator.next
-AttributedString.Runs.AttributesSlice2.
-AttributedString.Runs.AttributesSlice2.Element
-AttributedString.Runs.AttributesSlice2.Index
-AttributedString.Runs.AttributesSlice2.endIndex
-AttributedString.Runs.AttributesSlice2.index
-AttributedString.Runs.AttributesSlice2.makeIterator
-AttributedString.Runs.AttributesSlice2.startIndex
-AttributedString.Runs.AttributesSlice2.subscript
-AttributedString.Runs.AttributesSlice2.Iterator.
-AttributedString.Runs.AttributesSlice2.Iterator.Element
-AttributedString.Runs.AttributesSlice2.Iterator.next
-AttributedString.Runs.AttributesSlice3.
-AttributedString.Runs.AttributesSlice3.Element
-AttributedString.Runs.AttributesSlice3.Index
-AttributedString.Runs.AttributesSlice3.endIndex
-AttributedString.Runs.AttributesSlice3.index
-AttributedString.Runs.AttributesSlice3.makeIterator
-AttributedString.Runs.AttributesSlice3.startIndex
-AttributedString.Runs.AttributesSlice3.subscript
-AttributedString.Runs.AttributesSlice3.Iterator.
-AttributedString.Runs.AttributesSlice3.Iterator.Element
-AttributedString.Runs.AttributesSlice3.Iterator.next
-AttributedString.Runs.AttributesSlice4.
-AttributedString.Runs.AttributesSlice4.Element
-AttributedString.Runs.AttributesSlice4.Index
-AttributedString.Runs.AttributesSlice4.endIndex
-AttributedString.Runs.AttributesSlice4.index
-AttributedString.Runs.AttributesSlice4.makeIterator
-AttributedString.Runs.AttributesSlice4.startIndex
-AttributedString.Runs.AttributesSlice4.subscript
-AttributedString.Runs.AttributesSlice4.Iterator.
-AttributedString.Runs.AttributesSlice4.Iterator.Element
-AttributedString.Runs.AttributesSlice4.Iterator.next
-AttributedString.Runs.AttributesSlice5.
-AttributedString.Runs.AttributesSlice5.Element
-AttributedString.Runs.AttributesSlice5.Index
-AttributedString.Runs.AttributesSlice5.endIndex
-AttributedString.Runs.AttributesSlice5.index
-AttributedString.Runs.AttributesSlice5.makeIterator
-AttributedString.Runs.AttributesSlice5.startIndex
-AttributedString.Runs.AttributesSlice5.subscript
-AttributedString.Runs.AttributesSlice5.Iterator.
-AttributedString.Runs.AttributesSlice5.Iterator.Element
-AttributedString.Runs.AttributesSlice5.Iterator.next
-AttributedString.Runs.Index.
-AttributedString.Runs.Index.<
-AttributedString.Runs.Index.==
-AttributedString.Runs.Index.advanced
-AttributedString.Runs.Index.distance
-AttributedString.Runs.NSAttributesSlice.
-AttributedString.Runs.NSAttributesSlice.Element
-AttributedString.Runs.NSAttributesSlice.Index
-AttributedString.Runs.NSAttributesSlice.endIndex
-AttributedString.Runs.NSAttributesSlice.index
-AttributedString.Runs.NSAttributesSlice.makeIterator
-AttributedString.Runs.NSAttributesSlice.startIndex
-AttributedString.Runs.NSAttributesSlice.subscript
-AttributedString.Runs.NSAttributesSlice.Iterator.
-AttributedString.Runs.NSAttributesSlice.Iterator.Element
-AttributedString.Runs.NSAttributesSlice.Iterator.next
-AttributedString.Runs.Run.
-AttributedString.Runs.Run.==
-AttributedString.Runs.Run.attributes
-AttributedString.Runs.Run.description
-AttributedString.Runs.Run.range
-AttributedString.Runs.Run.subscript
-AttributedString.SingleAttributeTransformer.
-AttributedString.SingleAttributeTransformer.range
-AttributedString.SingleAttributeTransformer.replace
-AttributedString.SingleAttributeTransformer.value
-AttributedString.UTF16View.
-AttributedString.UTF16View.Element
-AttributedString.UTF16View.Index
-AttributedString.UTF16View.Subsequence
-AttributedString.UTF16View.count
-AttributedString.UTF16View.distance
-AttributedString.UTF16View.endIndex
-AttributedString.UTF16View.index
-AttributedString.UTF16View.startIndex
-AttributedString.UTF16View.subscript
-AttributedString.UTF8View.
-AttributedString.UTF8View.Element
-AttributedString.UTF8View.Index
-AttributedString.UTF8View.Subsequence
-AttributedString.UTF8View.count
-AttributedString.UTF8View.distance
-AttributedString.UTF8View.endIndex
-AttributedString.UTF8View.index
-AttributedString.UTF8View.startIndex
-AttributedString.UTF8View.subscript
-AttributedString.UnicodeScalarView.
-AttributedString.UnicodeScalarView.Element
-AttributedString.UnicodeScalarView.Index
-AttributedString.UnicodeScalarView.count
-AttributedString.UnicodeScalarView.distance
-AttributedString.UnicodeScalarView.endIndex
-AttributedString.UnicodeScalarView.index
-AttributedString.UnicodeScalarView.init
-AttributedString.UnicodeScalarView.replaceSubrange
-AttributedString.UnicodeScalarView.startIndex
-AttributedString.UnicodeScalarView.subscript
-AttributedString.WritingDirection.
+AttributedString.subscript	UNAVAILABLE
+AttributedString.transform	UNAVAILABLE
+AttributedString.transformingAttributes	UNAVAILABLE
+AttributedString.unicodeScalars	UNAVAILABLE
+AttributedString.utf16	UNAVAILABLE
+AttributedString.utf8	UNAVAILABLE
+AttributedString.AttributeInvalidationCondition.	UNAVAILABLE
+AttributedString.AttributeInvalidationCondition.attributeChanged	UNAVAILABLE
+AttributedString.AttributeInvalidationCondition.textChanged	UNAVAILABLE
+AttributedString.AttributeMergePolicy.	UNAVAILABLE
+AttributedString.AttributeRunBoundaries.	UNAVAILABLE
+AttributedString.CharacterView.	UNAVAILABLE
+AttributedString.CharacterView.Element	UNAVAILABLE
+AttributedString.CharacterView.Index	UNAVAILABLE
+AttributedString.CharacterView.count	UNAVAILABLE
+AttributedString.CharacterView.distance	UNAVAILABLE
+AttributedString.CharacterView.endIndex	UNAVAILABLE
+AttributedString.CharacterView.index	UNAVAILABLE
+AttributedString.CharacterView.init	UNAVAILABLE
+AttributedString.CharacterView.replaceSubrange	UNAVAILABLE
+AttributedString.CharacterView.startIndex	UNAVAILABLE
+AttributedString.CharacterView.subscript	UNAVAILABLE
+AttributedString.Index.	UNAVAILABLE
+AttributedString.Index.<	UNAVAILABLE
+AttributedString.Index.==	UNAVAILABLE
+AttributedString.Index.init	UNAVAILABLE
+AttributedString.Index.isValid	UNAVAILABLE
+AttributedString.Runs.	UNAVAILABLE
+AttributedString.Runs.==	UNAVAILABLE
+AttributedString.Runs.Element	UNAVAILABLE
+AttributedString.Runs.description	UNAVAILABLE
+AttributedString.Runs.distance	UNAVAILABLE
+AttributedString.Runs.endIndex	UNAVAILABLE
+AttributedString.Runs.index	UNAVAILABLE
+AttributedString.Runs.startIndex	UNAVAILABLE
+AttributedString.Runs.subscript	UNAVAILABLE
+AttributedString.Runs.AttributesSlice1.	UNAVAILABLE
+AttributedString.Runs.AttributesSlice1.Element	UNAVAILABLE
+AttributedString.Runs.AttributesSlice1.Index	UNAVAILABLE
+AttributedString.Runs.AttributesSlice1.endIndex	UNAVAILABLE
+AttributedString.Runs.AttributesSlice1.index	UNAVAILABLE
+AttributedString.Runs.AttributesSlice1.makeIterator	UNAVAILABLE
+AttributedString.Runs.AttributesSlice1.startIndex	UNAVAILABLE
+AttributedString.Runs.AttributesSlice1.subscript	UNAVAILABLE
+AttributedString.Runs.AttributesSlice1.Iterator.	UNAVAILABLE
+AttributedString.Runs.AttributesSlice1.Iterator.Element	UNAVAILABLE
+AttributedString.Runs.AttributesSlice1.Iterator.next	UNAVAILABLE
+AttributedString.Runs.AttributesSlice2.	UNAVAILABLE
+AttributedString.Runs.AttributesSlice2.Element	UNAVAILABLE
+AttributedString.Runs.AttributesSlice2.Index	UNAVAILABLE
+AttributedString.Runs.AttributesSlice2.endIndex	UNAVAILABLE
+AttributedString.Runs.AttributesSlice2.index	UNAVAILABLE
+AttributedString.Runs.AttributesSlice2.makeIterator	UNAVAILABLE
+AttributedString.Runs.AttributesSlice2.startIndex	UNAVAILABLE
+AttributedString.Runs.AttributesSlice2.subscript	UNAVAILABLE
+AttributedString.Runs.AttributesSlice2.Iterator.	UNAVAILABLE
+AttributedString.Runs.AttributesSlice2.Iterator.Element	UNAVAILABLE
+AttributedString.Runs.AttributesSlice2.Iterator.next	UNAVAILABLE
+AttributedString.Runs.AttributesSlice3.	UNAVAILABLE
+AttributedString.Runs.AttributesSlice3.Element	UNAVAILABLE
+AttributedString.Runs.AttributesSlice3.Index	UNAVAILABLE
+AttributedString.Runs.AttributesSlice3.endIndex	UNAVAILABLE
+AttributedString.Runs.AttributesSlice3.index	UNAVAILABLE
+AttributedString.Runs.AttributesSlice3.makeIterator	UNAVAILABLE
+AttributedString.Runs.AttributesSlice3.startIndex	UNAVAILABLE
+AttributedString.Runs.AttributesSlice3.subscript	UNAVAILABLE
+AttributedString.Runs.AttributesSlice3.Iterator.	UNAVAILABLE
+AttributedString.Runs.AttributesSlice3.Iterator.Element	UNAVAILABLE
+AttributedString.Runs.AttributesSlice3.Iterator.next	UNAVAILABLE
+AttributedString.Runs.AttributesSlice4.	UNAVAILABLE
+AttributedString.Runs.AttributesSlice4.Element	UNAVAILABLE
+AttributedString.Runs.AttributesSlice4.Index	UNAVAILABLE
+AttributedString.Runs.AttributesSlice4.endIndex	UNAVAILABLE
+AttributedString.Runs.AttributesSlice4.index	UNAVAILABLE
+AttributedString.Runs.AttributesSlice4.makeIterator	UNAVAILABLE
+AttributedString.Runs.AttributesSlice4.startIndex	UNAVAILABLE
+AttributedString.Runs.AttributesSlice4.subscript	UNAVAILABLE
+AttributedString.Runs.AttributesSlice4.Iterator.	UNAVAILABLE
+AttributedString.Runs.AttributesSlice4.Iterator.Element	UNAVAILABLE
+AttributedString.Runs.AttributesSlice4.Iterator.next	UNAVAILABLE
+AttributedString.Runs.AttributesSlice5.	UNAVAILABLE
+AttributedString.Runs.AttributesSlice5.Element	UNAVAILABLE
+AttributedString.Runs.AttributesSlice5.Index	UNAVAILABLE
+AttributedString.Runs.AttributesSlice5.endIndex	UNAVAILABLE
+AttributedString.Runs.AttributesSlice5.index	UNAVAILABLE
+AttributedString.Runs.AttributesSlice5.makeIterator	UNAVAILABLE
+AttributedString.Runs.AttributesSlice5.startIndex	UNAVAILABLE
+AttributedString.Runs.AttributesSlice5.subscript	UNAVAILABLE
+AttributedString.Runs.AttributesSlice5.Iterator.	UNAVAILABLE
+AttributedString.Runs.AttributesSlice5.Iterator.Element	UNAVAILABLE
+AttributedString.Runs.AttributesSlice5.Iterator.next	UNAVAILABLE
+AttributedString.Runs.Index.	UNAVAILABLE
+AttributedString.Runs.Index.<	UNAVAILABLE
+AttributedString.Runs.Index.==	UNAVAILABLE
+AttributedString.Runs.Index.advanced	UNAVAILABLE
+AttributedString.Runs.Index.distance	UNAVAILABLE
+AttributedString.Runs.NSAttributesSlice.	UNAVAILABLE
+AttributedString.Runs.NSAttributesSlice.Element	UNAVAILABLE
+AttributedString.Runs.NSAttributesSlice.Index	UNAVAILABLE
+AttributedString.Runs.NSAttributesSlice.endIndex	UNAVAILABLE
+AttributedString.Runs.NSAttributesSlice.index	UNAVAILABLE
+AttributedString.Runs.NSAttributesSlice.makeIterator	UNAVAILABLE
+AttributedString.Runs.NSAttributesSlice.startIndex	UNAVAILABLE
+AttributedString.Runs.NSAttributesSlice.subscript	UNAVAILABLE
+AttributedString.Runs.NSAttributesSlice.Iterator.	UNAVAILABLE
+AttributedString.Runs.NSAttributesSlice.Iterator.Element	UNAVAILABLE
+AttributedString.Runs.NSAttributesSlice.Iterator.next	UNAVAILABLE
+AttributedString.Runs.Run.	UNAVAILABLE
+AttributedString.Runs.Run.==	UNAVAILABLE
+AttributedString.Runs.Run.attributes	UNAVAILABLE
+AttributedString.Runs.Run.description	UNAVAILABLE
+AttributedString.Runs.Run.range	UNAVAILABLE
+AttributedString.Runs.Run.subscript	UNAVAILABLE
+AttributedString.SingleAttributeTransformer.	UNAVAILABLE
+AttributedString.SingleAttributeTransformer.range	UNAVAILABLE
+AttributedString.SingleAttributeTransformer.replace	UNAVAILABLE
+AttributedString.SingleAttributeTransformer.value	UNAVAILABLE
+AttributedString.UTF16View.	UNAVAILABLE
+AttributedString.UTF16View.Element	UNAVAILABLE
+AttributedString.UTF16View.Index	UNAVAILABLE
+AttributedString.UTF16View.Subsequence	UNAVAILABLE
+AttributedString.UTF16View.count	UNAVAILABLE
+AttributedString.UTF16View.distance	UNAVAILABLE
+AttributedString.UTF16View.endIndex	UNAVAILABLE
+AttributedString.UTF16View.index	UNAVAILABLE
+AttributedString.UTF16View.startIndex	UNAVAILABLE
+AttributedString.UTF16View.subscript	UNAVAILABLE
+AttributedString.UTF8View.	UNAVAILABLE
+AttributedString.UTF8View.Element	UNAVAILABLE
+AttributedString.UTF8View.Index	UNAVAILABLE
+AttributedString.UTF8View.Subsequence	UNAVAILABLE
+AttributedString.UTF8View.count	UNAVAILABLE
+AttributedString.UTF8View.distance	UNAVAILABLE
+AttributedString.UTF8View.endIndex	UNAVAILABLE
+AttributedString.UTF8View.index	UNAVAILABLE
+AttributedString.UTF8View.startIndex	UNAVAILABLE
+AttributedString.UTF8View.subscript	UNAVAILABLE
+AttributedString.UnicodeScalarView.	UNAVAILABLE
+AttributedString.UnicodeScalarView.Element	UNAVAILABLE
+AttributedString.UnicodeScalarView.Index	UNAVAILABLE
+AttributedString.UnicodeScalarView.count	UNAVAILABLE
+AttributedString.UnicodeScalarView.distance	UNAVAILABLE
+AttributedString.UnicodeScalarView.endIndex	UNAVAILABLE
+AttributedString.UnicodeScalarView.index	UNAVAILABLE
+AttributedString.UnicodeScalarView.init	UNAVAILABLE
+AttributedString.UnicodeScalarView.replaceSubrange	UNAVAILABLE
+AttributedString.UnicodeScalarView.startIndex	UNAVAILABLE
+AttributedString.UnicodeScalarView.subscript	UNAVAILABLE
+AttributedString.WritingDirection.	UNAVAILABLE
 AttributedStringAttributeMutation.
 AttributedStringKey.
 AttributedStringKey.description
@@ -595,22 +595,22 @@ AttributedStringProtocol.range
 AttributedStringProtocol.replacingAttributes
 AttributedStringProtocol.settingAttributes
 AttributedStringProtocol.subscript
-AttributedSubstring.
-AttributedSubstring.==
-AttributedSubstring.base
-AttributedSubstring.characters
-AttributedSubstring.description
-AttributedSubstring.endIndex
-AttributedSubstring.init
-AttributedSubstring.mergeAttributes
-AttributedSubstring.replaceAttributes
-AttributedSubstring.runs
-AttributedSubstring.setAttributes
-AttributedSubstring.startIndex
-AttributedSubstring.subscript
-AttributedSubstring.unicodeScalars
-AttributedSubstring.utf16
-AttributedSubstring.utf8
+AttributedSubstring.	UNAVAILABLE
+AttributedSubstring.==	UNAVAILABLE
+AttributedSubstring.base	UNAVAILABLE
+AttributedSubstring.characters	UNAVAILABLE
+AttributedSubstring.description	UNAVAILABLE
+AttributedSubstring.endIndex	UNAVAILABLE
+AttributedSubstring.init	UNAVAILABLE
+AttributedSubstring.mergeAttributes	UNAVAILABLE
+AttributedSubstring.replaceAttributes	UNAVAILABLE
+AttributedSubstring.runs	UNAVAILABLE
+AttributedSubstring.setAttributes	UNAVAILABLE
+AttributedSubstring.startIndex	UNAVAILABLE
+AttributedSubstring.subscript	UNAVAILABLE
+AttributedSubstring.unicodeScalars	UNAVAILABLE
+AttributedSubstring.utf16	UNAVAILABLE
+AttributedSubstring.utf8	UNAVAILABLE
 BinaryFloatingPoint.formatted
 BinaryFloatingPoint.init
 BinaryInteger.formatted
