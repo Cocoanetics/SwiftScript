@@ -11,10 +11,15 @@ extension Interpreter {
         // `OperationQueue.SchedulerTimeType`, …) out of the Linux build.
         registerGeneratedStdlib(into: self)
 
-        // Always-on extras (not in Swift's stdlib, but useful for math
-        // scripts): gcd, factorial, .clamped, .median, etc.
-        register(module: MathExtrasModule())
-        register(module: StatisticsModule())
+        // `MathExtras` extras (gcd, factorial, .clamped, .median, …) ship
+        // as a real Swift library target as well, so the same source
+        // works under stock `swift` (with the prebuilt module + dylib on
+        // the search path). Both the interpreter's bridges and the
+        // statistics helpers live behind `import MathExtras`.
+        let mathExtras = MathExtrasModule()
+        registerOnImport("MathExtras", module: mathExtras)
+        let statistics = StatisticsModule()
+        registerOnImport("MathExtras", module: statistics)
         // Stdlib `Set` and `Dictionary` constructors — always available.
         register(module: SetModule())
         register(module: DictionaryModule())

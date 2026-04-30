@@ -1,4 +1,6 @@
 // Run with: swift run swift-script Examples/math_demo.swift
+//        or: swift Examples/math_demo.swift
+import Foundation
 
 // --- Quadratic formula, roots returned as an array (empty if complex) -----
 
@@ -75,7 +77,7 @@ print("\n=== ∫₀¹ x² dx ≈ 1/3 ===")
 print("trapezoidal:", integrate(square, from: 0.0, to: 1.0, steps: 1000))
 
 print("\n=== ∫₀^π sin(x) dx ≈ 2 ===")
-print("trapezoidal:", integrate(sin, from: 0.0, to: pi, steps: 1000))
+print("trapezoidal:", integrate(sin, from: 0.0, to: Double.pi, steps: 1000))
 
 // --- Primes by trial division, accumulated functionally -------------------
 

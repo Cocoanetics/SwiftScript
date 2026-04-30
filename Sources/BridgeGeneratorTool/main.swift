@@ -490,6 +490,17 @@ func resolveSignature(_ sym: SymbolGraph.Symbol) -> ResolvedSignature? {
             } else {
                 return nil
             }
+        } else {
+            // No `typeIdentifier` — could be true Void, or an
+            // unbridgeable spelling like `Any`/`Never`/`some P` that
+            // shows up only as keyword/text fragments. Treat anything
+            // with non-empty content other than `Void`/`()` as a
+            // bridge-blocker so we don't silently discard the return.
+            let spelling = returns.map(\.spelling).joined()
+                .trimmingCharacters(in: .whitespaces)
+            if !spelling.isEmpty && spelling != "Void" && spelling != "()" {
+                return nil
+            }
         }
     }
     return ResolvedSignature(
@@ -665,13 +676,21 @@ func isDeprecated(_ sym: SymbolGraph.Symbol) -> Bool {
         // "Soft-deprecated" symbols carry `deprecated: { major: 100000 }` —
         // a sentinel meaning "we'd like you to migrate, but the symbol
         // still compiles and runs". Only treat as deprecated if the
-        // version is at or below our deployment target. macOS-style
-        // entries dominate; other domains follow the same rule.
-        if a.domain == "macOS",
-           let dep = a.deprecated?.major,
-           dep <= deploymentMacOSMajor
-        {
-            return true
+        // version is below the sentinel. macOS-domain entries also gate
+        // on the deployment target so a future-macOS deprecation
+        // doesn't pre-emptively trip when building for an older OS.
+        if let dep = a.deprecated?.major {
+            let softSentinel = 100000
+            if dep < softSentinel {
+                if a.domain == "macOS" {
+                    if dep <= deploymentMacOSMajor { return true }
+                } else {
+                    // `swift`, `*`, and per-platform domains other than
+                    // macOS — if the version says deprecated, swiftc
+                    // emits the warning, so skip the bridge.
+                    return true
+                }
+            }
         }
         if a.domain == "macOS",
            let major = a.introduced?.major
@@ -904,7 +923,8 @@ func parameterDefaults(in sym: SymbolGraph.Symbol, count: Int) -> [Bool] {
 /// - When the return is Optional, emit a guard-let so the success case
 ///   wraps in `.optional(…)` and the nil case becomes `.optional(nil)`.
 /// - When throwing AND optional, both transforms apply.
-/// - Plain Void returns get `_ = …`.
+/// - Plain Void returns emit a bare expression statement (no `_ =`,
+///   which the compiler flags as redundant for `Void`-returning calls).
 func buildReturnExpr(
     callExpr: String,
     returnType: BridgedType?,
@@ -928,7 +948,7 @@ func buildReturnExpr(
             """
         }
         guard let ret = returnType else {
-            return "_ = \(prefix)\(callExpr)\n            return .void"
+            return "\(prefix)\(callExpr)\n            return .void"
         }
         if isOptional {
             return """
@@ -1036,6 +1056,10 @@ for annotated in allSymbols {
     guard (1...2).contains(sym.pathComponents.count) else { continue }
     let typeName = sym.pathComponents.joined(separator: ".")
     guard !autoPromoteSkip.contains(typeName) else { continue }
+    // Skip types whose declaration itself is deprecated/obsoleted/post-
+    // deployment-target — bridging them would force the generated code
+    // to reference a deprecated symbol and emit warnings.
+    guard !isDeprecated(sym) else { continue }
     let usr = sym.identifier.precise
     guard primitiveBridges[usr] == nil else { continue }
     if bridgedTypes[usr] != nil { continue }

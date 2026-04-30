@@ -10,12 +10,26 @@ multi-second cold-start of `swift run` or a fresh `swiftc` build.
 
 ```swift
 #!/usr/bin/env swift-script
+import Foundation
 
 let data = [4.0, 2.0, 5.0, 8.0, 1.0, 9.0, 3.0]
-print("median:  ", data.median())
-print("stdDev:  ", data.stdDev())
+
+let sorted = data.sorted()
+let median = sorted.count.isMultiple(of: 2)
+    ? (sorted[sorted.count / 2 - 1] + sorted[sorted.count / 2]) / 2
+    : sorted[sorted.count / 2]
+
+let mean = data.reduce(0, +) / Double(data.count)
+let variance = data.reduce(0) { $0 + ($1 - mean) * ($1 - mean) } / Double(data.count - 1)
+let stdDev = sqrt(variance)
+
+print("median:  ", median)
+print("stdDev:  ", stdDev)
 print("hypot:   ", hypot(3.0, 4.0))
 ```
+
+Same source runs unchanged under `swift` (the stock interpreter via shebang)
+or `swift-script`.
 
 ## Install
 
@@ -64,19 +78,31 @@ unchanged:
 - **Foundation bridges** (auto-generated from Apple's symbol graphs): `URL`,
   `URLSession`, `URLComponents`, `Data`, `Date`, `DateFormatter`, `Calendar`,
   `JSONEncoder`/`JSONDecoder` (with script-side `Codable`), `FileManager`,
-  `ProcessInfo`, `UUID`, `RegEx`, format styles, and several hundred more.
-  Around 200 generated bridge files cover most read-only Foundation APIs you
-  reach for in scripts.
+  `ProcessInfo`, `UUID`, `Regex`, format styles, and several hundred more.
+  ~220 generated bridge files cover most read-only Foundation APIs you reach
+  for in scripts.
 - **Async**: `async`/`await`, `Task`, async bridged builtins (e.g. URLSession
   data tasks). Every step of evaluation is async, so script-side `await`
   actually suspends.
-- **Extras**: `MathExtras` (gcd/lcm/factorial/binomial/clamped/signum),
-  `Statistics` (mean/median/variance/stdDev/percentile), `Concurrency`,
-  `MirrorModule`.
+- **Extras**: `MathExtras` (gcd/lcm/factorial/binomial, `.clamped(to:)`,
+  `[Double]` reductions: sum/product/average/median/variance/stdDev/
+  percentile), `Concurrency`, `MirrorModule`. `MathExtras` ships as a
+  real Swift library too — see [Custom modules](#custom-modules) below.
 
-See [`Examples/`](Examples/) for runnable scripts, including 40-odd
+See [`Examples/`](Examples/) for runnable scripts, including ~40
 "LLM probe" scripts in `Examples/llm_probes/` that exercise the surface area
 end-to-end.
+
+### Parity with stock Swift
+
+Scripts that use only standard Swift + Foundation APIs run unchanged under
+both `swift` (via shebang) and `swift-script` and produce identical output.
+The interpreter follows Swift semantics where it can — including numeric
+promotion in mixed `Int`/`Double` arithmetic — so common idioms like
+`data.reduce(0, +)` over `[Double]` work the same in both. Scripts in
+`Examples/extras_demos/` deliberately use SwiftScript-only conveniences
+(`MathExtras`, `Statistics`) and won't run under stock `swift`; everything
+else is portable.
 
 ## What does NOT work
 
@@ -117,8 +143,55 @@ error, that's the boundary you've hit.
 - `Sources/swift-script/` — the CLI binary
 - `Sources/BridgeGeneratorTool/` — reads `swift-symbolgraph-extract` JSON,
   filters by allowlist, emits bridge code (run via `Tools/regen-foundation-bridge.sh`)
-- `Tests/` — 400+ unit tests, organized by feature area
+- `Tests/` — 410+ unit tests, organized by feature area
 - `Examples/` — runnable sample scripts
+
+## Custom modules
+
+`MathExtras` is shipped both as an interpreter built-in (registered when
+the script writes `import MathExtras`) and as a real Swift library
+target. The same source therefore runs unchanged under both runtimes:
+
+```swift
+import Foundation
+import MathExtras
+
+let data = [4.0, 2.0, 5.0, 8.0, 1.0, 9.0, 3.0]
+print("median:", data.median())
+print("stdDev:", data.stdDev())
+print("gcd:   ", gcd(48, 18))
+```
+
+Under `swift-script` the `import MathExtras` line activates the
+interpreter bridges. Under stock `swift`, install the module + dylib
+into the active toolchain once:
+
+```bash
+sudo bash Tools/install-mathextras.sh
+```
+
+After that, `swift script.swift` (or a `#!/usr/bin/env swift` shebang)
+finds `MathExtras` with no extra flags. The build embeds an autolink
+record into the .swiftmodule, so consumers never need `-lMathExtras` —
+just `-I` for the module and `-L` for the dylib:
+
+```bash
+BIN="$(swift build --show-bin-path)"
+swift -I "$BIN/Modules" -L "$BIN" script.swift
+```
+
+…or shove the same flags into a shebang via `env -S` (absolute paths,
+so the script binds to your current build directory — fine for
+personal scripts, less portable than installing into the toolchain):
+
+```swift
+#!/usr/bin/env -S swift -I /abs/path/.build/.../debug/Modules -L /abs/path/.build/.../debug
+import MathExtras
+```
+
+The same recipe works for any custom Swift module you want to share
+between scripts: SwiftScript resolves names the loaded interpreter
+knows about, and stock `swift` resolves them through the linker.
 
 ## Embedding
 

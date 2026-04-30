@@ -101,21 +101,14 @@ extension Interpreter {
         case let (.double(a), .double(b)):
             return try await applyDouble(op: op, a: a, b: b)
         case let (.int(a), .double(b)):
-            // Mixed Int/Double: only allowed if the Int side is a polymorphic
-            // integer-literal expression (in Swift, literals adapt; variables
-            // do not).
-            guard literalKind(lhsExpr) == .integerLiteral else {
-                throw RuntimeError.invalid(
-                    "binary operator '\(op)' cannot be applied to operands of type 'Int' and 'Double'"
-                )
-            }
+            // Mixed Int/Double: promote the Int side. Swift's compile-time
+            // rule is "literals adapt, variables don't", but at runtime
+            // we can't recover whether an Int flowed in from a literal
+            // (e.g. `reduce(0, +)` — the `0` is already an `.int` by the
+            // time the closure runs). Promoting unconditionally lets
+            // valid Swift programs run with the same numeric results.
             return try await applyDouble(op: op, a: Double(a), b: b)
         case let (.double(a), .int(b)):
-            guard literalKind(rhsExpr) == .integerLiteral else {
-                throw RuntimeError.invalid(
-                    "binary operator '\(op)' cannot be applied to operands of type 'Double' and 'Int'"
-                )
-            }
             return try await applyDouble(op: op, a: a, b: Double(b))
         case let (.string(a), .string(b)):
             switch op {

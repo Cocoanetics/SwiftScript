@@ -33,11 +33,6 @@ String.hasSuffix(_:)
 String.uppercased()
 String.lowercased()
 
-# `Int.isMultiple(of:)` — auto-harvest emits an `extensions["Int"]`
-# method, but we want `5.isMultiple(of:)` to use the inline switch path.
-# Blocking is harmless because the bridge wouldn't be reached.
-Int.isMultiple(of:)
-
 # `Double.squareRoot()` / `Double.rounded()` — inline-cased.
 Double.squareRoot()
 Double.rounded()

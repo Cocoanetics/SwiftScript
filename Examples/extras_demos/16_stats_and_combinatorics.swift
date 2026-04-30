@@ -1,8 +1,12 @@
-// Mix of MathExtras + Statistics modules — the kind of script an analyst
-// would write when asked "summarize this data and compute a few helpers".
-// (gcd, factorial, binomial, median, etc. are emulated extras — Swift's
-// stdlib doesn't ship them — so this script intentionally won't run as
-// pure `swift -`. swift-script handles it.)
+// Mix of MathExtras helpers (number theory + statistics) — the kind of
+// script an analyst would write when asked "summarize this data and
+// compute a few helpers". `MathExtras` ships as both a real Swift module
+// (importable from stock `swift` after running `Tools/build-mathextras.sh`)
+// and a swift-script bridge, so the same source runs under both runtimes.
+//
+// `hypot` lives in Foundation (C math globals) and needs the import.
+import Foundation
+import MathExtras
 
 let data = [4.0, 2.0, 5.0, 8.0, 1.0, 9.0, 3.0]
 

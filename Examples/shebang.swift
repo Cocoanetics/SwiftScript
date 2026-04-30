@@ -1,4 +1,5 @@
 #!/usr/bin/env swift-script
+import Foundation
 
 // A real script: run with `chmod +x shebang.swift && ./shebang.swift`.
 

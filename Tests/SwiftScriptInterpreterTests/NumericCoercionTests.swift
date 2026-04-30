@@ -95,15 +95,19 @@ struct NumericCoercionTests {
         #expect(r == .double(3.0))
     }
 
-    @Test func mixedVariableAndLiteralDoubleThrows() async throws {
+    @Test func mixedVariableAndLiteralDoublePromotes() async throws {
         let interp = Interpreter()
-        // i is an Int variable; 2.0 is a Double literal. Swift refuses.
-        await #expect(throws: RuntimeError.self) {
-            _ = try await interp.eval("""
-                let i = 1
-                i + 2.0
-                """)
-        }
+        // i is an Int variable; 2.0 is a Double literal. Stock Swift would
+        // reject this at compile time, but at runtime we can't recover
+        // whether `i` originated as a literal that should have adapted
+        // (e.g. `data.reduce(0, +)` over `[Double]`), so the interpreter
+        // promotes `Int` → `Double` to match Swift's effective numeric
+        // semantics for code that does compile.
+        let r = try await interp.eval("""
+            let i = 1
+            i + 2.0
+            """)
+        #expect(r == .double(3.0))
     }
 
     @Test func mixedDoubleVariableAndIntLiteralIsAllowed() async throws {
