@@ -848,7 +848,7 @@ extension Interpreter {
             }
             if name == "min" {
                 let fn = try expectClosure(args, methodName: "Dictionary.min", arity: 2)
-                var pairs = entries.map { Value.tuple([$0.key, $0.value], labels: ["key", "value"]) }
+                let pairs = entries.map { Value.tuple([$0.key, $0.value], labels: ["key", "value"]) }
                 guard !pairs.isEmpty else { return .optional(nil) }
                 let sorted = try await sortByClosure(pairs, comparator: fn)
                 return .optional(sorted.first)

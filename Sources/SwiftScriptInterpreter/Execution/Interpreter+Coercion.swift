@@ -8,6 +8,13 @@ enum CoercionContext {
     case returnValue     // `return ...` against a declared return type
 }
 
+extension GenericArgumentSyntax.Argument {
+    var swiftScriptType: TypeSyntax? {
+        guard case .type(let type) = self else { return nil }
+        return type
+    }
+}
+
 /// Classify how an expression's literal-ness affects coercion.
 /// - `.integerLiteral`: integer-literal expression (or arithmetic of
 ///   only integer literals). Adapts polymorphically to Int / Double /
@@ -160,7 +167,7 @@ extension Interpreter {
         // wording swiftc emits.
         if let identType = type.as(IdentifierTypeSyntax.self),
            identType.name.text == "Set",
-           let element = identType.genericArgumentClause?.arguments.first.map({ TypeSyntax($0.argument) }),
+           let element = identType.genericArgumentClause?.arguments.first?.argument.swiftScriptType,
            case .array(let elements) = value
         {
             let elementSpelling = element.description.trimmingCharacters(in: .whitespaces)
@@ -321,7 +328,9 @@ extension Interpreter {
             // whether `Set` itself is bridged.
             if let args = ident.genericArgumentClause {
                 for arg in args.arguments {
-                    try validateType(TypeSyntax(arg.argument))
+                    if let typeArgument = arg.argument.swiftScriptType {
+                        try validateType(typeArgument)
+                    }
                 }
             }
             let name = ident.name.text

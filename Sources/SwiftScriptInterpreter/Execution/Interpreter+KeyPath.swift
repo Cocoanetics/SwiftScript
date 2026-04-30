@@ -10,10 +10,10 @@ extension Interpreter {
     ///     people.sorted(by: \.age)     // closure call site
     ///     items.filter(\.isAvailable)
     ///
-    /// Components beyond plain `.property` (subscript, optional-chaining)
-    /// fall through to a runtime error — Swift's parser allows them but
-    /// they're rare in script code; we surface them as "unsupported"
-    /// rather than silently mis-translate.
+    /// Components beyond plain `.property` fall through to a runtime
+    /// error — Swift's parser allows them but they're rare in script
+    /// code; we surface them as "unsupported" rather than silently
+    /// mis-translate.
     func evaluate(keyPath: KeyPathExprSyntax) throws -> Value {
         var steps: [String] = []
         for component in keyPath.components {
@@ -28,6 +28,11 @@ extension Interpreter {
             case .optional:
                 throw RuntimeError.unsupported(
                     "optional-chaining in KeyPath",
+                    at: component.positionAfterSkippingLeadingTrivia.utf8Offset
+                )
+            default:
+                throw RuntimeError.unsupported(
+                    "unsupported KeyPath component",
                     at: component.positionAfterSkippingLeadingTrivia.utf8Offset
                 )
             }

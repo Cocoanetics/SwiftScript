@@ -105,7 +105,5 @@ jobs:
         run: swift --version
       - name: Build (Windows)
         run: swift build --build-tests -v
-        continue-on-error: true
       - name: Test (Windows)
         run: swift test -v --skip-build
-        continue-on-error: true

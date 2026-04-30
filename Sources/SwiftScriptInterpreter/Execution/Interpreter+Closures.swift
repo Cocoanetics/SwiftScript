@@ -21,22 +21,15 @@ extension Interpreter {
             if let captureClause = signature.capture {
                 let snapshot = Scope(parent: scope)
                 for item in captureClause.items {
-                    // `[x]`            → name=nil, expression=x (a DeclRef)
-                    // `[y = expr]`     → name=y,   expression=expr
+                    // `[x]`            → name=x, initializer=nil
+                    // `[y = expr]`     → name=y, initializer=expr
                     // `[weak self]`    → specifier=weak; we don't honor weak/
                     //                     unowned semantics, but the binding
                     //                     name is still derived as below.
-                    let bindingName: String
-                    if let name = item.name {
-                        bindingName = name.text
-                    } else if let ref = item.expression.as(DeclReferenceExprSyntax.self) {
-                        bindingName = ref.baseName.text
-                    } else {
-                        // No name and not a bare identifier — skip; we
-                        // don't support unnamed capture expressions.
-                        continue
-                    }
-                    let value = try await evaluate(item.expression, in: scope)
+                    let bindingName = item.name.text
+                    let expression = item.initializer?.value
+                        ?? ExprSyntax(DeclReferenceExprSyntax(baseName: item.name))
+                    let value = try await evaluate(expression, in: scope)
                     snapshot.bind(bindingName, value: value, mutable: false)
                 }
                 captureScope = snapshot

@@ -19,7 +19,7 @@ let package = Package(
         .executable(name: "swift-script", targets: ["swift-script"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-syntax", from: "600.0.0"),
+        .package(url: "https://github.com/swiftlang/swift-syntax", from: "603.0.0"),
     ],
     targets: [
         .target(
