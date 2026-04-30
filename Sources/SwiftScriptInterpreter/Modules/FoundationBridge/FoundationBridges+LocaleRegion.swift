@@ -5,316 +5,318 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let localeRegion: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Locale.Region.debugDescription: String"] = .computed { receiver in
+    nonisolated(unsafe) static let localeRegion: [String: Bridge] = [
+    "var Locale.Region.debugDescription: String": .computed { receiver in
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         return .string(recv.debugDescription)
-    }
-    d["var Locale.Region.identifier: String"] = .computed { receiver in
+    },
+    "var Locale.Region.identifier: String": .computed { receiver in
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         return .string(recv.identifier)
-    }
-    d["static let Locale.Region.unknown"] = .staticValue(boxOpaque(Locale.Region.unknown, typeName: "Locale.Region"))
-    d["var Locale.Region.hashValue: Int"] = .computed { receiver in
+    },
+    "static let Locale.Region.unknown": .staticValue(boxOpaque(Locale.Region.unknown, typeName: "Locale.Region")),
+    "var Locale.Region.hashValue: Int": .computed { receiver in
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         return .int(recv.hashValue)
-    }
-    d["static let Locale.Region.afghanistan"] = .staticValue(boxOpaque(Locale.Region.afghanistan, typeName: "Locale.Region"))
-    d["static let Locale.Region.ålandIslands"] = .staticValue(boxOpaque(Locale.Region.ålandIslands, typeName: "Locale.Region"))
-    d["static let Locale.Region.albania"] = .staticValue(boxOpaque(Locale.Region.albania, typeName: "Locale.Region"))
-    d["static let Locale.Region.algeria"] = .staticValue(boxOpaque(Locale.Region.algeria, typeName: "Locale.Region"))
-    d["static let Locale.Region.americanSamoa"] = .staticValue(boxOpaque(Locale.Region.americanSamoa, typeName: "Locale.Region"))
-    d["static let Locale.Region.andorra"] = .staticValue(boxOpaque(Locale.Region.andorra, typeName: "Locale.Region"))
-    d["static let Locale.Region.angola"] = .staticValue(boxOpaque(Locale.Region.angola, typeName: "Locale.Region"))
-    d["static let Locale.Region.anguilla"] = .staticValue(boxOpaque(Locale.Region.anguilla, typeName: "Locale.Region"))
-    d["static let Locale.Region.antarctica"] = .staticValue(boxOpaque(Locale.Region.antarctica, typeName: "Locale.Region"))
-    d["static let Locale.Region.antiguaBarbuda"] = .staticValue(boxOpaque(Locale.Region.antiguaBarbuda, typeName: "Locale.Region"))
-    d["static let Locale.Region.argentina"] = .staticValue(boxOpaque(Locale.Region.argentina, typeName: "Locale.Region"))
-    d["static let Locale.Region.armenia"] = .staticValue(boxOpaque(Locale.Region.armenia, typeName: "Locale.Region"))
-    d["static let Locale.Region.aruba"] = .staticValue(boxOpaque(Locale.Region.aruba, typeName: "Locale.Region"))
-    d["static let Locale.Region.ascensionIsland"] = .staticValue(boxOpaque(Locale.Region.ascensionIsland, typeName: "Locale.Region"))
-    d["static let Locale.Region.australia"] = .staticValue(boxOpaque(Locale.Region.australia, typeName: "Locale.Region"))
-    d["static let Locale.Region.austria"] = .staticValue(boxOpaque(Locale.Region.austria, typeName: "Locale.Region"))
-    d["static let Locale.Region.azerbaijan"] = .staticValue(boxOpaque(Locale.Region.azerbaijan, typeName: "Locale.Region"))
-    d["static let Locale.Region.bahamas"] = .staticValue(boxOpaque(Locale.Region.bahamas, typeName: "Locale.Region"))
-    d["static let Locale.Region.bahrain"] = .staticValue(boxOpaque(Locale.Region.bahrain, typeName: "Locale.Region"))
-    d["static let Locale.Region.bangladesh"] = .staticValue(boxOpaque(Locale.Region.bangladesh, typeName: "Locale.Region"))
-    d["static let Locale.Region.barbados"] = .staticValue(boxOpaque(Locale.Region.barbados, typeName: "Locale.Region"))
-    d["static let Locale.Region.belarus"] = .staticValue(boxOpaque(Locale.Region.belarus, typeName: "Locale.Region"))
-    d["static let Locale.Region.belgium"] = .staticValue(boxOpaque(Locale.Region.belgium, typeName: "Locale.Region"))
-    d["static let Locale.Region.belize"] = .staticValue(boxOpaque(Locale.Region.belize, typeName: "Locale.Region"))
-    d["static let Locale.Region.benin"] = .staticValue(boxOpaque(Locale.Region.benin, typeName: "Locale.Region"))
-    d["static let Locale.Region.bermuda"] = .staticValue(boxOpaque(Locale.Region.bermuda, typeName: "Locale.Region"))
-    d["static let Locale.Region.bhutan"] = .staticValue(boxOpaque(Locale.Region.bhutan, typeName: "Locale.Region"))
-    d["static let Locale.Region.bolivia"] = .staticValue(boxOpaque(Locale.Region.bolivia, typeName: "Locale.Region"))
-    d["static let Locale.Region.bosniaHerzegovina"] = .staticValue(boxOpaque(Locale.Region.bosniaHerzegovina, typeName: "Locale.Region"))
-    d["static let Locale.Region.botswana"] = .staticValue(boxOpaque(Locale.Region.botswana, typeName: "Locale.Region"))
-    d["static let Locale.Region.bouvetIsland"] = .staticValue(boxOpaque(Locale.Region.bouvetIsland, typeName: "Locale.Region"))
-    d["static let Locale.Region.brazil"] = .staticValue(boxOpaque(Locale.Region.brazil, typeName: "Locale.Region"))
-    d["static let Locale.Region.britishVirginIslands"] = .staticValue(boxOpaque(Locale.Region.britishVirginIslands, typeName: "Locale.Region"))
-    d["static let Locale.Region.brunei"] = .staticValue(boxOpaque(Locale.Region.brunei, typeName: "Locale.Region"))
-    d["static let Locale.Region.bulgaria"] = .staticValue(boxOpaque(Locale.Region.bulgaria, typeName: "Locale.Region"))
-    d["static let Locale.Region.burkinaFaso"] = .staticValue(boxOpaque(Locale.Region.burkinaFaso, typeName: "Locale.Region"))
-    d["static let Locale.Region.burundi"] = .staticValue(boxOpaque(Locale.Region.burundi, typeName: "Locale.Region"))
-    d["static let Locale.Region.cambodia"] = .staticValue(boxOpaque(Locale.Region.cambodia, typeName: "Locale.Region"))
-    d["static let Locale.Region.cameroon"] = .staticValue(boxOpaque(Locale.Region.cameroon, typeName: "Locale.Region"))
-    d["static let Locale.Region.canada"] = .staticValue(boxOpaque(Locale.Region.canada, typeName: "Locale.Region"))
-    d["static let Locale.Region.canaryIslands"] = .staticValue(boxOpaque(Locale.Region.canaryIslands, typeName: "Locale.Region"))
-    d["static let Locale.Region.capeVerde"] = .staticValue(boxOpaque(Locale.Region.capeVerde, typeName: "Locale.Region"))
-    d["static let Locale.Region.caribbeanNetherlands"] = .staticValue(boxOpaque(Locale.Region.caribbeanNetherlands, typeName: "Locale.Region"))
-    d["static let Locale.Region.caymanIslands"] = .staticValue(boxOpaque(Locale.Region.caymanIslands, typeName: "Locale.Region"))
-    d["static let Locale.Region.centralAfricanRepublic"] = .staticValue(boxOpaque(Locale.Region.centralAfricanRepublic, typeName: "Locale.Region"))
-    d["static let Locale.Region.ceutaMelilla"] = .staticValue(boxOpaque(Locale.Region.ceutaMelilla, typeName: "Locale.Region"))
-    d["static let Locale.Region.chad"] = .staticValue(boxOpaque(Locale.Region.chad, typeName: "Locale.Region"))
-    d["static let Locale.Region.chagosArchipelago"] = .staticValue(boxOpaque(Locale.Region.chagosArchipelago, typeName: "Locale.Region"))
-    d["static let Locale.Region.chile"] = .staticValue(boxOpaque(Locale.Region.chile, typeName: "Locale.Region"))
-    d["static let Locale.Region.chinaMainland"] = .staticValue(boxOpaque(Locale.Region.chinaMainland, typeName: "Locale.Region"))
-    d["static let Locale.Region.christmasIsland"] = .staticValue(boxOpaque(Locale.Region.christmasIsland, typeName: "Locale.Region"))
-    d["static let Locale.Region.clippertonIsland"] = .staticValue(boxOpaque(Locale.Region.clippertonIsland, typeName: "Locale.Region"))
-    d["static let Locale.Region.cocosIslands"] = .staticValue(boxOpaque(Locale.Region.cocosIslands, typeName: "Locale.Region"))
-    d["static let Locale.Region.colombia"] = .staticValue(boxOpaque(Locale.Region.colombia, typeName: "Locale.Region"))
-    d["static let Locale.Region.comoros"] = .staticValue(boxOpaque(Locale.Region.comoros, typeName: "Locale.Region"))
-    d["static let Locale.Region.congoBrazzaville"] = .staticValue(boxOpaque(Locale.Region.congoBrazzaville, typeName: "Locale.Region"))
-    d["static let Locale.Region.congoKinshasa"] = .staticValue(boxOpaque(Locale.Region.congoKinshasa, typeName: "Locale.Region"))
-    d["static let Locale.Region.cookIslands"] = .staticValue(boxOpaque(Locale.Region.cookIslands, typeName: "Locale.Region"))
-    d["static let Locale.Region.costaRica"] = .staticValue(boxOpaque(Locale.Region.costaRica, typeName: "Locale.Region"))
-    d["static let Locale.Region.côteDIvoire"] = .staticValue(boxOpaque(Locale.Region.côteDIvoire, typeName: "Locale.Region"))
-    d["static let Locale.Region.croatia"] = .staticValue(boxOpaque(Locale.Region.croatia, typeName: "Locale.Region"))
-    d["static let Locale.Region.cuba"] = .staticValue(boxOpaque(Locale.Region.cuba, typeName: "Locale.Region"))
-    d["static let Locale.Region.curaçao"] = .staticValue(boxOpaque(Locale.Region.curaçao, typeName: "Locale.Region"))
-    d["static let Locale.Region.cyprus"] = .staticValue(boxOpaque(Locale.Region.cyprus, typeName: "Locale.Region"))
-    d["static let Locale.Region.czechia"] = .staticValue(boxOpaque(Locale.Region.czechia, typeName: "Locale.Region"))
-    d["static let Locale.Region.denmark"] = .staticValue(boxOpaque(Locale.Region.denmark, typeName: "Locale.Region"))
-    d["static let Locale.Region.diegoGarcia"] = .staticValue(boxOpaque(Locale.Region.diegoGarcia, typeName: "Locale.Region"))
-    d["static let Locale.Region.djibouti"] = .staticValue(boxOpaque(Locale.Region.djibouti, typeName: "Locale.Region"))
-    d["static let Locale.Region.dominica"] = .staticValue(boxOpaque(Locale.Region.dominica, typeName: "Locale.Region"))
-    d["static let Locale.Region.dominicanRepublic"] = .staticValue(boxOpaque(Locale.Region.dominicanRepublic, typeName: "Locale.Region"))
-    d["static let Locale.Region.ecuador"] = .staticValue(boxOpaque(Locale.Region.ecuador, typeName: "Locale.Region"))
-    d["static let Locale.Region.egypt"] = .staticValue(boxOpaque(Locale.Region.egypt, typeName: "Locale.Region"))
-    d["static let Locale.Region.elSalvador"] = .staticValue(boxOpaque(Locale.Region.elSalvador, typeName: "Locale.Region"))
-    d["static let Locale.Region.equatorialGuinea"] = .staticValue(boxOpaque(Locale.Region.equatorialGuinea, typeName: "Locale.Region"))
-    d["static let Locale.Region.eritrea"] = .staticValue(boxOpaque(Locale.Region.eritrea, typeName: "Locale.Region"))
-    d["static let Locale.Region.estonia"] = .staticValue(boxOpaque(Locale.Region.estonia, typeName: "Locale.Region"))
-    d["static let Locale.Region.eswatini"] = .staticValue(boxOpaque(Locale.Region.eswatini, typeName: "Locale.Region"))
-    d["static let Locale.Region.ethiopia"] = .staticValue(boxOpaque(Locale.Region.ethiopia, typeName: "Locale.Region"))
-    d["static let Locale.Region.falklandIslands"] = .staticValue(boxOpaque(Locale.Region.falklandIslands, typeName: "Locale.Region"))
-    d["static let Locale.Region.faroeIslands"] = .staticValue(boxOpaque(Locale.Region.faroeIslands, typeName: "Locale.Region"))
-    d["static let Locale.Region.fiji"] = .staticValue(boxOpaque(Locale.Region.fiji, typeName: "Locale.Region"))
-    d["static let Locale.Region.finland"] = .staticValue(boxOpaque(Locale.Region.finland, typeName: "Locale.Region"))
-    d["static let Locale.Region.france"] = .staticValue(boxOpaque(Locale.Region.france, typeName: "Locale.Region"))
-    d["static let Locale.Region.frenchGuiana"] = .staticValue(boxOpaque(Locale.Region.frenchGuiana, typeName: "Locale.Region"))
-    d["static let Locale.Region.frenchPolynesia"] = .staticValue(boxOpaque(Locale.Region.frenchPolynesia, typeName: "Locale.Region"))
-    d["static let Locale.Region.frenchSouthernTerritories"] = .staticValue(boxOpaque(Locale.Region.frenchSouthernTerritories, typeName: "Locale.Region"))
-    d["static let Locale.Region.gabon"] = .staticValue(boxOpaque(Locale.Region.gabon, typeName: "Locale.Region"))
-    d["static let Locale.Region.gambia"] = .staticValue(boxOpaque(Locale.Region.gambia, typeName: "Locale.Region"))
-    d["static let Locale.Region.georgia"] = .staticValue(boxOpaque(Locale.Region.georgia, typeName: "Locale.Region"))
-    d["static let Locale.Region.germany"] = .staticValue(boxOpaque(Locale.Region.germany, typeName: "Locale.Region"))
-    d["static let Locale.Region.ghana"] = .staticValue(boxOpaque(Locale.Region.ghana, typeName: "Locale.Region"))
-    d["static let Locale.Region.gibraltar"] = .staticValue(boxOpaque(Locale.Region.gibraltar, typeName: "Locale.Region"))
-    d["static let Locale.Region.greece"] = .staticValue(boxOpaque(Locale.Region.greece, typeName: "Locale.Region"))
-    d["static let Locale.Region.greenland"] = .staticValue(boxOpaque(Locale.Region.greenland, typeName: "Locale.Region"))
-    d["static let Locale.Region.grenada"] = .staticValue(boxOpaque(Locale.Region.grenada, typeName: "Locale.Region"))
-    d["static let Locale.Region.guadeloupe"] = .staticValue(boxOpaque(Locale.Region.guadeloupe, typeName: "Locale.Region"))
-    d["static let Locale.Region.guam"] = .staticValue(boxOpaque(Locale.Region.guam, typeName: "Locale.Region"))
-    d["static let Locale.Region.guatemala"] = .staticValue(boxOpaque(Locale.Region.guatemala, typeName: "Locale.Region"))
-    d["static let Locale.Region.guernsey"] = .staticValue(boxOpaque(Locale.Region.guernsey, typeName: "Locale.Region"))
-    d["static let Locale.Region.guinea"] = .staticValue(boxOpaque(Locale.Region.guinea, typeName: "Locale.Region"))
-    d["static let Locale.Region.guineaBissau"] = .staticValue(boxOpaque(Locale.Region.guineaBissau, typeName: "Locale.Region"))
-    d["static let Locale.Region.guyana"] = .staticValue(boxOpaque(Locale.Region.guyana, typeName: "Locale.Region"))
-    d["static let Locale.Region.haiti"] = .staticValue(boxOpaque(Locale.Region.haiti, typeName: "Locale.Region"))
-    d["static let Locale.Region.heardMcdonaldIslands"] = .staticValue(boxOpaque(Locale.Region.heardMcdonaldIslands, typeName: "Locale.Region"))
-    d["static let Locale.Region.honduras"] = .staticValue(boxOpaque(Locale.Region.honduras, typeName: "Locale.Region"))
-    d["static let Locale.Region.hongKong"] = .staticValue(boxOpaque(Locale.Region.hongKong, typeName: "Locale.Region"))
-    d["static let Locale.Region.hungary"] = .staticValue(boxOpaque(Locale.Region.hungary, typeName: "Locale.Region"))
-    d["static let Locale.Region.iceland"] = .staticValue(boxOpaque(Locale.Region.iceland, typeName: "Locale.Region"))
-    d["static let Locale.Region.india"] = .staticValue(boxOpaque(Locale.Region.india, typeName: "Locale.Region"))
-    d["static let Locale.Region.indonesia"] = .staticValue(boxOpaque(Locale.Region.indonesia, typeName: "Locale.Region"))
-    d["static let Locale.Region.iran"] = .staticValue(boxOpaque(Locale.Region.iran, typeName: "Locale.Region"))
-    d["static let Locale.Region.iraq"] = .staticValue(boxOpaque(Locale.Region.iraq, typeName: "Locale.Region"))
-    d["static let Locale.Region.ireland"] = .staticValue(boxOpaque(Locale.Region.ireland, typeName: "Locale.Region"))
-    d["static let Locale.Region.isleOfMan"] = .staticValue(boxOpaque(Locale.Region.isleOfMan, typeName: "Locale.Region"))
-    d["static let Locale.Region.israel"] = .staticValue(boxOpaque(Locale.Region.israel, typeName: "Locale.Region"))
-    d["static let Locale.Region.italy"] = .staticValue(boxOpaque(Locale.Region.italy, typeName: "Locale.Region"))
-    d["static let Locale.Region.jamaica"] = .staticValue(boxOpaque(Locale.Region.jamaica, typeName: "Locale.Region"))
-    d["static let Locale.Region.japan"] = .staticValue(boxOpaque(Locale.Region.japan, typeName: "Locale.Region"))
-    d["static let Locale.Region.jersey"] = .staticValue(boxOpaque(Locale.Region.jersey, typeName: "Locale.Region"))
-    d["static let Locale.Region.jordan"] = .staticValue(boxOpaque(Locale.Region.jordan, typeName: "Locale.Region"))
-    d["static let Locale.Region.kazakhstan"] = .staticValue(boxOpaque(Locale.Region.kazakhstan, typeName: "Locale.Region"))
-    d["static let Locale.Region.kenya"] = .staticValue(boxOpaque(Locale.Region.kenya, typeName: "Locale.Region"))
-    d["static let Locale.Region.kiribati"] = .staticValue(boxOpaque(Locale.Region.kiribati, typeName: "Locale.Region"))
-    d["static let Locale.Region.kosovo"] = .staticValue(boxOpaque(Locale.Region.kosovo, typeName: "Locale.Region"))
-    d["static let Locale.Region.kuwait"] = .staticValue(boxOpaque(Locale.Region.kuwait, typeName: "Locale.Region"))
-    d["static let Locale.Region.kyrgyzstan"] = .staticValue(boxOpaque(Locale.Region.kyrgyzstan, typeName: "Locale.Region"))
-    d["static let Locale.Region.laos"] = .staticValue(boxOpaque(Locale.Region.laos, typeName: "Locale.Region"))
-    d["static let Locale.Region.latvia"] = .staticValue(boxOpaque(Locale.Region.latvia, typeName: "Locale.Region"))
-    d["static let Locale.Region.lebanon"] = .staticValue(boxOpaque(Locale.Region.lebanon, typeName: "Locale.Region"))
-    d["static let Locale.Region.lesotho"] = .staticValue(boxOpaque(Locale.Region.lesotho, typeName: "Locale.Region"))
-    d["static let Locale.Region.liberia"] = .staticValue(boxOpaque(Locale.Region.liberia, typeName: "Locale.Region"))
-    d["static let Locale.Region.libya"] = .staticValue(boxOpaque(Locale.Region.libya, typeName: "Locale.Region"))
-    d["static let Locale.Region.liechtenstein"] = .staticValue(boxOpaque(Locale.Region.liechtenstein, typeName: "Locale.Region"))
-    d["static let Locale.Region.lithuania"] = .staticValue(boxOpaque(Locale.Region.lithuania, typeName: "Locale.Region"))
-    d["static let Locale.Region.luxembourg"] = .staticValue(boxOpaque(Locale.Region.luxembourg, typeName: "Locale.Region"))
-    d["static let Locale.Region.macao"] = .staticValue(boxOpaque(Locale.Region.macao, typeName: "Locale.Region"))
-    d["static let Locale.Region.madagascar"] = .staticValue(boxOpaque(Locale.Region.madagascar, typeName: "Locale.Region"))
-    d["static let Locale.Region.malawi"] = .staticValue(boxOpaque(Locale.Region.malawi, typeName: "Locale.Region"))
-    d["static let Locale.Region.malaysia"] = .staticValue(boxOpaque(Locale.Region.malaysia, typeName: "Locale.Region"))
-    d["static let Locale.Region.maldives"] = .staticValue(boxOpaque(Locale.Region.maldives, typeName: "Locale.Region"))
-    d["static let Locale.Region.mali"] = .staticValue(boxOpaque(Locale.Region.mali, typeName: "Locale.Region"))
-    d["static let Locale.Region.malta"] = .staticValue(boxOpaque(Locale.Region.malta, typeName: "Locale.Region"))
-    d["static let Locale.Region.marshallIslands"] = .staticValue(boxOpaque(Locale.Region.marshallIslands, typeName: "Locale.Region"))
-    d["static let Locale.Region.martinique"] = .staticValue(boxOpaque(Locale.Region.martinique, typeName: "Locale.Region"))
-    d["static let Locale.Region.mauritania"] = .staticValue(boxOpaque(Locale.Region.mauritania, typeName: "Locale.Region"))
-    d["static let Locale.Region.mauritius"] = .staticValue(boxOpaque(Locale.Region.mauritius, typeName: "Locale.Region"))
-    d["static let Locale.Region.mayotte"] = .staticValue(boxOpaque(Locale.Region.mayotte, typeName: "Locale.Region"))
-    d["static let Locale.Region.mexico"] = .staticValue(boxOpaque(Locale.Region.mexico, typeName: "Locale.Region"))
-    d["static let Locale.Region.micronesia"] = .staticValue(boxOpaque(Locale.Region.micronesia, typeName: "Locale.Region"))
-    d["static let Locale.Region.moldova"] = .staticValue(boxOpaque(Locale.Region.moldova, typeName: "Locale.Region"))
-    d["static let Locale.Region.monaco"] = .staticValue(boxOpaque(Locale.Region.monaco, typeName: "Locale.Region"))
-    d["static let Locale.Region.mongolia"] = .staticValue(boxOpaque(Locale.Region.mongolia, typeName: "Locale.Region"))
-    d["static let Locale.Region.montenegro"] = .staticValue(boxOpaque(Locale.Region.montenegro, typeName: "Locale.Region"))
-    d["static let Locale.Region.montserrat"] = .staticValue(boxOpaque(Locale.Region.montserrat, typeName: "Locale.Region"))
-    d["static let Locale.Region.morocco"] = .staticValue(boxOpaque(Locale.Region.morocco, typeName: "Locale.Region"))
-    d["static let Locale.Region.mozambique"] = .staticValue(boxOpaque(Locale.Region.mozambique, typeName: "Locale.Region"))
-    d["static let Locale.Region.myanmar"] = .staticValue(boxOpaque(Locale.Region.myanmar, typeName: "Locale.Region"))
-    d["static let Locale.Region.namibia"] = .staticValue(boxOpaque(Locale.Region.namibia, typeName: "Locale.Region"))
-    d["static let Locale.Region.nauru"] = .staticValue(boxOpaque(Locale.Region.nauru, typeName: "Locale.Region"))
-    d["static let Locale.Region.nepal"] = .staticValue(boxOpaque(Locale.Region.nepal, typeName: "Locale.Region"))
-    d["static let Locale.Region.netherlands"] = .staticValue(boxOpaque(Locale.Region.netherlands, typeName: "Locale.Region"))
-    d["static let Locale.Region.newCaledonia"] = .staticValue(boxOpaque(Locale.Region.newCaledonia, typeName: "Locale.Region"))
-    d["static let Locale.Region.newZealand"] = .staticValue(boxOpaque(Locale.Region.newZealand, typeName: "Locale.Region"))
-    d["static let Locale.Region.nicaragua"] = .staticValue(boxOpaque(Locale.Region.nicaragua, typeName: "Locale.Region"))
-    d["static let Locale.Region.niger"] = .staticValue(boxOpaque(Locale.Region.niger, typeName: "Locale.Region"))
-    d["static let Locale.Region.nigeria"] = .staticValue(boxOpaque(Locale.Region.nigeria, typeName: "Locale.Region"))
-    d["static let Locale.Region.niue"] = .staticValue(boxOpaque(Locale.Region.niue, typeName: "Locale.Region"))
-    d["static let Locale.Region.norfolkIsland"] = .staticValue(boxOpaque(Locale.Region.norfolkIsland, typeName: "Locale.Region"))
-    d["static let Locale.Region.northernMarianaIslands"] = .staticValue(boxOpaque(Locale.Region.northernMarianaIslands, typeName: "Locale.Region"))
-    d["static let Locale.Region.northMacedonia"] = .staticValue(boxOpaque(Locale.Region.northMacedonia, typeName: "Locale.Region"))
-    d["static let Locale.Region.norway"] = .staticValue(boxOpaque(Locale.Region.norway, typeName: "Locale.Region"))
-    d["static let Locale.Region.oman"] = .staticValue(boxOpaque(Locale.Region.oman, typeName: "Locale.Region"))
-    d["static let Locale.Region.pakistan"] = .staticValue(boxOpaque(Locale.Region.pakistan, typeName: "Locale.Region"))
-    d["static let Locale.Region.palau"] = .staticValue(boxOpaque(Locale.Region.palau, typeName: "Locale.Region"))
-    d["static let Locale.Region.palestinianTerritories"] = .staticValue(boxOpaque(Locale.Region.palestinianTerritories, typeName: "Locale.Region"))
-    d["static let Locale.Region.panama"] = .staticValue(boxOpaque(Locale.Region.panama, typeName: "Locale.Region"))
-    d["static let Locale.Region.papuaNewGuinea"] = .staticValue(boxOpaque(Locale.Region.papuaNewGuinea, typeName: "Locale.Region"))
-    d["static let Locale.Region.paraguay"] = .staticValue(boxOpaque(Locale.Region.paraguay, typeName: "Locale.Region"))
-    d["static let Locale.Region.peru"] = .staticValue(boxOpaque(Locale.Region.peru, typeName: "Locale.Region"))
-    d["static let Locale.Region.philippines"] = .staticValue(boxOpaque(Locale.Region.philippines, typeName: "Locale.Region"))
-    d["static let Locale.Region.pitcairnIslands"] = .staticValue(boxOpaque(Locale.Region.pitcairnIslands, typeName: "Locale.Region"))
-    d["static let Locale.Region.poland"] = .staticValue(boxOpaque(Locale.Region.poland, typeName: "Locale.Region"))
-    d["static let Locale.Region.portugal"] = .staticValue(boxOpaque(Locale.Region.portugal, typeName: "Locale.Region"))
-    d["static let Locale.Region.puertoRico"] = .staticValue(boxOpaque(Locale.Region.puertoRico, typeName: "Locale.Region"))
-    d["static let Locale.Region.qatar"] = .staticValue(boxOpaque(Locale.Region.qatar, typeName: "Locale.Region"))
-    d["static let Locale.Region.réunion"] = .staticValue(boxOpaque(Locale.Region.réunion, typeName: "Locale.Region"))
-    d["static let Locale.Region.romania"] = .staticValue(boxOpaque(Locale.Region.romania, typeName: "Locale.Region"))
-    d["static let Locale.Region.russia"] = .staticValue(boxOpaque(Locale.Region.russia, typeName: "Locale.Region"))
-    d["static let Locale.Region.rwanda"] = .staticValue(boxOpaque(Locale.Region.rwanda, typeName: "Locale.Region"))
-    d["static let Locale.Region.saintBarthélemy"] = .staticValue(boxOpaque(Locale.Region.saintBarthélemy, typeName: "Locale.Region"))
-    d["static let Locale.Region.saintHelena"] = .staticValue(boxOpaque(Locale.Region.saintHelena, typeName: "Locale.Region"))
-    d["static let Locale.Region.saintKittsNevis"] = .staticValue(boxOpaque(Locale.Region.saintKittsNevis, typeName: "Locale.Region"))
-    d["static let Locale.Region.saintLucia"] = .staticValue(boxOpaque(Locale.Region.saintLucia, typeName: "Locale.Region"))
-    d["static let Locale.Region.saintMartin"] = .staticValue(boxOpaque(Locale.Region.saintMartin, typeName: "Locale.Region"))
-    d["static let Locale.Region.saintPierreMiquelon"] = .staticValue(boxOpaque(Locale.Region.saintPierreMiquelon, typeName: "Locale.Region"))
-    d["static let Locale.Region.saintVincentGrenadines"] = .staticValue(boxOpaque(Locale.Region.saintVincentGrenadines, typeName: "Locale.Region"))
-    d["static let Locale.Region.samoa"] = .staticValue(boxOpaque(Locale.Region.samoa, typeName: "Locale.Region"))
-    d["static let Locale.Region.sanMarino"] = .staticValue(boxOpaque(Locale.Region.sanMarino, typeName: "Locale.Region"))
-    d["static let Locale.Region.sãoToméPríncipe"] = .staticValue(boxOpaque(Locale.Region.sãoToméPríncipe, typeName: "Locale.Region"))
-    d["static let Locale.Region.saudiArabia"] = .staticValue(boxOpaque(Locale.Region.saudiArabia, typeName: "Locale.Region"))
-    d["static let Locale.Region.senegal"] = .staticValue(boxOpaque(Locale.Region.senegal, typeName: "Locale.Region"))
-    d["static let Locale.Region.serbia"] = .staticValue(boxOpaque(Locale.Region.serbia, typeName: "Locale.Region"))
-    d["static let Locale.Region.seychelles"] = .staticValue(boxOpaque(Locale.Region.seychelles, typeName: "Locale.Region"))
-    d["static let Locale.Region.sierraLeone"] = .staticValue(boxOpaque(Locale.Region.sierraLeone, typeName: "Locale.Region"))
-    d["static let Locale.Region.singapore"] = .staticValue(boxOpaque(Locale.Region.singapore, typeName: "Locale.Region"))
-    d["static let Locale.Region.sintMaarten"] = .staticValue(boxOpaque(Locale.Region.sintMaarten, typeName: "Locale.Region"))
-    d["static let Locale.Region.slovakia"] = .staticValue(boxOpaque(Locale.Region.slovakia, typeName: "Locale.Region"))
-    d["static let Locale.Region.slovenia"] = .staticValue(boxOpaque(Locale.Region.slovenia, typeName: "Locale.Region"))
-    d["static let Locale.Region.solomonIslands"] = .staticValue(boxOpaque(Locale.Region.solomonIslands, typeName: "Locale.Region"))
-    d["static let Locale.Region.somalia"] = .staticValue(boxOpaque(Locale.Region.somalia, typeName: "Locale.Region"))
-    d["static let Locale.Region.southAfrica"] = .staticValue(boxOpaque(Locale.Region.southAfrica, typeName: "Locale.Region"))
-    d["static let Locale.Region.southGeorgiaSouthSandwichIslands"] = .staticValue(boxOpaque(Locale.Region.southGeorgiaSouthSandwichIslands, typeName: "Locale.Region"))
-    d["static let Locale.Region.southKorea"] = .staticValue(boxOpaque(Locale.Region.southKorea, typeName: "Locale.Region"))
-    d["static let Locale.Region.southSudan"] = .staticValue(boxOpaque(Locale.Region.southSudan, typeName: "Locale.Region"))
-    d["static let Locale.Region.spain"] = .staticValue(boxOpaque(Locale.Region.spain, typeName: "Locale.Region"))
-    d["static let Locale.Region.sriLanka"] = .staticValue(boxOpaque(Locale.Region.sriLanka, typeName: "Locale.Region"))
-    d["static let Locale.Region.suriname"] = .staticValue(boxOpaque(Locale.Region.suriname, typeName: "Locale.Region"))
-    d["static let Locale.Region.svalbardJanMayen"] = .staticValue(boxOpaque(Locale.Region.svalbardJanMayen, typeName: "Locale.Region"))
-    d["static let Locale.Region.sweden"] = .staticValue(boxOpaque(Locale.Region.sweden, typeName: "Locale.Region"))
-    d["static let Locale.Region.switzerland"] = .staticValue(boxOpaque(Locale.Region.switzerland, typeName: "Locale.Region"))
-    d["static let Locale.Region.taiwan"] = .staticValue(boxOpaque(Locale.Region.taiwan, typeName: "Locale.Region"))
-    d["static let Locale.Region.tajikistan"] = .staticValue(boxOpaque(Locale.Region.tajikistan, typeName: "Locale.Region"))
-    d["static let Locale.Region.tanzania"] = .staticValue(boxOpaque(Locale.Region.tanzania, typeName: "Locale.Region"))
-    d["static let Locale.Region.thailand"] = .staticValue(boxOpaque(Locale.Region.thailand, typeName: "Locale.Region"))
-    d["static let Locale.Region.timorLeste"] = .staticValue(boxOpaque(Locale.Region.timorLeste, typeName: "Locale.Region"))
-    d["static let Locale.Region.togo"] = .staticValue(boxOpaque(Locale.Region.togo, typeName: "Locale.Region"))
-    d["static let Locale.Region.tokelau"] = .staticValue(boxOpaque(Locale.Region.tokelau, typeName: "Locale.Region"))
-    d["static let Locale.Region.tonga"] = .staticValue(boxOpaque(Locale.Region.tonga, typeName: "Locale.Region"))
-    d["static let Locale.Region.trinidadTobago"] = .staticValue(boxOpaque(Locale.Region.trinidadTobago, typeName: "Locale.Region"))
-    d["static let Locale.Region.tristanDaCunha"] = .staticValue(boxOpaque(Locale.Region.tristanDaCunha, typeName: "Locale.Region"))
-    d["static let Locale.Region.tunisia"] = .staticValue(boxOpaque(Locale.Region.tunisia, typeName: "Locale.Region"))
-    d["static let Locale.Region.turkey"] = .staticValue(boxOpaque(Locale.Region.turkey, typeName: "Locale.Region"))
-    d["static let Locale.Region.turkmenistan"] = .staticValue(boxOpaque(Locale.Region.turkmenistan, typeName: "Locale.Region"))
-    d["static let Locale.Region.turksCaicosIslands"] = .staticValue(boxOpaque(Locale.Region.turksCaicosIslands, typeName: "Locale.Region"))
-    d["static let Locale.Region.tuvalu"] = .staticValue(boxOpaque(Locale.Region.tuvalu, typeName: "Locale.Region"))
-    d["static let Locale.Region.uganda"] = .staticValue(boxOpaque(Locale.Region.uganda, typeName: "Locale.Region"))
-    d["static let Locale.Region.ukraine"] = .staticValue(boxOpaque(Locale.Region.ukraine, typeName: "Locale.Region"))
-    d["static let Locale.Region.unitedArabEmirates"] = .staticValue(boxOpaque(Locale.Region.unitedArabEmirates, typeName: "Locale.Region"))
-    d["static let Locale.Region.unitedKingdom"] = .staticValue(boxOpaque(Locale.Region.unitedKingdom, typeName: "Locale.Region"))
-    d["static let Locale.Region.unitedStates"] = .staticValue(boxOpaque(Locale.Region.unitedStates, typeName: "Locale.Region"))
-    d["static let Locale.Region.unitedStatesOutlyingIslands"] = .staticValue(boxOpaque(Locale.Region.unitedStatesOutlyingIslands, typeName: "Locale.Region"))
-    d["static let Locale.Region.unitedStatesVirginIslands"] = .staticValue(boxOpaque(Locale.Region.unitedStatesVirginIslands, typeName: "Locale.Region"))
-    d["static let Locale.Region.uruguay"] = .staticValue(boxOpaque(Locale.Region.uruguay, typeName: "Locale.Region"))
-    d["static let Locale.Region.uzbekistan"] = .staticValue(boxOpaque(Locale.Region.uzbekistan, typeName: "Locale.Region"))
-    d["static let Locale.Region.vanuatu"] = .staticValue(boxOpaque(Locale.Region.vanuatu, typeName: "Locale.Region"))
-    d["static let Locale.Region.vaticanCity"] = .staticValue(boxOpaque(Locale.Region.vaticanCity, typeName: "Locale.Region"))
-    d["static let Locale.Region.venezuela"] = .staticValue(boxOpaque(Locale.Region.venezuela, typeName: "Locale.Region"))
-    d["static let Locale.Region.vietnam"] = .staticValue(boxOpaque(Locale.Region.vietnam, typeName: "Locale.Region"))
-    d["static let Locale.Region.wallisFutuna"] = .staticValue(boxOpaque(Locale.Region.wallisFutuna, typeName: "Locale.Region"))
-    d["static let Locale.Region.westernSahara"] = .staticValue(boxOpaque(Locale.Region.westernSahara, typeName: "Locale.Region"))
-    d["static let Locale.Region.yemen"] = .staticValue(boxOpaque(Locale.Region.yemen, typeName: "Locale.Region"))
-    d["static let Locale.Region.zambia"] = .staticValue(boxOpaque(Locale.Region.zambia, typeName: "Locale.Region"))
-    d["static let Locale.Region.zimbabwe"] = .staticValue(boxOpaque(Locale.Region.zimbabwe, typeName: "Locale.Region"))
-    d["static let Locale.Region.world"] = .staticValue(boxOpaque(Locale.Region.world, typeName: "Locale.Region"))
-    d["static let Locale.Region.latinAmerica"] = .staticValue(boxOpaque(Locale.Region.latinAmerica, typeName: "Locale.Region"))
-    d["var Locale.Region.isISORegion: Bool"] = .computed { receiver in
+    },
+    "static let Locale.Region.afghanistan": .staticValue(boxOpaque(Locale.Region.afghanistan, typeName: "Locale.Region")),
+    "static let Locale.Region.ålandIslands": .staticValue(boxOpaque(Locale.Region.ålandIslands, typeName: "Locale.Region")),
+    "static let Locale.Region.albania": .staticValue(boxOpaque(Locale.Region.albania, typeName: "Locale.Region")),
+    "static let Locale.Region.algeria": .staticValue(boxOpaque(Locale.Region.algeria, typeName: "Locale.Region")),
+    "static let Locale.Region.americanSamoa": .staticValue(boxOpaque(Locale.Region.americanSamoa, typeName: "Locale.Region")),
+    "static let Locale.Region.andorra": .staticValue(boxOpaque(Locale.Region.andorra, typeName: "Locale.Region")),
+    "static let Locale.Region.angola": .staticValue(boxOpaque(Locale.Region.angola, typeName: "Locale.Region")),
+    "static let Locale.Region.anguilla": .staticValue(boxOpaque(Locale.Region.anguilla, typeName: "Locale.Region")),
+    "static let Locale.Region.antarctica": .staticValue(boxOpaque(Locale.Region.antarctica, typeName: "Locale.Region")),
+    "static let Locale.Region.antiguaBarbuda": .staticValue(boxOpaque(Locale.Region.antiguaBarbuda, typeName: "Locale.Region")),
+    "static let Locale.Region.argentina": .staticValue(boxOpaque(Locale.Region.argentina, typeName: "Locale.Region")),
+    "static let Locale.Region.armenia": .staticValue(boxOpaque(Locale.Region.armenia, typeName: "Locale.Region")),
+    "static let Locale.Region.aruba": .staticValue(boxOpaque(Locale.Region.aruba, typeName: "Locale.Region")),
+    "static let Locale.Region.ascensionIsland": .staticValue(boxOpaque(Locale.Region.ascensionIsland, typeName: "Locale.Region")),
+    "static let Locale.Region.australia": .staticValue(boxOpaque(Locale.Region.australia, typeName: "Locale.Region")),
+    "static let Locale.Region.austria": .staticValue(boxOpaque(Locale.Region.austria, typeName: "Locale.Region")),
+    "static let Locale.Region.azerbaijan": .staticValue(boxOpaque(Locale.Region.azerbaijan, typeName: "Locale.Region")),
+    "static let Locale.Region.bahamas": .staticValue(boxOpaque(Locale.Region.bahamas, typeName: "Locale.Region")),
+    "static let Locale.Region.bahrain": .staticValue(boxOpaque(Locale.Region.bahrain, typeName: "Locale.Region")),
+    "static let Locale.Region.bangladesh": .staticValue(boxOpaque(Locale.Region.bangladesh, typeName: "Locale.Region")),
+    "static let Locale.Region.barbados": .staticValue(boxOpaque(Locale.Region.barbados, typeName: "Locale.Region")),
+    "static let Locale.Region.belarus": .staticValue(boxOpaque(Locale.Region.belarus, typeName: "Locale.Region")),
+    "static let Locale.Region.belgium": .staticValue(boxOpaque(Locale.Region.belgium, typeName: "Locale.Region")),
+    "static let Locale.Region.belize": .staticValue(boxOpaque(Locale.Region.belize, typeName: "Locale.Region")),
+    "static let Locale.Region.benin": .staticValue(boxOpaque(Locale.Region.benin, typeName: "Locale.Region")),
+    "static let Locale.Region.bermuda": .staticValue(boxOpaque(Locale.Region.bermuda, typeName: "Locale.Region")),
+    "static let Locale.Region.bhutan": .staticValue(boxOpaque(Locale.Region.bhutan, typeName: "Locale.Region")),
+    "static let Locale.Region.bolivia": .staticValue(boxOpaque(Locale.Region.bolivia, typeName: "Locale.Region")),
+    "static let Locale.Region.bosniaHerzegovina": .staticValue(boxOpaque(Locale.Region.bosniaHerzegovina, typeName: "Locale.Region")),
+    "static let Locale.Region.botswana": .staticValue(boxOpaque(Locale.Region.botswana, typeName: "Locale.Region")),
+    "static let Locale.Region.bouvetIsland": .staticValue(boxOpaque(Locale.Region.bouvetIsland, typeName: "Locale.Region")),
+    "static let Locale.Region.brazil": .staticValue(boxOpaque(Locale.Region.brazil, typeName: "Locale.Region")),
+    "static let Locale.Region.britishVirginIslands": .staticValue(boxOpaque(Locale.Region.britishVirginIslands, typeName: "Locale.Region")),
+    "static let Locale.Region.brunei": .staticValue(boxOpaque(Locale.Region.brunei, typeName: "Locale.Region")),
+    "static let Locale.Region.bulgaria": .staticValue(boxOpaque(Locale.Region.bulgaria, typeName: "Locale.Region")),
+    "static let Locale.Region.burkinaFaso": .staticValue(boxOpaque(Locale.Region.burkinaFaso, typeName: "Locale.Region")),
+    "static let Locale.Region.burundi": .staticValue(boxOpaque(Locale.Region.burundi, typeName: "Locale.Region")),
+    "static let Locale.Region.cambodia": .staticValue(boxOpaque(Locale.Region.cambodia, typeName: "Locale.Region")),
+    "static let Locale.Region.cameroon": .staticValue(boxOpaque(Locale.Region.cameroon, typeName: "Locale.Region")),
+    "static let Locale.Region.canada": .staticValue(boxOpaque(Locale.Region.canada, typeName: "Locale.Region")),
+    "static let Locale.Region.canaryIslands": .staticValue(boxOpaque(Locale.Region.canaryIslands, typeName: "Locale.Region")),
+    "static let Locale.Region.capeVerde": .staticValue(boxOpaque(Locale.Region.capeVerde, typeName: "Locale.Region")),
+    "static let Locale.Region.caribbeanNetherlands": .staticValue(boxOpaque(Locale.Region.caribbeanNetherlands, typeName: "Locale.Region")),
+    "static let Locale.Region.caymanIslands": .staticValue(boxOpaque(Locale.Region.caymanIslands, typeName: "Locale.Region")),
+    "static let Locale.Region.centralAfricanRepublic": .staticValue(boxOpaque(Locale.Region.centralAfricanRepublic, typeName: "Locale.Region")),
+    "static let Locale.Region.ceutaMelilla": .staticValue(boxOpaque(Locale.Region.ceutaMelilla, typeName: "Locale.Region")),
+    "static let Locale.Region.chad": .staticValue(boxOpaque(Locale.Region.chad, typeName: "Locale.Region")),
+    "static let Locale.Region.chagosArchipelago": .staticValue(boxOpaque(Locale.Region.chagosArchipelago, typeName: "Locale.Region")),
+    "static let Locale.Region.chile": .staticValue(boxOpaque(Locale.Region.chile, typeName: "Locale.Region")),
+    "static let Locale.Region.chinaMainland": .staticValue(boxOpaque(Locale.Region.chinaMainland, typeName: "Locale.Region")),
+    "static let Locale.Region.christmasIsland": .staticValue(boxOpaque(Locale.Region.christmasIsland, typeName: "Locale.Region")),
+    "static let Locale.Region.clippertonIsland": .staticValue(boxOpaque(Locale.Region.clippertonIsland, typeName: "Locale.Region")),
+    "static let Locale.Region.cocosIslands": .staticValue(boxOpaque(Locale.Region.cocosIslands, typeName: "Locale.Region")),
+    "static let Locale.Region.colombia": .staticValue(boxOpaque(Locale.Region.colombia, typeName: "Locale.Region")),
+    "static let Locale.Region.comoros": .staticValue(boxOpaque(Locale.Region.comoros, typeName: "Locale.Region")),
+    "static let Locale.Region.congoBrazzaville": .staticValue(boxOpaque(Locale.Region.congoBrazzaville, typeName: "Locale.Region")),
+    "static let Locale.Region.congoKinshasa": .staticValue(boxOpaque(Locale.Region.congoKinshasa, typeName: "Locale.Region")),
+    "static let Locale.Region.cookIslands": .staticValue(boxOpaque(Locale.Region.cookIslands, typeName: "Locale.Region")),
+    "static let Locale.Region.costaRica": .staticValue(boxOpaque(Locale.Region.costaRica, typeName: "Locale.Region")),
+    "static let Locale.Region.côteDIvoire": .staticValue(boxOpaque(Locale.Region.côteDIvoire, typeName: "Locale.Region")),
+    "static let Locale.Region.croatia": .staticValue(boxOpaque(Locale.Region.croatia, typeName: "Locale.Region")),
+    "static let Locale.Region.cuba": .staticValue(boxOpaque(Locale.Region.cuba, typeName: "Locale.Region")),
+    "static let Locale.Region.curaçao": .staticValue(boxOpaque(Locale.Region.curaçao, typeName: "Locale.Region")),
+    "static let Locale.Region.cyprus": .staticValue(boxOpaque(Locale.Region.cyprus, typeName: "Locale.Region")),
+    "static let Locale.Region.czechia": .staticValue(boxOpaque(Locale.Region.czechia, typeName: "Locale.Region")),
+    "static let Locale.Region.denmark": .staticValue(boxOpaque(Locale.Region.denmark, typeName: "Locale.Region")),
+    "static let Locale.Region.diegoGarcia": .staticValue(boxOpaque(Locale.Region.diegoGarcia, typeName: "Locale.Region")),
+    "static let Locale.Region.djibouti": .staticValue(boxOpaque(Locale.Region.djibouti, typeName: "Locale.Region")),
+    "static let Locale.Region.dominica": .staticValue(boxOpaque(Locale.Region.dominica, typeName: "Locale.Region")),
+    "static let Locale.Region.dominicanRepublic": .staticValue(boxOpaque(Locale.Region.dominicanRepublic, typeName: "Locale.Region")),
+    "static let Locale.Region.ecuador": .staticValue(boxOpaque(Locale.Region.ecuador, typeName: "Locale.Region")),
+    "static let Locale.Region.egypt": .staticValue(boxOpaque(Locale.Region.egypt, typeName: "Locale.Region")),
+    "static let Locale.Region.elSalvador": .staticValue(boxOpaque(Locale.Region.elSalvador, typeName: "Locale.Region")),
+    "static let Locale.Region.equatorialGuinea": .staticValue(boxOpaque(Locale.Region.equatorialGuinea, typeName: "Locale.Region")),
+    "static let Locale.Region.eritrea": .staticValue(boxOpaque(Locale.Region.eritrea, typeName: "Locale.Region")),
+    "static let Locale.Region.estonia": .staticValue(boxOpaque(Locale.Region.estonia, typeName: "Locale.Region")),
+    "static let Locale.Region.eswatini": .staticValue(boxOpaque(Locale.Region.eswatini, typeName: "Locale.Region")),
+    "static let Locale.Region.ethiopia": .staticValue(boxOpaque(Locale.Region.ethiopia, typeName: "Locale.Region")),
+    "static let Locale.Region.falklandIslands": .staticValue(boxOpaque(Locale.Region.falklandIslands, typeName: "Locale.Region")),
+    "static let Locale.Region.faroeIslands": .staticValue(boxOpaque(Locale.Region.faroeIslands, typeName: "Locale.Region")),
+    "static let Locale.Region.fiji": .staticValue(boxOpaque(Locale.Region.fiji, typeName: "Locale.Region")),
+    "static let Locale.Region.finland": .staticValue(boxOpaque(Locale.Region.finland, typeName: "Locale.Region")),
+    "static let Locale.Region.france": .staticValue(boxOpaque(Locale.Region.france, typeName: "Locale.Region")),
+    "static let Locale.Region.frenchGuiana": .staticValue(boxOpaque(Locale.Region.frenchGuiana, typeName: "Locale.Region")),
+    "static let Locale.Region.frenchPolynesia": .staticValue(boxOpaque(Locale.Region.frenchPolynesia, typeName: "Locale.Region")),
+    "static let Locale.Region.frenchSouthernTerritories": .staticValue(boxOpaque(Locale.Region.frenchSouthernTerritories, typeName: "Locale.Region")),
+    "static let Locale.Region.gabon": .staticValue(boxOpaque(Locale.Region.gabon, typeName: "Locale.Region")),
+    "static let Locale.Region.gambia": .staticValue(boxOpaque(Locale.Region.gambia, typeName: "Locale.Region")),
+    "static let Locale.Region.georgia": .staticValue(boxOpaque(Locale.Region.georgia, typeName: "Locale.Region")),
+    "static let Locale.Region.germany": .staticValue(boxOpaque(Locale.Region.germany, typeName: "Locale.Region")),
+    "static let Locale.Region.ghana": .staticValue(boxOpaque(Locale.Region.ghana, typeName: "Locale.Region")),
+    "static let Locale.Region.gibraltar": .staticValue(boxOpaque(Locale.Region.gibraltar, typeName: "Locale.Region")),
+    "static let Locale.Region.greece": .staticValue(boxOpaque(Locale.Region.greece, typeName: "Locale.Region")),
+    "static let Locale.Region.greenland": .staticValue(boxOpaque(Locale.Region.greenland, typeName: "Locale.Region")),
+    "static let Locale.Region.grenada": .staticValue(boxOpaque(Locale.Region.grenada, typeName: "Locale.Region")),
+    "static let Locale.Region.guadeloupe": .staticValue(boxOpaque(Locale.Region.guadeloupe, typeName: "Locale.Region")),
+    "static let Locale.Region.guam": .staticValue(boxOpaque(Locale.Region.guam, typeName: "Locale.Region")),
+    "static let Locale.Region.guatemala": .staticValue(boxOpaque(Locale.Region.guatemala, typeName: "Locale.Region")),
+    "static let Locale.Region.guernsey": .staticValue(boxOpaque(Locale.Region.guernsey, typeName: "Locale.Region")),
+    "static let Locale.Region.guinea": .staticValue(boxOpaque(Locale.Region.guinea, typeName: "Locale.Region")),
+    "static let Locale.Region.guineaBissau": .staticValue(boxOpaque(Locale.Region.guineaBissau, typeName: "Locale.Region")),
+    "static let Locale.Region.guyana": .staticValue(boxOpaque(Locale.Region.guyana, typeName: "Locale.Region")),
+    "static let Locale.Region.haiti": .staticValue(boxOpaque(Locale.Region.haiti, typeName: "Locale.Region")),
+    "static let Locale.Region.heardMcdonaldIslands": .staticValue(boxOpaque(Locale.Region.heardMcdonaldIslands, typeName: "Locale.Region")),
+    "static let Locale.Region.honduras": .staticValue(boxOpaque(Locale.Region.honduras, typeName: "Locale.Region")),
+    "static let Locale.Region.hongKong": .staticValue(boxOpaque(Locale.Region.hongKong, typeName: "Locale.Region")),
+    "static let Locale.Region.hungary": .staticValue(boxOpaque(Locale.Region.hungary, typeName: "Locale.Region")),
+    "static let Locale.Region.iceland": .staticValue(boxOpaque(Locale.Region.iceland, typeName: "Locale.Region")),
+    "static let Locale.Region.india": .staticValue(boxOpaque(Locale.Region.india, typeName: "Locale.Region")),
+    "static let Locale.Region.indonesia": .staticValue(boxOpaque(Locale.Region.indonesia, typeName: "Locale.Region")),
+    "static let Locale.Region.iran": .staticValue(boxOpaque(Locale.Region.iran, typeName: "Locale.Region")),
+    "static let Locale.Region.iraq": .staticValue(boxOpaque(Locale.Region.iraq, typeName: "Locale.Region")),
+    "static let Locale.Region.ireland": .staticValue(boxOpaque(Locale.Region.ireland, typeName: "Locale.Region")),
+    "static let Locale.Region.isleOfMan": .staticValue(boxOpaque(Locale.Region.isleOfMan, typeName: "Locale.Region")),
+    "static let Locale.Region.israel": .staticValue(boxOpaque(Locale.Region.israel, typeName: "Locale.Region")),
+    "static let Locale.Region.italy": .staticValue(boxOpaque(Locale.Region.italy, typeName: "Locale.Region")),
+    "static let Locale.Region.jamaica": .staticValue(boxOpaque(Locale.Region.jamaica, typeName: "Locale.Region")),
+    "static let Locale.Region.japan": .staticValue(boxOpaque(Locale.Region.japan, typeName: "Locale.Region")),
+    "static let Locale.Region.jersey": .staticValue(boxOpaque(Locale.Region.jersey, typeName: "Locale.Region")),
+    "static let Locale.Region.jordan": .staticValue(boxOpaque(Locale.Region.jordan, typeName: "Locale.Region")),
+    "static let Locale.Region.kazakhstan": .staticValue(boxOpaque(Locale.Region.kazakhstan, typeName: "Locale.Region")),
+    "static let Locale.Region.kenya": .staticValue(boxOpaque(Locale.Region.kenya, typeName: "Locale.Region")),
+    "static let Locale.Region.kiribati": .staticValue(boxOpaque(Locale.Region.kiribati, typeName: "Locale.Region")),
+    "static let Locale.Region.kosovo": .staticValue(boxOpaque(Locale.Region.kosovo, typeName: "Locale.Region")),
+    "static let Locale.Region.kuwait": .staticValue(boxOpaque(Locale.Region.kuwait, typeName: "Locale.Region")),
+    "static let Locale.Region.kyrgyzstan": .staticValue(boxOpaque(Locale.Region.kyrgyzstan, typeName: "Locale.Region")),
+    "static let Locale.Region.laos": .staticValue(boxOpaque(Locale.Region.laos, typeName: "Locale.Region")),
+    "static let Locale.Region.latvia": .staticValue(boxOpaque(Locale.Region.latvia, typeName: "Locale.Region")),
+    "static let Locale.Region.lebanon": .staticValue(boxOpaque(Locale.Region.lebanon, typeName: "Locale.Region")),
+    "static let Locale.Region.lesotho": .staticValue(boxOpaque(Locale.Region.lesotho, typeName: "Locale.Region")),
+    "static let Locale.Region.liberia": .staticValue(boxOpaque(Locale.Region.liberia, typeName: "Locale.Region")),
+    "static let Locale.Region.libya": .staticValue(boxOpaque(Locale.Region.libya, typeName: "Locale.Region")),
+    "static let Locale.Region.liechtenstein": .staticValue(boxOpaque(Locale.Region.liechtenstein, typeName: "Locale.Region")),
+    "static let Locale.Region.lithuania": .staticValue(boxOpaque(Locale.Region.lithuania, typeName: "Locale.Region")),
+    "static let Locale.Region.luxembourg": .staticValue(boxOpaque(Locale.Region.luxembourg, typeName: "Locale.Region")),
+    "static let Locale.Region.macao": .staticValue(boxOpaque(Locale.Region.macao, typeName: "Locale.Region")),
+    "static let Locale.Region.madagascar": .staticValue(boxOpaque(Locale.Region.madagascar, typeName: "Locale.Region")),
+    "static let Locale.Region.malawi": .staticValue(boxOpaque(Locale.Region.malawi, typeName: "Locale.Region")),
+    "static let Locale.Region.malaysia": .staticValue(boxOpaque(Locale.Region.malaysia, typeName: "Locale.Region")),
+    "static let Locale.Region.maldives": .staticValue(boxOpaque(Locale.Region.maldives, typeName: "Locale.Region")),
+    "static let Locale.Region.mali": .staticValue(boxOpaque(Locale.Region.mali, typeName: "Locale.Region")),
+    "static let Locale.Region.malta": .staticValue(boxOpaque(Locale.Region.malta, typeName: "Locale.Region")),
+    "static let Locale.Region.marshallIslands": .staticValue(boxOpaque(Locale.Region.marshallIslands, typeName: "Locale.Region")),
+    "static let Locale.Region.martinique": .staticValue(boxOpaque(Locale.Region.martinique, typeName: "Locale.Region")),
+    "static let Locale.Region.mauritania": .staticValue(boxOpaque(Locale.Region.mauritania, typeName: "Locale.Region")),
+    "static let Locale.Region.mauritius": .staticValue(boxOpaque(Locale.Region.mauritius, typeName: "Locale.Region")),
+    "static let Locale.Region.mayotte": .staticValue(boxOpaque(Locale.Region.mayotte, typeName: "Locale.Region")),
+    "static let Locale.Region.mexico": .staticValue(boxOpaque(Locale.Region.mexico, typeName: "Locale.Region")),
+    "static let Locale.Region.micronesia": .staticValue(boxOpaque(Locale.Region.micronesia, typeName: "Locale.Region")),
+    "static let Locale.Region.moldova": .staticValue(boxOpaque(Locale.Region.moldova, typeName: "Locale.Region")),
+    "static let Locale.Region.monaco": .staticValue(boxOpaque(Locale.Region.monaco, typeName: "Locale.Region")),
+    "static let Locale.Region.mongolia": .staticValue(boxOpaque(Locale.Region.mongolia, typeName: "Locale.Region")),
+    "static let Locale.Region.montenegro": .staticValue(boxOpaque(Locale.Region.montenegro, typeName: "Locale.Region")),
+    "static let Locale.Region.montserrat": .staticValue(boxOpaque(Locale.Region.montserrat, typeName: "Locale.Region")),
+    "static let Locale.Region.morocco": .staticValue(boxOpaque(Locale.Region.morocco, typeName: "Locale.Region")),
+    "static let Locale.Region.mozambique": .staticValue(boxOpaque(Locale.Region.mozambique, typeName: "Locale.Region")),
+    "static let Locale.Region.myanmar": .staticValue(boxOpaque(Locale.Region.myanmar, typeName: "Locale.Region")),
+    "static let Locale.Region.namibia": .staticValue(boxOpaque(Locale.Region.namibia, typeName: "Locale.Region")),
+    "static let Locale.Region.nauru": .staticValue(boxOpaque(Locale.Region.nauru, typeName: "Locale.Region")),
+    "static let Locale.Region.nepal": .staticValue(boxOpaque(Locale.Region.nepal, typeName: "Locale.Region")),
+    "static let Locale.Region.netherlands": .staticValue(boxOpaque(Locale.Region.netherlands, typeName: "Locale.Region")),
+    "static let Locale.Region.newCaledonia": .staticValue(boxOpaque(Locale.Region.newCaledonia, typeName: "Locale.Region")),
+    "static let Locale.Region.newZealand": .staticValue(boxOpaque(Locale.Region.newZealand, typeName: "Locale.Region")),
+    "static let Locale.Region.nicaragua": .staticValue(boxOpaque(Locale.Region.nicaragua, typeName: "Locale.Region")),
+    "static let Locale.Region.niger": .staticValue(boxOpaque(Locale.Region.niger, typeName: "Locale.Region")),
+    "static let Locale.Region.nigeria": .staticValue(boxOpaque(Locale.Region.nigeria, typeName: "Locale.Region")),
+    "static let Locale.Region.niue": .staticValue(boxOpaque(Locale.Region.niue, typeName: "Locale.Region")),
+    "static let Locale.Region.norfolkIsland": .staticValue(boxOpaque(Locale.Region.norfolkIsland, typeName: "Locale.Region")),
+    "static let Locale.Region.northernMarianaIslands": .staticValue(boxOpaque(Locale.Region.northernMarianaIslands, typeName: "Locale.Region")),
+    "static let Locale.Region.northMacedonia": .staticValue(boxOpaque(Locale.Region.northMacedonia, typeName: "Locale.Region")),
+    "static let Locale.Region.norway": .staticValue(boxOpaque(Locale.Region.norway, typeName: "Locale.Region")),
+    "static let Locale.Region.oman": .staticValue(boxOpaque(Locale.Region.oman, typeName: "Locale.Region")),
+    "static let Locale.Region.pakistan": .staticValue(boxOpaque(Locale.Region.pakistan, typeName: "Locale.Region")),
+    "static let Locale.Region.palau": .staticValue(boxOpaque(Locale.Region.palau, typeName: "Locale.Region")),
+    "static let Locale.Region.palestinianTerritories": .staticValue(boxOpaque(Locale.Region.palestinianTerritories, typeName: "Locale.Region")),
+    "static let Locale.Region.panama": .staticValue(boxOpaque(Locale.Region.panama, typeName: "Locale.Region")),
+    "static let Locale.Region.papuaNewGuinea": .staticValue(boxOpaque(Locale.Region.papuaNewGuinea, typeName: "Locale.Region")),
+    "static let Locale.Region.paraguay": .staticValue(boxOpaque(Locale.Region.paraguay, typeName: "Locale.Region")),
+    "static let Locale.Region.peru": .staticValue(boxOpaque(Locale.Region.peru, typeName: "Locale.Region")),
+    "static let Locale.Region.philippines": .staticValue(boxOpaque(Locale.Region.philippines, typeName: "Locale.Region")),
+    "static let Locale.Region.pitcairnIslands": .staticValue(boxOpaque(Locale.Region.pitcairnIslands, typeName: "Locale.Region")),
+    "static let Locale.Region.poland": .staticValue(boxOpaque(Locale.Region.poland, typeName: "Locale.Region")),
+    "static let Locale.Region.portugal": .staticValue(boxOpaque(Locale.Region.portugal, typeName: "Locale.Region")),
+    "static let Locale.Region.puertoRico": .staticValue(boxOpaque(Locale.Region.puertoRico, typeName: "Locale.Region")),
+    "static let Locale.Region.qatar": .staticValue(boxOpaque(Locale.Region.qatar, typeName: "Locale.Region")),
+    "static let Locale.Region.réunion": .staticValue(boxOpaque(Locale.Region.réunion, typeName: "Locale.Region")),
+    "static let Locale.Region.romania": .staticValue(boxOpaque(Locale.Region.romania, typeName: "Locale.Region")),
+    "static let Locale.Region.russia": .staticValue(boxOpaque(Locale.Region.russia, typeName: "Locale.Region")),
+    "static let Locale.Region.rwanda": .staticValue(boxOpaque(Locale.Region.rwanda, typeName: "Locale.Region")),
+    "static let Locale.Region.saintBarthélemy": .staticValue(boxOpaque(Locale.Region.saintBarthélemy, typeName: "Locale.Region")),
+    "static let Locale.Region.saintHelena": .staticValue(boxOpaque(Locale.Region.saintHelena, typeName: "Locale.Region")),
+    "static let Locale.Region.saintKittsNevis": .staticValue(boxOpaque(Locale.Region.saintKittsNevis, typeName: "Locale.Region")),
+    "static let Locale.Region.saintLucia": .staticValue(boxOpaque(Locale.Region.saintLucia, typeName: "Locale.Region")),
+    "static let Locale.Region.saintMartin": .staticValue(boxOpaque(Locale.Region.saintMartin, typeName: "Locale.Region")),
+    "static let Locale.Region.saintPierreMiquelon": .staticValue(boxOpaque(Locale.Region.saintPierreMiquelon, typeName: "Locale.Region")),
+    "static let Locale.Region.saintVincentGrenadines": .staticValue(boxOpaque(Locale.Region.saintVincentGrenadines, typeName: "Locale.Region")),
+    "static let Locale.Region.samoa": .staticValue(boxOpaque(Locale.Region.samoa, typeName: "Locale.Region")),
+    "static let Locale.Region.sanMarino": .staticValue(boxOpaque(Locale.Region.sanMarino, typeName: "Locale.Region")),
+    "static let Locale.Region.sãoToméPríncipe": .staticValue(boxOpaque(Locale.Region.sãoToméPríncipe, typeName: "Locale.Region")),
+    "static let Locale.Region.saudiArabia": .staticValue(boxOpaque(Locale.Region.saudiArabia, typeName: "Locale.Region")),
+    "static let Locale.Region.senegal": .staticValue(boxOpaque(Locale.Region.senegal, typeName: "Locale.Region")),
+    "static let Locale.Region.serbia": .staticValue(boxOpaque(Locale.Region.serbia, typeName: "Locale.Region")),
+    "static let Locale.Region.seychelles": .staticValue(boxOpaque(Locale.Region.seychelles, typeName: "Locale.Region")),
+    "static let Locale.Region.sierraLeone": .staticValue(boxOpaque(Locale.Region.sierraLeone, typeName: "Locale.Region")),
+    "static let Locale.Region.singapore": .staticValue(boxOpaque(Locale.Region.singapore, typeName: "Locale.Region")),
+    "static let Locale.Region.sintMaarten": .staticValue(boxOpaque(Locale.Region.sintMaarten, typeName: "Locale.Region")),
+    "static let Locale.Region.slovakia": .staticValue(boxOpaque(Locale.Region.slovakia, typeName: "Locale.Region")),
+    "static let Locale.Region.slovenia": .staticValue(boxOpaque(Locale.Region.slovenia, typeName: "Locale.Region")),
+    "static let Locale.Region.solomonIslands": .staticValue(boxOpaque(Locale.Region.solomonIslands, typeName: "Locale.Region")),
+    "static let Locale.Region.somalia": .staticValue(boxOpaque(Locale.Region.somalia, typeName: "Locale.Region")),
+    "static let Locale.Region.southAfrica": .staticValue(boxOpaque(Locale.Region.southAfrica, typeName: "Locale.Region")),
+    "static let Locale.Region.southGeorgiaSouthSandwichIslands": .staticValue(boxOpaque(Locale.Region.southGeorgiaSouthSandwichIslands, typeName: "Locale.Region")),
+    "static let Locale.Region.southKorea": .staticValue(boxOpaque(Locale.Region.southKorea, typeName: "Locale.Region")),
+    "static let Locale.Region.southSudan": .staticValue(boxOpaque(Locale.Region.southSudan, typeName: "Locale.Region")),
+    "static let Locale.Region.spain": .staticValue(boxOpaque(Locale.Region.spain, typeName: "Locale.Region")),
+    "static let Locale.Region.sriLanka": .staticValue(boxOpaque(Locale.Region.sriLanka, typeName: "Locale.Region")),
+    "static let Locale.Region.suriname": .staticValue(boxOpaque(Locale.Region.suriname, typeName: "Locale.Region")),
+    "static let Locale.Region.svalbardJanMayen": .staticValue(boxOpaque(Locale.Region.svalbardJanMayen, typeName: "Locale.Region")),
+    "static let Locale.Region.sweden": .staticValue(boxOpaque(Locale.Region.sweden, typeName: "Locale.Region")),
+    "static let Locale.Region.switzerland": .staticValue(boxOpaque(Locale.Region.switzerland, typeName: "Locale.Region")),
+    "static let Locale.Region.taiwan": .staticValue(boxOpaque(Locale.Region.taiwan, typeName: "Locale.Region")),
+    "static let Locale.Region.tajikistan": .staticValue(boxOpaque(Locale.Region.tajikistan, typeName: "Locale.Region")),
+    "static let Locale.Region.tanzania": .staticValue(boxOpaque(Locale.Region.tanzania, typeName: "Locale.Region")),
+    "static let Locale.Region.thailand": .staticValue(boxOpaque(Locale.Region.thailand, typeName: "Locale.Region")),
+    "static let Locale.Region.timorLeste": .staticValue(boxOpaque(Locale.Region.timorLeste, typeName: "Locale.Region")),
+    "static let Locale.Region.togo": .staticValue(boxOpaque(Locale.Region.togo, typeName: "Locale.Region")),
+    "static let Locale.Region.tokelau": .staticValue(boxOpaque(Locale.Region.tokelau, typeName: "Locale.Region")),
+    "static let Locale.Region.tonga": .staticValue(boxOpaque(Locale.Region.tonga, typeName: "Locale.Region")),
+    "static let Locale.Region.trinidadTobago": .staticValue(boxOpaque(Locale.Region.trinidadTobago, typeName: "Locale.Region")),
+    "static let Locale.Region.tristanDaCunha": .staticValue(boxOpaque(Locale.Region.tristanDaCunha, typeName: "Locale.Region")),
+    "static let Locale.Region.tunisia": .staticValue(boxOpaque(Locale.Region.tunisia, typeName: "Locale.Region")),
+    "static let Locale.Region.turkey": .staticValue(boxOpaque(Locale.Region.turkey, typeName: "Locale.Region")),
+    "static let Locale.Region.turkmenistan": .staticValue(boxOpaque(Locale.Region.turkmenistan, typeName: "Locale.Region")),
+    "static let Locale.Region.turksCaicosIslands": .staticValue(boxOpaque(Locale.Region.turksCaicosIslands, typeName: "Locale.Region")),
+    "static let Locale.Region.tuvalu": .staticValue(boxOpaque(Locale.Region.tuvalu, typeName: "Locale.Region")),
+    "static let Locale.Region.uganda": .staticValue(boxOpaque(Locale.Region.uganda, typeName: "Locale.Region")),
+    "static let Locale.Region.ukraine": .staticValue(boxOpaque(Locale.Region.ukraine, typeName: "Locale.Region")),
+    "static let Locale.Region.unitedArabEmirates": .staticValue(boxOpaque(Locale.Region.unitedArabEmirates, typeName: "Locale.Region")),
+    "static let Locale.Region.unitedKingdom": .staticValue(boxOpaque(Locale.Region.unitedKingdom, typeName: "Locale.Region")),
+    "static let Locale.Region.unitedStates": .staticValue(boxOpaque(Locale.Region.unitedStates, typeName: "Locale.Region")),
+    "static let Locale.Region.unitedStatesOutlyingIslands": .staticValue(boxOpaque(Locale.Region.unitedStatesOutlyingIslands, typeName: "Locale.Region")),
+    "static let Locale.Region.unitedStatesVirginIslands": .staticValue(boxOpaque(Locale.Region.unitedStatesVirginIslands, typeName: "Locale.Region")),
+    "static let Locale.Region.uruguay": .staticValue(boxOpaque(Locale.Region.uruguay, typeName: "Locale.Region")),
+    "static let Locale.Region.uzbekistan": .staticValue(boxOpaque(Locale.Region.uzbekistan, typeName: "Locale.Region")),
+    "static let Locale.Region.vanuatu": .staticValue(boxOpaque(Locale.Region.vanuatu, typeName: "Locale.Region")),
+    "static let Locale.Region.vaticanCity": .staticValue(boxOpaque(Locale.Region.vaticanCity, typeName: "Locale.Region")),
+    "static let Locale.Region.venezuela": .staticValue(boxOpaque(Locale.Region.venezuela, typeName: "Locale.Region")),
+    "static let Locale.Region.vietnam": .staticValue(boxOpaque(Locale.Region.vietnam, typeName: "Locale.Region")),
+    "static let Locale.Region.wallisFutuna": .staticValue(boxOpaque(Locale.Region.wallisFutuna, typeName: "Locale.Region")),
+    "static let Locale.Region.westernSahara": .staticValue(boxOpaque(Locale.Region.westernSahara, typeName: "Locale.Region")),
+    "static let Locale.Region.yemen": .staticValue(boxOpaque(Locale.Region.yemen, typeName: "Locale.Region")),
+    "static let Locale.Region.zambia": .staticValue(boxOpaque(Locale.Region.zambia, typeName: "Locale.Region")),
+    "static let Locale.Region.zimbabwe": .staticValue(boxOpaque(Locale.Region.zimbabwe, typeName: "Locale.Region")),
+    "static let Locale.Region.world": .staticValue(boxOpaque(Locale.Region.world, typeName: "Locale.Region")),
+    "static let Locale.Region.latinAmerica": .staticValue(boxOpaque(Locale.Region.latinAmerica, typeName: "Locale.Region")),
+    "var Locale.Region.isISORegion: Bool": .computed { receiver in
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         return .bool(recv.isISORegion)
-    }
-    d["var Locale.Region.containingRegion: Locale.Region?"] = .computed { receiver in
+    },
+    "var Locale.Region.containingRegion: Locale.Region?": .computed { receiver in
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         if let _v = recv.containingRegion {
             return .optional(boxOpaque(_v, typeName: "Locale.Region"))
         }
         return .optional(nil)
-    }
-    d["var Locale.Region.continent: Locale.Region?"] = .computed { receiver in
+    },
+    "var Locale.Region.continent: Locale.Region?": .computed { receiver in
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         if let _v = recv.continent {
             return .optional(boxOpaque(_v, typeName: "Locale.Region"))
         }
         return .optional(nil)
-    }
-    d["var Locale.Region.subcontinent: Locale.Region?"] = .computed { receiver in
+    },
+    "var Locale.Region.subcontinent: Locale.Region?": .computed { receiver in
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         if let _v = recv.subcontinent {
             return .optional(boxOpaque(_v, typeName: "Locale.Region"))
         }
         return .optional(nil)
-    }
-    d["init Locale.Region(stringLiteral:)"] = .`init` { args in
+    },
+    "init Locale.Region(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Region(stringLiteral:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.Region(stringLiteral: try unboxString(args[0])), typeName: "Locale.Region")
-    }
-    d["init Locale.Region(_:)"] = .`init` { args in
+    },
+    "init Locale.Region(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Region(_:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.Region(try unboxString(args[0])), typeName: "Locale.Region")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let localeRegion: [String: Bridge] = [:]
+}
+#endif

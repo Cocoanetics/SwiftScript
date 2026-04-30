@@ -5,71 +5,70 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateComponentsISO8601FormatStyle: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["static let DateComponents.ISO8601FormatStyle.iso8601"] = .staticValue(boxOpaque(DateComponents.ISO8601FormatStyle.iso8601, typeName: "DateComponents.ISO8601FormatStyle"))
-    d["static let DateComponents.ISO8601FormatStyle.iso8601Components"] = .staticValue(boxOpaque(DateComponents.ISO8601FormatStyle.iso8601Components, typeName: "DateComponents.ISO8601FormatStyle"))
-    d["var DateComponents.ISO8601FormatStyle.includingFractionalSeconds: Bool"] = .computed { receiver in
+    nonisolated(unsafe) static let dateComponentsISO8601FormatStyle: [String: Bridge] = [
+    "static let DateComponents.ISO8601FormatStyle.iso8601": .staticValue(boxOpaque(DateComponents.ISO8601FormatStyle.iso8601, typeName: "DateComponents.ISO8601FormatStyle")),
+    "static let DateComponents.ISO8601FormatStyle.iso8601Components": .staticValue(boxOpaque(DateComponents.ISO8601FormatStyle.iso8601Components, typeName: "DateComponents.ISO8601FormatStyle")),
+    "var DateComponents.ISO8601FormatStyle.includingFractionalSeconds: Bool": .computed { receiver in
         let recv: DateComponents.ISO8601FormatStyle = try unboxOpaque(receiver, as: DateComponents.ISO8601FormatStyle.self, typeName: "DateComponents.ISO8601FormatStyle")
         return .bool(recv.includingFractionalSeconds)
-    }
-    d["var DateComponents.ISO8601FormatStyle.timeZone: TimeZone"] = .computed { receiver in
+    },
+    "var DateComponents.ISO8601FormatStyle.timeZone: TimeZone": .computed { receiver in
         let recv: DateComponents.ISO8601FormatStyle = try unboxOpaque(receiver, as: DateComponents.ISO8601FormatStyle.self, typeName: "DateComponents.ISO8601FormatStyle")
         return boxOpaque(recv.timeZone, typeName: "TimeZone")
-    }
-    d["var DateComponents.ISO8601FormatStyle.hashValue: Int"] = .computed { receiver in
+    },
+    "var DateComponents.ISO8601FormatStyle.hashValue: Int": .computed { receiver in
         let recv: DateComponents.ISO8601FormatStyle = try unboxOpaque(receiver, as: DateComponents.ISO8601FormatStyle.self, typeName: "DateComponents.ISO8601FormatStyle")
         return .int(recv.hashValue)
-    }
-    d["func DateComponents.ISO8601FormatStyle.year()"] = .method { receiver, args in
+    },
+    "func DateComponents.ISO8601FormatStyle.year()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("DateComponents.ISO8601FormatStyle.year: expected 0 argument(s), got \(args.count)")
         }
         let recv: DateComponents.ISO8601FormatStyle = try unboxOpaque(receiver, as: DateComponents.ISO8601FormatStyle.self, typeName: "DateComponents.ISO8601FormatStyle")
         return boxOpaque(recv.year(), typeName: "DateComponents.ISO8601FormatStyle")
-    }
-    d["func DateComponents.ISO8601FormatStyle.weekOfYear()"] = .method { receiver, args in
+    },
+    "func DateComponents.ISO8601FormatStyle.weekOfYear()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("DateComponents.ISO8601FormatStyle.weekOfYear: expected 0 argument(s), got \(args.count)")
         }
         let recv: DateComponents.ISO8601FormatStyle = try unboxOpaque(receiver, as: DateComponents.ISO8601FormatStyle.self, typeName: "DateComponents.ISO8601FormatStyle")
         return boxOpaque(recv.weekOfYear(), typeName: "DateComponents.ISO8601FormatStyle")
-    }
-    d["func DateComponents.ISO8601FormatStyle.month()"] = .method { receiver, args in
+    },
+    "func DateComponents.ISO8601FormatStyle.month()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("DateComponents.ISO8601FormatStyle.month: expected 0 argument(s), got \(args.count)")
         }
         let recv: DateComponents.ISO8601FormatStyle = try unboxOpaque(receiver, as: DateComponents.ISO8601FormatStyle.self, typeName: "DateComponents.ISO8601FormatStyle")
         return boxOpaque(recv.month(), typeName: "DateComponents.ISO8601FormatStyle")
-    }
-    d["func DateComponents.ISO8601FormatStyle.day()"] = .method { receiver, args in
+    },
+    "func DateComponents.ISO8601FormatStyle.day()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("DateComponents.ISO8601FormatStyle.day: expected 0 argument(s), got \(args.count)")
         }
         let recv: DateComponents.ISO8601FormatStyle = try unboxOpaque(receiver, as: DateComponents.ISO8601FormatStyle.self, typeName: "DateComponents.ISO8601FormatStyle")
         return boxOpaque(recv.day(), typeName: "DateComponents.ISO8601FormatStyle")
-    }
-    d["var DateComponents.ISO8601FormatStyle.parseStrategy: DateComponents.ISO8601FormatStyle"] = .computed { receiver in
+    },
+    "var DateComponents.ISO8601FormatStyle.parseStrategy: DateComponents.ISO8601FormatStyle": .computed { receiver in
         let recv: DateComponents.ISO8601FormatStyle = try unboxOpaque(receiver, as: DateComponents.ISO8601FormatStyle.self, typeName: "DateComponents.ISO8601FormatStyle")
         return boxOpaque(recv.parseStrategy, typeName: "DateComponents.ISO8601FormatStyle")
-    }
-    d["func DateComponents.ISO8601FormatStyle.time()"] = .method { receiver, args in
+    },
+    "func DateComponents.ISO8601FormatStyle.time()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("DateComponents.ISO8601FormatStyle.time: expected 1 argument(s), got \(args.count)")
         }
         let recv: DateComponents.ISO8601FormatStyle = try unboxOpaque(receiver, as: DateComponents.ISO8601FormatStyle.self, typeName: "DateComponents.ISO8601FormatStyle")
         return boxOpaque(recv.time(includingFractionalSeconds: try unboxBool(args[0])), typeName: "DateComponents.ISO8601FormatStyle")
-    }
-    d["func DateComponents.ISO8601FormatStyle.format()"] = .method { receiver, args in
+    },
+    "func DateComponents.ISO8601FormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("DateComponents.ISO8601FormatStyle.format: expected 1 argument(s), got \(args.count)")
         }
         let recv: DateComponents.ISO8601FormatStyle = try unboxOpaque(receiver, as: DateComponents.ISO8601FormatStyle.self, typeName: "DateComponents.ISO8601FormatStyle")
         return .string(recv.format(try unboxOpaque(args[0], as: DateComponents.self, typeName: "DateComponents")))
-    }
-    d["func DateComponents.ISO8601FormatStyle.parse()"] = .method { receiver, args in
+    },
+    "func DateComponents.ISO8601FormatStyle.parse()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("DateComponents.ISO8601FormatStyle.parse: expected 1 argument(s), got \(args.count)")
         }
@@ -79,14 +78,17 @@ extension FoundationBridges {
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
-    }
-    d["init DateComponents.ISO8601FormatStyle(includingFractionalSeconds:timeZone:)"] = .`init` { args in
+    },
+    "init DateComponents.ISO8601FormatStyle(includingFractionalSeconds:timeZone:)": .`init` { args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("init DateComponents.ISO8601FormatStyle(includingFractionalSeconds:timeZone:): expected 2 argument(s), got \(args.count)")
         }
         return boxOpaque(DateComponents.ISO8601FormatStyle(includingFractionalSeconds: try unboxBool(args[0]), timeZone: try unboxOpaque(args[1], as: TimeZone.self, typeName: "TimeZone")), typeName: "DateComponents.ISO8601FormatStyle")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let dateComponentsISO8601FormatStyle: [String: Bridge] = [:]
+}
+#endif

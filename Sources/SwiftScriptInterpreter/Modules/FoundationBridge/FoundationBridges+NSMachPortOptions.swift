@@ -5,23 +5,22 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSMachPortOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init NSMachPort.Options()"] = .`init` { args in
+    nonisolated(unsafe) static let nSMachPortOptions: [String: Bridge] = [
+    "init NSMachPort.Options()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSMachPort.Options(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(NSMachPort.Options(), typeName: "NSMachPort.Options")
-    }
-    d["var NSMachPort.Options.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var NSMachPort.Options.isEmpty: Bool": .computed { receiver in
         let recv: NSMachPort.Options = try unboxOpaque(receiver, as: NSMachPort.Options.self, typeName: "NSMachPort.Options")
         return .bool(recv.isEmpty)
-    }
-    d["static let NSMachPort.Options.deallocateSendRight"] = .staticValue(boxOpaque(NSMachPort.Options.deallocateSendRight, typeName: "NSMachPort.Options"))
-    d["static let NSMachPort.Options.deallocateReceiveRight"] = .staticValue(boxOpaque(NSMachPort.Options.deallocateReceiveRight, typeName: "NSMachPort.Options"))
-        d["init NSMachPort.Options(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let NSMachPort.Options.deallocateSendRight": .staticValue(boxOpaque(NSMachPort.Options.deallocateSendRight, typeName: "NSMachPort.Options")),
+    "static let NSMachPort.Options.deallocateReceiveRight": .staticValue(boxOpaque(NSMachPort.Options.deallocateReceiveRight, typeName: "NSMachPort.Options")),
+        "init NSMachPort.Options(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSMachPort.Options(arrayLiteral:): expected array literal")
             }
@@ -33,8 +32,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "NSMachPort.Options")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSMachPortOptions: [String: Bridge] = [:]
+}
+#endif

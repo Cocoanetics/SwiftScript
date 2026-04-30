@@ -5,42 +5,41 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateParseStrategy: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Date.ParseStrategy.isLenient: Bool"] = .computed { receiver in
+    nonisolated(unsafe) static let dateParseStrategy: [String: Bridge] = [
+    "var Date.ParseStrategy.isLenient: Bool": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return .bool(recv.isLenient)
-    }
-    d["var Date.ParseStrategy.twoDigitStartDate: Date"] = .computed { receiver in
+    },
+    "var Date.ParseStrategy.twoDigitStartDate: Date": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return boxOpaque(recv.twoDigitStartDate, typeName: "Date")
-    }
-    d["var Date.ParseStrategy.locale: Locale?"] = .computed { receiver in
+    },
+    "var Date.ParseStrategy.locale: Locale?": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         if let _v = recv.locale {
             return .optional(boxOpaque(_v, typeName: "Locale"))
         }
         return .optional(nil)
-    }
-    d["var Date.ParseStrategy.timeZone: TimeZone"] = .computed { receiver in
+    },
+    "var Date.ParseStrategy.timeZone: TimeZone": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return boxOpaque(recv.timeZone, typeName: "TimeZone")
-    }
-    d["var Date.ParseStrategy.calendar: Calendar"] = .computed { receiver in
+    },
+    "var Date.ParseStrategy.calendar: Calendar": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return boxOpaque(recv.calendar, typeName: "Calendar")
-    }
-    d["var Date.ParseStrategy.format: String"] = .computed { receiver in
+    },
+    "var Date.ParseStrategy.format: String": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return .string(recv.format)
-    }
-    d["var Date.ParseStrategy.hashValue: Int"] = .computed { receiver in
+    },
+    "var Date.ParseStrategy.hashValue: Int": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return .int(recv.hashValue)
-    }
-    d["func Date.ParseStrategy.parse()"] = .method { receiver, args in
+    },
+    "func Date.ParseStrategy.parse()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.ParseStrategy.parse: expected 1 argument(s), got \(args.count)")
         }
@@ -50,8 +49,11 @@ extension FoundationBridges {
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let dateParseStrategy: [String: Bridge] = [:]
+}
+#endif

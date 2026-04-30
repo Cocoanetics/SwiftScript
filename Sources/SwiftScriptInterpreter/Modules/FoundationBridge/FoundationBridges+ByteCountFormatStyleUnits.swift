@@ -5,36 +5,35 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let byteCountFormatStyleUnits: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init ByteCountFormatStyle.Units()"] = .`init` { args in
+    nonisolated(unsafe) static let byteCountFormatStyleUnits: [String: Bridge] = [
+    "init ByteCountFormatStyle.Units()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init ByteCountFormatStyle.Units(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(ByteCountFormatStyle.Units(), typeName: "ByteCountFormatStyle.Units")
-    }
-    d["var ByteCountFormatStyle.Units.hashValue: Int"] = .computed { receiver in
+    },
+    "var ByteCountFormatStyle.Units.hashValue: Int": .computed { receiver in
         let recv: ByteCountFormatStyle.Units = try unboxOpaque(receiver, as: ByteCountFormatStyle.Units.self, typeName: "ByteCountFormatStyle.Units")
         return .int(recv.hashValue)
-    }
-    d["var ByteCountFormatStyle.Units.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var ByteCountFormatStyle.Units.isEmpty: Bool": .computed { receiver in
         let recv: ByteCountFormatStyle.Units = try unboxOpaque(receiver, as: ByteCountFormatStyle.Units.self, typeName: "ByteCountFormatStyle.Units")
         return .bool(recv.isEmpty)
-    }
-    d["static let ByteCountFormatStyle.Units.bytes"] = .staticValue(boxOpaque(ByteCountFormatStyle.Units.bytes, typeName: "ByteCountFormatStyle.Units"))
-    d["static let ByteCountFormatStyle.Units.kb"] = .staticValue(boxOpaque(ByteCountFormatStyle.Units.kb, typeName: "ByteCountFormatStyle.Units"))
-    d["static let ByteCountFormatStyle.Units.mb"] = .staticValue(boxOpaque(ByteCountFormatStyle.Units.mb, typeName: "ByteCountFormatStyle.Units"))
-    d["static let ByteCountFormatStyle.Units.gb"] = .staticValue(boxOpaque(ByteCountFormatStyle.Units.gb, typeName: "ByteCountFormatStyle.Units"))
-    d["static let ByteCountFormatStyle.Units.tb"] = .staticValue(boxOpaque(ByteCountFormatStyle.Units.tb, typeName: "ByteCountFormatStyle.Units"))
-    d["static let ByteCountFormatStyle.Units.pb"] = .staticValue(boxOpaque(ByteCountFormatStyle.Units.pb, typeName: "ByteCountFormatStyle.Units"))
-    d["static let ByteCountFormatStyle.Units.eb"] = .staticValue(boxOpaque(ByteCountFormatStyle.Units.eb, typeName: "ByteCountFormatStyle.Units"))
-    d["static let ByteCountFormatStyle.Units.zb"] = .staticValue(boxOpaque(ByteCountFormatStyle.Units.zb, typeName: "ByteCountFormatStyle.Units"))
-    d["static let ByteCountFormatStyle.Units.ybOrHigher"] = .staticValue(boxOpaque(ByteCountFormatStyle.Units.ybOrHigher, typeName: "ByteCountFormatStyle.Units"))
-    d["static let ByteCountFormatStyle.Units.all"] = .staticValue(boxOpaque(ByteCountFormatStyle.Units.all, typeName: "ByteCountFormatStyle.Units"))
-    d["static let ByteCountFormatStyle.Units.default"] = .staticValue(boxOpaque(ByteCountFormatStyle.Units.default, typeName: "ByteCountFormatStyle.Units"))
-        d["init ByteCountFormatStyle.Units(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let ByteCountFormatStyle.Units.bytes": .staticValue(boxOpaque(ByteCountFormatStyle.Units.bytes, typeName: "ByteCountFormatStyle.Units")),
+    "static let ByteCountFormatStyle.Units.kb": .staticValue(boxOpaque(ByteCountFormatStyle.Units.kb, typeName: "ByteCountFormatStyle.Units")),
+    "static let ByteCountFormatStyle.Units.mb": .staticValue(boxOpaque(ByteCountFormatStyle.Units.mb, typeName: "ByteCountFormatStyle.Units")),
+    "static let ByteCountFormatStyle.Units.gb": .staticValue(boxOpaque(ByteCountFormatStyle.Units.gb, typeName: "ByteCountFormatStyle.Units")),
+    "static let ByteCountFormatStyle.Units.tb": .staticValue(boxOpaque(ByteCountFormatStyle.Units.tb, typeName: "ByteCountFormatStyle.Units")),
+    "static let ByteCountFormatStyle.Units.pb": .staticValue(boxOpaque(ByteCountFormatStyle.Units.pb, typeName: "ByteCountFormatStyle.Units")),
+    "static let ByteCountFormatStyle.Units.eb": .staticValue(boxOpaque(ByteCountFormatStyle.Units.eb, typeName: "ByteCountFormatStyle.Units")),
+    "static let ByteCountFormatStyle.Units.zb": .staticValue(boxOpaque(ByteCountFormatStyle.Units.zb, typeName: "ByteCountFormatStyle.Units")),
+    "static let ByteCountFormatStyle.Units.ybOrHigher": .staticValue(boxOpaque(ByteCountFormatStyle.Units.ybOrHigher, typeName: "ByteCountFormatStyle.Units")),
+    "static let ByteCountFormatStyle.Units.all": .staticValue(boxOpaque(ByteCountFormatStyle.Units.all, typeName: "ByteCountFormatStyle.Units")),
+    "static let ByteCountFormatStyle.Units.default": .staticValue(boxOpaque(ByteCountFormatStyle.Units.default, typeName: "ByteCountFormatStyle.Units")),
+        "init ByteCountFormatStyle.Units(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("ByteCountFormatStyle.Units(arrayLiteral:): expected array literal")
             }
@@ -46,8 +45,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "ByteCountFormatStyle.Units")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let byteCountFormatStyleUnits: [String: Bridge] = [:]
+}
+#endif

@@ -5,30 +5,32 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let uRLResource: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var URLResource.name: String"] = .computed { receiver in
+    nonisolated(unsafe) static let uRLResource: [String: Bridge] = [
+    "var URLResource.name: String": .computed { receiver in
         let recv: URLResource = try unboxOpaque(receiver, as: URLResource.self, typeName: "URLResource")
         return .string(recv.name)
-    }
-    d["var URLResource.subdirectory: String?"] = .computed { receiver in
+    },
+    "var URLResource.subdirectory: String?": .computed { receiver in
         let recv: URLResource = try unboxOpaque(receiver, as: URLResource.self, typeName: "URLResource")
         if let _v = recv.subdirectory {
             return .optional(.string(_v))
         }
         return .optional(nil)
-    }
-    d["var URLResource.locale: Locale"] = .computed { receiver in
+    },
+    "var URLResource.locale: Locale": .computed { receiver in
         let recv: URLResource = try unboxOpaque(receiver, as: URLResource.self, typeName: "URLResource")
         return boxOpaque(recv.locale, typeName: "Locale")
-    }
-    d["var URLResource.hashValue: Int"] = .computed { receiver in
+    },
+    "var URLResource.hashValue: Int": .computed { receiver in
         let recv: URLResource = try unboxOpaque(receiver, as: URLResource.self, typeName: "URLResource")
         return .int(recv.hashValue)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let uRLResource: [String: Bridge] = [:]
+}
+#endif

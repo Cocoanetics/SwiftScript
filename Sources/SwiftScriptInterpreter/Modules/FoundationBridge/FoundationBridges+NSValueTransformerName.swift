@@ -5,31 +5,33 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSValueTransformerName: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var NSValueTransformerName.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let nSValueTransformerName: [String: Bridge] = [
+    "var NSValueTransformerName.hashValue: Int": .computed { receiver in
         let recv: NSValueTransformerName = try unboxOpaque(receiver, as: NSValueTransformerName.self, typeName: "NSValueTransformerName")
         return .int(recv.hashValue)
-    }
-    d["static let NSValueTransformerName.negateBooleanTransformerName"] = .staticValue(boxOpaque(NSValueTransformerName.negateBooleanTransformerName, typeName: "NSValueTransformerName"))
-    d["static let NSValueTransformerName.isNilTransformerName"] = .staticValue(boxOpaque(NSValueTransformerName.isNilTransformerName, typeName: "NSValueTransformerName"))
-    d["static let NSValueTransformerName.isNotNilTransformerName"] = .staticValue(boxOpaque(NSValueTransformerName.isNotNilTransformerName, typeName: "NSValueTransformerName"))
-    d["static let NSValueTransformerName.secureUnarchiveFromDataTransformerName"] = .staticValue(boxOpaque(NSValueTransformerName.secureUnarchiveFromDataTransformerName, typeName: "NSValueTransformerName"))
-    d["init NSValueTransformerName(_:)"] = .`init` { args in
+    },
+    "static let NSValueTransformerName.negateBooleanTransformerName": .staticValue(boxOpaque(NSValueTransformerName.negateBooleanTransformerName, typeName: "NSValueTransformerName")),
+    "static let NSValueTransformerName.isNilTransformerName": .staticValue(boxOpaque(NSValueTransformerName.isNilTransformerName, typeName: "NSValueTransformerName")),
+    "static let NSValueTransformerName.isNotNilTransformerName": .staticValue(boxOpaque(NSValueTransformerName.isNotNilTransformerName, typeName: "NSValueTransformerName")),
+    "static let NSValueTransformerName.secureUnarchiveFromDataTransformerName": .staticValue(boxOpaque(NSValueTransformerName.secureUnarchiveFromDataTransformerName, typeName: "NSValueTransformerName")),
+    "init NSValueTransformerName(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init NSValueTransformerName(_:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(NSValueTransformerName(try unboxString(args[0])), typeName: "NSValueTransformerName")
-    }
-    d["init NSValueTransformerName(rawValue:)"] = .`init` { args in
+    },
+    "init NSValueTransformerName(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init NSValueTransformerName(rawValue:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(NSValueTransformerName(rawValue: try unboxString(args[0])), typeName: "NSValueTransformerName")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSValueTransformerName: [String: Bridge] = [:]
+}
+#endif

@@ -5,15 +5,17 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let predicateExpressionsVariableID: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var PredicateExpressions.VariableID.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let predicateExpressionsVariableID: [String: Bridge] = [
+    "var PredicateExpressions.VariableID.hashValue: Int": .computed { receiver in
         let recv: PredicateExpressions.VariableID = try unboxOpaque(receiver, as: PredicateExpressions.VariableID.self, typeName: "PredicateExpressions.VariableID")
         return .int(recv.hashValue)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let predicateExpressionsVariableID: [String: Bridge] = [:]
+}
+#endif

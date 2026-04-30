@@ -5,25 +5,24 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSDataBase64EncodingOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init NSData.Base64EncodingOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let nSDataBase64EncodingOptions: [String: Bridge] = [
+    "init NSData.Base64EncodingOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSData.Base64EncodingOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(NSData.Base64EncodingOptions(), typeName: "NSData.Base64EncodingOptions")
-    }
-    d["var NSData.Base64EncodingOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var NSData.Base64EncodingOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSData.Base64EncodingOptions = try unboxOpaque(receiver, as: NSData.Base64EncodingOptions.self, typeName: "NSData.Base64EncodingOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let NSData.Base64EncodingOptions.lineLength64Characters"] = .staticValue(boxOpaque(NSData.Base64EncodingOptions.lineLength64Characters, typeName: "NSData.Base64EncodingOptions"))
-    d["static let NSData.Base64EncodingOptions.lineLength76Characters"] = .staticValue(boxOpaque(NSData.Base64EncodingOptions.lineLength76Characters, typeName: "NSData.Base64EncodingOptions"))
-    d["static let NSData.Base64EncodingOptions.endLineWithCarriageReturn"] = .staticValue(boxOpaque(NSData.Base64EncodingOptions.endLineWithCarriageReturn, typeName: "NSData.Base64EncodingOptions"))
-    d["static let NSData.Base64EncodingOptions.endLineWithLineFeed"] = .staticValue(boxOpaque(NSData.Base64EncodingOptions.endLineWithLineFeed, typeName: "NSData.Base64EncodingOptions"))
-        d["init NSData.Base64EncodingOptions(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let NSData.Base64EncodingOptions.lineLength64Characters": .staticValue(boxOpaque(NSData.Base64EncodingOptions.lineLength64Characters, typeName: "NSData.Base64EncodingOptions")),
+    "static let NSData.Base64EncodingOptions.lineLength76Characters": .staticValue(boxOpaque(NSData.Base64EncodingOptions.lineLength76Characters, typeName: "NSData.Base64EncodingOptions")),
+    "static let NSData.Base64EncodingOptions.endLineWithCarriageReturn": .staticValue(boxOpaque(NSData.Base64EncodingOptions.endLineWithCarriageReturn, typeName: "NSData.Base64EncodingOptions")),
+    "static let NSData.Base64EncodingOptions.endLineWithLineFeed": .staticValue(boxOpaque(NSData.Base64EncodingOptions.endLineWithLineFeed, typeName: "NSData.Base64EncodingOptions")),
+        "init NSData.Base64EncodingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSData.Base64EncodingOptions(arrayLiteral:): expected array literal")
             }
@@ -35,8 +34,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "NSData.Base64EncodingOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSDataBase64EncodingOptions: [String: Bridge] = [:]
+}
+#endif

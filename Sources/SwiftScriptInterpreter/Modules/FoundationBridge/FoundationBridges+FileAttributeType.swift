@@ -5,28 +5,30 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let fileAttributeType: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var FileAttributeType.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let fileAttributeType: [String: Bridge] = [
+    "var FileAttributeType.hashValue: Int": .computed { receiver in
         let recv: FileAttributeType = try unboxOpaque(receiver, as: FileAttributeType.self, typeName: "FileAttributeType")
         return .int(recv.hashValue)
-    }
-    d["static let FileAttributeType.typeDirectory"] = .staticValue(boxOpaque(FileAttributeType.typeDirectory, typeName: "FileAttributeType"))
-    d["static let FileAttributeType.typeRegular"] = .staticValue(boxOpaque(FileAttributeType.typeRegular, typeName: "FileAttributeType"))
-    d["static let FileAttributeType.typeSymbolicLink"] = .staticValue(boxOpaque(FileAttributeType.typeSymbolicLink, typeName: "FileAttributeType"))
-    d["static let FileAttributeType.typeSocket"] = .staticValue(boxOpaque(FileAttributeType.typeSocket, typeName: "FileAttributeType"))
-    d["static let FileAttributeType.typeCharacterSpecial"] = .staticValue(boxOpaque(FileAttributeType.typeCharacterSpecial, typeName: "FileAttributeType"))
-    d["static let FileAttributeType.typeBlockSpecial"] = .staticValue(boxOpaque(FileAttributeType.typeBlockSpecial, typeName: "FileAttributeType"))
-    d["static let FileAttributeType.typeUnknown"] = .staticValue(boxOpaque(FileAttributeType.typeUnknown, typeName: "FileAttributeType"))
-    d["init FileAttributeType(rawValue:)"] = .`init` { args in
+    },
+    "static let FileAttributeType.typeDirectory": .staticValue(boxOpaque(FileAttributeType.typeDirectory, typeName: "FileAttributeType")),
+    "static let FileAttributeType.typeRegular": .staticValue(boxOpaque(FileAttributeType.typeRegular, typeName: "FileAttributeType")),
+    "static let FileAttributeType.typeSymbolicLink": .staticValue(boxOpaque(FileAttributeType.typeSymbolicLink, typeName: "FileAttributeType")),
+    "static let FileAttributeType.typeSocket": .staticValue(boxOpaque(FileAttributeType.typeSocket, typeName: "FileAttributeType")),
+    "static let FileAttributeType.typeCharacterSpecial": .staticValue(boxOpaque(FileAttributeType.typeCharacterSpecial, typeName: "FileAttributeType")),
+    "static let FileAttributeType.typeBlockSpecial": .staticValue(boxOpaque(FileAttributeType.typeBlockSpecial, typeName: "FileAttributeType")),
+    "static let FileAttributeType.typeUnknown": .staticValue(boxOpaque(FileAttributeType.typeUnknown, typeName: "FileAttributeType")),
+    "init FileAttributeType(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init FileAttributeType(rawValue:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(FileAttributeType(rawValue: try unboxString(args[0])), typeName: "FileAttributeType")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let fileAttributeType: [String: Bridge] = [:]
+}
+#endif

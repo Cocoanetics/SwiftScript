@@ -5,57 +5,59 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let processInfo: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["static let ProcessInfo.processInfo"] = .staticValue(boxOpaque(ProcessInfo.processInfo, typeName: "ProcessInfo"))
-    d["var ProcessInfo.hostName: String"] = .computed { receiver in
+    nonisolated(unsafe) static let processInfo: [String: Bridge] = [
+    "static let ProcessInfo.processInfo": .staticValue(boxOpaque(ProcessInfo.processInfo, typeName: "ProcessInfo")),
+    "var ProcessInfo.hostName: String": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .string(recv.hostName)
-    }
-    d["var ProcessInfo.processName: String"] = .computed { receiver in
+    },
+    "var ProcessInfo.processName: String": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .string(recv.processName)
-    }
-        d["set var ProcessInfo.processName: String"] = .setter { receiver, newValue in
+    },
+        "set var ProcessInfo.processName: String": .setter { receiver, newValue in
             let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
             recv.processName = try unboxString(newValue)
-        }
-    d["var ProcessInfo.globallyUniqueString: String"] = .computed { receiver in
+        },
+    "var ProcessInfo.globallyUniqueString: String": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .string(recv.globallyUniqueString)
-    }
-    d["var ProcessInfo.operatingSystemVersionString: String"] = .computed { receiver in
+    },
+    "var ProcessInfo.operatingSystemVersionString: String": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .string(recv.operatingSystemVersionString)
-    }
-    d["var ProcessInfo.processorCount: Int"] = .computed { receiver in
+    },
+    "var ProcessInfo.processorCount: Int": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .int(recv.processorCount)
-    }
-    d["var ProcessInfo.activeProcessorCount: Int"] = .computed { receiver in
+    },
+    "var ProcessInfo.activeProcessorCount: Int": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .int(recv.activeProcessorCount)
-    }
-    d["var ProcessInfo.systemUptime: Double"] = .computed { receiver in
+    },
+    "var ProcessInfo.systemUptime: Double": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .double(recv.systemUptime)
-    }
-    d["var ProcessInfo.isLowPowerModeEnabled: Bool"] = .computed { receiver in
+    },
+    "var ProcessInfo.isLowPowerModeEnabled: Bool": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .bool(recv.isLowPowerModeEnabled)
-    }
-    d["var ProcessInfo.isMacCatalystApp: Bool"] = .computed { receiver in
+    },
+    "var ProcessInfo.isMacCatalystApp: Bool": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .bool(recv.isMacCatalystApp)
-    }
-    d["var ProcessInfo.isiOSAppOnMac: Bool"] = .computed { receiver in
+    },
+    "var ProcessInfo.isiOSAppOnMac: Bool": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .bool(recv.isiOSAppOnMac)
-    }
-    d["static let ProcessInfo.thermalStateDidChangeNotification"] = .staticValue(boxOpaque(ProcessInfo.thermalStateDidChangeNotification, typeName: "NSNotification.Name"))
-        #endif
-        return d
-    }()
+    },
+    "static let ProcessInfo.thermalStateDidChangeNotification": .staticValue(boxOpaque(ProcessInfo.thermalStateDidChangeNotification, typeName: "NSNotification.Name")),
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let processInfo: [String: Bridge] = [:]
+}
+#endif

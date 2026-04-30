@@ -5,19 +5,18 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let uRLTemplate: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var URL.Template.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let uRLTemplate: [String: Bridge] = [
+    "var URL.Template.hashValue: Int": .computed { receiver in
         let recv: URL.Template = try unboxOpaque(receiver, as: URL.Template.self, typeName: "URL.Template")
         return .int(recv.hashValue)
-    }
-    d["var URL.Template.description: String"] = .computed { receiver in
+    },
+    "var URL.Template.description: String": .computed { receiver in
         let recv: URL.Template = try unboxOpaque(receiver, as: URL.Template.self, typeName: "URL.Template")
         return .string(recv.description)
-    }
-    d["init URL.Template(_:)"] = .`init` { args in
+    },
+    "init URL.Template(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init URL.Template(_:): expected 1 argument(s), got \(args.count)")
         }
@@ -25,8 +24,11 @@ extension FoundationBridges {
             return .optional(boxOpaque(_v, typeName: "URL.Template"))
         }
         return .optional(nil)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let uRLTemplate: [String: Bridge] = [:]
+}
+#endif

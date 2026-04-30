@@ -5,171 +5,170 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let decimal: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Decimal.description: String"] = .computed { receiver in
+    nonisolated(unsafe) static let decimal: [String: Bridge] = [
+    "var Decimal.description: String": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .string(recv.description)
-    }
-    d["static let Decimal.leastFiniteMagnitude"] = .staticValue(boxOpaque(Decimal.leastFiniteMagnitude, typeName: "Decimal"))
-    d["static let Decimal.greatestFiniteMagnitude"] = .staticValue(boxOpaque(Decimal.greatestFiniteMagnitude, typeName: "Decimal"))
-    d["static let Decimal.leastNormalMagnitude"] = .staticValue(boxOpaque(Decimal.leastNormalMagnitude, typeName: "Decimal"))
-    d["static let Decimal.leastNonzeroMagnitude"] = .staticValue(boxOpaque(Decimal.leastNonzeroMagnitude, typeName: "Decimal"))
-    d["static let Decimal.pi"] = .staticValue(boxOpaque(Decimal.pi, typeName: "Decimal"))
-    d["static let Decimal.quietNaN"] = .staticValue(boxOpaque(Decimal.quietNaN, typeName: "Decimal"))
-    d["static let Decimal.nan"] = .staticValue(boxOpaque(Decimal.nan, typeName: "Decimal"))
-    d["static let Decimal.radix"] = .staticValue(.int(Decimal.radix))
-    d["var Decimal.exponent: Int"] = .computed { receiver in
+    },
+    "static let Decimal.leastFiniteMagnitude": .staticValue(boxOpaque(Decimal.leastFiniteMagnitude, typeName: "Decimal")),
+    "static let Decimal.greatestFiniteMagnitude": .staticValue(boxOpaque(Decimal.greatestFiniteMagnitude, typeName: "Decimal")),
+    "static let Decimal.leastNormalMagnitude": .staticValue(boxOpaque(Decimal.leastNormalMagnitude, typeName: "Decimal")),
+    "static let Decimal.leastNonzeroMagnitude": .staticValue(boxOpaque(Decimal.leastNonzeroMagnitude, typeName: "Decimal")),
+    "static let Decimal.pi": .staticValue(boxOpaque(Decimal.pi, typeName: "Decimal")),
+    "static let Decimal.quietNaN": .staticValue(boxOpaque(Decimal.quietNaN, typeName: "Decimal")),
+    "static let Decimal.nan": .staticValue(boxOpaque(Decimal.nan, typeName: "Decimal")),
+    "static let Decimal.radix": .staticValue(.int(Decimal.radix)),
+    "var Decimal.exponent: Int": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .int(recv.exponent)
-    }
-    d["var Decimal.significand: Decimal"] = .computed { receiver in
+    },
+    "var Decimal.significand: Decimal": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return boxOpaque(recv.significand, typeName: "Decimal")
-    }
-    d["var Decimal.ulp: Decimal"] = .computed { receiver in
+    },
+    "var Decimal.ulp: Decimal": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return boxOpaque(recv.ulp, typeName: "Decimal")
-    }
-    d["var Decimal.isCanonical: Bool"] = .computed { receiver in
+    },
+    "var Decimal.isCanonical: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isCanonical)
-    }
-    d["var Decimal.isSignMinus: Bool"] = .computed { receiver in
+    },
+    "var Decimal.isSignMinus: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isSignMinus)
-    }
-    d["var Decimal.isZero: Bool"] = .computed { receiver in
+    },
+    "var Decimal.isZero: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isZero)
-    }
-    d["var Decimal.isSubnormal: Bool"] = .computed { receiver in
+    },
+    "var Decimal.isSubnormal: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isSubnormal)
-    }
-    d["var Decimal.isNormal: Bool"] = .computed { receiver in
+    },
+    "var Decimal.isNormal: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isNormal)
-    }
-    d["var Decimal.isFinite: Bool"] = .computed { receiver in
+    },
+    "var Decimal.isFinite: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isFinite)
-    }
-    d["var Decimal.isInfinite: Bool"] = .computed { receiver in
+    },
+    "var Decimal.isInfinite: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isInfinite)
-    }
-    d["var Decimal.isNaN: Bool"] = .computed { receiver in
+    },
+    "var Decimal.isNaN: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isNaN)
-    }
-    d["var Decimal.isSignaling: Bool"] = .computed { receiver in
+    },
+    "var Decimal.isSignaling: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isSignaling)
-    }
-    d["var Decimal.isSignalingNaN: Bool"] = .computed { receiver in
+    },
+    "var Decimal.isSignalingNaN: Bool": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isSignalingNaN)
-    }
-    d["var Decimal.nextUp: Decimal"] = .computed { receiver in
+    },
+    "var Decimal.nextUp: Decimal": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return boxOpaque(recv.nextUp, typeName: "Decimal")
-    }
-    d["var Decimal.nextDown: Decimal"] = .computed { receiver in
+    },
+    "var Decimal.nextDown: Decimal": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return boxOpaque(recv.nextDown, typeName: "Decimal")
-    }
-    d["var Decimal.hashValue: Int"] = .computed { receiver in
+    },
+    "var Decimal.hashValue: Int": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .int(recv.hashValue)
-    }
-    d["var Decimal.magnitude: Decimal"] = .computed { receiver in
+    },
+    "var Decimal.magnitude: Decimal": .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return boxOpaque(recv.magnitude, typeName: "Decimal")
-    }
-    d["func Decimal.formatted()"] = .method { receiver, args in
+    },
+    "func Decimal.formatted()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("Decimal.formatted: expected 0 argument(s), got \(args.count)")
         }
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .string(recv.formatted())
-    }
-    d["static let Decimal.zero"] = .staticValue(boxOpaque(Decimal.zero, typeName: "Decimal"))
-    d["init Decimal()"] = .`init` { args in
+    },
+    "static let Decimal.zero": .staticValue(boxOpaque(Decimal.zero, typeName: "Decimal")),
+    "init Decimal()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init Decimal(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(Decimal(), typeName: "Decimal")
-    }
-    d["init Decimal(_:)"] = .`init` { args in
+    },
+    "init Decimal(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Decimal(_:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Decimal(try unboxInt(args[0])), typeName: "Decimal")
-    }
-    d["func Decimal.isEqual()"] = .method { receiver, args in
+    },
+    "func Decimal.isEqual()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Decimal.isEqual: expected 1 argument(s), got \(args.count)")
         }
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isEqual(to: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")))
-    }
-    d["func Decimal.isLess()"] = .method { receiver, args in
+    },
+    "func Decimal.isLess()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Decimal.isLess: expected 1 argument(s), got \(args.count)")
         }
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isLess(than: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")))
-    }
-    d["func Decimal.isLessThanOrEqualTo()"] = .method { receiver, args in
+    },
+    "func Decimal.isLessThanOrEqualTo()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Decimal.isLessThanOrEqualTo: expected 1 argument(s), got \(args.count)")
         }
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isLessThanOrEqualTo(try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")))
-    }
-    d["func Decimal.isTotallyOrdered()"] = .method { receiver, args in
+    },
+    "func Decimal.isTotallyOrdered()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Decimal.isTotallyOrdered: expected 1 argument(s), got \(args.count)")
         }
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isTotallyOrdered(belowOrEqualTo: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")))
-    }
-    d["init Decimal(floatLiteral:)"] = .`init` { args in
+    },
+    "init Decimal(floatLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Decimal(floatLiteral:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Decimal(floatLiteral: try toDouble(args[0])), typeName: "Decimal")
-    }
-    d["init Decimal(integerLiteral:)"] = .`init` { args in
+    },
+    "init Decimal(integerLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Decimal(integerLiteral:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Decimal(integerLiteral: try unboxInt(args[0])), typeName: "Decimal")
-    }
-    d["func Decimal.distance()"] = .method { receiver, args in
+    },
+    "func Decimal.distance()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Decimal.distance: expected 1 argument(s), got \(args.count)")
         }
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return boxOpaque(recv.distance(to: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")), typeName: "Decimal")
-    }
-    d["func Decimal.advanced()"] = .method { receiver, args in
+    },
+    "func Decimal.advanced()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Decimal.advanced: expected 1 argument(s), got \(args.count)")
         }
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return boxOpaque(recv.advanced(by: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")), typeName: "Decimal")
-    }
-    d["init Decimal(signOf:magnitudeOf:)"] = .`init` { args in
+    },
+    "init Decimal(signOf:magnitudeOf:)": .`init` { args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("init Decimal(signOf:magnitudeOf:): expected 2 argument(s), got \(args.count)")
         }
         return boxOpaque(Decimal(signOf: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal"), magnitudeOf: try unboxOpaque(args[1], as: Decimal.self, typeName: "Decimal")), typeName: "Decimal")
-    }
-    d["init Decimal(_:format:lenient:)"] = .`init` { args in
+    },
+    "init Decimal(_:format:lenient:)": .`init` { args in
         guard args.count == 3 else {
             throw RuntimeError.invalid("init Decimal(_:format:lenient:): expected 3 argument(s), got \(args.count)")
         }
@@ -178,8 +177,11 @@ extension FoundationBridges {
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let decimal: [String: Bridge] = [:]
+}
+#endif

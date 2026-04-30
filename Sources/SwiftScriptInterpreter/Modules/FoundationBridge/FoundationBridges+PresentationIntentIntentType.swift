@@ -5,23 +5,25 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let presentationIntentIntentType: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var PresentationIntent.IntentType.identity: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let presentationIntentIntentType: [String: Bridge] = [
+    "var PresentationIntent.IntentType.identity: Int": .computed { receiver in
         let recv: PresentationIntent.IntentType = try unboxOpaque(receiver, as: PresentationIntent.IntentType.self, typeName: "PresentationIntent.IntentType")
         return .int(recv.identity)
-    }
-    d["var PresentationIntent.IntentType.debugDescription: String"] = .computed { receiver in
+    },
+    "var PresentationIntent.IntentType.debugDescription: String": .computed { receiver in
         let recv: PresentationIntent.IntentType = try unboxOpaque(receiver, as: PresentationIntent.IntentType.self, typeName: "PresentationIntent.IntentType")
         return .string(recv.debugDescription)
-    }
-    d["var PresentationIntent.IntentType.hashValue: Int"] = .computed { receiver in
+    },
+    "var PresentationIntent.IntentType.hashValue: Int": .computed { receiver in
         let recv: PresentationIntent.IntentType = try unboxOpaque(receiver, as: PresentationIntent.IntentType.self, typeName: "PresentationIntent.IntentType")
         return .int(recv.hashValue)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let presentationIntentIntentType: [String: Bridge] = [:]
+}
+#endif

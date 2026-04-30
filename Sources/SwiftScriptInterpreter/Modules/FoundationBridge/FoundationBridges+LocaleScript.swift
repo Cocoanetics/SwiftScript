@@ -5,77 +5,79 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let localeScript: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Locale.Script.identifier: String"] = .computed { receiver in
+    nonisolated(unsafe) static let localeScript: [String: Bridge] = [
+    "var Locale.Script.identifier: String": .computed { receiver in
         let recv: Locale.Script = try unboxOpaque(receiver, as: Locale.Script.self, typeName: "Locale.Script")
         return .string(recv.identifier)
-    }
-    d["var Locale.Script.debugDescription: String"] = .computed { receiver in
+    },
+    "var Locale.Script.debugDescription: String": .computed { receiver in
         let recv: Locale.Script = try unboxOpaque(receiver, as: Locale.Script.self, typeName: "Locale.Script")
         return .string(recv.debugDescription)
-    }
-    d["static let Locale.Script.unknown"] = .staticValue(boxOpaque(Locale.Script.unknown, typeName: "Locale.Script"))
-    d["var Locale.Script.hashValue: Int"] = .computed { receiver in
+    },
+    "static let Locale.Script.unknown": .staticValue(boxOpaque(Locale.Script.unknown, typeName: "Locale.Script")),
+    "var Locale.Script.hashValue: Int": .computed { receiver in
         let recv: Locale.Script = try unboxOpaque(receiver, as: Locale.Script.self, typeName: "Locale.Script")
         return .int(recv.hashValue)
-    }
-    d["static let Locale.Script.adlam"] = .staticValue(boxOpaque(Locale.Script.adlam, typeName: "Locale.Script"))
-    d["static let Locale.Script.arabic"] = .staticValue(boxOpaque(Locale.Script.arabic, typeName: "Locale.Script"))
-    d["static let Locale.Script.arabicNastaliq"] = .staticValue(boxOpaque(Locale.Script.arabicNastaliq, typeName: "Locale.Script"))
-    d["static let Locale.Script.armenian"] = .staticValue(boxOpaque(Locale.Script.armenian, typeName: "Locale.Script"))
-    d["static let Locale.Script.bangla"] = .staticValue(boxOpaque(Locale.Script.bangla, typeName: "Locale.Script"))
-    d["static let Locale.Script.cherokee"] = .staticValue(boxOpaque(Locale.Script.cherokee, typeName: "Locale.Script"))
-    d["static let Locale.Script.cyrillic"] = .staticValue(boxOpaque(Locale.Script.cyrillic, typeName: "Locale.Script"))
-    d["static let Locale.Script.devanagari"] = .staticValue(boxOpaque(Locale.Script.devanagari, typeName: "Locale.Script"))
-    d["static let Locale.Script.ethiopic"] = .staticValue(boxOpaque(Locale.Script.ethiopic, typeName: "Locale.Script"))
-    d["static let Locale.Script.georgian"] = .staticValue(boxOpaque(Locale.Script.georgian, typeName: "Locale.Script"))
-    d["static let Locale.Script.greek"] = .staticValue(boxOpaque(Locale.Script.greek, typeName: "Locale.Script"))
-    d["static let Locale.Script.gujarati"] = .staticValue(boxOpaque(Locale.Script.gujarati, typeName: "Locale.Script"))
-    d["static let Locale.Script.gurmukhi"] = .staticValue(boxOpaque(Locale.Script.gurmukhi, typeName: "Locale.Script"))
-    d["static let Locale.Script.hanifiRohingya"] = .staticValue(boxOpaque(Locale.Script.hanifiRohingya, typeName: "Locale.Script"))
-    d["static let Locale.Script.hanSimplified"] = .staticValue(boxOpaque(Locale.Script.hanSimplified, typeName: "Locale.Script"))
-    d["static let Locale.Script.hanTraditional"] = .staticValue(boxOpaque(Locale.Script.hanTraditional, typeName: "Locale.Script"))
-    d["static let Locale.Script.hebrew"] = .staticValue(boxOpaque(Locale.Script.hebrew, typeName: "Locale.Script"))
-    d["static let Locale.Script.hiragana"] = .staticValue(boxOpaque(Locale.Script.hiragana, typeName: "Locale.Script"))
-    d["static let Locale.Script.japanese"] = .staticValue(boxOpaque(Locale.Script.japanese, typeName: "Locale.Script"))
-    d["static let Locale.Script.kannada"] = .staticValue(boxOpaque(Locale.Script.kannada, typeName: "Locale.Script"))
-    d["static let Locale.Script.katakana"] = .staticValue(boxOpaque(Locale.Script.katakana, typeName: "Locale.Script"))
-    d["static let Locale.Script.khmer"] = .staticValue(boxOpaque(Locale.Script.khmer, typeName: "Locale.Script"))
-    d["static let Locale.Script.korean"] = .staticValue(boxOpaque(Locale.Script.korean, typeName: "Locale.Script"))
-    d["static let Locale.Script.lao"] = .staticValue(boxOpaque(Locale.Script.lao, typeName: "Locale.Script"))
-    d["static let Locale.Script.latin"] = .staticValue(boxOpaque(Locale.Script.latin, typeName: "Locale.Script"))
-    d["static let Locale.Script.malayalam"] = .staticValue(boxOpaque(Locale.Script.malayalam, typeName: "Locale.Script"))
-    d["static let Locale.Script.meiteiMayek"] = .staticValue(boxOpaque(Locale.Script.meiteiMayek, typeName: "Locale.Script"))
-    d["static let Locale.Script.myanmar"] = .staticValue(boxOpaque(Locale.Script.myanmar, typeName: "Locale.Script"))
-    d["static let Locale.Script.odia"] = .staticValue(boxOpaque(Locale.Script.odia, typeName: "Locale.Script"))
-    d["static let Locale.Script.olChiki"] = .staticValue(boxOpaque(Locale.Script.olChiki, typeName: "Locale.Script"))
-    d["static let Locale.Script.sinhala"] = .staticValue(boxOpaque(Locale.Script.sinhala, typeName: "Locale.Script"))
-    d["static let Locale.Script.syriac"] = .staticValue(boxOpaque(Locale.Script.syriac, typeName: "Locale.Script"))
-    d["static let Locale.Script.tamil"] = .staticValue(boxOpaque(Locale.Script.tamil, typeName: "Locale.Script"))
-    d["static let Locale.Script.telugu"] = .staticValue(boxOpaque(Locale.Script.telugu, typeName: "Locale.Script"))
-    d["static let Locale.Script.thaana"] = .staticValue(boxOpaque(Locale.Script.thaana, typeName: "Locale.Script"))
-    d["static let Locale.Script.thai"] = .staticValue(boxOpaque(Locale.Script.thai, typeName: "Locale.Script"))
-    d["static let Locale.Script.tibetan"] = .staticValue(boxOpaque(Locale.Script.tibetan, typeName: "Locale.Script"))
-    d["var Locale.Script.isISOScript: Bool"] = .computed { receiver in
+    },
+    "static let Locale.Script.adlam": .staticValue(boxOpaque(Locale.Script.adlam, typeName: "Locale.Script")),
+    "static let Locale.Script.arabic": .staticValue(boxOpaque(Locale.Script.arabic, typeName: "Locale.Script")),
+    "static let Locale.Script.arabicNastaliq": .staticValue(boxOpaque(Locale.Script.arabicNastaliq, typeName: "Locale.Script")),
+    "static let Locale.Script.armenian": .staticValue(boxOpaque(Locale.Script.armenian, typeName: "Locale.Script")),
+    "static let Locale.Script.bangla": .staticValue(boxOpaque(Locale.Script.bangla, typeName: "Locale.Script")),
+    "static let Locale.Script.cherokee": .staticValue(boxOpaque(Locale.Script.cherokee, typeName: "Locale.Script")),
+    "static let Locale.Script.cyrillic": .staticValue(boxOpaque(Locale.Script.cyrillic, typeName: "Locale.Script")),
+    "static let Locale.Script.devanagari": .staticValue(boxOpaque(Locale.Script.devanagari, typeName: "Locale.Script")),
+    "static let Locale.Script.ethiopic": .staticValue(boxOpaque(Locale.Script.ethiopic, typeName: "Locale.Script")),
+    "static let Locale.Script.georgian": .staticValue(boxOpaque(Locale.Script.georgian, typeName: "Locale.Script")),
+    "static let Locale.Script.greek": .staticValue(boxOpaque(Locale.Script.greek, typeName: "Locale.Script")),
+    "static let Locale.Script.gujarati": .staticValue(boxOpaque(Locale.Script.gujarati, typeName: "Locale.Script")),
+    "static let Locale.Script.gurmukhi": .staticValue(boxOpaque(Locale.Script.gurmukhi, typeName: "Locale.Script")),
+    "static let Locale.Script.hanifiRohingya": .staticValue(boxOpaque(Locale.Script.hanifiRohingya, typeName: "Locale.Script")),
+    "static let Locale.Script.hanSimplified": .staticValue(boxOpaque(Locale.Script.hanSimplified, typeName: "Locale.Script")),
+    "static let Locale.Script.hanTraditional": .staticValue(boxOpaque(Locale.Script.hanTraditional, typeName: "Locale.Script")),
+    "static let Locale.Script.hebrew": .staticValue(boxOpaque(Locale.Script.hebrew, typeName: "Locale.Script")),
+    "static let Locale.Script.hiragana": .staticValue(boxOpaque(Locale.Script.hiragana, typeName: "Locale.Script")),
+    "static let Locale.Script.japanese": .staticValue(boxOpaque(Locale.Script.japanese, typeName: "Locale.Script")),
+    "static let Locale.Script.kannada": .staticValue(boxOpaque(Locale.Script.kannada, typeName: "Locale.Script")),
+    "static let Locale.Script.katakana": .staticValue(boxOpaque(Locale.Script.katakana, typeName: "Locale.Script")),
+    "static let Locale.Script.khmer": .staticValue(boxOpaque(Locale.Script.khmer, typeName: "Locale.Script")),
+    "static let Locale.Script.korean": .staticValue(boxOpaque(Locale.Script.korean, typeName: "Locale.Script")),
+    "static let Locale.Script.lao": .staticValue(boxOpaque(Locale.Script.lao, typeName: "Locale.Script")),
+    "static let Locale.Script.latin": .staticValue(boxOpaque(Locale.Script.latin, typeName: "Locale.Script")),
+    "static let Locale.Script.malayalam": .staticValue(boxOpaque(Locale.Script.malayalam, typeName: "Locale.Script")),
+    "static let Locale.Script.meiteiMayek": .staticValue(boxOpaque(Locale.Script.meiteiMayek, typeName: "Locale.Script")),
+    "static let Locale.Script.myanmar": .staticValue(boxOpaque(Locale.Script.myanmar, typeName: "Locale.Script")),
+    "static let Locale.Script.odia": .staticValue(boxOpaque(Locale.Script.odia, typeName: "Locale.Script")),
+    "static let Locale.Script.olChiki": .staticValue(boxOpaque(Locale.Script.olChiki, typeName: "Locale.Script")),
+    "static let Locale.Script.sinhala": .staticValue(boxOpaque(Locale.Script.sinhala, typeName: "Locale.Script")),
+    "static let Locale.Script.syriac": .staticValue(boxOpaque(Locale.Script.syriac, typeName: "Locale.Script")),
+    "static let Locale.Script.tamil": .staticValue(boxOpaque(Locale.Script.tamil, typeName: "Locale.Script")),
+    "static let Locale.Script.telugu": .staticValue(boxOpaque(Locale.Script.telugu, typeName: "Locale.Script")),
+    "static let Locale.Script.thaana": .staticValue(boxOpaque(Locale.Script.thaana, typeName: "Locale.Script")),
+    "static let Locale.Script.thai": .staticValue(boxOpaque(Locale.Script.thai, typeName: "Locale.Script")),
+    "static let Locale.Script.tibetan": .staticValue(boxOpaque(Locale.Script.tibetan, typeName: "Locale.Script")),
+    "var Locale.Script.isISOScript: Bool": .computed { receiver in
         let recv: Locale.Script = try unboxOpaque(receiver, as: Locale.Script.self, typeName: "Locale.Script")
         return .bool(recv.isISOScript)
-    }
-    d["init Locale.Script(stringLiteral:)"] = .`init` { args in
+    },
+    "init Locale.Script(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Script(stringLiteral:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.Script(stringLiteral: try unboxString(args[0])), typeName: "Locale.Script")
-    }
-    d["init Locale.Script(_:)"] = .`init` { args in
+    },
+    "init Locale.Script(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Script(_:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.Script(try unboxString(args[0])), typeName: "Locale.Script")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let localeScript: [String: Bridge] = [:]
+}
+#endif

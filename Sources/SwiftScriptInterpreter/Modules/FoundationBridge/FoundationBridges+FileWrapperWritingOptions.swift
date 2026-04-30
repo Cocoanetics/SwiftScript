@@ -5,23 +5,22 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let fileWrapperWritingOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init FileWrapper.WritingOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let fileWrapperWritingOptions: [String: Bridge] = [
+    "init FileWrapper.WritingOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init FileWrapper.WritingOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(FileWrapper.WritingOptions(), typeName: "FileWrapper.WritingOptions")
-    }
-    d["var FileWrapper.WritingOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var FileWrapper.WritingOptions.isEmpty: Bool": .computed { receiver in
         let recv: FileWrapper.WritingOptions = try unboxOpaque(receiver, as: FileWrapper.WritingOptions.self, typeName: "FileWrapper.WritingOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let FileWrapper.WritingOptions.atomic"] = .staticValue(boxOpaque(FileWrapper.WritingOptions.atomic, typeName: "FileWrapper.WritingOptions"))
-    d["static let FileWrapper.WritingOptions.withNameUpdating"] = .staticValue(boxOpaque(FileWrapper.WritingOptions.withNameUpdating, typeName: "FileWrapper.WritingOptions"))
-        d["init FileWrapper.WritingOptions(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let FileWrapper.WritingOptions.atomic": .staticValue(boxOpaque(FileWrapper.WritingOptions.atomic, typeName: "FileWrapper.WritingOptions")),
+    "static let FileWrapper.WritingOptions.withNameUpdating": .staticValue(boxOpaque(FileWrapper.WritingOptions.withNameUpdating, typeName: "FileWrapper.WritingOptions")),
+        "init FileWrapper.WritingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("FileWrapper.WritingOptions(arrayLiteral:): expected array literal")
             }
@@ -33,8 +32,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "FileWrapper.WritingOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let fileWrapperWritingOptions: [String: Bridge] = [:]
+}
+#endif

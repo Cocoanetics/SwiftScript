@@ -5,40 +5,39 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let durationUnitsFormatStyle: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Duration.UnitsFormatStyle.locale: Locale"] = .computed { receiver in
+    nonisolated(unsafe) static let durationUnitsFormatStyle: [String: Bridge] = [
+    "var Duration.UnitsFormatStyle.locale: Locale": .computed { receiver in
         let recv: Duration.UnitsFormatStyle = try unboxOpaque(receiver, as: Duration.UnitsFormatStyle.self, typeName: "Duration.UnitsFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
-    }
-    d["var Duration.UnitsFormatStyle.maximumUnitCount: Int?"] = .computed { receiver in
+    },
+    "var Duration.UnitsFormatStyle.maximumUnitCount: Int?": .computed { receiver in
         let recv: Duration.UnitsFormatStyle = try unboxOpaque(receiver, as: Duration.UnitsFormatStyle.self, typeName: "Duration.UnitsFormatStyle")
         if let _v = recv.maximumUnitCount {
             return .optional(.int(_v))
         }
         return .optional(nil)
-    }
-    d["var Duration.UnitsFormatStyle.hashValue: Int"] = .computed { receiver in
+    },
+    "var Duration.UnitsFormatStyle.hashValue: Int": .computed { receiver in
         let recv: Duration.UnitsFormatStyle = try unboxOpaque(receiver, as: Duration.UnitsFormatStyle.self, typeName: "Duration.UnitsFormatStyle")
         return .int(recv.hashValue)
-    }
-    d["func Duration.UnitsFormatStyle.format()"] = .method { receiver, args in
+    },
+    "func Duration.UnitsFormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Duration.UnitsFormatStyle.format: expected 1 argument(s), got \(args.count)")
         }
         let recv: Duration.UnitsFormatStyle = try unboxOpaque(receiver, as: Duration.UnitsFormatStyle.self, typeName: "Duration.UnitsFormatStyle")
         return .string(recv.format(try unboxOpaque(args[0], as: Duration.self, typeName: "Duration")))
-    }
-    d["func Duration.UnitsFormatStyle.locale()"] = .method { receiver, args in
+    },
+    "func Duration.UnitsFormatStyle.locale()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Duration.UnitsFormatStyle.locale: expected 1 argument(s), got \(args.count)")
         }
         let recv: Duration.UnitsFormatStyle = try unboxOpaque(receiver, as: Duration.UnitsFormatStyle.self, typeName: "Duration.UnitsFormatStyle")
         return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Duration.UnitsFormatStyle")
-    }
-    d["func Duration.UnitsFormatStyle.discreteInput()"] = .method { receiver, args in
+    },
+    "func Duration.UnitsFormatStyle.discreteInput()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Duration.UnitsFormatStyle.discreteInput: expected 1 argument(s), got \(args.count)")
         }
@@ -47,8 +46,11 @@ extension FoundationBridges {
             return .optional(boxOpaque(_v, typeName: "Duration"))
         }
         return .optional(nil)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let durationUnitsFormatStyle: [String: Bridge] = [:]
+}
+#endif

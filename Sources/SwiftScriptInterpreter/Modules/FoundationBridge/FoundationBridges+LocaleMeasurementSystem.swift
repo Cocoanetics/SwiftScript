@@ -5,38 +5,40 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let localeMeasurementSystem: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Locale.MeasurementSystem.identifier: String"] = .computed { receiver in
+    nonisolated(unsafe) static let localeMeasurementSystem: [String: Bridge] = [
+    "var Locale.MeasurementSystem.identifier: String": .computed { receiver in
         let recv: Locale.MeasurementSystem = try unboxOpaque(receiver, as: Locale.MeasurementSystem.self, typeName: "Locale.MeasurementSystem")
         return .string(recv.identifier)
-    }
-    d["var Locale.MeasurementSystem.debugDescription: String"] = .computed { receiver in
+    },
+    "var Locale.MeasurementSystem.debugDescription: String": .computed { receiver in
         let recv: Locale.MeasurementSystem = try unboxOpaque(receiver, as: Locale.MeasurementSystem.self, typeName: "Locale.MeasurementSystem")
         return .string(recv.debugDescription)
-    }
-    d["static let Locale.MeasurementSystem.metric"] = .staticValue(boxOpaque(Locale.MeasurementSystem.metric, typeName: "Locale.MeasurementSystem"))
-    d["static let Locale.MeasurementSystem.us"] = .staticValue(boxOpaque(Locale.MeasurementSystem.us, typeName: "Locale.MeasurementSystem"))
-    d["static let Locale.MeasurementSystem.uk"] = .staticValue(boxOpaque(Locale.MeasurementSystem.uk, typeName: "Locale.MeasurementSystem"))
-    d["var Locale.MeasurementSystem.hashValue: Int"] = .computed { receiver in
+    },
+    "static let Locale.MeasurementSystem.metric": .staticValue(boxOpaque(Locale.MeasurementSystem.metric, typeName: "Locale.MeasurementSystem")),
+    "static let Locale.MeasurementSystem.us": .staticValue(boxOpaque(Locale.MeasurementSystem.us, typeName: "Locale.MeasurementSystem")),
+    "static let Locale.MeasurementSystem.uk": .staticValue(boxOpaque(Locale.MeasurementSystem.uk, typeName: "Locale.MeasurementSystem")),
+    "var Locale.MeasurementSystem.hashValue: Int": .computed { receiver in
         let recv: Locale.MeasurementSystem = try unboxOpaque(receiver, as: Locale.MeasurementSystem.self, typeName: "Locale.MeasurementSystem")
         return .int(recv.hashValue)
-    }
-    d["init Locale.MeasurementSystem(stringLiteral:)"] = .`init` { args in
+    },
+    "init Locale.MeasurementSystem(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.MeasurementSystem(stringLiteral:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.MeasurementSystem(stringLiteral: try unboxString(args[0])), typeName: "Locale.MeasurementSystem")
-    }
-    d["init Locale.MeasurementSystem(_:)"] = .`init` { args in
+    },
+    "init Locale.MeasurementSystem(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.MeasurementSystem(_:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.MeasurementSystem(try unboxString(args[0])), typeName: "Locale.MeasurementSystem")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let localeMeasurementSystem: [String: Bridge] = [:]
+}
+#endif

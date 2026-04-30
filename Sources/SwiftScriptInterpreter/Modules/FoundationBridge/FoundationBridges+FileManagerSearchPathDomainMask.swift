@@ -5,26 +5,25 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let fileManagerSearchPathDomainMask: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init FileManager.SearchPathDomainMask()"] = .`init` { args in
+    nonisolated(unsafe) static let fileManagerSearchPathDomainMask: [String: Bridge] = [
+    "init FileManager.SearchPathDomainMask()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init FileManager.SearchPathDomainMask(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(FileManager.SearchPathDomainMask(), typeName: "FileManager.SearchPathDomainMask")
-    }
-    d["var FileManager.SearchPathDomainMask.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var FileManager.SearchPathDomainMask.isEmpty: Bool": .computed { receiver in
         let recv: FileManager.SearchPathDomainMask = try unboxOpaque(receiver, as: FileManager.SearchPathDomainMask.self, typeName: "FileManager.SearchPathDomainMask")
         return .bool(recv.isEmpty)
-    }
-    d["static let FileManager.SearchPathDomainMask.userDomainMask"] = .staticValue(boxOpaque(FileManager.SearchPathDomainMask.userDomainMask, typeName: "FileManager.SearchPathDomainMask"))
-    d["static let FileManager.SearchPathDomainMask.localDomainMask"] = .staticValue(boxOpaque(FileManager.SearchPathDomainMask.localDomainMask, typeName: "FileManager.SearchPathDomainMask"))
-    d["static let FileManager.SearchPathDomainMask.networkDomainMask"] = .staticValue(boxOpaque(FileManager.SearchPathDomainMask.networkDomainMask, typeName: "FileManager.SearchPathDomainMask"))
-    d["static let FileManager.SearchPathDomainMask.systemDomainMask"] = .staticValue(boxOpaque(FileManager.SearchPathDomainMask.systemDomainMask, typeName: "FileManager.SearchPathDomainMask"))
-    d["static let FileManager.SearchPathDomainMask.allDomainsMask"] = .staticValue(boxOpaque(FileManager.SearchPathDomainMask.allDomainsMask, typeName: "FileManager.SearchPathDomainMask"))
-        d["init FileManager.SearchPathDomainMask(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let FileManager.SearchPathDomainMask.userDomainMask": .staticValue(boxOpaque(FileManager.SearchPathDomainMask.userDomainMask, typeName: "FileManager.SearchPathDomainMask")),
+    "static let FileManager.SearchPathDomainMask.localDomainMask": .staticValue(boxOpaque(FileManager.SearchPathDomainMask.localDomainMask, typeName: "FileManager.SearchPathDomainMask")),
+    "static let FileManager.SearchPathDomainMask.networkDomainMask": .staticValue(boxOpaque(FileManager.SearchPathDomainMask.networkDomainMask, typeName: "FileManager.SearchPathDomainMask")),
+    "static let FileManager.SearchPathDomainMask.systemDomainMask": .staticValue(boxOpaque(FileManager.SearchPathDomainMask.systemDomainMask, typeName: "FileManager.SearchPathDomainMask")),
+    "static let FileManager.SearchPathDomainMask.allDomainsMask": .staticValue(boxOpaque(FileManager.SearchPathDomainMask.allDomainsMask, typeName: "FileManager.SearchPathDomainMask")),
+        "init FileManager.SearchPathDomainMask(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("FileManager.SearchPathDomainMask(arrayLiteral:): expected array literal")
             }
@@ -36,8 +35,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "FileManager.SearchPathDomainMask")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let fileManagerSearchPathDomainMask: [String: Bridge] = [:]
+}
+#endif

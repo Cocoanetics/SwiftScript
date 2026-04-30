@@ -5,95 +5,94 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSKeyValueObservingOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init NSKeyValueObservingOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let nSKeyValueObservingOptions: [String: Bridge] = [
+    "init NSKeyValueObservingOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSKeyValueObservingOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(NSKeyValueObservingOptions(), typeName: "NSKeyValueObservingOptions")
-    }
-    d["var NSKeyValueObservingOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var NSKeyValueObservingOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let NSKeyValueObservingOptions.new"] = .staticValue(boxOpaque(NSKeyValueObservingOptions.new, typeName: "NSKeyValueObservingOptions"))
-    d["static let NSKeyValueObservingOptions.old"] = .staticValue(boxOpaque(NSKeyValueObservingOptions.old, typeName: "NSKeyValueObservingOptions"))
-    d["static let NSKeyValueObservingOptions.initial"] = .staticValue(boxOpaque(NSKeyValueObservingOptions.initial, typeName: "NSKeyValueObservingOptions"))
-    d["static let NSKeyValueObservingOptions.prior"] = .staticValue(boxOpaque(NSKeyValueObservingOptions.prior, typeName: "NSKeyValueObservingOptions"))
-    d["func NSKeyValueObservingOptions.union()"] = .method { receiver, args in
+    },
+    "static let NSKeyValueObservingOptions.new": .staticValue(boxOpaque(NSKeyValueObservingOptions.new, typeName: "NSKeyValueObservingOptions")),
+    "static let NSKeyValueObservingOptions.old": .staticValue(boxOpaque(NSKeyValueObservingOptions.old, typeName: "NSKeyValueObservingOptions")),
+    "static let NSKeyValueObservingOptions.initial": .staticValue(boxOpaque(NSKeyValueObservingOptions.initial, typeName: "NSKeyValueObservingOptions")),
+    "static let NSKeyValueObservingOptions.prior": .staticValue(boxOpaque(NSKeyValueObservingOptions.prior, typeName: "NSKeyValueObservingOptions")),
+    "func NSKeyValueObservingOptions.union()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSKeyValueObservingOptions.union: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
         return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")), typeName: "NSKeyValueObservingOptions")
-    }
-    d["func NSKeyValueObservingOptions.intersection()"] = .method { receiver, args in
+    },
+    "func NSKeyValueObservingOptions.intersection()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSKeyValueObservingOptions.intersection: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
         return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")), typeName: "NSKeyValueObservingOptions")
-    }
-    d["func NSKeyValueObservingOptions.symmetricDifference()"] = .method { receiver, args in
+    },
+    "func NSKeyValueObservingOptions.symmetricDifference()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSKeyValueObservingOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
         return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")), typeName: "NSKeyValueObservingOptions")
-    }
-    d["func NSKeyValueObservingOptions.contains()"] = .method { receiver, args in
+    },
+    "func NSKeyValueObservingOptions.contains()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSKeyValueObservingOptions.contains: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
         return .bool(recv.contains(try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
-    }
-    d["func NSKeyValueObservingOptions.isSubset()"] = .method { receiver, args in
+    },
+    "func NSKeyValueObservingOptions.isSubset()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSKeyValueObservingOptions.isSubset: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
         return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
-    }
-    d["func NSKeyValueObservingOptions.isSuperset()"] = .method { receiver, args in
+    },
+    "func NSKeyValueObservingOptions.isSuperset()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSKeyValueObservingOptions.isSuperset: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
         return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
-    }
-    d["func NSKeyValueObservingOptions.isDisjoint()"] = .method { receiver, args in
+    },
+    "func NSKeyValueObservingOptions.isDisjoint()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSKeyValueObservingOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
         return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
-    }
-    d["func NSKeyValueObservingOptions.subtracting()"] = .method { receiver, args in
+    },
+    "func NSKeyValueObservingOptions.subtracting()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSKeyValueObservingOptions.subtracting: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
         return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")), typeName: "NSKeyValueObservingOptions")
-    }
-    d["func NSKeyValueObservingOptions.isStrictSuperset()"] = .method { receiver, args in
+    },
+    "func NSKeyValueObservingOptions.isStrictSuperset()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSKeyValueObservingOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
         return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
-    }
-    d["func NSKeyValueObservingOptions.isStrictSubset()"] = .method { receiver, args in
+    },
+    "func NSKeyValueObservingOptions.isStrictSubset()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSKeyValueObservingOptions.isStrictSubset: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSKeyValueObservingOptions = try unboxOpaque(receiver, as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")
         return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSKeyValueObservingOptions.self, typeName: "NSKeyValueObservingOptions")))
-    }
-        d["init NSKeyValueObservingOptions(arrayLiteral:)"] = .`init` { args in
+    },
+        "init NSKeyValueObservingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSKeyValueObservingOptions(arrayLiteral:): expected array literal")
             }
@@ -105,8 +104,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "NSKeyValueObservingOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSKeyValueObservingOptions: [String: Bridge] = [:]
+}
+#endif

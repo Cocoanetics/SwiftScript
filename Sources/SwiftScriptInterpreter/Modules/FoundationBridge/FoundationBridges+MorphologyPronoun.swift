@@ -5,30 +5,32 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let morphologyPronoun: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Morphology.Pronoun.pronoun: String"] = .computed { receiver in
+    nonisolated(unsafe) static let morphologyPronoun: [String: Bridge] = [
+    "var Morphology.Pronoun.pronoun: String": .computed { receiver in
         let recv: Morphology.Pronoun = try unboxOpaque(receiver, as: Morphology.Pronoun.self, typeName: "Morphology.Pronoun")
         return .string(recv.pronoun)
-    }
-    d["var Morphology.Pronoun.morphology: Morphology"] = .computed { receiver in
+    },
+    "var Morphology.Pronoun.morphology: Morphology": .computed { receiver in
         let recv: Morphology.Pronoun = try unboxOpaque(receiver, as: Morphology.Pronoun.self, typeName: "Morphology.Pronoun")
         return boxOpaque(recv.morphology, typeName: "Morphology")
-    }
-    d["var Morphology.Pronoun.dependentMorphology: Morphology?"] = .computed { receiver in
+    },
+    "var Morphology.Pronoun.dependentMorphology: Morphology?": .computed { receiver in
         let recv: Morphology.Pronoun = try unboxOpaque(receiver, as: Morphology.Pronoun.self, typeName: "Morphology.Pronoun")
         if let _v = recv.dependentMorphology {
             return .optional(boxOpaque(_v, typeName: "Morphology"))
         }
         return .optional(nil)
-    }
-    d["var Morphology.Pronoun.hashValue: Int"] = .computed { receiver in
+    },
+    "var Morphology.Pronoun.hashValue: Int": .computed { receiver in
         let recv: Morphology.Pronoun = try unboxOpaque(receiver, as: Morphology.Pronoun.self, typeName: "Morphology.Pronoun")
         return .int(recv.hashValue)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let morphologyPronoun: [String: Bridge] = [:]
+}
+#endif

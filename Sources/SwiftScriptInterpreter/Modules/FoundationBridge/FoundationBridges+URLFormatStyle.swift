@@ -5,89 +5,91 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let uRLFormatStyle: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["static let URL.FormatStyle.url"] = .staticValue(boxOpaque(URL.FormatStyle.url, typeName: "URL.FormatStyle"))
-    d["var URL.FormatStyle.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let uRLFormatStyle: [String: Bridge] = [
+    "static let URL.FormatStyle.url": .staticValue(boxOpaque(URL.FormatStyle.url, typeName: "URL.FormatStyle")),
+    "var URL.FormatStyle.hashValue: Int": .computed { receiver in
         let recv: URL.FormatStyle = try unboxOpaque(receiver, as: URL.FormatStyle.self, typeName: "URL.FormatStyle")
         return .int(recv.hashValue)
-    }
-    d["var URL.FormatStyle.parseStrategy: URL.ParseStrategy"] = .computed { receiver in
+    },
+    "var URL.FormatStyle.parseStrategy: URL.ParseStrategy": .computed { receiver in
         let recv: URL.FormatStyle = try unboxOpaque(receiver, as: URL.FormatStyle.self, typeName: "URL.FormatStyle")
         return boxOpaque(recv.parseStrategy, typeName: "URL.ParseStrategy")
-    }
-    d["func URL.FormatStyle.scheme()"] = .method { receiver, args in
+    },
+    "func URL.FormatStyle.scheme()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("URL.FormatStyle.scheme: expected 0 argument(s), got \(args.count)")
         }
         let recv: URL.FormatStyle = try unboxOpaque(receiver, as: URL.FormatStyle.self, typeName: "URL.FormatStyle")
         return boxOpaque(recv.scheme(), typeName: "URL.FormatStyle")
-    }
-    d["func URL.FormatStyle.user()"] = .method { receiver, args in
+    },
+    "func URL.FormatStyle.user()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("URL.FormatStyle.user: expected 0 argument(s), got \(args.count)")
         }
         let recv: URL.FormatStyle = try unboxOpaque(receiver, as: URL.FormatStyle.self, typeName: "URL.FormatStyle")
         return boxOpaque(recv.user(), typeName: "URL.FormatStyle")
-    }
-    d["func URL.FormatStyle.password()"] = .method { receiver, args in
+    },
+    "func URL.FormatStyle.password()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("URL.FormatStyle.password: expected 0 argument(s), got \(args.count)")
         }
         let recv: URL.FormatStyle = try unboxOpaque(receiver, as: URL.FormatStyle.self, typeName: "URL.FormatStyle")
         return boxOpaque(recv.password(), typeName: "URL.FormatStyle")
-    }
-    d["func URL.FormatStyle.host()"] = .method { receiver, args in
+    },
+    "func URL.FormatStyle.host()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("URL.FormatStyle.host: expected 0 argument(s), got \(args.count)")
         }
         let recv: URL.FormatStyle = try unboxOpaque(receiver, as: URL.FormatStyle.self, typeName: "URL.FormatStyle")
         return boxOpaque(recv.host(), typeName: "URL.FormatStyle")
-    }
-    d["func URL.FormatStyle.port()"] = .method { receiver, args in
+    },
+    "func URL.FormatStyle.port()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("URL.FormatStyle.port: expected 0 argument(s), got \(args.count)")
         }
         let recv: URL.FormatStyle = try unboxOpaque(receiver, as: URL.FormatStyle.self, typeName: "URL.FormatStyle")
         return boxOpaque(recv.port(), typeName: "URL.FormatStyle")
-    }
-    d["func URL.FormatStyle.path()"] = .method { receiver, args in
+    },
+    "func URL.FormatStyle.path()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("URL.FormatStyle.path: expected 0 argument(s), got \(args.count)")
         }
         let recv: URL.FormatStyle = try unboxOpaque(receiver, as: URL.FormatStyle.self, typeName: "URL.FormatStyle")
         return boxOpaque(recv.path(), typeName: "URL.FormatStyle")
-    }
-    d["func URL.FormatStyle.query()"] = .method { receiver, args in
+    },
+    "func URL.FormatStyle.query()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("URL.FormatStyle.query: expected 0 argument(s), got \(args.count)")
         }
         let recv: URL.FormatStyle = try unboxOpaque(receiver, as: URL.FormatStyle.self, typeName: "URL.FormatStyle")
         return boxOpaque(recv.query(), typeName: "URL.FormatStyle")
-    }
-    d["func URL.FormatStyle.fragment()"] = .method { receiver, args in
+    },
+    "func URL.FormatStyle.fragment()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("URL.FormatStyle.fragment: expected 0 argument(s), got \(args.count)")
         }
         let recv: URL.FormatStyle = try unboxOpaque(receiver, as: URL.FormatStyle.self, typeName: "URL.FormatStyle")
         return boxOpaque(recv.fragment(), typeName: "URL.FormatStyle")
-    }
-    d["func URL.FormatStyle.format()"] = .method { receiver, args in
+    },
+    "func URL.FormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("URL.FormatStyle.format: expected 1 argument(s), got \(args.count)")
         }
         let recv: URL.FormatStyle = try unboxOpaque(receiver, as: URL.FormatStyle.self, typeName: "URL.FormatStyle")
         return .string(recv.format(try unboxOpaque(args[0], as: URL.self, typeName: "URL")))
-    }
-    d["init URL.FormatStyle()"] = .`init` { args in
+    },
+    "init URL.FormatStyle()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init URL.FormatStyle(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(URL.FormatStyle(), typeName: "URL.FormatStyle")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let uRLFormatStyle: [String: Bridge] = [:]
+}
+#endif

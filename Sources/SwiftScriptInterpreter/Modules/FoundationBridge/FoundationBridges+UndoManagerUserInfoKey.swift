@@ -5,27 +5,29 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let undoManagerUserInfoKey: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var UndoManager.UserInfoKey.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let undoManagerUserInfoKey: [String: Bridge] = [
+    "var UndoManager.UserInfoKey.hashValue: Int": .computed { receiver in
         let recv: UndoManager.UserInfoKey = try unboxOpaque(receiver, as: UndoManager.UserInfoKey.self, typeName: "UndoManager.UserInfoKey")
         return .int(recv.hashValue)
-    }
-    d["init UndoManager.UserInfoKey(_:)"] = .`init` { args in
+    },
+    "init UndoManager.UserInfoKey(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init UndoManager.UserInfoKey(_:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(UndoManager.UserInfoKey(try unboxString(args[0])), typeName: "UndoManager.UserInfoKey")
-    }
-    d["init UndoManager.UserInfoKey(rawValue:)"] = .`init` { args in
+    },
+    "init UndoManager.UserInfoKey(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init UndoManager.UserInfoKey(rawValue:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(UndoManager.UserInfoKey(rawValue: try unboxString(args[0])), typeName: "UndoManager.UserInfoKey")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let undoManagerUserInfoKey: [String: Bridge] = [:]
+}
+#endif

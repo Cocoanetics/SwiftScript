@@ -236,15 +236,6 @@ extension FoundationBridges {
         }
         return boxOpaque(URL(fileReferenceLiteralResourceName: try unboxString(args[0])), typeName: "URL")
     },
-    "init URL(resource:)": .`init` { args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("init URL(resource:): expected 1 argument(s), got \(args.count)")
-        }
-        if let _v = URL(resource: try unboxOpaque(args[0], as: URLResource.self, typeName: "URLResource")) {
-            return .optional(boxOpaque(_v, typeName: "URL"))
-        }
-        return .optional(nil)
-    },
     "init URL(string:encodingInvalidCharacters:)": .`init` { args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("init URL(string:encodingInvalidCharacters:): expected 2 argument(s), got \(args.count)")

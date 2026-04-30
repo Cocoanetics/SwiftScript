@@ -5,25 +5,27 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let errorUserInfoKey: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var ErrorUserInfoKey.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let errorUserInfoKey: [String: Bridge] = [
+    "var ErrorUserInfoKey.hashValue: Int": .computed { receiver in
         let recv: ErrorUserInfoKey = try unboxOpaque(receiver, as: ErrorUserInfoKey.self, typeName: "ErrorUserInfoKey")
         return .int(recv.hashValue)
-    }
-    d["var ErrorUserInfoKey.rawValue: String"] = .computed { receiver in
+    },
+    "var ErrorUserInfoKey.rawValue: String": .computed { receiver in
         let recv: ErrorUserInfoKey = try unboxOpaque(receiver, as: ErrorUserInfoKey.self, typeName: "ErrorUserInfoKey")
         return .string(recv.rawValue)
-    }
-    d["init ErrorUserInfoKey(rawValue:)"] = .`init` { args in
+    },
+    "init ErrorUserInfoKey(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init ErrorUserInfoKey(rawValue:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(ErrorUserInfoKey(rawValue: try unboxString(args[0])), typeName: "ErrorUserInfoKey")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let errorUserInfoKey: [String: Bridge] = [:]
+}
+#endif

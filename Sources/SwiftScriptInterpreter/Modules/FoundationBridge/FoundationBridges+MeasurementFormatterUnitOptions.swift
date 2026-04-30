@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let measurementFormatterUnitOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [
+    nonisolated(unsafe) static let measurementFormatterUnitOptions: [String: Bridge] = [
     "init MeasurementFormatter.UnitOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init MeasurementFormatter.UnitOptions(): expected 0 argument(s), got \(args.count)")
@@ -30,13 +30,14 @@ extension FoundationBridges {
             }
             return boxOpaque(result, typeName: "MeasurementFormatter.UnitOptions")
         },
-        ]
-        #if canImport(Darwin)
-    d["var MeasurementFormatter.UnitOptions.isEmpty: Bool"] = .computed { receiver in
+    "var MeasurementFormatter.UnitOptions.isEmpty: Bool": .computed { receiver in
         let recv: MeasurementFormatter.UnitOptions = try unboxOpaque(receiver, as: MeasurementFormatter.UnitOptions.self, typeName: "MeasurementFormatter.UnitOptions")
         return .bool(recv.isEmpty)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let measurementFormatterUnitOptions: [String: Bridge] = [:]
+}
+#endif

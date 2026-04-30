@@ -5,26 +5,28 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let termOfAddress: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var TermOfAddress.language: Locale.Language?"] = .computed { receiver in
+    nonisolated(unsafe) static let termOfAddress: [String: Bridge] = [
+    "var TermOfAddress.language: Locale.Language?": .computed { receiver in
         let recv: TermOfAddress = try unboxOpaque(receiver, as: TermOfAddress.self, typeName: "TermOfAddress")
         if let _v = recv.language {
             return .optional(boxOpaque(_v, typeName: "Locale.Language"))
         }
         return .optional(nil)
-    }
-    d["static let TermOfAddress.neutral"] = .staticValue(boxOpaque(TermOfAddress.neutral, typeName: "TermOfAddress"))
-    d["static let TermOfAddress.feminine"] = .staticValue(boxOpaque(TermOfAddress.feminine, typeName: "TermOfAddress"))
-    d["static let TermOfAddress.masculine"] = .staticValue(boxOpaque(TermOfAddress.masculine, typeName: "TermOfAddress"))
-    d["static let TermOfAddress.currentUser"] = .staticValue(boxOpaque(TermOfAddress.currentUser, typeName: "TermOfAddress"))
-    d["var TermOfAddress.hashValue: Int"] = .computed { receiver in
+    },
+    "static let TermOfAddress.neutral": .staticValue(boxOpaque(TermOfAddress.neutral, typeName: "TermOfAddress")),
+    "static let TermOfAddress.feminine": .staticValue(boxOpaque(TermOfAddress.feminine, typeName: "TermOfAddress")),
+    "static let TermOfAddress.masculine": .staticValue(boxOpaque(TermOfAddress.masculine, typeName: "TermOfAddress")),
+    "static let TermOfAddress.currentUser": .staticValue(boxOpaque(TermOfAddress.currentUser, typeName: "TermOfAddress")),
+    "var TermOfAddress.hashValue: Int": .computed { receiver in
         let recv: TermOfAddress = try unboxOpaque(receiver, as: TermOfAddress.self, typeName: "TermOfAddress")
         return .int(recv.hashValue)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let termOfAddress: [String: Bridge] = [:]
+}
+#endif

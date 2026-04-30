@@ -5,39 +5,41 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let personNameComponentsAttributedStyle: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var PersonNameComponents.AttributedStyle.locale: Locale"] = .computed { receiver in
+    nonisolated(unsafe) static let personNameComponentsAttributedStyle: [String: Bridge] = [
+    "var PersonNameComponents.AttributedStyle.locale: Locale": .computed { receiver in
         let recv: PersonNameComponents.AttributedStyle = try unboxOpaque(receiver, as: PersonNameComponents.AttributedStyle.self, typeName: "PersonNameComponents.AttributedStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
-    }
-    d["var PersonNameComponents.AttributedStyle.hashValue: Int"] = .computed { receiver in
+    },
+    "var PersonNameComponents.AttributedStyle.hashValue: Int": .computed { receiver in
         let recv: PersonNameComponents.AttributedStyle = try unboxOpaque(receiver, as: PersonNameComponents.AttributedStyle.self, typeName: "PersonNameComponents.AttributedStyle")
         return .int(recv.hashValue)
-    }
-    d["func PersonNameComponents.AttributedStyle.format()"] = .method { receiver, args in
+    },
+    "func PersonNameComponents.AttributedStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("PersonNameComponents.AttributedStyle.format: expected 1 argument(s), got \(args.count)")
         }
         let recv: PersonNameComponents.AttributedStyle = try unboxOpaque(receiver, as: PersonNameComponents.AttributedStyle.self, typeName: "PersonNameComponents.AttributedStyle")
         return boxOpaque(recv.format(try unboxOpaque(args[0], as: PersonNameComponents.self, typeName: "PersonNameComponents")), typeName: "AttributedString")
-    }
-    d["func PersonNameComponents.AttributedStyle.locale()"] = .method { receiver, args in
+    },
+    "func PersonNameComponents.AttributedStyle.locale()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("PersonNameComponents.AttributedStyle.locale: expected 1 argument(s), got \(args.count)")
         }
         let recv: PersonNameComponents.AttributedStyle = try unboxOpaque(receiver, as: PersonNameComponents.AttributedStyle.self, typeName: "PersonNameComponents.AttributedStyle")
         return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "PersonNameComponents.AttributedStyle")
-    }
-    d["init PersonNameComponents.AttributedStyle(locale:)"] = .`init` { args in
+    },
+    "init PersonNameComponents.AttributedStyle(locale:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init PersonNameComponents.AttributedStyle(locale:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(PersonNameComponents.AttributedStyle(locale: try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "PersonNameComponents.AttributedStyle")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let personNameComponentsAttributedStyle: [String: Bridge] = [:]
+}
+#endif

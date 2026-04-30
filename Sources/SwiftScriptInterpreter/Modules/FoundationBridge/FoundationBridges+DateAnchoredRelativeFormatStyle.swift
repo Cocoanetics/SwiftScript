@@ -5,45 +5,44 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateAnchoredRelativeFormatStyle: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Date.AnchoredRelativeFormatStyle.anchor: Date"] = .computed { receiver in
+    nonisolated(unsafe) static let dateAnchoredRelativeFormatStyle: [String: Bridge] = [
+    "var Date.AnchoredRelativeFormatStyle.anchor: Date": .computed { receiver in
         let recv: Date.AnchoredRelativeFormatStyle = try unboxOpaque(receiver, as: Date.AnchoredRelativeFormatStyle.self, typeName: "Date.AnchoredRelativeFormatStyle")
         return boxOpaque(recv.anchor, typeName: "Date")
-    }
-    d["var Date.AnchoredRelativeFormatStyle.capitalizationContext: FormatStyleCapitalizationContext"] = .computed { receiver in
+    },
+    "var Date.AnchoredRelativeFormatStyle.capitalizationContext: FormatStyleCapitalizationContext": .computed { receiver in
         let recv: Date.AnchoredRelativeFormatStyle = try unboxOpaque(receiver, as: Date.AnchoredRelativeFormatStyle.self, typeName: "Date.AnchoredRelativeFormatStyle")
         return boxOpaque(recv.capitalizationContext, typeName: "FormatStyleCapitalizationContext")
-    }
-    d["var Date.AnchoredRelativeFormatStyle.locale: Locale"] = .computed { receiver in
+    },
+    "var Date.AnchoredRelativeFormatStyle.locale: Locale": .computed { receiver in
         let recv: Date.AnchoredRelativeFormatStyle = try unboxOpaque(receiver, as: Date.AnchoredRelativeFormatStyle.self, typeName: "Date.AnchoredRelativeFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
-    }
-    d["var Date.AnchoredRelativeFormatStyle.calendar: Calendar"] = .computed { receiver in
+    },
+    "var Date.AnchoredRelativeFormatStyle.calendar: Calendar": .computed { receiver in
         let recv: Date.AnchoredRelativeFormatStyle = try unboxOpaque(receiver, as: Date.AnchoredRelativeFormatStyle.self, typeName: "Date.AnchoredRelativeFormatStyle")
         return boxOpaque(recv.calendar, typeName: "Calendar")
-    }
-    d["var Date.AnchoredRelativeFormatStyle.hashValue: Int"] = .computed { receiver in
+    },
+    "var Date.AnchoredRelativeFormatStyle.hashValue: Int": .computed { receiver in
         let recv: Date.AnchoredRelativeFormatStyle = try unboxOpaque(receiver, as: Date.AnchoredRelativeFormatStyle.self, typeName: "Date.AnchoredRelativeFormatStyle")
         return .int(recv.hashValue)
-    }
-    d["func Date.AnchoredRelativeFormatStyle.format()"] = .method { receiver, args in
+    },
+    "func Date.AnchoredRelativeFormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.AnchoredRelativeFormatStyle.format: expected 1 argument(s), got \(args.count)")
         }
         let recv: Date.AnchoredRelativeFormatStyle = try unboxOpaque(receiver, as: Date.AnchoredRelativeFormatStyle.self, typeName: "Date.AnchoredRelativeFormatStyle")
         return .string(recv.format(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
-    }
-    d["func Date.AnchoredRelativeFormatStyle.locale()"] = .method { receiver, args in
+    },
+    "func Date.AnchoredRelativeFormatStyle.locale()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.AnchoredRelativeFormatStyle.locale: expected 1 argument(s), got \(args.count)")
         }
         let recv: Date.AnchoredRelativeFormatStyle = try unboxOpaque(receiver, as: Date.AnchoredRelativeFormatStyle.self, typeName: "Date.AnchoredRelativeFormatStyle")
         return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Date.AnchoredRelativeFormatStyle")
-    }
-    d["func Date.AnchoredRelativeFormatStyle.discreteInput()"] = .method { receiver, args in
+    },
+    "func Date.AnchoredRelativeFormatStyle.discreteInput()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.AnchoredRelativeFormatStyle.discreteInput: expected 1 argument(s), got \(args.count)")
         }
@@ -52,8 +51,8 @@ extension FoundationBridges {
             return .optional(boxOpaque(_v, typeName: "Date"))
         }
         return .optional(nil)
-    }
-    d["func Date.AnchoredRelativeFormatStyle.input()"] = .method { receiver, args in
+    },
+    "func Date.AnchoredRelativeFormatStyle.input()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.AnchoredRelativeFormatStyle.input: expected 1 argument(s), got \(args.count)")
         }
@@ -62,14 +61,17 @@ extension FoundationBridges {
             return .optional(boxOpaque(_v, typeName: "Date"))
         }
         return .optional(nil)
-    }
-    d["init Date.AnchoredRelativeFormatStyle(anchor:locale:calendar:capitalizationContext:)"] = .`init` { args in
+    },
+    "init Date.AnchoredRelativeFormatStyle(anchor:locale:calendar:capitalizationContext:)": .`init` { args in
         guard args.count == 4 else {
             throw RuntimeError.invalid("init Date.AnchoredRelativeFormatStyle(anchor:locale:calendar:capitalizationContext:): expected 4 argument(s), got \(args.count)")
         }
         return boxOpaque(Date.AnchoredRelativeFormatStyle(anchor: try unboxOpaque(args[0], as: Date.self, typeName: "Date"), locale: try unboxOpaque(args[1], as: Locale.self, typeName: "Locale"), calendar: try unboxOpaque(args[2], as: Calendar.self, typeName: "Calendar"), capitalizationContext: try unboxOpaque(args[3], as: FormatStyleCapitalizationContext.self, typeName: "FormatStyleCapitalizationContext")), typeName: "Date.AnchoredRelativeFormatStyle")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let dateAnchoredRelativeFormatStyle: [String: Bridge] = [:]
+}
+#endif

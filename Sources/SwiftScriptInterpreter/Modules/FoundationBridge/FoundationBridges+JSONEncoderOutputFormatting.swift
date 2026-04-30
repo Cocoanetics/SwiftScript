@@ -5,24 +5,23 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let jSONEncoderOutputFormatting: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init JSONEncoder.OutputFormatting()"] = .`init` { args in
+    nonisolated(unsafe) static let jSONEncoderOutputFormatting: [String: Bridge] = [
+    "init JSONEncoder.OutputFormatting()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init JSONEncoder.OutputFormatting(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(JSONEncoder.OutputFormatting(), typeName: "JSONEncoder.OutputFormatting")
-    }
-    d["var JSONEncoder.OutputFormatting.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var JSONEncoder.OutputFormatting.isEmpty: Bool": .computed { receiver in
         let recv: JSONEncoder.OutputFormatting = try unboxOpaque(receiver, as: JSONEncoder.OutputFormatting.self, typeName: "JSONEncoder.OutputFormatting")
         return .bool(recv.isEmpty)
-    }
-    d["static let JSONEncoder.OutputFormatting.prettyPrinted"] = .staticValue(boxOpaque(JSONEncoder.OutputFormatting.prettyPrinted, typeName: "JSONEncoder.OutputFormatting"))
-    d["static let JSONEncoder.OutputFormatting.sortedKeys"] = .staticValue(boxOpaque(JSONEncoder.OutputFormatting.sortedKeys, typeName: "JSONEncoder.OutputFormatting"))
-    d["static let JSONEncoder.OutputFormatting.withoutEscapingSlashes"] = .staticValue(boxOpaque(JSONEncoder.OutputFormatting.withoutEscapingSlashes, typeName: "JSONEncoder.OutputFormatting"))
-        d["init JSONEncoder.OutputFormatting(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let JSONEncoder.OutputFormatting.prettyPrinted": .staticValue(boxOpaque(JSONEncoder.OutputFormatting.prettyPrinted, typeName: "JSONEncoder.OutputFormatting")),
+    "static let JSONEncoder.OutputFormatting.sortedKeys": .staticValue(boxOpaque(JSONEncoder.OutputFormatting.sortedKeys, typeName: "JSONEncoder.OutputFormatting")),
+    "static let JSONEncoder.OutputFormatting.withoutEscapingSlashes": .staticValue(boxOpaque(JSONEncoder.OutputFormatting.withoutEscapingSlashes, typeName: "JSONEncoder.OutputFormatting")),
+        "init JSONEncoder.OutputFormatting(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("JSONEncoder.OutputFormatting(arrayLiteral:): expected array literal")
             }
@@ -34,8 +33,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "JSONEncoder.OutputFormatting")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let jSONEncoderOutputFormatting: [String: Bridge] = [:]
+}
+#endif

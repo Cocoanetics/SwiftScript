@@ -5,20 +5,22 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let formatStyleCapitalizationContext: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["static let FormatStyleCapitalizationContext.unknown"] = .staticValue(boxOpaque(FormatStyleCapitalizationContext.unknown, typeName: "FormatStyleCapitalizationContext"))
-    d["static let FormatStyleCapitalizationContext.standalone"] = .staticValue(boxOpaque(FormatStyleCapitalizationContext.standalone, typeName: "FormatStyleCapitalizationContext"))
-    d["static let FormatStyleCapitalizationContext.listItem"] = .staticValue(boxOpaque(FormatStyleCapitalizationContext.listItem, typeName: "FormatStyleCapitalizationContext"))
-    d["static let FormatStyleCapitalizationContext.beginningOfSentence"] = .staticValue(boxOpaque(FormatStyleCapitalizationContext.beginningOfSentence, typeName: "FormatStyleCapitalizationContext"))
-    d["static let FormatStyleCapitalizationContext.middleOfSentence"] = .staticValue(boxOpaque(FormatStyleCapitalizationContext.middleOfSentence, typeName: "FormatStyleCapitalizationContext"))
-    d["var FormatStyleCapitalizationContext.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let formatStyleCapitalizationContext: [String: Bridge] = [
+    "static let FormatStyleCapitalizationContext.unknown": .staticValue(boxOpaque(FormatStyleCapitalizationContext.unknown, typeName: "FormatStyleCapitalizationContext")),
+    "static let FormatStyleCapitalizationContext.standalone": .staticValue(boxOpaque(FormatStyleCapitalizationContext.standalone, typeName: "FormatStyleCapitalizationContext")),
+    "static let FormatStyleCapitalizationContext.listItem": .staticValue(boxOpaque(FormatStyleCapitalizationContext.listItem, typeName: "FormatStyleCapitalizationContext")),
+    "static let FormatStyleCapitalizationContext.beginningOfSentence": .staticValue(boxOpaque(FormatStyleCapitalizationContext.beginningOfSentence, typeName: "FormatStyleCapitalizationContext")),
+    "static let FormatStyleCapitalizationContext.middleOfSentence": .staticValue(boxOpaque(FormatStyleCapitalizationContext.middleOfSentence, typeName: "FormatStyleCapitalizationContext")),
+    "var FormatStyleCapitalizationContext.hashValue: Int": .computed { receiver in
         let recv: FormatStyleCapitalizationContext = try unboxOpaque(receiver, as: FormatStyleCapitalizationContext.self, typeName: "FormatStyleCapitalizationContext")
         return .int(recv.hashValue)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let formatStyleCapitalizationContext: [String: Bridge] = [:]
+}
+#endif

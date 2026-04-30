@@ -5,24 +5,26 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let machError: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var MachError.errorCode: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let machError: [String: Bridge] = [
+    "var MachError.errorCode: Int": .computed { receiver in
         let recv: MachError = try unboxOpaque(receiver, as: MachError.self, typeName: "MachError")
         return .int(recv.errorCode)
-    }
-    d["static let MachError.errorDomain"] = .staticValue(.string(MachError.errorDomain))
-    d["var MachError.localizedDescription: String"] = .computed { receiver in
+    },
+    "static let MachError.errorDomain": .staticValue(.string(MachError.errorDomain)),
+    "var MachError.localizedDescription: String": .computed { receiver in
         let recv: MachError = try unboxOpaque(receiver, as: MachError.self, typeName: "MachError")
         return .string(recv.localizedDescription)
-    }
-    d["var MachError.hashValue: Int"] = .computed { receiver in
+    },
+    "var MachError.hashValue: Int": .computed { receiver in
         let recv: MachError = try unboxOpaque(receiver, as: MachError.self, typeName: "MachError")
         return .int(recv.hashValue)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let machError: [String: Bridge] = [:]
+}
+#endif

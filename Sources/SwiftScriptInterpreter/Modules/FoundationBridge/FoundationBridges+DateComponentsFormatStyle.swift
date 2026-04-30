@@ -5,42 +5,44 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateComponentsFormatStyle: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["static let Date.ComponentsFormatStyle.timeDuration"] = .staticValue(boxOpaque(Date.ComponentsFormatStyle.timeDuration, typeName: "Date.ComponentsFormatStyle"))
-    d["var Date.ComponentsFormatStyle.calendar: Calendar"] = .computed { receiver in
+    nonisolated(unsafe) static let dateComponentsFormatStyle: [String: Bridge] = [
+    "static let Date.ComponentsFormatStyle.timeDuration": .staticValue(boxOpaque(Date.ComponentsFormatStyle.timeDuration, typeName: "Date.ComponentsFormatStyle")),
+    "var Date.ComponentsFormatStyle.calendar: Calendar": .computed { receiver in
         let recv: Date.ComponentsFormatStyle = try unboxOpaque(receiver, as: Date.ComponentsFormatStyle.self, typeName: "Date.ComponentsFormatStyle")
         return boxOpaque(recv.calendar, typeName: "Calendar")
-    }
-    d["var Date.ComponentsFormatStyle.locale: Locale"] = .computed { receiver in
+    },
+    "var Date.ComponentsFormatStyle.locale: Locale": .computed { receiver in
         let recv: Date.ComponentsFormatStyle = try unboxOpaque(receiver, as: Date.ComponentsFormatStyle.self, typeName: "Date.ComponentsFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
-    }
-    d["var Date.ComponentsFormatStyle.isPositive: Bool"] = .computed { receiver in
+    },
+    "var Date.ComponentsFormatStyle.isPositive: Bool": .computed { receiver in
         let recv: Date.ComponentsFormatStyle = try unboxOpaque(receiver, as: Date.ComponentsFormatStyle.self, typeName: "Date.ComponentsFormatStyle")
         return .bool(recv.isPositive)
-    }
-    d["var Date.ComponentsFormatStyle.hashValue: Int"] = .computed { receiver in
+    },
+    "var Date.ComponentsFormatStyle.hashValue: Int": .computed { receiver in
         let recv: Date.ComponentsFormatStyle = try unboxOpaque(receiver, as: Date.ComponentsFormatStyle.self, typeName: "Date.ComponentsFormatStyle")
         return .int(recv.hashValue)
-    }
-    d["func Date.ComponentsFormatStyle.calendar()"] = .method { receiver, args in
+    },
+    "func Date.ComponentsFormatStyle.calendar()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.ComponentsFormatStyle.calendar: expected 1 argument(s), got \(args.count)")
         }
         let recv: Date.ComponentsFormatStyle = try unboxOpaque(receiver, as: Date.ComponentsFormatStyle.self, typeName: "Date.ComponentsFormatStyle")
         return boxOpaque(recv.calendar(try unboxOpaque(args[0], as: Calendar.self, typeName: "Calendar")), typeName: "Date.ComponentsFormatStyle")
-    }
-    d["func Date.ComponentsFormatStyle.locale()"] = .method { receiver, args in
+    },
+    "func Date.ComponentsFormatStyle.locale()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.ComponentsFormatStyle.locale: expected 1 argument(s), got \(args.count)")
         }
         let recv: Date.ComponentsFormatStyle = try unboxOpaque(receiver, as: Date.ComponentsFormatStyle.self, typeName: "Date.ComponentsFormatStyle")
         return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Date.ComponentsFormatStyle")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let dateComponentsFormatStyle: [String: Bridge] = [:]
+}
+#endif

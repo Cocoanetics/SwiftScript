@@ -5,41 +5,43 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let localeSubdivision: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Locale.Subdivision.identifier: String"] = .computed { receiver in
+    nonisolated(unsafe) static let localeSubdivision: [String: Bridge] = [
+    "var Locale.Subdivision.identifier: String": .computed { receiver in
         let recv: Locale.Subdivision = try unboxOpaque(receiver, as: Locale.Subdivision.self, typeName: "Locale.Subdivision")
         return .string(recv.identifier)
-    }
-    d["var Locale.Subdivision.debugDescription: String"] = .computed { receiver in
+    },
+    "var Locale.Subdivision.debugDescription: String": .computed { receiver in
         let recv: Locale.Subdivision = try unboxOpaque(receiver, as: Locale.Subdivision.self, typeName: "Locale.Subdivision")
         return .string(recv.debugDescription)
-    }
-    d["var Locale.Subdivision.hashValue: Int"] = .computed { receiver in
+    },
+    "var Locale.Subdivision.hashValue: Int": .computed { receiver in
         let recv: Locale.Subdivision = try unboxOpaque(receiver, as: Locale.Subdivision.self, typeName: "Locale.Subdivision")
         return .int(recv.hashValue)
-    }
-    d["init Locale.Subdivision(stringLiteral:)"] = .`init` { args in
+    },
+    "init Locale.Subdivision(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Subdivision(stringLiteral:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.Subdivision(stringLiteral: try unboxString(args[0])), typeName: "Locale.Subdivision")
-    }
-    d["init Locale.Subdivision(_:)"] = .`init` { args in
+    },
+    "init Locale.Subdivision(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Subdivision(_:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.Subdivision(try unboxString(args[0])), typeName: "Locale.Subdivision")
-    }
-    d["static func Locale.Subdivision.subdivision()"] = .staticMethod { args in
+    },
+    "static func Locale.Subdivision.subdivision()": .staticMethod { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Locale.Subdivision.subdivision: expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.Subdivision.subdivision(for: try unboxOpaque(args[0], as: Locale.Region.self, typeName: "Locale.Region")), typeName: "Locale.Subdivision")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let localeSubdivision: [String: Bridge] = [:]
+}
+#endif

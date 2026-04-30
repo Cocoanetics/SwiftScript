@@ -5,35 +5,37 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let localeNumberingSystem: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Locale.NumberingSystem.identifier: String"] = .computed { receiver in
+    nonisolated(unsafe) static let localeNumberingSystem: [String: Bridge] = [
+    "var Locale.NumberingSystem.identifier: String": .computed { receiver in
         let recv: Locale.NumberingSystem = try unboxOpaque(receiver, as: Locale.NumberingSystem.self, typeName: "Locale.NumberingSystem")
         return .string(recv.identifier)
-    }
-    d["var Locale.NumberingSystem.debugDescription: String"] = .computed { receiver in
+    },
+    "var Locale.NumberingSystem.debugDescription: String": .computed { receiver in
         let recv: Locale.NumberingSystem = try unboxOpaque(receiver, as: Locale.NumberingSystem.self, typeName: "Locale.NumberingSystem")
         return .string(recv.debugDescription)
-    }
-    d["var Locale.NumberingSystem.hashValue: Int"] = .computed { receiver in
+    },
+    "var Locale.NumberingSystem.hashValue: Int": .computed { receiver in
         let recv: Locale.NumberingSystem = try unboxOpaque(receiver, as: Locale.NumberingSystem.self, typeName: "Locale.NumberingSystem")
         return .int(recv.hashValue)
-    }
-    d["init Locale.NumberingSystem(stringLiteral:)"] = .`init` { args in
+    },
+    "init Locale.NumberingSystem(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.NumberingSystem(stringLiteral:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.NumberingSystem(stringLiteral: try unboxString(args[0])), typeName: "Locale.NumberingSystem")
-    }
-    d["init Locale.NumberingSystem(_:)"] = .`init` { args in
+    },
+    "init Locale.NumberingSystem(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.NumberingSystem(_:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.NumberingSystem(try unboxString(args[0])), typeName: "Locale.NumberingSystem")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let localeNumberingSystem: [String: Bridge] = [:]
+}
+#endif

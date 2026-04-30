@@ -14,12 +14,6 @@ extension FoundationBridges {
         }
         return boxOpaque(NSTextCheckingKey(try unboxString(args[0])), typeName: "NSTextCheckingKey")
     },
-    "init NSTextCheckingKey(rawValue:)": .`init` { args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("init NSTextCheckingKey(rawValue:): expected 1 argument(s), got \(args.count)")
-        }
-        return boxOpaque(NSTextCheckingKey(rawValue: try unboxString(args[0])), typeName: "NSTextCheckingKey")
-    },
         ]
         #if canImport(Darwin)
     d["var NSTextCheckingKey.hashValue: Int"] = .computed { receiver in

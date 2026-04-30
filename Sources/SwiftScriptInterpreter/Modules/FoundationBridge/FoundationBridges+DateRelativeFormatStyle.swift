@@ -5,47 +5,49 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateRelativeFormatStyle: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Date.RelativeFormatStyle.capitalizationContext: FormatStyleCapitalizationContext"] = .computed { receiver in
+    nonisolated(unsafe) static let dateRelativeFormatStyle: [String: Bridge] = [
+    "var Date.RelativeFormatStyle.capitalizationContext: FormatStyleCapitalizationContext": .computed { receiver in
         let recv: Date.RelativeFormatStyle = try unboxOpaque(receiver, as: Date.RelativeFormatStyle.self, typeName: "Date.RelativeFormatStyle")
         return boxOpaque(recv.capitalizationContext, typeName: "FormatStyleCapitalizationContext")
-    }
-    d["var Date.RelativeFormatStyle.locale: Locale"] = .computed { receiver in
+    },
+    "var Date.RelativeFormatStyle.locale: Locale": .computed { receiver in
         let recv: Date.RelativeFormatStyle = try unboxOpaque(receiver, as: Date.RelativeFormatStyle.self, typeName: "Date.RelativeFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
-    }
-    d["var Date.RelativeFormatStyle.calendar: Calendar"] = .computed { receiver in
+    },
+    "var Date.RelativeFormatStyle.calendar: Calendar": .computed { receiver in
         let recv: Date.RelativeFormatStyle = try unboxOpaque(receiver, as: Date.RelativeFormatStyle.self, typeName: "Date.RelativeFormatStyle")
         return boxOpaque(recv.calendar, typeName: "Calendar")
-    }
-    d["var Date.RelativeFormatStyle.hashValue: Int"] = .computed { receiver in
+    },
+    "var Date.RelativeFormatStyle.hashValue: Int": .computed { receiver in
         let recv: Date.RelativeFormatStyle = try unboxOpaque(receiver, as: Date.RelativeFormatStyle.self, typeName: "Date.RelativeFormatStyle")
         return .int(recv.hashValue)
-    }
-    d["func Date.RelativeFormatStyle.format()"] = .method { receiver, args in
+    },
+    "func Date.RelativeFormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.RelativeFormatStyle.format: expected 1 argument(s), got \(args.count)")
         }
         let recv: Date.RelativeFormatStyle = try unboxOpaque(receiver, as: Date.RelativeFormatStyle.self, typeName: "Date.RelativeFormatStyle")
         return .string(recv.format(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
-    }
-    d["func Date.RelativeFormatStyle.locale()"] = .method { receiver, args in
+    },
+    "func Date.RelativeFormatStyle.locale()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.RelativeFormatStyle.locale: expected 1 argument(s), got \(args.count)")
         }
         let recv: Date.RelativeFormatStyle = try unboxOpaque(receiver, as: Date.RelativeFormatStyle.self, typeName: "Date.RelativeFormatStyle")
         return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Date.RelativeFormatStyle")
-    }
-    d["init Date.RelativeFormatStyle(locale:calendar:capitalizationContext:)"] = .`init` { args in
+    },
+    "init Date.RelativeFormatStyle(locale:calendar:capitalizationContext:)": .`init` { args in
         guard args.count == 3 else {
             throw RuntimeError.invalid("init Date.RelativeFormatStyle(locale:calendar:capitalizationContext:): expected 3 argument(s), got \(args.count)")
         }
         return boxOpaque(Date.RelativeFormatStyle(locale: try unboxOpaque(args[0], as: Locale.self, typeName: "Locale"), calendar: try unboxOpaque(args[1], as: Calendar.self, typeName: "Calendar"), capitalizationContext: try unboxOpaque(args[2], as: FormatStyleCapitalizationContext.self, typeName: "FormatStyleCapitalizationContext")), typeName: "Date.RelativeFormatStyle")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let dateRelativeFormatStyle: [String: Bridge] = [:]
+}
+#endif

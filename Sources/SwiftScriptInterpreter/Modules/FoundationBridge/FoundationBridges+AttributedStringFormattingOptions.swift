@@ -5,22 +5,21 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let attributedStringFormattingOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init AttributedString.FormattingOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let attributedStringFormattingOptions: [String: Bridge] = [
+    "init AttributedString.FormattingOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init AttributedString.FormattingOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(AttributedString.FormattingOptions(), typeName: "AttributedString.FormattingOptions")
-    }
-    d["var AttributedString.FormattingOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var AttributedString.FormattingOptions.isEmpty: Bool": .computed { receiver in
         let recv: AttributedString.FormattingOptions = try unboxOpaque(receiver, as: AttributedString.FormattingOptions.self, typeName: "AttributedString.FormattingOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let AttributedString.FormattingOptions.applyReplacementIndexAttribute"] = .staticValue(boxOpaque(AttributedString.FormattingOptions.applyReplacementIndexAttribute, typeName: "AttributedString.FormattingOptions"))
-        d["init AttributedString.FormattingOptions(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let AttributedString.FormattingOptions.applyReplacementIndexAttribute": .staticValue(boxOpaque(AttributedString.FormattingOptions.applyReplacementIndexAttribute, typeName: "AttributedString.FormattingOptions")),
+        "init AttributedString.FormattingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("AttributedString.FormattingOptions(arrayLiteral:): expected array literal")
             }
@@ -32,8 +31,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "AttributedString.FormattingOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let attributedStringFormattingOptions: [String: Bridge] = [:]
+}
+#endif

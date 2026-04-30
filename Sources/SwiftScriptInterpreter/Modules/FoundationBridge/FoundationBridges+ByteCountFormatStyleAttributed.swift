@@ -5,38 +5,40 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let byteCountFormatStyleAttributed: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var ByteCountFormatStyle.Attributed.allowedUnits: ByteCountFormatStyle.Units"] = .computed { receiver in
+    nonisolated(unsafe) static let byteCountFormatStyleAttributed: [String: Bridge] = [
+    "var ByteCountFormatStyle.Attributed.allowedUnits: ByteCountFormatStyle.Units": .computed { receiver in
         let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
         return boxOpaque(recv.allowedUnits, typeName: "ByteCountFormatStyle.Units")
-    }
-    d["var ByteCountFormatStyle.Attributed.spellsOutZero: Bool"] = .computed { receiver in
+    },
+    "var ByteCountFormatStyle.Attributed.spellsOutZero: Bool": .computed { receiver in
         let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
         return .bool(recv.spellsOutZero)
-    }
-    d["var ByteCountFormatStyle.Attributed.includesActualByteCount: Bool"] = .computed { receiver in
+    },
+    "var ByteCountFormatStyle.Attributed.includesActualByteCount: Bool": .computed { receiver in
         let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
         return .bool(recv.includesActualByteCount)
-    }
-    d["var ByteCountFormatStyle.Attributed.locale: Locale"] = .computed { receiver in
+    },
+    "var ByteCountFormatStyle.Attributed.locale: Locale": .computed { receiver in
         let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
         return boxOpaque(recv.locale, typeName: "Locale")
-    }
-    d["var ByteCountFormatStyle.Attributed.hashValue: Int"] = .computed { receiver in
+    },
+    "var ByteCountFormatStyle.Attributed.hashValue: Int": .computed { receiver in
         let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
         return .int(recv.hashValue)
-    }
-    d["func ByteCountFormatStyle.Attributed.locale()"] = .method { receiver, args in
+    },
+    "func ByteCountFormatStyle.Attributed.locale()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("ByteCountFormatStyle.Attributed.locale: expected 1 argument(s), got \(args.count)")
         }
         let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
         return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "ByteCountFormatStyle.Attributed")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let byteCountFormatStyleAttributed: [String: Bridge] = [:]
+}
+#endif

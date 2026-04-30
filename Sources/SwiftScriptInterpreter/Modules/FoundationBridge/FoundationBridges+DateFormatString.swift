@@ -5,21 +5,23 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateFormatString: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Date.FormatString.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let dateFormatString: [String: Bridge] = [
+    "var Date.FormatString.hashValue: Int": .computed { receiver in
         let recv: Date.FormatString = try unboxOpaque(receiver, as: Date.FormatString.self, typeName: "Date.FormatString")
         return .int(recv.hashValue)
-    }
-    d["init Date.FormatString(stringLiteral:)"] = .`init` { args in
+    },
+    "init Date.FormatString(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Date.FormatString(stringLiteral:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Date.FormatString(stringLiteral: try unboxString(args[0])), typeName: "Date.FormatString")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let dateFormatString: [String: Bridge] = [:]
+}
+#endif

@@ -5,40 +5,42 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let localizedStringResource: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var LocalizedStringResource.key: String"] = .computed { receiver in
+    nonisolated(unsafe) static let localizedStringResource: [String: Bridge] = [
+    "var LocalizedStringResource.key: String": .computed { receiver in
         let recv: LocalizedStringResource = try unboxOpaque(receiver, as: LocalizedStringResource.self, typeName: "LocalizedStringResource")
         return .string(recv.key)
-    }
-    d["var LocalizedStringResource.defaultValue: String.LocalizationValue"] = .computed { receiver in
+    },
+    "var LocalizedStringResource.defaultValue: String.LocalizationValue": .computed { receiver in
         let recv: LocalizedStringResource = try unboxOpaque(receiver, as: LocalizedStringResource.self, typeName: "LocalizedStringResource")
         return boxOpaque(recv.defaultValue, typeName: "String.LocalizationValue")
-    }
-    d["var LocalizedStringResource.table: String?"] = .computed { receiver in
+    },
+    "var LocalizedStringResource.table: String?": .computed { receiver in
         let recv: LocalizedStringResource = try unboxOpaque(receiver, as: LocalizedStringResource.self, typeName: "LocalizedStringResource")
         if let _v = recv.table {
             return .optional(.string(_v))
         }
         return .optional(nil)
-    }
-    d["var LocalizedStringResource.locale: Locale"] = .computed { receiver in
+    },
+    "var LocalizedStringResource.locale: Locale": .computed { receiver in
         let recv: LocalizedStringResource = try unboxOpaque(receiver, as: LocalizedStringResource.self, typeName: "LocalizedStringResource")
         return boxOpaque(recv.locale, typeName: "Locale")
-    }
-    d["var LocalizedStringResource.localizedStringResource: LocalizedStringResource"] = .computed { receiver in
+    },
+    "var LocalizedStringResource.localizedStringResource: LocalizedStringResource": .computed { receiver in
         let recv: LocalizedStringResource = try unboxOpaque(receiver, as: LocalizedStringResource.self, typeName: "LocalizedStringResource")
         return boxOpaque(recv.localizedStringResource, typeName: "LocalizedStringResource")
-    }
-    d["init LocalizedStringResource(stringLiteral:)"] = .`init` { args in
+    },
+    "init LocalizedStringResource(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init LocalizedStringResource(stringLiteral:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(LocalizedStringResource(stringLiteral: try unboxString(args[0])), typeName: "LocalizedStringResource")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let localizedStringResource: [String: Bridge] = [:]
+}
+#endif

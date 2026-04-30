@@ -5,30 +5,32 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension StdlibBridges {
-    nonisolated(unsafe) static let suspendingClockInstant: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["static let SuspendingClock.Instant.now"] = .staticValue(boxOpaque(SuspendingClock.Instant.now, typeName: "SuspendingClock.Instant"))
-    d["var SuspendingClock.Instant.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let suspendingClockInstant: [String: Bridge] = [
+    "static let SuspendingClock.Instant.now": .staticValue(boxOpaque(SuspendingClock.Instant.now, typeName: "SuspendingClock.Instant")),
+    "var SuspendingClock.Instant.hashValue: Int": .computed { receiver in
         let recv: SuspendingClock.Instant = try unboxOpaque(receiver, as: SuspendingClock.Instant.self, typeName: "SuspendingClock.Instant")
         return .int(recv.hashValue)
-    }
-    d["func SuspendingClock.Instant.advanced()"] = .method { receiver, args in
+    },
+    "func SuspendingClock.Instant.advanced()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("SuspendingClock.Instant.advanced: expected 1 argument(s), got \(args.count)")
         }
         let recv: SuspendingClock.Instant = try unboxOpaque(receiver, as: SuspendingClock.Instant.self, typeName: "SuspendingClock.Instant")
         return boxOpaque(recv.advanced(by: try unboxOpaque(args[0], as: Duration.self, typeName: "Duration")), typeName: "SuspendingClock.Instant")
-    }
-    d["func SuspendingClock.Instant.duration()"] = .method { receiver, args in
+    },
+    "func SuspendingClock.Instant.duration()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("SuspendingClock.Instant.duration: expected 1 argument(s), got \(args.count)")
         }
         let recv: SuspendingClock.Instant = try unboxOpaque(receiver, as: SuspendingClock.Instant.self, typeName: "SuspendingClock.Instant")
         return boxOpaque(recv.duration(to: try unboxOpaque(args[0], as: SuspendingClock.Instant.self, typeName: "SuspendingClock.Instant")), typeName: "Duration")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension StdlibBridges {
+    nonisolated(unsafe) static let suspendingClockInstant: [String: Bridge] = [:]
+}
+#endif

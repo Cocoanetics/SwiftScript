@@ -5,24 +5,26 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let pOSIXError: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var POSIXError.errorCode: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let pOSIXError: [String: Bridge] = [
+    "var POSIXError.errorCode: Int": .computed { receiver in
         let recv: POSIXError = try unboxOpaque(receiver, as: POSIXError.self, typeName: "POSIXError")
         return .int(recv.errorCode)
-    }
-    d["static let POSIXError.errorDomain"] = .staticValue(.string(POSIXError.errorDomain))
-    d["var POSIXError.localizedDescription: String"] = .computed { receiver in
+    },
+    "static let POSIXError.errorDomain": .staticValue(.string(POSIXError.errorDomain)),
+    "var POSIXError.localizedDescription: String": .computed { receiver in
         let recv: POSIXError = try unboxOpaque(receiver, as: POSIXError.self, typeName: "POSIXError")
         return .string(recv.localizedDescription)
-    }
-    d["var POSIXError.hashValue: Int"] = .computed { receiver in
+    },
+    "var POSIXError.hashValue: Int": .computed { receiver in
         let recv: POSIXError = try unboxOpaque(receiver, as: POSIXError.self, typeName: "POSIXError")
         return .int(recv.hashValue)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let pOSIXError: [String: Bridge] = [:]
+}
+#endif

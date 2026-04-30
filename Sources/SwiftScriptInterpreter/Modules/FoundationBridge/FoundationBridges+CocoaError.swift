@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let cocoaError: [String: Bridge] = {
-        var d: [String: Bridge] = [
+    nonisolated(unsafe) static let cocoaError: [String: Bridge] = [
     "static let CocoaError.xpcConnectionInterrupted": .staticValue(boxOpaque(CocoaError.xpcConnectionInterrupted, typeName: "CocoaError.Code")),
     "static let CocoaError.xpcConnectionInvalid": .staticValue(boxOpaque(CocoaError.xpcConnectionInvalid, typeName: "CocoaError.Code")),
     "static let CocoaError.xpcConnectionReplyInvalid": .staticValue(boxOpaque(CocoaError.xpcConnectionReplyInvalid, typeName: "CocoaError.Code")),
@@ -33,100 +33,101 @@ extension FoundationBridges {
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .bool(recv.isXPCConnectionError)
     },
-        ]
-        #if canImport(Darwin)
-    d["var CocoaError.errorCode: Int"] = .computed { receiver in
+    "var CocoaError.errorCode: Int": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .int(recv.errorCode)
-    }
-    d["static let CocoaError.errorDomain"] = .staticValue(.string(CocoaError.errorDomain))
-    d["var CocoaError.localizedDescription: String"] = .computed { receiver in
+    },
+    "static let CocoaError.errorDomain": .staticValue(.string(CocoaError.errorDomain)),
+    "var CocoaError.localizedDescription: String": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .string(recv.localizedDescription)
-    }
-    d["var CocoaError.hashValue: Int"] = .computed { receiver in
+    },
+    "var CocoaError.hashValue: Int": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .int(recv.hashValue)
-    }
-    d["var CocoaError.filePath: String?"] = .computed { receiver in
+    },
+    "var CocoaError.filePath: String?": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         if let _v = recv.filePath {
             return .optional(.string(_v))
         }
         return .optional(nil)
-    }
-    d["var CocoaError.stringEncoding: String.Encoding?"] = .computed { receiver in
+    },
+    "var CocoaError.stringEncoding: String.Encoding?": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         if let _v = recv.stringEncoding {
             return .optional(boxOpaque(_v, typeName: "String.Encoding"))
         }
         return .optional(nil)
-    }
-    d["var CocoaError.url: URL?"] = .computed { receiver in
+    },
+    "var CocoaError.url: URL?": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         if let _v = recv.url {
             return .optional(boxOpaque(_v, typeName: "URL"))
         }
         return .optional(nil)
-    }
-    d["static let CocoaError.fileNoSuchFile"] = .staticValue(boxOpaque(CocoaError.fileNoSuchFile, typeName: "CocoaError.Code"))
-    d["static let CocoaError.fileLocking"] = .staticValue(boxOpaque(CocoaError.fileLocking, typeName: "CocoaError.Code"))
-    d["static let CocoaError.fileReadUnknown"] = .staticValue(boxOpaque(CocoaError.fileReadUnknown, typeName: "CocoaError.Code"))
-    d["static let CocoaError.fileReadNoPermission"] = .staticValue(boxOpaque(CocoaError.fileReadNoPermission, typeName: "CocoaError.Code"))
-    d["static let CocoaError.fileReadInvalidFileName"] = .staticValue(boxOpaque(CocoaError.fileReadInvalidFileName, typeName: "CocoaError.Code"))
-    d["static let CocoaError.fileReadCorruptFile"] = .staticValue(boxOpaque(CocoaError.fileReadCorruptFile, typeName: "CocoaError.Code"))
-    d["static let CocoaError.fileReadNoSuchFile"] = .staticValue(boxOpaque(CocoaError.fileReadNoSuchFile, typeName: "CocoaError.Code"))
-    d["static let CocoaError.fileReadInapplicableStringEncoding"] = .staticValue(boxOpaque(CocoaError.fileReadInapplicableStringEncoding, typeName: "CocoaError.Code"))
-    d["static let CocoaError.fileReadUnsupportedScheme"] = .staticValue(boxOpaque(CocoaError.fileReadUnsupportedScheme, typeName: "CocoaError.Code"))
-    d["static let CocoaError.fileReadTooLarge"] = .staticValue(boxOpaque(CocoaError.fileReadTooLarge, typeName: "CocoaError.Code"))
-    d["static let CocoaError.fileReadUnknownStringEncoding"] = .staticValue(boxOpaque(CocoaError.fileReadUnknownStringEncoding, typeName: "CocoaError.Code"))
-    d["static let CocoaError.fileWriteUnknown"] = .staticValue(boxOpaque(CocoaError.fileWriteUnknown, typeName: "CocoaError.Code"))
-    d["static let CocoaError.fileWriteNoPermission"] = .staticValue(boxOpaque(CocoaError.fileWriteNoPermission, typeName: "CocoaError.Code"))
-    d["static let CocoaError.fileWriteInvalidFileName"] = .staticValue(boxOpaque(CocoaError.fileWriteInvalidFileName, typeName: "CocoaError.Code"))
-    d["static let CocoaError.fileWriteFileExists"] = .staticValue(boxOpaque(CocoaError.fileWriteFileExists, typeName: "CocoaError.Code"))
-    d["static let CocoaError.fileWriteInapplicableStringEncoding"] = .staticValue(boxOpaque(CocoaError.fileWriteInapplicableStringEncoding, typeName: "CocoaError.Code"))
-    d["static let CocoaError.fileWriteUnsupportedScheme"] = .staticValue(boxOpaque(CocoaError.fileWriteUnsupportedScheme, typeName: "CocoaError.Code"))
-    d["static let CocoaError.fileWriteOutOfSpace"] = .staticValue(boxOpaque(CocoaError.fileWriteOutOfSpace, typeName: "CocoaError.Code"))
-    d["static let CocoaError.fileWriteVolumeReadOnly"] = .staticValue(boxOpaque(CocoaError.fileWriteVolumeReadOnly, typeName: "CocoaError.Code"))
-    d["static let CocoaError.keyValueValidation"] = .staticValue(boxOpaque(CocoaError.keyValueValidation, typeName: "CocoaError.Code"))
-    d["static let CocoaError.formatting"] = .staticValue(boxOpaque(CocoaError.formatting, typeName: "CocoaError.Code"))
-    d["static let CocoaError.userCancelled"] = .staticValue(boxOpaque(CocoaError.userCancelled, typeName: "CocoaError.Code"))
-    d["static let CocoaError.featureUnsupported"] = .staticValue(boxOpaque(CocoaError.featureUnsupported, typeName: "CocoaError.Code"))
-    d["static let CocoaError.executableNotLoadable"] = .staticValue(boxOpaque(CocoaError.executableNotLoadable, typeName: "CocoaError.Code"))
-    d["static let CocoaError.executableArchitectureMismatch"] = .staticValue(boxOpaque(CocoaError.executableArchitectureMismatch, typeName: "CocoaError.Code"))
-    d["static let CocoaError.executableRuntimeMismatch"] = .staticValue(boxOpaque(CocoaError.executableRuntimeMismatch, typeName: "CocoaError.Code"))
-    d["static let CocoaError.executableLoad"] = .staticValue(boxOpaque(CocoaError.executableLoad, typeName: "CocoaError.Code"))
-    d["static let CocoaError.executableLink"] = .staticValue(boxOpaque(CocoaError.executableLink, typeName: "CocoaError.Code"))
-    d["static let CocoaError.propertyListReadCorrupt"] = .staticValue(boxOpaque(CocoaError.propertyListReadCorrupt, typeName: "CocoaError.Code"))
-    d["static let CocoaError.propertyListReadUnknownVersion"] = .staticValue(boxOpaque(CocoaError.propertyListReadUnknownVersion, typeName: "CocoaError.Code"))
-    d["static let CocoaError.propertyListReadStream"] = .staticValue(boxOpaque(CocoaError.propertyListReadStream, typeName: "CocoaError.Code"))
-    d["static let CocoaError.propertyListWriteStream"] = .staticValue(boxOpaque(CocoaError.propertyListWriteStream, typeName: "CocoaError.Code"))
-    d["static let CocoaError.propertyListWriteInvalid"] = .staticValue(boxOpaque(CocoaError.propertyListWriteInvalid, typeName: "CocoaError.Code"))
-    d["var CocoaError.isCoderError: Bool"] = .computed { receiver in
+    },
+    "static let CocoaError.fileNoSuchFile": .staticValue(boxOpaque(CocoaError.fileNoSuchFile, typeName: "CocoaError.Code")),
+    "static let CocoaError.fileLocking": .staticValue(boxOpaque(CocoaError.fileLocking, typeName: "CocoaError.Code")),
+    "static let CocoaError.fileReadUnknown": .staticValue(boxOpaque(CocoaError.fileReadUnknown, typeName: "CocoaError.Code")),
+    "static let CocoaError.fileReadNoPermission": .staticValue(boxOpaque(CocoaError.fileReadNoPermission, typeName: "CocoaError.Code")),
+    "static let CocoaError.fileReadInvalidFileName": .staticValue(boxOpaque(CocoaError.fileReadInvalidFileName, typeName: "CocoaError.Code")),
+    "static let CocoaError.fileReadCorruptFile": .staticValue(boxOpaque(CocoaError.fileReadCorruptFile, typeName: "CocoaError.Code")),
+    "static let CocoaError.fileReadNoSuchFile": .staticValue(boxOpaque(CocoaError.fileReadNoSuchFile, typeName: "CocoaError.Code")),
+    "static let CocoaError.fileReadInapplicableStringEncoding": .staticValue(boxOpaque(CocoaError.fileReadInapplicableStringEncoding, typeName: "CocoaError.Code")),
+    "static let CocoaError.fileReadUnsupportedScheme": .staticValue(boxOpaque(CocoaError.fileReadUnsupportedScheme, typeName: "CocoaError.Code")),
+    "static let CocoaError.fileReadTooLarge": .staticValue(boxOpaque(CocoaError.fileReadTooLarge, typeName: "CocoaError.Code")),
+    "static let CocoaError.fileReadUnknownStringEncoding": .staticValue(boxOpaque(CocoaError.fileReadUnknownStringEncoding, typeName: "CocoaError.Code")),
+    "static let CocoaError.fileWriteUnknown": .staticValue(boxOpaque(CocoaError.fileWriteUnknown, typeName: "CocoaError.Code")),
+    "static let CocoaError.fileWriteNoPermission": .staticValue(boxOpaque(CocoaError.fileWriteNoPermission, typeName: "CocoaError.Code")),
+    "static let CocoaError.fileWriteInvalidFileName": .staticValue(boxOpaque(CocoaError.fileWriteInvalidFileName, typeName: "CocoaError.Code")),
+    "static let CocoaError.fileWriteFileExists": .staticValue(boxOpaque(CocoaError.fileWriteFileExists, typeName: "CocoaError.Code")),
+    "static let CocoaError.fileWriteInapplicableStringEncoding": .staticValue(boxOpaque(CocoaError.fileWriteInapplicableStringEncoding, typeName: "CocoaError.Code")),
+    "static let CocoaError.fileWriteUnsupportedScheme": .staticValue(boxOpaque(CocoaError.fileWriteUnsupportedScheme, typeName: "CocoaError.Code")),
+    "static let CocoaError.fileWriteOutOfSpace": .staticValue(boxOpaque(CocoaError.fileWriteOutOfSpace, typeName: "CocoaError.Code")),
+    "static let CocoaError.fileWriteVolumeReadOnly": .staticValue(boxOpaque(CocoaError.fileWriteVolumeReadOnly, typeName: "CocoaError.Code")),
+    "static let CocoaError.keyValueValidation": .staticValue(boxOpaque(CocoaError.keyValueValidation, typeName: "CocoaError.Code")),
+    "static let CocoaError.formatting": .staticValue(boxOpaque(CocoaError.formatting, typeName: "CocoaError.Code")),
+    "static let CocoaError.userCancelled": .staticValue(boxOpaque(CocoaError.userCancelled, typeName: "CocoaError.Code")),
+    "static let CocoaError.featureUnsupported": .staticValue(boxOpaque(CocoaError.featureUnsupported, typeName: "CocoaError.Code")),
+    "static let CocoaError.executableNotLoadable": .staticValue(boxOpaque(CocoaError.executableNotLoadable, typeName: "CocoaError.Code")),
+    "static let CocoaError.executableArchitectureMismatch": .staticValue(boxOpaque(CocoaError.executableArchitectureMismatch, typeName: "CocoaError.Code")),
+    "static let CocoaError.executableRuntimeMismatch": .staticValue(boxOpaque(CocoaError.executableRuntimeMismatch, typeName: "CocoaError.Code")),
+    "static let CocoaError.executableLoad": .staticValue(boxOpaque(CocoaError.executableLoad, typeName: "CocoaError.Code")),
+    "static let CocoaError.executableLink": .staticValue(boxOpaque(CocoaError.executableLink, typeName: "CocoaError.Code")),
+    "static let CocoaError.propertyListReadCorrupt": .staticValue(boxOpaque(CocoaError.propertyListReadCorrupt, typeName: "CocoaError.Code")),
+    "static let CocoaError.propertyListReadUnknownVersion": .staticValue(boxOpaque(CocoaError.propertyListReadUnknownVersion, typeName: "CocoaError.Code")),
+    "static let CocoaError.propertyListReadStream": .staticValue(boxOpaque(CocoaError.propertyListReadStream, typeName: "CocoaError.Code")),
+    "static let CocoaError.propertyListWriteStream": .staticValue(boxOpaque(CocoaError.propertyListWriteStream, typeName: "CocoaError.Code")),
+    "static let CocoaError.propertyListWriteInvalid": .staticValue(boxOpaque(CocoaError.propertyListWriteInvalid, typeName: "CocoaError.Code")),
+    "var CocoaError.isCoderError: Bool": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .bool(recv.isCoderError)
-    }
-    d["var CocoaError.isExecutableError: Bool"] = .computed { receiver in
+    },
+    "var CocoaError.isExecutableError: Bool": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .bool(recv.isExecutableError)
-    }
-    d["var CocoaError.isFileError: Bool"] = .computed { receiver in
+    },
+    "var CocoaError.isFileError: Bool": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .bool(recv.isFileError)
-    }
-    d["var CocoaError.isFormattingError: Bool"] = .computed { receiver in
+    },
+    "var CocoaError.isFormattingError: Bool": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .bool(recv.isFormattingError)
-    }
-    d["var CocoaError.isPropertyListError: Bool"] = .computed { receiver in
+    },
+    "var CocoaError.isPropertyListError: Bool": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .bool(recv.isPropertyListError)
-    }
-    d["var CocoaError.isValidationError: Bool"] = .computed { receiver in
+    },
+    "var CocoaError.isValidationError: Bool": .computed { receiver in
         let recv: CocoaError = try unboxOpaque(receiver, as: CocoaError.self, typeName: "CocoaError")
         return .bool(recv.isValidationError)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let cocoaError: [String: Bridge] = [:]
+}
+#endif

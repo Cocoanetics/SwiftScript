@@ -5,33 +5,32 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSPointerFunctionsOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init NSPointerFunctions.Options()"] = .`init` { args in
+    nonisolated(unsafe) static let nSPointerFunctionsOptions: [String: Bridge] = [
+    "init NSPointerFunctions.Options()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSPointerFunctions.Options(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(NSPointerFunctions.Options(), typeName: "NSPointerFunctions.Options")
-    }
-    d["var NSPointerFunctions.Options.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var NSPointerFunctions.Options.isEmpty: Bool": .computed { receiver in
         let recv: NSPointerFunctions.Options = try unboxOpaque(receiver, as: NSPointerFunctions.Options.self, typeName: "NSPointerFunctions.Options")
         return .bool(recv.isEmpty)
-    }
-    d["static let NSPointerFunctions.Options.strongMemory"] = .staticValue(boxOpaque(NSPointerFunctions.Options.strongMemory, typeName: "NSPointerFunctions.Options"))
-    d["static let NSPointerFunctions.Options.opaqueMemory"] = .staticValue(boxOpaque(NSPointerFunctions.Options.opaqueMemory, typeName: "NSPointerFunctions.Options"))
-    d["static let NSPointerFunctions.Options.mallocMemory"] = .staticValue(boxOpaque(NSPointerFunctions.Options.mallocMemory, typeName: "NSPointerFunctions.Options"))
-    d["static let NSPointerFunctions.Options.machVirtualMemory"] = .staticValue(boxOpaque(NSPointerFunctions.Options.machVirtualMemory, typeName: "NSPointerFunctions.Options"))
-    d["static let NSPointerFunctions.Options.weakMemory"] = .staticValue(boxOpaque(NSPointerFunctions.Options.weakMemory, typeName: "NSPointerFunctions.Options"))
-    d["static let NSPointerFunctions.Options.objectPersonality"] = .staticValue(boxOpaque(NSPointerFunctions.Options.objectPersonality, typeName: "NSPointerFunctions.Options"))
-    d["static let NSPointerFunctions.Options.opaquePersonality"] = .staticValue(boxOpaque(NSPointerFunctions.Options.opaquePersonality, typeName: "NSPointerFunctions.Options"))
-    d["static let NSPointerFunctions.Options.objectPointerPersonality"] = .staticValue(boxOpaque(NSPointerFunctions.Options.objectPointerPersonality, typeName: "NSPointerFunctions.Options"))
-    d["static let NSPointerFunctions.Options.cStringPersonality"] = .staticValue(boxOpaque(NSPointerFunctions.Options.cStringPersonality, typeName: "NSPointerFunctions.Options"))
-    d["static let NSPointerFunctions.Options.structPersonality"] = .staticValue(boxOpaque(NSPointerFunctions.Options.structPersonality, typeName: "NSPointerFunctions.Options"))
-    d["static let NSPointerFunctions.Options.integerPersonality"] = .staticValue(boxOpaque(NSPointerFunctions.Options.integerPersonality, typeName: "NSPointerFunctions.Options"))
-    d["static let NSPointerFunctions.Options.copyIn"] = .staticValue(boxOpaque(NSPointerFunctions.Options.copyIn, typeName: "NSPointerFunctions.Options"))
-        d["init NSPointerFunctions.Options(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let NSPointerFunctions.Options.strongMemory": .staticValue(boxOpaque(NSPointerFunctions.Options.strongMemory, typeName: "NSPointerFunctions.Options")),
+    "static let NSPointerFunctions.Options.opaqueMemory": .staticValue(boxOpaque(NSPointerFunctions.Options.opaqueMemory, typeName: "NSPointerFunctions.Options")),
+    "static let NSPointerFunctions.Options.mallocMemory": .staticValue(boxOpaque(NSPointerFunctions.Options.mallocMemory, typeName: "NSPointerFunctions.Options")),
+    "static let NSPointerFunctions.Options.machVirtualMemory": .staticValue(boxOpaque(NSPointerFunctions.Options.machVirtualMemory, typeName: "NSPointerFunctions.Options")),
+    "static let NSPointerFunctions.Options.weakMemory": .staticValue(boxOpaque(NSPointerFunctions.Options.weakMemory, typeName: "NSPointerFunctions.Options")),
+    "static let NSPointerFunctions.Options.objectPersonality": .staticValue(boxOpaque(NSPointerFunctions.Options.objectPersonality, typeName: "NSPointerFunctions.Options")),
+    "static let NSPointerFunctions.Options.opaquePersonality": .staticValue(boxOpaque(NSPointerFunctions.Options.opaquePersonality, typeName: "NSPointerFunctions.Options")),
+    "static let NSPointerFunctions.Options.objectPointerPersonality": .staticValue(boxOpaque(NSPointerFunctions.Options.objectPointerPersonality, typeName: "NSPointerFunctions.Options")),
+    "static let NSPointerFunctions.Options.cStringPersonality": .staticValue(boxOpaque(NSPointerFunctions.Options.cStringPersonality, typeName: "NSPointerFunctions.Options")),
+    "static let NSPointerFunctions.Options.structPersonality": .staticValue(boxOpaque(NSPointerFunctions.Options.structPersonality, typeName: "NSPointerFunctions.Options")),
+    "static let NSPointerFunctions.Options.integerPersonality": .staticValue(boxOpaque(NSPointerFunctions.Options.integerPersonality, typeName: "NSPointerFunctions.Options")),
+    "static let NSPointerFunctions.Options.copyIn": .staticValue(boxOpaque(NSPointerFunctions.Options.copyIn, typeName: "NSPointerFunctions.Options")),
+        "init NSPointerFunctions.Options(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSPointerFunctions.Options(arrayLiteral:): expected array literal")
             }
@@ -43,8 +42,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "NSPointerFunctions.Options")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSPointerFunctionsOptions: [String: Bridge] = [:]
+}
+#endif

@@ -5,82 +5,84 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let decimalFormatStyle: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["static let Decimal.FormatStyle.number"] = .staticValue(boxOpaque(Decimal.FormatStyle.number, typeName: "Decimal.FormatStyle"))
-    d["var Decimal.FormatStyle.locale: Locale"] = .computed { receiver in
+    nonisolated(unsafe) static let decimalFormatStyle: [String: Bridge] = [
+    "static let Decimal.FormatStyle.number": .staticValue(boxOpaque(Decimal.FormatStyle.number, typeName: "Decimal.FormatStyle")),
+    "var Decimal.FormatStyle.locale: Locale": .computed { receiver in
         let recv: Decimal.FormatStyle = try unboxOpaque(receiver, as: Decimal.FormatStyle.self, typeName: "Decimal.FormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
-    }
-    d["var Decimal.FormatStyle.hashValue: Int"] = .computed { receiver in
+    },
+    "var Decimal.FormatStyle.hashValue: Int": .computed { receiver in
         let recv: Decimal.FormatStyle = try unboxOpaque(receiver, as: Decimal.FormatStyle.self, typeName: "Decimal.FormatStyle")
         return .int(recv.hashValue)
-    }
-    d["init Decimal.FormatStyle(locale:)"] = .`init` { args in
+    },
+    "init Decimal.FormatStyle(locale:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Decimal.FormatStyle(locale:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Decimal.FormatStyle(locale: try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Decimal.FormatStyle")
-    }
-    d["func Decimal.FormatStyle.grouping()"] = .method { receiver, args in
+    },
+    "func Decimal.FormatStyle.grouping()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Decimal.FormatStyle.grouping: expected 1 argument(s), got \(args.count)")
         }
         let recv: Decimal.FormatStyle = try unboxOpaque(receiver, as: Decimal.FormatStyle.self, typeName: "Decimal.FormatStyle")
         return boxOpaque(recv.grouping(try unboxOpaque(args[0], as: NumberFormatStyleConfiguration.Grouping.self, typeName: "NumberFormatStyleConfiguration.Grouping")), typeName: "Decimal.FormatStyle")
-    }
-    d["func Decimal.FormatStyle.precision()"] = .method { receiver, args in
+    },
+    "func Decimal.FormatStyle.precision()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Decimal.FormatStyle.precision: expected 1 argument(s), got \(args.count)")
         }
         let recv: Decimal.FormatStyle = try unboxOpaque(receiver, as: Decimal.FormatStyle.self, typeName: "Decimal.FormatStyle")
         return boxOpaque(recv.precision(try unboxOpaque(args[0], as: NumberFormatStyleConfiguration.Precision.self, typeName: "NumberFormatStyleConfiguration.Precision")), typeName: "Decimal.FormatStyle")
-    }
-    d["func Decimal.FormatStyle.sign()"] = .method { receiver, args in
+    },
+    "func Decimal.FormatStyle.sign()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Decimal.FormatStyle.sign: expected 1 argument(s), got \(args.count)")
         }
         let recv: Decimal.FormatStyle = try unboxOpaque(receiver, as: Decimal.FormatStyle.self, typeName: "Decimal.FormatStyle")
         return boxOpaque(recv.sign(strategy: try unboxOpaque(args[0], as: NumberFormatStyleConfiguration.SignDisplayStrategy.self, typeName: "NumberFormatStyleConfiguration.SignDisplayStrategy")), typeName: "Decimal.FormatStyle")
-    }
-    d["func Decimal.FormatStyle.decimalSeparator()"] = .method { receiver, args in
+    },
+    "func Decimal.FormatStyle.decimalSeparator()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Decimal.FormatStyle.decimalSeparator: expected 1 argument(s), got \(args.count)")
         }
         let recv: Decimal.FormatStyle = try unboxOpaque(receiver, as: Decimal.FormatStyle.self, typeName: "Decimal.FormatStyle")
         return boxOpaque(recv.decimalSeparator(strategy: try unboxOpaque(args[0], as: NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.self, typeName: "NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy")), typeName: "Decimal.FormatStyle")
-    }
-    d["func Decimal.FormatStyle.scale()"] = .method { receiver, args in
+    },
+    "func Decimal.FormatStyle.scale()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Decimal.FormatStyle.scale: expected 1 argument(s), got \(args.count)")
         }
         let recv: Decimal.FormatStyle = try unboxOpaque(receiver, as: Decimal.FormatStyle.self, typeName: "Decimal.FormatStyle")
         return boxOpaque(recv.scale(try toDouble(args[0])), typeName: "Decimal.FormatStyle")
-    }
-    d["func Decimal.FormatStyle.notation()"] = .method { receiver, args in
+    },
+    "func Decimal.FormatStyle.notation()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Decimal.FormatStyle.notation: expected 1 argument(s), got \(args.count)")
         }
         let recv: Decimal.FormatStyle = try unboxOpaque(receiver, as: Decimal.FormatStyle.self, typeName: "Decimal.FormatStyle")
         return boxOpaque(recv.notation(try unboxOpaque(args[0], as: NumberFormatStyleConfiguration.Notation.self, typeName: "NumberFormatStyleConfiguration.Notation")), typeName: "Decimal.FormatStyle")
-    }
-    d["func Decimal.FormatStyle.format()"] = .method { receiver, args in
+    },
+    "func Decimal.FormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Decimal.FormatStyle.format: expected 1 argument(s), got \(args.count)")
         }
         let recv: Decimal.FormatStyle = try unboxOpaque(receiver, as: Decimal.FormatStyle.self, typeName: "Decimal.FormatStyle")
         return .string(recv.format(try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")))
-    }
-    d["func Decimal.FormatStyle.locale()"] = .method { receiver, args in
+    },
+    "func Decimal.FormatStyle.locale()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Decimal.FormatStyle.locale: expected 1 argument(s), got \(args.count)")
         }
         let recv: Decimal.FormatStyle = try unboxOpaque(receiver, as: Decimal.FormatStyle.self, typeName: "Decimal.FormatStyle")
         return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Decimal.FormatStyle")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let decimalFormatStyle: [String: Bridge] = [:]
+}
+#endif

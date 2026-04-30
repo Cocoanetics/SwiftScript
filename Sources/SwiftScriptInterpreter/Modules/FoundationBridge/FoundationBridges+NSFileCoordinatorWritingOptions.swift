@@ -5,26 +5,25 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSFileCoordinatorWritingOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init NSFileCoordinator.WritingOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let nSFileCoordinatorWritingOptions: [String: Bridge] = [
+    "init NSFileCoordinator.WritingOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSFileCoordinator.WritingOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(NSFileCoordinator.WritingOptions(), typeName: "NSFileCoordinator.WritingOptions")
-    }
-    d["var NSFileCoordinator.WritingOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var NSFileCoordinator.WritingOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSFileCoordinator.WritingOptions = try unboxOpaque(receiver, as: NSFileCoordinator.WritingOptions.self, typeName: "NSFileCoordinator.WritingOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let NSFileCoordinator.WritingOptions.forDeleting"] = .staticValue(boxOpaque(NSFileCoordinator.WritingOptions.forDeleting, typeName: "NSFileCoordinator.WritingOptions"))
-    d["static let NSFileCoordinator.WritingOptions.forMoving"] = .staticValue(boxOpaque(NSFileCoordinator.WritingOptions.forMoving, typeName: "NSFileCoordinator.WritingOptions"))
-    d["static let NSFileCoordinator.WritingOptions.forMerging"] = .staticValue(boxOpaque(NSFileCoordinator.WritingOptions.forMerging, typeName: "NSFileCoordinator.WritingOptions"))
-    d["static let NSFileCoordinator.WritingOptions.forReplacing"] = .staticValue(boxOpaque(NSFileCoordinator.WritingOptions.forReplacing, typeName: "NSFileCoordinator.WritingOptions"))
-    d["static let NSFileCoordinator.WritingOptions.contentIndependentMetadataOnly"] = .staticValue(boxOpaque(NSFileCoordinator.WritingOptions.contentIndependentMetadataOnly, typeName: "NSFileCoordinator.WritingOptions"))
-        d["init NSFileCoordinator.WritingOptions(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let NSFileCoordinator.WritingOptions.forDeleting": .staticValue(boxOpaque(NSFileCoordinator.WritingOptions.forDeleting, typeName: "NSFileCoordinator.WritingOptions")),
+    "static let NSFileCoordinator.WritingOptions.forMoving": .staticValue(boxOpaque(NSFileCoordinator.WritingOptions.forMoving, typeName: "NSFileCoordinator.WritingOptions")),
+    "static let NSFileCoordinator.WritingOptions.forMerging": .staticValue(boxOpaque(NSFileCoordinator.WritingOptions.forMerging, typeName: "NSFileCoordinator.WritingOptions")),
+    "static let NSFileCoordinator.WritingOptions.forReplacing": .staticValue(boxOpaque(NSFileCoordinator.WritingOptions.forReplacing, typeName: "NSFileCoordinator.WritingOptions")),
+    "static let NSFileCoordinator.WritingOptions.contentIndependentMetadataOnly": .staticValue(boxOpaque(NSFileCoordinator.WritingOptions.contentIndependentMetadataOnly, typeName: "NSFileCoordinator.WritingOptions")),
+        "init NSFileCoordinator.WritingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSFileCoordinator.WritingOptions(arrayLiteral:): expected array literal")
             }
@@ -36,8 +35,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "NSFileCoordinator.WritingOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSFileCoordinatorWritingOptions: [String: Bridge] = [:]
+}
+#endif

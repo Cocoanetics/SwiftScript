@@ -116,3 +116,24 @@ NSURL.BookmarkResolutionOptions.withSecurityScope
 # public ctor or the generator learns to consult `accessLevel` on
 # every member.
 JobPriority.init(_:)
+
+# Stdlib types whose specific members are Apple-only — the scl
+# oracle whitelists `String.Index` / `UnsafeCurrentTask` as cross-
+# platform owners (since scl is Foundation-only), so individual
+# Apple-only extensions need explicit blocking. Catalogue grows by
+# CI feedback.
+String.Index.debugDescription
+UnsafeCurrentTask.escalatePriority(_:)
+
+# Apple-side overloads whose signature differs from scl's:
+#   • `AttributedString.init(localized:)` takes
+#     `LocalizedStringResource` on Apple but the scl init list
+#     doesn't include the `localized:` label.
+#   • `PersonNameComponents.init(from:)` is Decoder-shaped on
+#     Apple, scl's init list differs.
+#   • `NSTextCheckingKey.init(rawValue:)` — scl uses unlabeled.
+# Skip until the generator can intersect signatures, not just names.
+AttributedString.init(localized:)
+PersonNameComponents.init(from:)
+NSTextCheckingKey.init(rawValue:)
+URL.init(resource:)

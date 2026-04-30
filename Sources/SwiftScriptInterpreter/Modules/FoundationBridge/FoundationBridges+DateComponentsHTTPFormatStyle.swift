@@ -5,34 +5,33 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateComponentsHTTPFormatStyle: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var DateComponents.HTTPFormatStyle.parseStrategy: DateComponents.HTTPFormatStyle"] = .computed { receiver in
+    nonisolated(unsafe) static let dateComponentsHTTPFormatStyle: [String: Bridge] = [
+    "var DateComponents.HTTPFormatStyle.parseStrategy: DateComponents.HTTPFormatStyle": .computed { receiver in
         let recv: DateComponents.HTTPFormatStyle = try unboxOpaque(receiver, as: DateComponents.HTTPFormatStyle.self, typeName: "DateComponents.HTTPFormatStyle")
         return boxOpaque(recv.parseStrategy, typeName: "DateComponents.HTTPFormatStyle")
-    }
-    d["static let DateComponents.HTTPFormatStyle.http"] = .staticValue(boxOpaque(DateComponents.HTTPFormatStyle.http, typeName: "DateComponents.HTTPFormatStyle"))
-    d["static let DateComponents.HTTPFormatStyle.httpComponents"] = .staticValue(boxOpaque(DateComponents.HTTPFormatStyle.httpComponents, typeName: "DateComponents.HTTPFormatStyle"))
-    d["init DateComponents.HTTPFormatStyle()"] = .`init` { args in
+    },
+    "static let DateComponents.HTTPFormatStyle.http": .staticValue(boxOpaque(DateComponents.HTTPFormatStyle.http, typeName: "DateComponents.HTTPFormatStyle")),
+    "static let DateComponents.HTTPFormatStyle.httpComponents": .staticValue(boxOpaque(DateComponents.HTTPFormatStyle.httpComponents, typeName: "DateComponents.HTTPFormatStyle")),
+    "init DateComponents.HTTPFormatStyle()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init DateComponents.HTTPFormatStyle(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(DateComponents.HTTPFormatStyle(), typeName: "DateComponents.HTTPFormatStyle")
-    }
-    d["var DateComponents.HTTPFormatStyle.hashValue: Int"] = .computed { receiver in
+    },
+    "var DateComponents.HTTPFormatStyle.hashValue: Int": .computed { receiver in
         let recv: DateComponents.HTTPFormatStyle = try unboxOpaque(receiver, as: DateComponents.HTTPFormatStyle.self, typeName: "DateComponents.HTTPFormatStyle")
         return .int(recv.hashValue)
-    }
-    d["func DateComponents.HTTPFormatStyle.format()"] = .method { receiver, args in
+    },
+    "func DateComponents.HTTPFormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("DateComponents.HTTPFormatStyle.format: expected 1 argument(s), got \(args.count)")
         }
         let recv: DateComponents.HTTPFormatStyle = try unboxOpaque(receiver, as: DateComponents.HTTPFormatStyle.self, typeName: "DateComponents.HTTPFormatStyle")
         return .string(recv.format(try unboxOpaque(args[0], as: DateComponents.self, typeName: "DateComponents")))
-    }
-    d["func DateComponents.HTTPFormatStyle.parse()"] = .method { receiver, args in
+    },
+    "func DateComponents.HTTPFormatStyle.parse()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("DateComponents.HTTPFormatStyle.parse: expected 1 argument(s), got \(args.count)")
         }
@@ -42,8 +41,11 @@ extension FoundationBridges {
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let dateComponentsHTTPFormatStyle: [String: Bridge] = [:]
+}
+#endif

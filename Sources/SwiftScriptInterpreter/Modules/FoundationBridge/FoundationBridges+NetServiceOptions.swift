@@ -5,23 +5,22 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let netServiceOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init NetService.Options()"] = .`init` { args in
+    nonisolated(unsafe) static let netServiceOptions: [String: Bridge] = [
+    "init NetService.Options()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NetService.Options(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(NetService.Options(), typeName: "NetService.Options")
-    }
-    d["var NetService.Options.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var NetService.Options.isEmpty: Bool": .computed { receiver in
         let recv: NetService.Options = try unboxOpaque(receiver, as: NetService.Options.self, typeName: "NetService.Options")
         return .bool(recv.isEmpty)
-    }
-    d["static let NetService.Options.noAutoRename"] = .staticValue(boxOpaque(NetService.Options.noAutoRename, typeName: "NetService.Options"))
-    d["static let NetService.Options.listenForConnections"] = .staticValue(boxOpaque(NetService.Options.listenForConnections, typeName: "NetService.Options"))
-        d["init NetService.Options(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let NetService.Options.noAutoRename": .staticValue(boxOpaque(NetService.Options.noAutoRename, typeName: "NetService.Options")),
+    "static let NetService.Options.listenForConnections": .staticValue(boxOpaque(NetService.Options.listenForConnections, typeName: "NetService.Options")),
+        "init NetService.Options(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NetService.Options(arrayLiteral:): expected array literal")
             }
@@ -33,8 +32,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "NetService.Options")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let netServiceOptions: [String: Bridge] = [:]
+}
+#endif

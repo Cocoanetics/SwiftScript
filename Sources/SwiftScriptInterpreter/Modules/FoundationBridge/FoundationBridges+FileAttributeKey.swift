@@ -5,51 +5,53 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let fileAttributeKey: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var FileAttributeKey.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let fileAttributeKey: [String: Bridge] = [
+    "var FileAttributeKey.hashValue: Int": .computed { receiver in
         let recv: FileAttributeKey = try unboxOpaque(receiver, as: FileAttributeKey.self, typeName: "FileAttributeKey")
         return .int(recv.hashValue)
-    }
-    d["static let FileAttributeKey.type"] = .staticValue(boxOpaque(FileAttributeKey.type, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.size"] = .staticValue(boxOpaque(FileAttributeKey.size, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.modificationDate"] = .staticValue(boxOpaque(FileAttributeKey.modificationDate, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.referenceCount"] = .staticValue(boxOpaque(FileAttributeKey.referenceCount, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.deviceIdentifier"] = .staticValue(boxOpaque(FileAttributeKey.deviceIdentifier, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.ownerAccountName"] = .staticValue(boxOpaque(FileAttributeKey.ownerAccountName, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.groupOwnerAccountName"] = .staticValue(boxOpaque(FileAttributeKey.groupOwnerAccountName, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.posixPermissions"] = .staticValue(boxOpaque(FileAttributeKey.posixPermissions, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.systemNumber"] = .staticValue(boxOpaque(FileAttributeKey.systemNumber, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.systemFileNumber"] = .staticValue(boxOpaque(FileAttributeKey.systemFileNumber, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.extensionHidden"] = .staticValue(boxOpaque(FileAttributeKey.extensionHidden, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.hfsCreatorCode"] = .staticValue(boxOpaque(FileAttributeKey.hfsCreatorCode, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.hfsTypeCode"] = .staticValue(boxOpaque(FileAttributeKey.hfsTypeCode, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.immutable"] = .staticValue(boxOpaque(FileAttributeKey.immutable, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.appendOnly"] = .staticValue(boxOpaque(FileAttributeKey.appendOnly, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.creationDate"] = .staticValue(boxOpaque(FileAttributeKey.creationDate, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.ownerAccountID"] = .staticValue(boxOpaque(FileAttributeKey.ownerAccountID, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.groupOwnerAccountID"] = .staticValue(boxOpaque(FileAttributeKey.groupOwnerAccountID, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.busy"] = .staticValue(boxOpaque(FileAttributeKey.busy, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.protectionKey"] = .staticValue(boxOpaque(FileAttributeKey.protectionKey, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.systemSize"] = .staticValue(boxOpaque(FileAttributeKey.systemSize, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.systemFreeSize"] = .staticValue(boxOpaque(FileAttributeKey.systemFreeSize, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.systemNodes"] = .staticValue(boxOpaque(FileAttributeKey.systemNodes, typeName: "FileAttributeKey"))
-    d["static let FileAttributeKey.systemFreeNodes"] = .staticValue(boxOpaque(FileAttributeKey.systemFreeNodes, typeName: "FileAttributeKey"))
-    d["init FileAttributeKey(_:)"] = .`init` { args in
+    },
+    "static let FileAttributeKey.type": .staticValue(boxOpaque(FileAttributeKey.type, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.size": .staticValue(boxOpaque(FileAttributeKey.size, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.modificationDate": .staticValue(boxOpaque(FileAttributeKey.modificationDate, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.referenceCount": .staticValue(boxOpaque(FileAttributeKey.referenceCount, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.deviceIdentifier": .staticValue(boxOpaque(FileAttributeKey.deviceIdentifier, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.ownerAccountName": .staticValue(boxOpaque(FileAttributeKey.ownerAccountName, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.groupOwnerAccountName": .staticValue(boxOpaque(FileAttributeKey.groupOwnerAccountName, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.posixPermissions": .staticValue(boxOpaque(FileAttributeKey.posixPermissions, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.systemNumber": .staticValue(boxOpaque(FileAttributeKey.systemNumber, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.systemFileNumber": .staticValue(boxOpaque(FileAttributeKey.systemFileNumber, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.extensionHidden": .staticValue(boxOpaque(FileAttributeKey.extensionHidden, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.hfsCreatorCode": .staticValue(boxOpaque(FileAttributeKey.hfsCreatorCode, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.hfsTypeCode": .staticValue(boxOpaque(FileAttributeKey.hfsTypeCode, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.immutable": .staticValue(boxOpaque(FileAttributeKey.immutable, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.appendOnly": .staticValue(boxOpaque(FileAttributeKey.appendOnly, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.creationDate": .staticValue(boxOpaque(FileAttributeKey.creationDate, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.ownerAccountID": .staticValue(boxOpaque(FileAttributeKey.ownerAccountID, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.groupOwnerAccountID": .staticValue(boxOpaque(FileAttributeKey.groupOwnerAccountID, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.busy": .staticValue(boxOpaque(FileAttributeKey.busy, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.protectionKey": .staticValue(boxOpaque(FileAttributeKey.protectionKey, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.systemSize": .staticValue(boxOpaque(FileAttributeKey.systemSize, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.systemFreeSize": .staticValue(boxOpaque(FileAttributeKey.systemFreeSize, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.systemNodes": .staticValue(boxOpaque(FileAttributeKey.systemNodes, typeName: "FileAttributeKey")),
+    "static let FileAttributeKey.systemFreeNodes": .staticValue(boxOpaque(FileAttributeKey.systemFreeNodes, typeName: "FileAttributeKey")),
+    "init FileAttributeKey(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init FileAttributeKey(_:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(FileAttributeKey(try unboxString(args[0])), typeName: "FileAttributeKey")
-    }
-    d["init FileAttributeKey(rawValue:)"] = .`init` { args in
+    },
+    "init FileAttributeKey(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init FileAttributeKey(rawValue:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(FileAttributeKey(rawValue: try unboxString(args[0])), typeName: "FileAttributeKey")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let fileAttributeKey: [String: Bridge] = [:]
+}
+#endif

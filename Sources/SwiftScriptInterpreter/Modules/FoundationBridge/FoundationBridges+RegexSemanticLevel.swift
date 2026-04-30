@@ -5,17 +5,19 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let regexSemanticLevel: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["static let RegexSemanticLevel.graphemeCluster"] = .staticValue(boxOpaque(RegexSemanticLevel.graphemeCluster, typeName: "RegexSemanticLevel"))
-    d["static let RegexSemanticLevel.unicodeScalar"] = .staticValue(boxOpaque(RegexSemanticLevel.unicodeScalar, typeName: "RegexSemanticLevel"))
-    d["var RegexSemanticLevel.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let regexSemanticLevel: [String: Bridge] = [
+    "static let RegexSemanticLevel.graphemeCluster": .staticValue(boxOpaque(RegexSemanticLevel.graphemeCluster, typeName: "RegexSemanticLevel")),
+    "static let RegexSemanticLevel.unicodeScalar": .staticValue(boxOpaque(RegexSemanticLevel.unicodeScalar, typeName: "RegexSemanticLevel")),
+    "var RegexSemanticLevel.hashValue: Int": .computed { receiver in
         let recv: RegexSemanticLevel = try unboxOpaque(receiver, as: RegexSemanticLevel.self, typeName: "RegexSemanticLevel")
         return .int(recv.hashValue)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let regexSemanticLevel: [String: Bridge] = [:]
+}
+#endif

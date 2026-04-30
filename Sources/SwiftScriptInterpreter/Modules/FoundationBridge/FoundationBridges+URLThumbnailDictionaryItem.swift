@@ -5,27 +5,29 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let uRLThumbnailDictionaryItem: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var URLThumbnailDictionaryItem.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let uRLThumbnailDictionaryItem: [String: Bridge] = [
+    "var URLThumbnailDictionaryItem.hashValue: Int": .computed { receiver in
         let recv: URLThumbnailDictionaryItem = try unboxOpaque(receiver, as: URLThumbnailDictionaryItem.self, typeName: "URLThumbnailDictionaryItem")
         return .int(recv.hashValue)
-    }
-    d["init URLThumbnailDictionaryItem(_:)"] = .`init` { args in
+    },
+    "init URLThumbnailDictionaryItem(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init URLThumbnailDictionaryItem(_:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(URLThumbnailDictionaryItem(try unboxString(args[0])), typeName: "URLThumbnailDictionaryItem")
-    }
-    d["init URLThumbnailDictionaryItem(rawValue:)"] = .`init` { args in
+    },
+    "init URLThumbnailDictionaryItem(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init URLThumbnailDictionaryItem(rawValue:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(URLThumbnailDictionaryItem(rawValue: try unboxString(args[0])), typeName: "URLThumbnailDictionaryItem")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let uRLThumbnailDictionaryItem: [String: Bridge] = [:]
+}
+#endif

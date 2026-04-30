@@ -5,28 +5,30 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let stringEncodingDetectionOptionsKey: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var StringEncodingDetectionOptionsKey.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let stringEncodingDetectionOptionsKey: [String: Bridge] = [
+    "var StringEncodingDetectionOptionsKey.hashValue: Int": .computed { receiver in
         let recv: StringEncodingDetectionOptionsKey = try unboxOpaque(receiver, as: StringEncodingDetectionOptionsKey.self, typeName: "StringEncodingDetectionOptionsKey")
         return .int(recv.hashValue)
-    }
-    d["static let StringEncodingDetectionOptionsKey.suggestedEncodingsKey"] = .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.suggestedEncodingsKey, typeName: "StringEncodingDetectionOptionsKey"))
-    d["static let StringEncodingDetectionOptionsKey.disallowedEncodingsKey"] = .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.disallowedEncodingsKey, typeName: "StringEncodingDetectionOptionsKey"))
-    d["static let StringEncodingDetectionOptionsKey.useOnlySuggestedEncodingsKey"] = .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.useOnlySuggestedEncodingsKey, typeName: "StringEncodingDetectionOptionsKey"))
-    d["static let StringEncodingDetectionOptionsKey.allowLossyKey"] = .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.allowLossyKey, typeName: "StringEncodingDetectionOptionsKey"))
-    d["static let StringEncodingDetectionOptionsKey.fromWindowsKey"] = .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.fromWindowsKey, typeName: "StringEncodingDetectionOptionsKey"))
-    d["static let StringEncodingDetectionOptionsKey.lossySubstitutionKey"] = .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.lossySubstitutionKey, typeName: "StringEncodingDetectionOptionsKey"))
-    d["static let StringEncodingDetectionOptionsKey.likelyLanguageKey"] = .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.likelyLanguageKey, typeName: "StringEncodingDetectionOptionsKey"))
-    d["init StringEncodingDetectionOptionsKey(rawValue:)"] = .`init` { args in
+    },
+    "static let StringEncodingDetectionOptionsKey.suggestedEncodingsKey": .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.suggestedEncodingsKey, typeName: "StringEncodingDetectionOptionsKey")),
+    "static let StringEncodingDetectionOptionsKey.disallowedEncodingsKey": .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.disallowedEncodingsKey, typeName: "StringEncodingDetectionOptionsKey")),
+    "static let StringEncodingDetectionOptionsKey.useOnlySuggestedEncodingsKey": .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.useOnlySuggestedEncodingsKey, typeName: "StringEncodingDetectionOptionsKey")),
+    "static let StringEncodingDetectionOptionsKey.allowLossyKey": .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.allowLossyKey, typeName: "StringEncodingDetectionOptionsKey")),
+    "static let StringEncodingDetectionOptionsKey.fromWindowsKey": .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.fromWindowsKey, typeName: "StringEncodingDetectionOptionsKey")),
+    "static let StringEncodingDetectionOptionsKey.lossySubstitutionKey": .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.lossySubstitutionKey, typeName: "StringEncodingDetectionOptionsKey")),
+    "static let StringEncodingDetectionOptionsKey.likelyLanguageKey": .staticValue(boxOpaque(StringEncodingDetectionOptionsKey.likelyLanguageKey, typeName: "StringEncodingDetectionOptionsKey")),
+    "init StringEncodingDetectionOptionsKey(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init StringEncodingDetectionOptionsKey(rawValue:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(StringEncodingDetectionOptionsKey(rawValue: try unboxString(args[0])), typeName: "StringEncodingDetectionOptionsKey")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let stringEncodingDetectionOptionsKey: [String: Bridge] = [:]
+}
+#endif

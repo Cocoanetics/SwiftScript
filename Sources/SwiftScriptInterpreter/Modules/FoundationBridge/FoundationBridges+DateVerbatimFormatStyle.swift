@@ -5,48 +5,47 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateVerbatimFormatStyle: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Date.VerbatimFormatStyle.timeZone: TimeZone"] = .computed { receiver in
+    nonisolated(unsafe) static let dateVerbatimFormatStyle: [String: Bridge] = [
+    "var Date.VerbatimFormatStyle.timeZone: TimeZone": .computed { receiver in
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return boxOpaque(recv.timeZone, typeName: "TimeZone")
-    }
-    d["var Date.VerbatimFormatStyle.calendar: Calendar"] = .computed { receiver in
+    },
+    "var Date.VerbatimFormatStyle.calendar: Calendar": .computed { receiver in
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return boxOpaque(recv.calendar, typeName: "Calendar")
-    }
-    d["var Date.VerbatimFormatStyle.locale: Locale?"] = .computed { receiver in
+    },
+    "var Date.VerbatimFormatStyle.locale: Locale?": .computed { receiver in
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         if let _v = recv.locale {
             return .optional(boxOpaque(_v, typeName: "Locale"))
         }
         return .optional(nil)
-    }
-    d["var Date.VerbatimFormatStyle.hashValue: Int"] = .computed { receiver in
+    },
+    "var Date.VerbatimFormatStyle.hashValue: Int": .computed { receiver in
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return .int(recv.hashValue)
-    }
-    d["var Date.VerbatimFormatStyle.parseStrategy: Date.ParseStrategy"] = .computed { receiver in
+    },
+    "var Date.VerbatimFormatStyle.parseStrategy: Date.ParseStrategy": .computed { receiver in
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return boxOpaque(recv.parseStrategy, typeName: "Date.ParseStrategy")
-    }
-    d["func Date.VerbatimFormatStyle.format()"] = .method { receiver, args in
+    },
+    "func Date.VerbatimFormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.VerbatimFormatStyle.format: expected 1 argument(s), got \(args.count)")
         }
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return .string(recv.format(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
-    }
-    d["func Date.VerbatimFormatStyle.locale()"] = .method { receiver, args in
+    },
+    "func Date.VerbatimFormatStyle.locale()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.VerbatimFormatStyle.locale: expected 1 argument(s), got \(args.count)")
         }
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Date.VerbatimFormatStyle")
-    }
-    d["func Date.VerbatimFormatStyle.discreteInput()"] = .method { receiver, args in
+    },
+    "func Date.VerbatimFormatStyle.discreteInput()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.VerbatimFormatStyle.discreteInput: expected 1 argument(s), got \(args.count)")
         }
@@ -55,8 +54,8 @@ extension FoundationBridges {
             return .optional(boxOpaque(_v, typeName: "Date"))
         }
         return .optional(nil)
-    }
-    d["func Date.VerbatimFormatStyle.input()"] = .method { receiver, args in
+    },
+    "func Date.VerbatimFormatStyle.input()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.VerbatimFormatStyle.input: expected 1 argument(s), got \(args.count)")
         }
@@ -65,8 +64,11 @@ extension FoundationBridges {
             return .optional(boxOpaque(_v, typeName: "Date"))
         }
         return .optional(nil)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let dateVerbatimFormatStyle: [String: Bridge] = [:]
+}
+#endif

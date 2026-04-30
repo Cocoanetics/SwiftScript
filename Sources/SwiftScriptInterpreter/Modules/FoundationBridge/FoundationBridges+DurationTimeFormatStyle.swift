@@ -5,44 +5,43 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let durationTimeFormatStyle: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Duration.TimeFormatStyle.locale: Locale"] = .computed { receiver in
+    nonisolated(unsafe) static let durationTimeFormatStyle: [String: Bridge] = [
+    "var Duration.TimeFormatStyle.locale: Locale": .computed { receiver in
         let recv: Duration.TimeFormatStyle = try unboxOpaque(receiver, as: Duration.TimeFormatStyle.self, typeName: "Duration.TimeFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
-    }
-    d["var Duration.TimeFormatStyle.hashValue: Int"] = .computed { receiver in
+    },
+    "var Duration.TimeFormatStyle.hashValue: Int": .computed { receiver in
         let recv: Duration.TimeFormatStyle = try unboxOpaque(receiver, as: Duration.TimeFormatStyle.self, typeName: "Duration.TimeFormatStyle")
         return .int(recv.hashValue)
-    }
-    d["var Duration.TimeFormatStyle.grouping: NumberFormatStyleConfiguration.Grouping"] = .computed { receiver in
+    },
+    "var Duration.TimeFormatStyle.grouping: NumberFormatStyleConfiguration.Grouping": .computed { receiver in
         let recv: Duration.TimeFormatStyle = try unboxOpaque(receiver, as: Duration.TimeFormatStyle.self, typeName: "Duration.TimeFormatStyle")
         return boxOpaque(recv.grouping, typeName: "NumberFormatStyleConfiguration.Grouping")
-    }
-    d["func Duration.TimeFormatStyle.format()"] = .method { receiver, args in
+    },
+    "func Duration.TimeFormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Duration.TimeFormatStyle.format: expected 1 argument(s), got \(args.count)")
         }
         let recv: Duration.TimeFormatStyle = try unboxOpaque(receiver, as: Duration.TimeFormatStyle.self, typeName: "Duration.TimeFormatStyle")
         return .string(recv.format(try unboxOpaque(args[0], as: Duration.self, typeName: "Duration")))
-    }
-    d["func Duration.TimeFormatStyle.locale()"] = .method { receiver, args in
+    },
+    "func Duration.TimeFormatStyle.locale()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Duration.TimeFormatStyle.locale: expected 1 argument(s), got \(args.count)")
         }
         let recv: Duration.TimeFormatStyle = try unboxOpaque(receiver, as: Duration.TimeFormatStyle.self, typeName: "Duration.TimeFormatStyle")
         return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Duration.TimeFormatStyle")
-    }
-    d["func Duration.TimeFormatStyle.grouping()"] = .method { receiver, args in
+    },
+    "func Duration.TimeFormatStyle.grouping()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Duration.TimeFormatStyle.grouping: expected 1 argument(s), got \(args.count)")
         }
         let recv: Duration.TimeFormatStyle = try unboxOpaque(receiver, as: Duration.TimeFormatStyle.self, typeName: "Duration.TimeFormatStyle")
         return boxOpaque(recv.grouping(try unboxOpaque(args[0], as: NumberFormatStyleConfiguration.Grouping.self, typeName: "NumberFormatStyleConfiguration.Grouping")), typeName: "Duration.TimeFormatStyle")
-    }
-    d["func Duration.TimeFormatStyle.discreteInput()"] = .method { receiver, args in
+    },
+    "func Duration.TimeFormatStyle.discreteInput()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Duration.TimeFormatStyle.discreteInput: expected 1 argument(s), got \(args.count)")
         }
@@ -51,8 +50,11 @@ extension FoundationBridges {
             return .optional(boxOpaque(_v, typeName: "Duration"))
         }
         return .optional(nil)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let durationTimeFormatStyle: [String: Bridge] = [:]
+}
+#endif

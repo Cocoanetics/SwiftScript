@@ -5,32 +5,31 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateHTTPFormatStyle: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Date.HTTPFormatStyle.parseStrategy: Date.HTTPFormatStyle"] = .computed { receiver in
+    nonisolated(unsafe) static let dateHTTPFormatStyle: [String: Bridge] = [
+    "var Date.HTTPFormatStyle.parseStrategy: Date.HTTPFormatStyle": .computed { receiver in
         let recv: Date.HTTPFormatStyle = try unboxOpaque(receiver, as: Date.HTTPFormatStyle.self, typeName: "Date.HTTPFormatStyle")
         return boxOpaque(recv.parseStrategy, typeName: "Date.HTTPFormatStyle")
-    }
-    d["init Date.HTTPFormatStyle()"] = .`init` { args in
+    },
+    "init Date.HTTPFormatStyle()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init Date.HTTPFormatStyle(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(Date.HTTPFormatStyle(), typeName: "Date.HTTPFormatStyle")
-    }
-    d["var Date.HTTPFormatStyle.hashValue: Int"] = .computed { receiver in
+    },
+    "var Date.HTTPFormatStyle.hashValue: Int": .computed { receiver in
         let recv: Date.HTTPFormatStyle = try unboxOpaque(receiver, as: Date.HTTPFormatStyle.self, typeName: "Date.HTTPFormatStyle")
         return .int(recv.hashValue)
-    }
-    d["func Date.HTTPFormatStyle.format()"] = .method { receiver, args in
+    },
+    "func Date.HTTPFormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.HTTPFormatStyle.format: expected 1 argument(s), got \(args.count)")
         }
         let recv: Date.HTTPFormatStyle = try unboxOpaque(receiver, as: Date.HTTPFormatStyle.self, typeName: "Date.HTTPFormatStyle")
         return .string(recv.format(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
-    }
-    d["func Date.HTTPFormatStyle.parse()"] = .method { receiver, args in
+    },
+    "func Date.HTTPFormatStyle.parse()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.HTTPFormatStyle.parse: expected 1 argument(s), got \(args.count)")
         }
@@ -40,8 +39,11 @@ extension FoundationBridges {
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let dateHTTPFormatStyle: [String: Bridge] = [:]
+}
+#endif

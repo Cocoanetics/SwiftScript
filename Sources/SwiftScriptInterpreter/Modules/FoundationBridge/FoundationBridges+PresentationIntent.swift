@@ -5,31 +5,33 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let presentationIntent: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var PresentationIntent.count: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let presentationIntent: [String: Bridge] = [
+    "var PresentationIntent.count: Int": .computed { receiver in
         let recv: PresentationIntent = try unboxOpaque(receiver, as: PresentationIntent.self, typeName: "PresentationIntent")
         return .int(recv.count)
-    }
-    d["var PresentationIntent.debugDescription: String"] = .computed { receiver in
+    },
+    "var PresentationIntent.debugDescription: String": .computed { receiver in
         let recv: PresentationIntent = try unboxOpaque(receiver, as: PresentationIntent.self, typeName: "PresentationIntent")
         return .string(recv.debugDescription)
-    }
-    d["var PresentationIntent.isValid: Bool"] = .computed { receiver in
+    },
+    "var PresentationIntent.isValid: Bool": .computed { receiver in
         let recv: PresentationIntent = try unboxOpaque(receiver, as: PresentationIntent.self, typeName: "PresentationIntent")
         return .bool(recv.isValid)
-    }
-    d["var PresentationIntent.indentationLevel: Int"] = .computed { receiver in
+    },
+    "var PresentationIntent.indentationLevel: Int": .computed { receiver in
         let recv: PresentationIntent = try unboxOpaque(receiver, as: PresentationIntent.self, typeName: "PresentationIntent")
         return .int(recv.indentationLevel)
-    }
-    d["var PresentationIntent.hashValue: Int"] = .computed { receiver in
+    },
+    "var PresentationIntent.hashValue: Int": .computed { receiver in
         let recv: PresentationIntent = try unboxOpaque(receiver, as: PresentationIntent.self, typeName: "PresentationIntent")
         return .int(recv.hashValue)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let presentationIntent: [String: Bridge] = [:]
+}
+#endif

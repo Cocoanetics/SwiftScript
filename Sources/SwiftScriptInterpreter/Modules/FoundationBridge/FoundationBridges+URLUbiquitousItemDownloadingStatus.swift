@@ -5,24 +5,26 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let uRLUbiquitousItemDownloadingStatus: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var URLUbiquitousItemDownloadingStatus.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let uRLUbiquitousItemDownloadingStatus: [String: Bridge] = [
+    "var URLUbiquitousItemDownloadingStatus.hashValue: Int": .computed { receiver in
         let recv: URLUbiquitousItemDownloadingStatus = try unboxOpaque(receiver, as: URLUbiquitousItemDownloadingStatus.self, typeName: "URLUbiquitousItemDownloadingStatus")
         return .int(recv.hashValue)
-    }
-    d["static let URLUbiquitousItemDownloadingStatus.notDownloaded"] = .staticValue(boxOpaque(URLUbiquitousItemDownloadingStatus.notDownloaded, typeName: "URLUbiquitousItemDownloadingStatus"))
-    d["static let URLUbiquitousItemDownloadingStatus.downloaded"] = .staticValue(boxOpaque(URLUbiquitousItemDownloadingStatus.downloaded, typeName: "URLUbiquitousItemDownloadingStatus"))
-    d["static let URLUbiquitousItemDownloadingStatus.current"] = .staticValue(boxOpaque(URLUbiquitousItemDownloadingStatus.current, typeName: "URLUbiquitousItemDownloadingStatus"))
-    d["init URLUbiquitousItemDownloadingStatus(rawValue:)"] = .`init` { args in
+    },
+    "static let URLUbiquitousItemDownloadingStatus.notDownloaded": .staticValue(boxOpaque(URLUbiquitousItemDownloadingStatus.notDownloaded, typeName: "URLUbiquitousItemDownloadingStatus")),
+    "static let URLUbiquitousItemDownloadingStatus.downloaded": .staticValue(boxOpaque(URLUbiquitousItemDownloadingStatus.downloaded, typeName: "URLUbiquitousItemDownloadingStatus")),
+    "static let URLUbiquitousItemDownloadingStatus.current": .staticValue(boxOpaque(URLUbiquitousItemDownloadingStatus.current, typeName: "URLUbiquitousItemDownloadingStatus")),
+    "init URLUbiquitousItemDownloadingStatus(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init URLUbiquitousItemDownloadingStatus(rawValue:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(URLUbiquitousItemDownloadingStatus(rawValue: try unboxString(args[0])), typeName: "URLUbiquitousItemDownloadingStatus")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let uRLUbiquitousItemDownloadingStatus: [String: Bridge] = [:]
+}
+#endif

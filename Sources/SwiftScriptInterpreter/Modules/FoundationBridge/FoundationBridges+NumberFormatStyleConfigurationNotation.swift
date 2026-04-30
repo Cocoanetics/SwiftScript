@@ -5,22 +5,24 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let numberFormatStyleConfigurationNotation: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["static let NumberFormatStyleConfiguration.Notation.scientific"] = .staticValue(boxOpaque(NumberFormatStyleConfiguration.Notation.scientific, typeName: "NumberFormatStyleConfiguration.Notation"))
-    d["static let NumberFormatStyleConfiguration.Notation.automatic"] = .staticValue(boxOpaque(NumberFormatStyleConfiguration.Notation.automatic, typeName: "NumberFormatStyleConfiguration.Notation"))
-    d["static let NumberFormatStyleConfiguration.Notation.compactName"] = .staticValue(boxOpaque(NumberFormatStyleConfiguration.Notation.compactName, typeName: "NumberFormatStyleConfiguration.Notation"))
-    d["var NumberFormatStyleConfiguration.Notation.description: String"] = .computed { receiver in
+    nonisolated(unsafe) static let numberFormatStyleConfigurationNotation: [String: Bridge] = [
+    "static let NumberFormatStyleConfiguration.Notation.scientific": .staticValue(boxOpaque(NumberFormatStyleConfiguration.Notation.scientific, typeName: "NumberFormatStyleConfiguration.Notation")),
+    "static let NumberFormatStyleConfiguration.Notation.automatic": .staticValue(boxOpaque(NumberFormatStyleConfiguration.Notation.automatic, typeName: "NumberFormatStyleConfiguration.Notation")),
+    "static let NumberFormatStyleConfiguration.Notation.compactName": .staticValue(boxOpaque(NumberFormatStyleConfiguration.Notation.compactName, typeName: "NumberFormatStyleConfiguration.Notation")),
+    "var NumberFormatStyleConfiguration.Notation.description: String": .computed { receiver in
         let recv: NumberFormatStyleConfiguration.Notation = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.Notation.self, typeName: "NumberFormatStyleConfiguration.Notation")
         return .string(recv.description)
-    }
-    d["var NumberFormatStyleConfiguration.Notation.hashValue: Int"] = .computed { receiver in
+    },
+    "var NumberFormatStyleConfiguration.Notation.hashValue: Int": .computed { receiver in
         let recv: NumberFormatStyleConfiguration.Notation = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.Notation.self, typeName: "NumberFormatStyleConfiguration.Notation")
         return .int(recv.hashValue)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let numberFormatStyleConfigurationNotation: [String: Bridge] = [:]
+}
+#endif

@@ -5,25 +5,24 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSFileCoordinatorReadingOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init NSFileCoordinator.ReadingOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let nSFileCoordinatorReadingOptions: [String: Bridge] = [
+    "init NSFileCoordinator.ReadingOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSFileCoordinator.ReadingOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(NSFileCoordinator.ReadingOptions(), typeName: "NSFileCoordinator.ReadingOptions")
-    }
-    d["var NSFileCoordinator.ReadingOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var NSFileCoordinator.ReadingOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSFileCoordinator.ReadingOptions = try unboxOpaque(receiver, as: NSFileCoordinator.ReadingOptions.self, typeName: "NSFileCoordinator.ReadingOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let NSFileCoordinator.ReadingOptions.withoutChanges"] = .staticValue(boxOpaque(NSFileCoordinator.ReadingOptions.withoutChanges, typeName: "NSFileCoordinator.ReadingOptions"))
-    d["static let NSFileCoordinator.ReadingOptions.resolvesSymbolicLink"] = .staticValue(boxOpaque(NSFileCoordinator.ReadingOptions.resolvesSymbolicLink, typeName: "NSFileCoordinator.ReadingOptions"))
-    d["static let NSFileCoordinator.ReadingOptions.immediatelyAvailableMetadataOnly"] = .staticValue(boxOpaque(NSFileCoordinator.ReadingOptions.immediatelyAvailableMetadataOnly, typeName: "NSFileCoordinator.ReadingOptions"))
-    d["static let NSFileCoordinator.ReadingOptions.forUploading"] = .staticValue(boxOpaque(NSFileCoordinator.ReadingOptions.forUploading, typeName: "NSFileCoordinator.ReadingOptions"))
-        d["init NSFileCoordinator.ReadingOptions(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let NSFileCoordinator.ReadingOptions.withoutChanges": .staticValue(boxOpaque(NSFileCoordinator.ReadingOptions.withoutChanges, typeName: "NSFileCoordinator.ReadingOptions")),
+    "static let NSFileCoordinator.ReadingOptions.resolvesSymbolicLink": .staticValue(boxOpaque(NSFileCoordinator.ReadingOptions.resolvesSymbolicLink, typeName: "NSFileCoordinator.ReadingOptions")),
+    "static let NSFileCoordinator.ReadingOptions.immediatelyAvailableMetadataOnly": .staticValue(boxOpaque(NSFileCoordinator.ReadingOptions.immediatelyAvailableMetadataOnly, typeName: "NSFileCoordinator.ReadingOptions")),
+    "static let NSFileCoordinator.ReadingOptions.forUploading": .staticValue(boxOpaque(NSFileCoordinator.ReadingOptions.forUploading, typeName: "NSFileCoordinator.ReadingOptions")),
+        "init NSFileCoordinator.ReadingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSFileCoordinator.ReadingOptions(arrayLiteral:): expected array literal")
             }
@@ -35,8 +34,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "NSFileCoordinator.ReadingOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSFileCoordinatorReadingOptions: [String: Bridge] = [:]
+}
+#endif

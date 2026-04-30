@@ -5,23 +5,22 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSDataSearchOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init NSData.SearchOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let nSDataSearchOptions: [String: Bridge] = [
+    "init NSData.SearchOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSData.SearchOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(NSData.SearchOptions(), typeName: "NSData.SearchOptions")
-    }
-    d["var NSData.SearchOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var NSData.SearchOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSData.SearchOptions = try unboxOpaque(receiver, as: NSData.SearchOptions.self, typeName: "NSData.SearchOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let NSData.SearchOptions.backwards"] = .staticValue(boxOpaque(NSData.SearchOptions.backwards, typeName: "NSData.SearchOptions"))
-    d["static let NSData.SearchOptions.anchored"] = .staticValue(boxOpaque(NSData.SearchOptions.anchored, typeName: "NSData.SearchOptions"))
-        d["init NSData.SearchOptions(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let NSData.SearchOptions.backwards": .staticValue(boxOpaque(NSData.SearchOptions.backwards, typeName: "NSData.SearchOptions")),
+    "static let NSData.SearchOptions.anchored": .staticValue(boxOpaque(NSData.SearchOptions.anchored, typeName: "NSData.SearchOptions")),
+        "init NSData.SearchOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSData.SearchOptions(arrayLiteral:): expected array literal")
             }
@@ -33,8 +32,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "NSData.SearchOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSDataSearchOptions: [String: Bridge] = [:]
+}
+#endif

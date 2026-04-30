@@ -30,12 +30,6 @@ extension FoundationBridges {
         }
         return boxOpaque(AttributedString(stringLiteral: try unboxString(args[0])), typeName: "AttributedString")
     },
-    "init AttributedString(localized:)": .`init` { args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("init AttributedString(localized:): expected 1 argument(s), got \(args.count)")
-        }
-        return boxOpaque(AttributedString(localized: try unboxOpaque(args[0], as: LocalizedStringResource.self, typeName: "LocalizedStringResource")), typeName: "AttributedString")
-    },
     "init AttributedString(_:attributes:)": .`init` { args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("init AttributedString(_:attributes:): expected 2 argument(s), got \(args.count)")

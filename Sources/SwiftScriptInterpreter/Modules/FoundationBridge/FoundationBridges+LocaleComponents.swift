@@ -5,83 +5,85 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let localeComponents: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Locale.Components.collation: Locale.Collation?"] = .computed { receiver in
+    nonisolated(unsafe) static let localeComponents: [String: Bridge] = [
+    "var Locale.Components.collation: Locale.Collation?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.collation {
             return .optional(boxOpaque(_v, typeName: "Locale.Collation"))
         }
         return .optional(nil)
-    }
-    d["var Locale.Components.currency: Locale.Currency?"] = .computed { receiver in
+    },
+    "var Locale.Components.currency: Locale.Currency?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.currency {
             return .optional(boxOpaque(_v, typeName: "Locale.Currency"))
         }
         return .optional(nil)
-    }
-    d["var Locale.Components.numberingSystem: Locale.NumberingSystem?"] = .computed { receiver in
+    },
+    "var Locale.Components.numberingSystem: Locale.NumberingSystem?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.numberingSystem {
             return .optional(boxOpaque(_v, typeName: "Locale.NumberingSystem"))
         }
         return .optional(nil)
-    }
-    d["var Locale.Components.measurementSystem: Locale.MeasurementSystem?"] = .computed { receiver in
+    },
+    "var Locale.Components.measurementSystem: Locale.MeasurementSystem?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.measurementSystem {
             return .optional(boxOpaque(_v, typeName: "Locale.MeasurementSystem"))
         }
         return .optional(nil)
-    }
-    d["var Locale.Components.region: Locale.Region?"] = .computed { receiver in
+    },
+    "var Locale.Components.region: Locale.Region?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.region {
             return .optional(boxOpaque(_v, typeName: "Locale.Region"))
         }
         return .optional(nil)
-    }
-    d["var Locale.Components.subdivision: Locale.Subdivision?"] = .computed { receiver in
+    },
+    "var Locale.Components.subdivision: Locale.Subdivision?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.subdivision {
             return .optional(boxOpaque(_v, typeName: "Locale.Subdivision"))
         }
         return .optional(nil)
-    }
-    d["var Locale.Components.timeZone: TimeZone?"] = .computed { receiver in
+    },
+    "var Locale.Components.timeZone: TimeZone?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.timeZone {
             return .optional(boxOpaque(_v, typeName: "TimeZone"))
         }
         return .optional(nil)
-    }
-    d["var Locale.Components.variant: Locale.Variant?"] = .computed { receiver in
+    },
+    "var Locale.Components.variant: Locale.Variant?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.variant {
             return .optional(boxOpaque(_v, typeName: "Locale.Variant"))
         }
         return .optional(nil)
-    }
-    d["var Locale.Components.hashValue: Int"] = .computed { receiver in
+    },
+    "var Locale.Components.hashValue: Int": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         return .int(recv.hashValue)
-    }
-    d["init Locale.Components(identifier:)"] = .`init` { args in
+    },
+    "init Locale.Components(identifier:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Components(identifier:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.Components(identifier: try unboxString(args[0])), typeName: "Locale.Components")
-    }
-    d["init Locale.Components(locale:)"] = .`init` { args in
+    },
+    "init Locale.Components(locale:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Components(locale:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.Components(locale: try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Locale.Components")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let localeComponents: [String: Bridge] = [:]
+}
+#endif

@@ -5,26 +5,25 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let fileManagerDirectoryEnumerationOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init FileManager.DirectoryEnumerationOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let fileManagerDirectoryEnumerationOptions: [String: Bridge] = [
+    "init FileManager.DirectoryEnumerationOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init FileManager.DirectoryEnumerationOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(FileManager.DirectoryEnumerationOptions(), typeName: "FileManager.DirectoryEnumerationOptions")
-    }
-    d["var FileManager.DirectoryEnumerationOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var FileManager.DirectoryEnumerationOptions.isEmpty: Bool": .computed { receiver in
         let recv: FileManager.DirectoryEnumerationOptions = try unboxOpaque(receiver, as: FileManager.DirectoryEnumerationOptions.self, typeName: "FileManager.DirectoryEnumerationOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let FileManager.DirectoryEnumerationOptions.skipsSubdirectoryDescendants"] = .staticValue(boxOpaque(FileManager.DirectoryEnumerationOptions.skipsSubdirectoryDescendants, typeName: "FileManager.DirectoryEnumerationOptions"))
-    d["static let FileManager.DirectoryEnumerationOptions.skipsPackageDescendants"] = .staticValue(boxOpaque(FileManager.DirectoryEnumerationOptions.skipsPackageDescendants, typeName: "FileManager.DirectoryEnumerationOptions"))
-    d["static let FileManager.DirectoryEnumerationOptions.skipsHiddenFiles"] = .staticValue(boxOpaque(FileManager.DirectoryEnumerationOptions.skipsHiddenFiles, typeName: "FileManager.DirectoryEnumerationOptions"))
-    d["static let FileManager.DirectoryEnumerationOptions.includesDirectoriesPostOrder"] = .staticValue(boxOpaque(FileManager.DirectoryEnumerationOptions.includesDirectoriesPostOrder, typeName: "FileManager.DirectoryEnumerationOptions"))
-    d["static let FileManager.DirectoryEnumerationOptions.producesRelativePathURLs"] = .staticValue(boxOpaque(FileManager.DirectoryEnumerationOptions.producesRelativePathURLs, typeName: "FileManager.DirectoryEnumerationOptions"))
-        d["init FileManager.DirectoryEnumerationOptions(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let FileManager.DirectoryEnumerationOptions.skipsSubdirectoryDescendants": .staticValue(boxOpaque(FileManager.DirectoryEnumerationOptions.skipsSubdirectoryDescendants, typeName: "FileManager.DirectoryEnumerationOptions")),
+    "static let FileManager.DirectoryEnumerationOptions.skipsPackageDescendants": .staticValue(boxOpaque(FileManager.DirectoryEnumerationOptions.skipsPackageDescendants, typeName: "FileManager.DirectoryEnumerationOptions")),
+    "static let FileManager.DirectoryEnumerationOptions.skipsHiddenFiles": .staticValue(boxOpaque(FileManager.DirectoryEnumerationOptions.skipsHiddenFiles, typeName: "FileManager.DirectoryEnumerationOptions")),
+    "static let FileManager.DirectoryEnumerationOptions.includesDirectoriesPostOrder": .staticValue(boxOpaque(FileManager.DirectoryEnumerationOptions.includesDirectoriesPostOrder, typeName: "FileManager.DirectoryEnumerationOptions")),
+    "static let FileManager.DirectoryEnumerationOptions.producesRelativePathURLs": .staticValue(boxOpaque(FileManager.DirectoryEnumerationOptions.producesRelativePathURLs, typeName: "FileManager.DirectoryEnumerationOptions")),
+        "init FileManager.DirectoryEnumerationOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("FileManager.DirectoryEnumerationOptions(arrayLiteral:): expected array literal")
             }
@@ -36,8 +35,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "FileManager.DirectoryEnumerationOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let fileManagerDirectoryEnumerationOptions: [String: Bridge] = [:]
+}
+#endif

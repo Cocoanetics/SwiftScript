@@ -5,25 +5,27 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let runLoopSchedulerTimeType: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var RunLoop.SchedulerTimeType.date: Date"] = .computed { receiver in
+    nonisolated(unsafe) static let runLoopSchedulerTimeType: [String: Bridge] = [
+    "var RunLoop.SchedulerTimeType.date: Date": .computed { receiver in
         let recv: RunLoop.SchedulerTimeType = try unboxOpaque(receiver, as: RunLoop.SchedulerTimeType.self, typeName: "RunLoop.SchedulerTimeType")
         return boxOpaque(recv.date, typeName: "Date")
-    }
-    d["var RunLoop.SchedulerTimeType.hashValue: Int"] = .computed { receiver in
+    },
+    "var RunLoop.SchedulerTimeType.hashValue: Int": .computed { receiver in
         let recv: RunLoop.SchedulerTimeType = try unboxOpaque(receiver, as: RunLoop.SchedulerTimeType.self, typeName: "RunLoop.SchedulerTimeType")
         return .int(recv.hashValue)
-    }
-    d["init RunLoop.SchedulerTimeType(_:)"] = .`init` { args in
+    },
+    "init RunLoop.SchedulerTimeType(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init RunLoop.SchedulerTimeType(_:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(RunLoop.SchedulerTimeType(try unboxOpaque(args[0], as: Date.self, typeName: "Date")), typeName: "RunLoop.SchedulerTimeType")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let runLoopSchedulerTimeType: [String: Bridge] = [:]
+}
+#endif

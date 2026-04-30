@@ -5,25 +5,27 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let uRLFileProtection: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var URLFileProtection.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let uRLFileProtection: [String: Bridge] = [
+    "var URLFileProtection.hashValue: Int": .computed { receiver in
         let recv: URLFileProtection = try unboxOpaque(receiver, as: URLFileProtection.self, typeName: "URLFileProtection")
         return .int(recv.hashValue)
-    }
-    d["static let URLFileProtection.none"] = .staticValue(boxOpaque(URLFileProtection.none, typeName: "URLFileProtection"))
-    d["static let URLFileProtection.complete"] = .staticValue(boxOpaque(URLFileProtection.complete, typeName: "URLFileProtection"))
-    d["static let URLFileProtection.completeUnlessOpen"] = .staticValue(boxOpaque(URLFileProtection.completeUnlessOpen, typeName: "URLFileProtection"))
-    d["static let URLFileProtection.completeUntilFirstUserAuthentication"] = .staticValue(boxOpaque(URLFileProtection.completeUntilFirstUserAuthentication, typeName: "URLFileProtection"))
-    d["init URLFileProtection(rawValue:)"] = .`init` { args in
+    },
+    "static let URLFileProtection.none": .staticValue(boxOpaque(URLFileProtection.none, typeName: "URLFileProtection")),
+    "static let URLFileProtection.complete": .staticValue(boxOpaque(URLFileProtection.complete, typeName: "URLFileProtection")),
+    "static let URLFileProtection.completeUnlessOpen": .staticValue(boxOpaque(URLFileProtection.completeUnlessOpen, typeName: "URLFileProtection")),
+    "static let URLFileProtection.completeUntilFirstUserAuthentication": .staticValue(boxOpaque(URLFileProtection.completeUntilFirstUserAuthentication, typeName: "URLFileProtection")),
+    "init URLFileProtection(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init URLFileProtection(rawValue:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(URLFileProtection(rawValue: try unboxString(args[0])), typeName: "URLFileProtection")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let uRLFileProtection: [String: Bridge] = [:]
+}
+#endif

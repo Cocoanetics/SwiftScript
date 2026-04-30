@@ -5,22 +5,21 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let attributedStringInterpolationOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init AttributedString.InterpolationOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let attributedStringInterpolationOptions: [String: Bridge] = [
+    "init AttributedString.InterpolationOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init AttributedString.InterpolationOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(AttributedString.InterpolationOptions(), typeName: "AttributedString.InterpolationOptions")
-    }
-    d["var AttributedString.InterpolationOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var AttributedString.InterpolationOptions.isEmpty: Bool": .computed { receiver in
         let recv: AttributedString.InterpolationOptions = try unboxOpaque(receiver, as: AttributedString.InterpolationOptions.self, typeName: "AttributedString.InterpolationOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let AttributedString.InterpolationOptions.insertAttributesWithoutMerging"] = .staticValue(boxOpaque(AttributedString.InterpolationOptions.insertAttributesWithoutMerging, typeName: "AttributedString.InterpolationOptions"))
-        d["init AttributedString.InterpolationOptions(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let AttributedString.InterpolationOptions.insertAttributesWithoutMerging": .staticValue(boxOpaque(AttributedString.InterpolationOptions.insertAttributesWithoutMerging, typeName: "AttributedString.InterpolationOptions")),
+        "init AttributedString.InterpolationOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("AttributedString.InterpolationOptions(arrayLiteral:): expected array literal")
             }
@@ -32,8 +31,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "AttributedString.InterpolationOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let attributedStringInterpolationOptions: [String: Bridge] = [:]
+}
+#endif

@@ -5,23 +5,25 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let uRLUbiquitousSharedItemPermissions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var URLUbiquitousSharedItemPermissions.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let uRLUbiquitousSharedItemPermissions: [String: Bridge] = [
+    "var URLUbiquitousSharedItemPermissions.hashValue: Int": .computed { receiver in
         let recv: URLUbiquitousSharedItemPermissions = try unboxOpaque(receiver, as: URLUbiquitousSharedItemPermissions.self, typeName: "URLUbiquitousSharedItemPermissions")
         return .int(recv.hashValue)
-    }
-    d["static let URLUbiquitousSharedItemPermissions.readOnly"] = .staticValue(boxOpaque(URLUbiquitousSharedItemPermissions.readOnly, typeName: "URLUbiquitousSharedItemPermissions"))
-    d["static let URLUbiquitousSharedItemPermissions.readWrite"] = .staticValue(boxOpaque(URLUbiquitousSharedItemPermissions.readWrite, typeName: "URLUbiquitousSharedItemPermissions"))
-    d["init URLUbiquitousSharedItemPermissions(rawValue:)"] = .`init` { args in
+    },
+    "static let URLUbiquitousSharedItemPermissions.readOnly": .staticValue(boxOpaque(URLUbiquitousSharedItemPermissions.readOnly, typeName: "URLUbiquitousSharedItemPermissions")),
+    "static let URLUbiquitousSharedItemPermissions.readWrite": .staticValue(boxOpaque(URLUbiquitousSharedItemPermissions.readWrite, typeName: "URLUbiquitousSharedItemPermissions")),
+    "init URLUbiquitousSharedItemPermissions(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init URLUbiquitousSharedItemPermissions(rawValue:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(URLUbiquitousSharedItemPermissions(rawValue: try unboxString(args[0])), typeName: "URLUbiquitousSharedItemPermissions")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let uRLUbiquitousSharedItemPermissions: [String: Bridge] = [:]
+}
+#endif

@@ -5,36 +5,38 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let localeVariant: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Locale.Variant.identifier: String"] = .computed { receiver in
+    nonisolated(unsafe) static let localeVariant: [String: Bridge] = [
+    "var Locale.Variant.identifier: String": .computed { receiver in
         let recv: Locale.Variant = try unboxOpaque(receiver, as: Locale.Variant.self, typeName: "Locale.Variant")
         return .string(recv.identifier)
-    }
-    d["var Locale.Variant.debugDescription: String"] = .computed { receiver in
+    },
+    "var Locale.Variant.debugDescription: String": .computed { receiver in
         let recv: Locale.Variant = try unboxOpaque(receiver, as: Locale.Variant.self, typeName: "Locale.Variant")
         return .string(recv.debugDescription)
-    }
-    d["static let Locale.Variant.posix"] = .staticValue(boxOpaque(Locale.Variant.posix, typeName: "Locale.Variant"))
-    d["var Locale.Variant.hashValue: Int"] = .computed { receiver in
+    },
+    "static let Locale.Variant.posix": .staticValue(boxOpaque(Locale.Variant.posix, typeName: "Locale.Variant")),
+    "var Locale.Variant.hashValue: Int": .computed { receiver in
         let recv: Locale.Variant = try unboxOpaque(receiver, as: Locale.Variant.self, typeName: "Locale.Variant")
         return .int(recv.hashValue)
-    }
-    d["init Locale.Variant(stringLiteral:)"] = .`init` { args in
+    },
+    "init Locale.Variant(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Variant(stringLiteral:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.Variant(stringLiteral: try unboxString(args[0])), typeName: "Locale.Variant")
-    }
-    d["init Locale.Variant(_:)"] = .`init` { args in
+    },
+    "init Locale.Variant(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Variant(_:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.Variant(try unboxString(args[0])), typeName: "Locale.Variant")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let localeVariant: [String: Bridge] = [:]
+}
+#endif

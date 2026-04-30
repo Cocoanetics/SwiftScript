@@ -5,17 +5,19 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let propertyListDecoder: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init PropertyListDecoder()"] = .`init` { args in
+    nonisolated(unsafe) static let propertyListDecoder: [String: Bridge] = [
+    "init PropertyListDecoder()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init PropertyListDecoder(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(PropertyListDecoder(), typeName: "PropertyListDecoder")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let propertyListDecoder: [String: Bridge] = [:]
+}
+#endif

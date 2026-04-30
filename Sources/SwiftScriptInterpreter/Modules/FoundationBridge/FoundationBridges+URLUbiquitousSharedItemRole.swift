@@ -5,23 +5,25 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let uRLUbiquitousSharedItemRole: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var URLUbiquitousSharedItemRole.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let uRLUbiquitousSharedItemRole: [String: Bridge] = [
+    "var URLUbiquitousSharedItemRole.hashValue: Int": .computed { receiver in
         let recv: URLUbiquitousSharedItemRole = try unboxOpaque(receiver, as: URLUbiquitousSharedItemRole.self, typeName: "URLUbiquitousSharedItemRole")
         return .int(recv.hashValue)
-    }
-    d["static let URLUbiquitousSharedItemRole.owner"] = .staticValue(boxOpaque(URLUbiquitousSharedItemRole.owner, typeName: "URLUbiquitousSharedItemRole"))
-    d["static let URLUbiquitousSharedItemRole.participant"] = .staticValue(boxOpaque(URLUbiquitousSharedItemRole.participant, typeName: "URLUbiquitousSharedItemRole"))
-    d["init URLUbiquitousSharedItemRole(rawValue:)"] = .`init` { args in
+    },
+    "static let URLUbiquitousSharedItemRole.owner": .staticValue(boxOpaque(URLUbiquitousSharedItemRole.owner, typeName: "URLUbiquitousSharedItemRole")),
+    "static let URLUbiquitousSharedItemRole.participant": .staticValue(boxOpaque(URLUbiquitousSharedItemRole.participant, typeName: "URLUbiquitousSharedItemRole")),
+    "init URLUbiquitousSharedItemRole(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init URLUbiquitousSharedItemRole(rawValue:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(URLUbiquitousSharedItemRole(rawValue: try unboxString(args[0])), typeName: "URLUbiquitousSharedItemRole")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let uRLUbiquitousSharedItemRole: [String: Bridge] = [:]
+}
+#endif

@@ -5,22 +5,21 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSDataBase64DecodingOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init NSData.Base64DecodingOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let nSDataBase64DecodingOptions: [String: Bridge] = [
+    "init NSData.Base64DecodingOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSData.Base64DecodingOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(NSData.Base64DecodingOptions(), typeName: "NSData.Base64DecodingOptions")
-    }
-    d["var NSData.Base64DecodingOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var NSData.Base64DecodingOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSData.Base64DecodingOptions = try unboxOpaque(receiver, as: NSData.Base64DecodingOptions.self, typeName: "NSData.Base64DecodingOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let NSData.Base64DecodingOptions.ignoreUnknownCharacters"] = .staticValue(boxOpaque(NSData.Base64DecodingOptions.ignoreUnknownCharacters, typeName: "NSData.Base64DecodingOptions"))
-        d["init NSData.Base64DecodingOptions(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let NSData.Base64DecodingOptions.ignoreUnknownCharacters": .staticValue(boxOpaque(NSData.Base64DecodingOptions.ignoreUnknownCharacters, typeName: "NSData.Base64DecodingOptions")),
+        "init NSData.Base64DecodingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSData.Base64DecodingOptions(arrayLiteral:): expected array literal")
             }
@@ -32,8 +31,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "NSData.Base64DecodingOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSDataBase64DecodingOptions: [String: Bridge] = [:]
+}
+#endif

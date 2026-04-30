@@ -5,26 +5,28 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSKeyValueChangeKey: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var NSKeyValueChangeKey.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let nSKeyValueChangeKey: [String: Bridge] = [
+    "var NSKeyValueChangeKey.hashValue: Int": .computed { receiver in
         let recv: NSKeyValueChangeKey = try unboxOpaque(receiver, as: NSKeyValueChangeKey.self, typeName: "NSKeyValueChangeKey")
         return .int(recv.hashValue)
-    }
-    d["static let NSKeyValueChangeKey.kindKey"] = .staticValue(boxOpaque(NSKeyValueChangeKey.kindKey, typeName: "NSKeyValueChangeKey"))
-    d["static let NSKeyValueChangeKey.newKey"] = .staticValue(boxOpaque(NSKeyValueChangeKey.newKey, typeName: "NSKeyValueChangeKey"))
-    d["static let NSKeyValueChangeKey.oldKey"] = .staticValue(boxOpaque(NSKeyValueChangeKey.oldKey, typeName: "NSKeyValueChangeKey"))
-    d["static let NSKeyValueChangeKey.indexesKey"] = .staticValue(boxOpaque(NSKeyValueChangeKey.indexesKey, typeName: "NSKeyValueChangeKey"))
-    d["static let NSKeyValueChangeKey.notificationIsPriorKey"] = .staticValue(boxOpaque(NSKeyValueChangeKey.notificationIsPriorKey, typeName: "NSKeyValueChangeKey"))
-    d["init NSKeyValueChangeKey(rawValue:)"] = .`init` { args in
+    },
+    "static let NSKeyValueChangeKey.kindKey": .staticValue(boxOpaque(NSKeyValueChangeKey.kindKey, typeName: "NSKeyValueChangeKey")),
+    "static let NSKeyValueChangeKey.newKey": .staticValue(boxOpaque(NSKeyValueChangeKey.newKey, typeName: "NSKeyValueChangeKey")),
+    "static let NSKeyValueChangeKey.oldKey": .staticValue(boxOpaque(NSKeyValueChangeKey.oldKey, typeName: "NSKeyValueChangeKey")),
+    "static let NSKeyValueChangeKey.indexesKey": .staticValue(boxOpaque(NSKeyValueChangeKey.indexesKey, typeName: "NSKeyValueChangeKey")),
+    "static let NSKeyValueChangeKey.notificationIsPriorKey": .staticValue(boxOpaque(NSKeyValueChangeKey.notificationIsPriorKey, typeName: "NSKeyValueChangeKey")),
+    "init NSKeyValueChangeKey(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init NSKeyValueChangeKey(rawValue:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(NSKeyValueChangeKey(rawValue: try unboxString(args[0])), typeName: "NSKeyValueChangeKey")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSKeyValueChangeKey: [String: Bridge] = [:]
+}
+#endif

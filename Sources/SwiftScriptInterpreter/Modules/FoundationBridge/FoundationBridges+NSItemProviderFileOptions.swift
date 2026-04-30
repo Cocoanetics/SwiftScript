@@ -5,98 +5,97 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSItemProviderFileOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init NSItemProviderFileOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let nSItemProviderFileOptions: [String: Bridge] = [
+    "init NSItemProviderFileOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSItemProviderFileOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(NSItemProviderFileOptions(), typeName: "NSItemProviderFileOptions")
-    }
-    d["var NSItemProviderFileOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var NSItemProviderFileOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSItemProviderFileOptions = try unboxOpaque(receiver, as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let NSItemProviderFileOptions.openInPlace"] = .staticValue(boxOpaque(NSItemProviderFileOptions.openInPlace, typeName: "NSItemProviderFileOptions"))
-    d["func NSItemProviderFileOptions.union()"] = .method { receiver, args in
+    },
+    "static let NSItemProviderFileOptions.openInPlace": .staticValue(boxOpaque(NSItemProviderFileOptions.openInPlace, typeName: "NSItemProviderFileOptions")),
+    "func NSItemProviderFileOptions.union()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSItemProviderFileOptions.union: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSItemProviderFileOptions = try unboxOpaque(receiver, as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")
         return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")), typeName: "NSItemProviderFileOptions")
-    }
-    d["func NSItemProviderFileOptions.intersection()"] = .method { receiver, args in
+    },
+    "func NSItemProviderFileOptions.intersection()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSItemProviderFileOptions.intersection: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSItemProviderFileOptions = try unboxOpaque(receiver, as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")
         return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")), typeName: "NSItemProviderFileOptions")
-    }
-    d["func NSItemProviderFileOptions.symmetricDifference()"] = .method { receiver, args in
+    },
+    "func NSItemProviderFileOptions.symmetricDifference()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSItemProviderFileOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSItemProviderFileOptions = try unboxOpaque(receiver, as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")
         return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")), typeName: "NSItemProviderFileOptions")
-    }
-    d["func NSItemProviderFileOptions.contains()"] = .method { receiver, args in
+    },
+    "func NSItemProviderFileOptions.contains()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSItemProviderFileOptions.contains: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSItemProviderFileOptions = try unboxOpaque(receiver, as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")
         return .bool(recv.contains(try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")))
-    }
-    d["func NSItemProviderFileOptions.isSubset()"] = .method { receiver, args in
+    },
+    "func NSItemProviderFileOptions.isSubset()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSItemProviderFileOptions.isSubset: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSItemProviderFileOptions = try unboxOpaque(receiver, as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")
         return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")))
-    }
-    d["func NSItemProviderFileOptions.isSuperset()"] = .method { receiver, args in
+    },
+    "func NSItemProviderFileOptions.isSuperset()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSItemProviderFileOptions.isSuperset: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSItemProviderFileOptions = try unboxOpaque(receiver, as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")
         return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")))
-    }
-    d["func NSItemProviderFileOptions.isDisjoint()"] = .method { receiver, args in
+    },
+    "func NSItemProviderFileOptions.isDisjoint()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSItemProviderFileOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSItemProviderFileOptions = try unboxOpaque(receiver, as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")
         return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")))
-    }
-    d["func NSItemProviderFileOptions.subtracting()"] = .method { receiver, args in
+    },
+    "func NSItemProviderFileOptions.subtracting()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSItemProviderFileOptions.subtracting: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSItemProviderFileOptions = try unboxOpaque(receiver, as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")
         return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")), typeName: "NSItemProviderFileOptions")
-    }
-    d["func NSItemProviderFileOptions.isStrictSuperset()"] = .method { receiver, args in
+    },
+    "func NSItemProviderFileOptions.isStrictSuperset()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSItemProviderFileOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSItemProviderFileOptions = try unboxOpaque(receiver, as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")
         return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")))
-    }
-    d["func NSItemProviderFileOptions.isStrictSubset()"] = .method { receiver, args in
+    },
+    "func NSItemProviderFileOptions.isStrictSubset()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSItemProviderFileOptions.isStrictSubset: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSItemProviderFileOptions = try unboxOpaque(receiver, as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")
         return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSItemProviderFileOptions.self, typeName: "NSItemProviderFileOptions")))
-    }
-    d["init NSItemProviderFileOptions(rawValue:)"] = .`init` { args in
+    },
+    "init NSItemProviderFileOptions(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init NSItemProviderFileOptions(rawValue:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(NSItemProviderFileOptions(rawValue: try unboxInt(args[0])), typeName: "NSItemProviderFileOptions")
-    }
-        d["init NSItemProviderFileOptions(arrayLiteral:)"] = .`init` { args in
+    },
+        "init NSItemProviderFileOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSItemProviderFileOptions(arrayLiteral:): expected array literal")
             }
@@ -108,8 +107,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "NSItemProviderFileOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSItemProviderFileOptions: [String: Bridge] = [:]
+}
+#endif

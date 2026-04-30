@@ -5,51 +5,53 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let duration: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["func Duration.formatted()"] = .method { receiver, args in
+    nonisolated(unsafe) static let duration: [String: Bridge] = [
+    "func Duration.formatted()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("Duration.formatted: expected 0 argument(s), got \(args.count)")
         }
         let recv: Duration = try unboxOpaque(receiver, as: Duration.self, typeName: "Duration")
         return .string(recv.formatted())
-    }
-    d["var Duration.hashValue: Int"] = .computed { receiver in
+    },
+    "var Duration.hashValue: Int": .computed { receiver in
         let recv: Duration = try unboxOpaque(receiver, as: Duration.self, typeName: "Duration")
         return .int(recv.hashValue)
-    }
-    d["static let Duration.zero"] = .staticValue(boxOpaque(Duration.zero, typeName: "Duration"))
-    d["var Duration.description: String"] = .computed { receiver in
+    },
+    "static let Duration.zero": .staticValue(boxOpaque(Duration.zero, typeName: "Duration")),
+    "var Duration.description: String": .computed { receiver in
         let recv: Duration = try unboxOpaque(receiver, as: Duration.self, typeName: "Duration")
         return .string(recv.description)
-    }
-    d["static func Duration.seconds()"] = .staticMethod { args in
+    },
+    "static func Duration.seconds()": .staticMethod { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Duration.seconds: expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Duration.seconds(try toDouble(args[0])), typeName: "Duration")
-    }
-    d["static func Duration.milliseconds()"] = .staticMethod { args in
+    },
+    "static func Duration.milliseconds()": .staticMethod { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Duration.milliseconds: expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Duration.milliseconds(try toDouble(args[0])), typeName: "Duration")
-    }
-    d["static func Duration.microseconds()"] = .staticMethod { args in
+    },
+    "static func Duration.microseconds()": .staticMethod { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Duration.microseconds: expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Duration.microseconds(try toDouble(args[0])), typeName: "Duration")
-    }
-    d["static func Duration.nanoseconds()"] = .staticMethod { args in
+    },
+    "static func Duration.nanoseconds()": .staticMethod { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Duration.nanoseconds: expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Duration.nanoseconds(try toDouble(args[0])), typeName: "Duration")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let duration: [String: Bridge] = [:]
+}
+#endif

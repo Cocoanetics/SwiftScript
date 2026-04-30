@@ -5,24 +5,23 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSURLBookmarkResolutionOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init NSURL.BookmarkResolutionOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let nSURLBookmarkResolutionOptions: [String: Bridge] = [
+    "init NSURL.BookmarkResolutionOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSURL.BookmarkResolutionOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(NSURL.BookmarkResolutionOptions(), typeName: "NSURL.BookmarkResolutionOptions")
-    }
-    d["var NSURL.BookmarkResolutionOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var NSURL.BookmarkResolutionOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSURL.BookmarkResolutionOptions = try unboxOpaque(receiver, as: NSURL.BookmarkResolutionOptions.self, typeName: "NSURL.BookmarkResolutionOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let NSURL.BookmarkResolutionOptions.withoutUI"] = .staticValue(boxOpaque(NSURL.BookmarkResolutionOptions.withoutUI, typeName: "NSURL.BookmarkResolutionOptions"))
-    d["static let NSURL.BookmarkResolutionOptions.withoutMounting"] = .staticValue(boxOpaque(NSURL.BookmarkResolutionOptions.withoutMounting, typeName: "NSURL.BookmarkResolutionOptions"))
-    d["static let NSURL.BookmarkResolutionOptions.withoutImplicitStartAccessing"] = .staticValue(boxOpaque(NSURL.BookmarkResolutionOptions.withoutImplicitStartAccessing, typeName: "NSURL.BookmarkResolutionOptions"))
-        d["init NSURL.BookmarkResolutionOptions(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let NSURL.BookmarkResolutionOptions.withoutUI": .staticValue(boxOpaque(NSURL.BookmarkResolutionOptions.withoutUI, typeName: "NSURL.BookmarkResolutionOptions")),
+    "static let NSURL.BookmarkResolutionOptions.withoutMounting": .staticValue(boxOpaque(NSURL.BookmarkResolutionOptions.withoutMounting, typeName: "NSURL.BookmarkResolutionOptions")),
+    "static let NSURL.BookmarkResolutionOptions.withoutImplicitStartAccessing": .staticValue(boxOpaque(NSURL.BookmarkResolutionOptions.withoutImplicitStartAccessing, typeName: "NSURL.BookmarkResolutionOptions")),
+        "init NSURL.BookmarkResolutionOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSURL.BookmarkResolutionOptions(arrayLiteral:): expected array literal")
             }
@@ -34,8 +33,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "NSURL.BookmarkResolutionOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSURLBookmarkResolutionOptions: [String: Bridge] = [:]
+}
+#endif

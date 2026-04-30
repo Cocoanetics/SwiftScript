@@ -5,30 +5,29 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSStringCompareOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init NSString.CompareOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let nSStringCompareOptions: [String: Bridge] = [
+    "init NSString.CompareOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSString.CompareOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(NSString.CompareOptions(), typeName: "NSString.CompareOptions")
-    }
-    d["var NSString.CompareOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var NSString.CompareOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSString.CompareOptions = try unboxOpaque(receiver, as: NSString.CompareOptions.self, typeName: "NSString.CompareOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let NSString.CompareOptions.caseInsensitive"] = .staticValue(boxOpaque(NSString.CompareOptions.caseInsensitive, typeName: "NSString.CompareOptions"))
-    d["static let NSString.CompareOptions.literal"] = .staticValue(boxOpaque(NSString.CompareOptions.literal, typeName: "NSString.CompareOptions"))
-    d["static let NSString.CompareOptions.backwards"] = .staticValue(boxOpaque(NSString.CompareOptions.backwards, typeName: "NSString.CompareOptions"))
-    d["static let NSString.CompareOptions.anchored"] = .staticValue(boxOpaque(NSString.CompareOptions.anchored, typeName: "NSString.CompareOptions"))
-    d["static let NSString.CompareOptions.numeric"] = .staticValue(boxOpaque(NSString.CompareOptions.numeric, typeName: "NSString.CompareOptions"))
-    d["static let NSString.CompareOptions.diacriticInsensitive"] = .staticValue(boxOpaque(NSString.CompareOptions.diacriticInsensitive, typeName: "NSString.CompareOptions"))
-    d["static let NSString.CompareOptions.widthInsensitive"] = .staticValue(boxOpaque(NSString.CompareOptions.widthInsensitive, typeName: "NSString.CompareOptions"))
-    d["static let NSString.CompareOptions.forcedOrdering"] = .staticValue(boxOpaque(NSString.CompareOptions.forcedOrdering, typeName: "NSString.CompareOptions"))
-    d["static let NSString.CompareOptions.regularExpression"] = .staticValue(boxOpaque(NSString.CompareOptions.regularExpression, typeName: "NSString.CompareOptions"))
-        d["init NSString.CompareOptions(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let NSString.CompareOptions.caseInsensitive": .staticValue(boxOpaque(NSString.CompareOptions.caseInsensitive, typeName: "NSString.CompareOptions")),
+    "static let NSString.CompareOptions.literal": .staticValue(boxOpaque(NSString.CompareOptions.literal, typeName: "NSString.CompareOptions")),
+    "static let NSString.CompareOptions.backwards": .staticValue(boxOpaque(NSString.CompareOptions.backwards, typeName: "NSString.CompareOptions")),
+    "static let NSString.CompareOptions.anchored": .staticValue(boxOpaque(NSString.CompareOptions.anchored, typeName: "NSString.CompareOptions")),
+    "static let NSString.CompareOptions.numeric": .staticValue(boxOpaque(NSString.CompareOptions.numeric, typeName: "NSString.CompareOptions")),
+    "static let NSString.CompareOptions.diacriticInsensitive": .staticValue(boxOpaque(NSString.CompareOptions.diacriticInsensitive, typeName: "NSString.CompareOptions")),
+    "static let NSString.CompareOptions.widthInsensitive": .staticValue(boxOpaque(NSString.CompareOptions.widthInsensitive, typeName: "NSString.CompareOptions")),
+    "static let NSString.CompareOptions.forcedOrdering": .staticValue(boxOpaque(NSString.CompareOptions.forcedOrdering, typeName: "NSString.CompareOptions")),
+    "static let NSString.CompareOptions.regularExpression": .staticValue(boxOpaque(NSString.CompareOptions.regularExpression, typeName: "NSString.CompareOptions")),
+        "init NSString.CompareOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSString.CompareOptions(arrayLiteral:): expected array literal")
             }
@@ -40,8 +39,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "NSString.CompareOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSStringCompareOptions: [String: Bridge] = [:]
+}
+#endif

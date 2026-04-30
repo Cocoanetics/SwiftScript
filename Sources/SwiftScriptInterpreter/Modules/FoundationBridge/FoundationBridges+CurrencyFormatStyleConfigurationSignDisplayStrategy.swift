@@ -5,30 +5,32 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let currencyFormatStyleConfigurationSignDisplayStrategy: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["static let CurrencyFormatStyleConfiguration.SignDisplayStrategy.automatic"] = .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.SignDisplayStrategy.automatic, typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy"))
-    d["static let CurrencyFormatStyleConfiguration.SignDisplayStrategy.never"] = .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.SignDisplayStrategy.never, typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy"))
-    d["static let CurrencyFormatStyleConfiguration.SignDisplayStrategy.accounting"] = .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.SignDisplayStrategy.accounting, typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy"))
-    d["var CurrencyFormatStyleConfiguration.SignDisplayStrategy.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let currencyFormatStyleConfigurationSignDisplayStrategy: [String: Bridge] = [
+    "static let CurrencyFormatStyleConfiguration.SignDisplayStrategy.automatic": .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.SignDisplayStrategy.automatic, typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy")),
+    "static let CurrencyFormatStyleConfiguration.SignDisplayStrategy.never": .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.SignDisplayStrategy.never, typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy")),
+    "static let CurrencyFormatStyleConfiguration.SignDisplayStrategy.accounting": .staticValue(boxOpaque(CurrencyFormatStyleConfiguration.SignDisplayStrategy.accounting, typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy")),
+    "var CurrencyFormatStyleConfiguration.SignDisplayStrategy.hashValue: Int": .computed { receiver in
         let recv: CurrencyFormatStyleConfiguration.SignDisplayStrategy = try unboxOpaque(receiver, as: CurrencyFormatStyleConfiguration.SignDisplayStrategy.self, typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy")
         return .int(recv.hashValue)
-    }
-    d["static func CurrencyFormatStyleConfiguration.SignDisplayStrategy.always()"] = .staticMethod { args in
+    },
+    "static func CurrencyFormatStyleConfiguration.SignDisplayStrategy.always()": .staticMethod { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("CurrencyFormatStyleConfiguration.SignDisplayStrategy.always: expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(CurrencyFormatStyleConfiguration.SignDisplayStrategy.always(showZero: try unboxBool(args[0])), typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy")
-    }
-    d["static func CurrencyFormatStyleConfiguration.SignDisplayStrategy.accountingAlways()"] = .staticMethod { args in
+    },
+    "static func CurrencyFormatStyleConfiguration.SignDisplayStrategy.accountingAlways()": .staticMethod { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("CurrencyFormatStyleConfiguration.SignDisplayStrategy.accountingAlways: expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(CurrencyFormatStyleConfiguration.SignDisplayStrategy.accountingAlways(showZero: try unboxBool(args[0])), typeName: "CurrencyFormatStyleConfiguration.SignDisplayStrategy")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let currencyFormatStyleConfigurationSignDisplayStrategy: [String: Bridge] = [:]
+}
+#endif

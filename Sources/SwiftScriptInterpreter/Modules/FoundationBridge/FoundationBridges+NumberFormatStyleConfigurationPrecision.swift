@@ -5,39 +5,41 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let numberFormatStyleConfigurationPrecision: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var NumberFormatStyleConfiguration.Precision.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let numberFormatStyleConfigurationPrecision: [String: Bridge] = [
+    "var NumberFormatStyleConfiguration.Precision.hashValue: Int": .computed { receiver in
         let recv: NumberFormatStyleConfiguration.Precision = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.Precision.self, typeName: "NumberFormatStyleConfiguration.Precision")
         return .int(recv.hashValue)
-    }
-    d["static func NumberFormatStyleConfiguration.Precision.significantDigits()"] = .staticMethod { args in
+    },
+    "static func NumberFormatStyleConfiguration.Precision.significantDigits()": .staticMethod { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NumberFormatStyleConfiguration.Precision.significantDigits: expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(NumberFormatStyleConfiguration.Precision.significantDigits(try unboxInt(args[0])), typeName: "NumberFormatStyleConfiguration.Precision")
-    }
-    d["static func NumberFormatStyleConfiguration.Precision.integerLength()"] = .staticMethod { args in
+    },
+    "static func NumberFormatStyleConfiguration.Precision.integerLength()": .staticMethod { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NumberFormatStyleConfiguration.Precision.integerLength: expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(NumberFormatStyleConfiguration.Precision.integerLength(try unboxInt(args[0])), typeName: "NumberFormatStyleConfiguration.Precision")
-    }
-    d["static func NumberFormatStyleConfiguration.Precision.fractionLength()"] = .staticMethod { args in
+    },
+    "static func NumberFormatStyleConfiguration.Precision.fractionLength()": .staticMethod { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NumberFormatStyleConfiguration.Precision.fractionLength: expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(NumberFormatStyleConfiguration.Precision.fractionLength(try unboxInt(args[0])), typeName: "NumberFormatStyleConfiguration.Precision")
-    }
-    d["static func NumberFormatStyleConfiguration.Precision.integerAndFractionLength()"] = .staticMethod { args in
+    },
+    "static func NumberFormatStyleConfiguration.Precision.integerAndFractionLength()": .staticMethod { args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("NumberFormatStyleConfiguration.Precision.integerAndFractionLength: expected 2 argument(s), got \(args.count)")
         }
         return boxOpaque(NumberFormatStyleConfiguration.Precision.integerAndFractionLength(integer: try unboxInt(args[0]), fraction: try unboxInt(args[1])), typeName: "NumberFormatStyleConfiguration.Precision")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let numberFormatStyleConfigurationPrecision: [String: Bridge] = [:]
+}
+#endif

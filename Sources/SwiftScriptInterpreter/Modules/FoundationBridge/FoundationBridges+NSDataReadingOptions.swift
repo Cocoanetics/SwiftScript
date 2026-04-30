@@ -5,27 +5,26 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSDataReadingOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init NSData.ReadingOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let nSDataReadingOptions: [String: Bridge] = [
+    "init NSData.ReadingOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSData.ReadingOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(NSData.ReadingOptions(), typeName: "NSData.ReadingOptions")
-    }
-    d["var NSData.ReadingOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var NSData.ReadingOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSData.ReadingOptions = try unboxOpaque(receiver, as: NSData.ReadingOptions.self, typeName: "NSData.ReadingOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let NSData.ReadingOptions.mappedIfSafe"] = .staticValue(boxOpaque(NSData.ReadingOptions.mappedIfSafe, typeName: "NSData.ReadingOptions"))
-    d["static let NSData.ReadingOptions.uncached"] = .staticValue(boxOpaque(NSData.ReadingOptions.uncached, typeName: "NSData.ReadingOptions"))
-    d["static let NSData.ReadingOptions.alwaysMapped"] = .staticValue(boxOpaque(NSData.ReadingOptions.alwaysMapped, typeName: "NSData.ReadingOptions"))
-    d["static let NSData.ReadingOptions.dataReadingMapped"] = .staticValue(boxOpaque(NSData.ReadingOptions.dataReadingMapped, typeName: "NSData.ReadingOptions"))
-    d["static let NSData.ReadingOptions.mappedRead"] = .staticValue(boxOpaque(NSData.ReadingOptions.mappedRead, typeName: "NSData.ReadingOptions"))
-    d["static let NSData.ReadingOptions.uncachedRead"] = .staticValue(boxOpaque(NSData.ReadingOptions.uncachedRead, typeName: "NSData.ReadingOptions"))
-        d["init NSData.ReadingOptions(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let NSData.ReadingOptions.mappedIfSafe": .staticValue(boxOpaque(NSData.ReadingOptions.mappedIfSafe, typeName: "NSData.ReadingOptions")),
+    "static let NSData.ReadingOptions.uncached": .staticValue(boxOpaque(NSData.ReadingOptions.uncached, typeName: "NSData.ReadingOptions")),
+    "static let NSData.ReadingOptions.alwaysMapped": .staticValue(boxOpaque(NSData.ReadingOptions.alwaysMapped, typeName: "NSData.ReadingOptions")),
+    "static let NSData.ReadingOptions.dataReadingMapped": .staticValue(boxOpaque(NSData.ReadingOptions.dataReadingMapped, typeName: "NSData.ReadingOptions")),
+    "static let NSData.ReadingOptions.mappedRead": .staticValue(boxOpaque(NSData.ReadingOptions.mappedRead, typeName: "NSData.ReadingOptions")),
+    "static let NSData.ReadingOptions.uncachedRead": .staticValue(boxOpaque(NSData.ReadingOptions.uncachedRead, typeName: "NSData.ReadingOptions")),
+        "init NSData.ReadingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSData.ReadingOptions(arrayLiteral:): expected array literal")
             }
@@ -37,8 +36,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "NSData.ReadingOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSDataReadingOptions: [String: Bridge] = [:]
+}
+#endif

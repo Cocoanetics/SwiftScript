@@ -5,27 +5,29 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let numberFormatStyleConfigurationSignDisplayStrategy: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["static let NumberFormatStyleConfiguration.SignDisplayStrategy.automatic"] = .staticValue(boxOpaque(NumberFormatStyleConfiguration.SignDisplayStrategy.automatic, typeName: "NumberFormatStyleConfiguration.SignDisplayStrategy"))
-    d["static let NumberFormatStyleConfiguration.SignDisplayStrategy.never"] = .staticValue(boxOpaque(NumberFormatStyleConfiguration.SignDisplayStrategy.never, typeName: "NumberFormatStyleConfiguration.SignDisplayStrategy"))
-    d["var NumberFormatStyleConfiguration.SignDisplayStrategy.description: String"] = .computed { receiver in
+    nonisolated(unsafe) static let numberFormatStyleConfigurationSignDisplayStrategy: [String: Bridge] = [
+    "static let NumberFormatStyleConfiguration.SignDisplayStrategy.automatic": .staticValue(boxOpaque(NumberFormatStyleConfiguration.SignDisplayStrategy.automatic, typeName: "NumberFormatStyleConfiguration.SignDisplayStrategy")),
+    "static let NumberFormatStyleConfiguration.SignDisplayStrategy.never": .staticValue(boxOpaque(NumberFormatStyleConfiguration.SignDisplayStrategy.never, typeName: "NumberFormatStyleConfiguration.SignDisplayStrategy")),
+    "var NumberFormatStyleConfiguration.SignDisplayStrategy.description: String": .computed { receiver in
         let recv: NumberFormatStyleConfiguration.SignDisplayStrategy = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.SignDisplayStrategy.self, typeName: "NumberFormatStyleConfiguration.SignDisplayStrategy")
         return .string(recv.description)
-    }
-    d["var NumberFormatStyleConfiguration.SignDisplayStrategy.hashValue: Int"] = .computed { receiver in
+    },
+    "var NumberFormatStyleConfiguration.SignDisplayStrategy.hashValue: Int": .computed { receiver in
         let recv: NumberFormatStyleConfiguration.SignDisplayStrategy = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.SignDisplayStrategy.self, typeName: "NumberFormatStyleConfiguration.SignDisplayStrategy")
         return .int(recv.hashValue)
-    }
-    d["static func NumberFormatStyleConfiguration.SignDisplayStrategy.always()"] = .staticMethod { args in
+    },
+    "static func NumberFormatStyleConfiguration.SignDisplayStrategy.always()": .staticMethod { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NumberFormatStyleConfiguration.SignDisplayStrategy.always: expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(NumberFormatStyleConfiguration.SignDisplayStrategy.always(includingZero: try unboxBool(args[0])), typeName: "NumberFormatStyleConfiguration.SignDisplayStrategy")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let numberFormatStyleConfigurationSignDisplayStrategy: [String: Bridge] = [:]
+}
+#endif

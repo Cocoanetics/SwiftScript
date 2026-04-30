@@ -5,32 +5,34 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSKeyValueOperator: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var NSKeyValueOperator.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let nSKeyValueOperator: [String: Bridge] = [
+    "var NSKeyValueOperator.hashValue: Int": .computed { receiver in
         let recv: NSKeyValueOperator = try unboxOpaque(receiver, as: NSKeyValueOperator.self, typeName: "NSKeyValueOperator")
         return .int(recv.hashValue)
-    }
-    d["static let NSKeyValueOperator.averageKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.averageKeyValueOperator, typeName: "NSKeyValueOperator"))
-    d["static let NSKeyValueOperator.countKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.countKeyValueOperator, typeName: "NSKeyValueOperator"))
-    d["static let NSKeyValueOperator.distinctUnionOfArraysKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.distinctUnionOfArraysKeyValueOperator, typeName: "NSKeyValueOperator"))
-    d["static let NSKeyValueOperator.distinctUnionOfObjectsKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.distinctUnionOfObjectsKeyValueOperator, typeName: "NSKeyValueOperator"))
-    d["static let NSKeyValueOperator.distinctUnionOfSetsKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.distinctUnionOfSetsKeyValueOperator, typeName: "NSKeyValueOperator"))
-    d["static let NSKeyValueOperator.maximumKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.maximumKeyValueOperator, typeName: "NSKeyValueOperator"))
-    d["static let NSKeyValueOperator.minimumKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.minimumKeyValueOperator, typeName: "NSKeyValueOperator"))
-    d["static let NSKeyValueOperator.sumKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.sumKeyValueOperator, typeName: "NSKeyValueOperator"))
-    d["static let NSKeyValueOperator.unionOfArraysKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.unionOfArraysKeyValueOperator, typeName: "NSKeyValueOperator"))
-    d["static let NSKeyValueOperator.unionOfObjectsKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.unionOfObjectsKeyValueOperator, typeName: "NSKeyValueOperator"))
-    d["static let NSKeyValueOperator.unionOfSetsKeyValueOperator"] = .staticValue(boxOpaque(NSKeyValueOperator.unionOfSetsKeyValueOperator, typeName: "NSKeyValueOperator"))
-    d["init NSKeyValueOperator(rawValue:)"] = .`init` { args in
+    },
+    "static let NSKeyValueOperator.averageKeyValueOperator": .staticValue(boxOpaque(NSKeyValueOperator.averageKeyValueOperator, typeName: "NSKeyValueOperator")),
+    "static let NSKeyValueOperator.countKeyValueOperator": .staticValue(boxOpaque(NSKeyValueOperator.countKeyValueOperator, typeName: "NSKeyValueOperator")),
+    "static let NSKeyValueOperator.distinctUnionOfArraysKeyValueOperator": .staticValue(boxOpaque(NSKeyValueOperator.distinctUnionOfArraysKeyValueOperator, typeName: "NSKeyValueOperator")),
+    "static let NSKeyValueOperator.distinctUnionOfObjectsKeyValueOperator": .staticValue(boxOpaque(NSKeyValueOperator.distinctUnionOfObjectsKeyValueOperator, typeName: "NSKeyValueOperator")),
+    "static let NSKeyValueOperator.distinctUnionOfSetsKeyValueOperator": .staticValue(boxOpaque(NSKeyValueOperator.distinctUnionOfSetsKeyValueOperator, typeName: "NSKeyValueOperator")),
+    "static let NSKeyValueOperator.maximumKeyValueOperator": .staticValue(boxOpaque(NSKeyValueOperator.maximumKeyValueOperator, typeName: "NSKeyValueOperator")),
+    "static let NSKeyValueOperator.minimumKeyValueOperator": .staticValue(boxOpaque(NSKeyValueOperator.minimumKeyValueOperator, typeName: "NSKeyValueOperator")),
+    "static let NSKeyValueOperator.sumKeyValueOperator": .staticValue(boxOpaque(NSKeyValueOperator.sumKeyValueOperator, typeName: "NSKeyValueOperator")),
+    "static let NSKeyValueOperator.unionOfArraysKeyValueOperator": .staticValue(boxOpaque(NSKeyValueOperator.unionOfArraysKeyValueOperator, typeName: "NSKeyValueOperator")),
+    "static let NSKeyValueOperator.unionOfObjectsKeyValueOperator": .staticValue(boxOpaque(NSKeyValueOperator.unionOfObjectsKeyValueOperator, typeName: "NSKeyValueOperator")),
+    "static let NSKeyValueOperator.unionOfSetsKeyValueOperator": .staticValue(boxOpaque(NSKeyValueOperator.unionOfSetsKeyValueOperator, typeName: "NSKeyValueOperator")),
+    "init NSKeyValueOperator(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init NSKeyValueOperator(rawValue:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(NSKeyValueOperator(rawValue: try unboxString(args[0])), typeName: "NSKeyValueOperator")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSKeyValueOperator: [String: Bridge] = [:]
+}
+#endif

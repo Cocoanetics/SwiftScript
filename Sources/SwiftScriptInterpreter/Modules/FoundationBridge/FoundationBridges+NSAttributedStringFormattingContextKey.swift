@@ -5,28 +5,30 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSAttributedStringFormattingContextKey: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var NSAttributedStringFormattingContextKey.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let nSAttributedStringFormattingContextKey: [String: Bridge] = [
+    "var NSAttributedStringFormattingContextKey.hashValue: Int": .computed { receiver in
         let recv: NSAttributedStringFormattingContextKey = try unboxOpaque(receiver, as: NSAttributedStringFormattingContextKey.self, typeName: "NSAttributedStringFormattingContextKey")
         return .int(recv.hashValue)
-    }
-    d["static let NSAttributedStringFormattingContextKey.inflectionConceptsKey"] = .staticValue(boxOpaque(NSAttributedStringFormattingContextKey.inflectionConceptsKey, typeName: "NSAttributedStringFormattingContextKey"))
-    d["init NSAttributedStringFormattingContextKey(_:)"] = .`init` { args in
+    },
+    "static let NSAttributedStringFormattingContextKey.inflectionConceptsKey": .staticValue(boxOpaque(NSAttributedStringFormattingContextKey.inflectionConceptsKey, typeName: "NSAttributedStringFormattingContextKey")),
+    "init NSAttributedStringFormattingContextKey(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init NSAttributedStringFormattingContextKey(_:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(NSAttributedStringFormattingContextKey(try unboxString(args[0])), typeName: "NSAttributedStringFormattingContextKey")
-    }
-    d["init NSAttributedStringFormattingContextKey(rawValue:)"] = .`init` { args in
+    },
+    "init NSAttributedStringFormattingContextKey(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init NSAttributedStringFormattingContextKey(rawValue:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(NSAttributedStringFormattingContextKey(rawValue: try unboxString(args[0])), typeName: "NSAttributedStringFormattingContextKey")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSAttributedStringFormattingContextKey: [String: Bridge] = [:]
+}
+#endif

@@ -5,18 +5,20 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let attributedStringIndex: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["func AttributedString.Index.isValid()"] = .method { receiver, args in
+    nonisolated(unsafe) static let attributedStringIndex: [String: Bridge] = [
+    "func AttributedString.Index.isValid()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("AttributedString.Index.isValid: expected 1 argument(s), got \(args.count)")
         }
         let recv: AttributedString.Index = try unboxOpaque(receiver, as: AttributedString.Index.self, typeName: "AttributedString.Index")
         return .bool(recv.isValid(within: try unboxOpaque(args[0], as: DiscontiguousAttributedSubstring.self, typeName: "DiscontiguousAttributedSubstring")))
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let attributedStringIndex: [String: Bridge] = [:]
+}
+#endif

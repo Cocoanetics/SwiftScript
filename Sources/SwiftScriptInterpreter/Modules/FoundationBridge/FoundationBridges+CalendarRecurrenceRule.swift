@@ -5,59 +5,61 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let calendarRecurrenceRule: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Calendar.RecurrenceRule.calendar: Calendar"] = .computed { receiver in
+    nonisolated(unsafe) static let calendarRecurrenceRule: [String: Bridge] = [
+    "var Calendar.RecurrenceRule.calendar: Calendar": .computed { receiver in
         let recv: Calendar.RecurrenceRule = try unboxOpaque(receiver, as: Calendar.RecurrenceRule.self, typeName: "Calendar.RecurrenceRule")
         return boxOpaque(recv.calendar, typeName: "Calendar")
-    }
-    d["var Calendar.RecurrenceRule.interval: Int"] = .computed { receiver in
+    },
+    "var Calendar.RecurrenceRule.interval: Int": .computed { receiver in
         let recv: Calendar.RecurrenceRule = try unboxOpaque(receiver, as: Calendar.RecurrenceRule.self, typeName: "Calendar.RecurrenceRule")
         return .int(recv.interval)
-    }
-    d["var Calendar.RecurrenceRule.hashValue: Int"] = .computed { receiver in
+    },
+    "var Calendar.RecurrenceRule.hashValue: Int": .computed { receiver in
         let recv: Calendar.RecurrenceRule = try unboxOpaque(receiver, as: Calendar.RecurrenceRule.self, typeName: "Calendar.RecurrenceRule")
         return .int(recv.hashValue)
-    }
-    d["static func Calendar.RecurrenceRule.weekly()"] = .staticMethod { args in
+    },
+    "static func Calendar.RecurrenceRule.weekly()": .staticMethod { args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("Calendar.RecurrenceRule.weekly: expected 2 argument(s), got \(args.count)")
         }
         return boxOpaque(Calendar.RecurrenceRule.weekly(calendar: try unboxOpaque(args[0], as: Calendar.self, typeName: "Calendar"), interval: try unboxInt(args[1])), typeName: "Calendar.RecurrenceRule")
-    }
-    d["static func Calendar.RecurrenceRule.daily()"] = .staticMethod { args in
+    },
+    "static func Calendar.RecurrenceRule.daily()": .staticMethod { args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("Calendar.RecurrenceRule.daily: expected 2 argument(s), got \(args.count)")
         }
         return boxOpaque(Calendar.RecurrenceRule.daily(calendar: try unboxOpaque(args[0], as: Calendar.self, typeName: "Calendar"), interval: try unboxInt(args[1])), typeName: "Calendar.RecurrenceRule")
-    }
-    d["static func Calendar.RecurrenceRule.monthly()"] = .staticMethod { args in
+    },
+    "static func Calendar.RecurrenceRule.monthly()": .staticMethod { args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("Calendar.RecurrenceRule.monthly: expected 2 argument(s), got \(args.count)")
         }
         return boxOpaque(Calendar.RecurrenceRule.monthly(calendar: try unboxOpaque(args[0], as: Calendar.self, typeName: "Calendar"), interval: try unboxInt(args[1])), typeName: "Calendar.RecurrenceRule")
-    }
-    d["static func Calendar.RecurrenceRule.minutely()"] = .staticMethod { args in
+    },
+    "static func Calendar.RecurrenceRule.minutely()": .staticMethod { args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("Calendar.RecurrenceRule.minutely: expected 2 argument(s), got \(args.count)")
         }
         return boxOpaque(Calendar.RecurrenceRule.minutely(calendar: try unboxOpaque(args[0], as: Calendar.self, typeName: "Calendar"), interval: try unboxInt(args[1])), typeName: "Calendar.RecurrenceRule")
-    }
-    d["static func Calendar.RecurrenceRule.hourly()"] = .staticMethod { args in
+    },
+    "static func Calendar.RecurrenceRule.hourly()": .staticMethod { args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("Calendar.RecurrenceRule.hourly: expected 2 argument(s), got \(args.count)")
         }
         return boxOpaque(Calendar.RecurrenceRule.hourly(calendar: try unboxOpaque(args[0], as: Calendar.self, typeName: "Calendar"), interval: try unboxInt(args[1])), typeName: "Calendar.RecurrenceRule")
-    }
-    d["static func Calendar.RecurrenceRule.yearly()"] = .staticMethod { args in
+    },
+    "static func Calendar.RecurrenceRule.yearly()": .staticMethod { args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("Calendar.RecurrenceRule.yearly: expected 2 argument(s), got \(args.count)")
         }
         return boxOpaque(Calendar.RecurrenceRule.yearly(calendar: try unboxOpaque(args[0], as: Calendar.self, typeName: "Calendar"), interval: try unboxInt(args[1])), typeName: "Calendar.RecurrenceRule")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let calendarRecurrenceRule: [String: Bridge] = [:]
+}
+#endif

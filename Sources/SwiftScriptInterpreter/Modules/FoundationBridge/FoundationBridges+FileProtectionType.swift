@@ -5,25 +5,27 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let fileProtectionType: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var FileProtectionType.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let fileProtectionType: [String: Bridge] = [
+    "var FileProtectionType.hashValue: Int": .computed { receiver in
         let recv: FileProtectionType = try unboxOpaque(receiver, as: FileProtectionType.self, typeName: "FileProtectionType")
         return .int(recv.hashValue)
-    }
-    d["static let FileProtectionType.none"] = .staticValue(boxOpaque(FileProtectionType.none, typeName: "FileProtectionType"))
-    d["static let FileProtectionType.complete"] = .staticValue(boxOpaque(FileProtectionType.complete, typeName: "FileProtectionType"))
-    d["static let FileProtectionType.completeUnlessOpen"] = .staticValue(boxOpaque(FileProtectionType.completeUnlessOpen, typeName: "FileProtectionType"))
-    d["static let FileProtectionType.completeUntilFirstUserAuthentication"] = .staticValue(boxOpaque(FileProtectionType.completeUntilFirstUserAuthentication, typeName: "FileProtectionType"))
-    d["init FileProtectionType(rawValue:)"] = .`init` { args in
+    },
+    "static let FileProtectionType.none": .staticValue(boxOpaque(FileProtectionType.none, typeName: "FileProtectionType")),
+    "static let FileProtectionType.complete": .staticValue(boxOpaque(FileProtectionType.complete, typeName: "FileProtectionType")),
+    "static let FileProtectionType.completeUnlessOpen": .staticValue(boxOpaque(FileProtectionType.completeUnlessOpen, typeName: "FileProtectionType")),
+    "static let FileProtectionType.completeUntilFirstUserAuthentication": .staticValue(boxOpaque(FileProtectionType.completeUntilFirstUserAuthentication, typeName: "FileProtectionType")),
+    "init FileProtectionType(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init FileProtectionType(rawValue:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(FileProtectionType(rawValue: try unboxString(args[0])), typeName: "FileProtectionType")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let fileProtectionType: [String: Bridge] = [:]
+}
+#endif

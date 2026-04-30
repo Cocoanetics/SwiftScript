@@ -5,23 +5,22 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let fileManagerItemReplacementOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init FileManager.ItemReplacementOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let fileManagerItemReplacementOptions: [String: Bridge] = [
+    "init FileManager.ItemReplacementOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init FileManager.ItemReplacementOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(FileManager.ItemReplacementOptions(), typeName: "FileManager.ItemReplacementOptions")
-    }
-    d["var FileManager.ItemReplacementOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var FileManager.ItemReplacementOptions.isEmpty: Bool": .computed { receiver in
         let recv: FileManager.ItemReplacementOptions = try unboxOpaque(receiver, as: FileManager.ItemReplacementOptions.self, typeName: "FileManager.ItemReplacementOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let FileManager.ItemReplacementOptions.usingNewMetadataOnly"] = .staticValue(boxOpaque(FileManager.ItemReplacementOptions.usingNewMetadataOnly, typeName: "FileManager.ItemReplacementOptions"))
-    d["static let FileManager.ItemReplacementOptions.withoutDeletingBackupItem"] = .staticValue(boxOpaque(FileManager.ItemReplacementOptions.withoutDeletingBackupItem, typeName: "FileManager.ItemReplacementOptions"))
-        d["init FileManager.ItemReplacementOptions(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let FileManager.ItemReplacementOptions.usingNewMetadataOnly": .staticValue(boxOpaque(FileManager.ItemReplacementOptions.usingNewMetadataOnly, typeName: "FileManager.ItemReplacementOptions")),
+    "static let FileManager.ItemReplacementOptions.withoutDeletingBackupItem": .staticValue(boxOpaque(FileManager.ItemReplacementOptions.withoutDeletingBackupItem, typeName: "FileManager.ItemReplacementOptions")),
+        "init FileManager.ItemReplacementOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("FileManager.ItemReplacementOptions(arrayLiteral:): expected array literal")
             }
@@ -33,8 +32,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "FileManager.ItemReplacementOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let fileManagerItemReplacementOptions: [String: Bridge] = [:]
+}
+#endif

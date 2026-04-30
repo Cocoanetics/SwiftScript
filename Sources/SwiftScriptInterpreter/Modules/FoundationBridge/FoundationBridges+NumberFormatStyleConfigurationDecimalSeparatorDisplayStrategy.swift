@@ -5,21 +5,23 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let numberFormatStyleConfigurationDecimalSeparatorDisplayStrategy: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["static let NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.automatic"] = .staticValue(boxOpaque(NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.automatic, typeName: "NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy"))
-    d["static let NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.always"] = .staticValue(boxOpaque(NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.always, typeName: "NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy"))
-    d["var NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.description: String"] = .computed { receiver in
+    nonisolated(unsafe) static let numberFormatStyleConfigurationDecimalSeparatorDisplayStrategy: [String: Bridge] = [
+    "static let NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.automatic": .staticValue(boxOpaque(NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.automatic, typeName: "NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy")),
+    "static let NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.always": .staticValue(boxOpaque(NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.always, typeName: "NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy")),
+    "var NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.description: String": .computed { receiver in
         let recv: NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.self, typeName: "NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy")
         return .string(recv.description)
-    }
-    d["var NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.hashValue: Int"] = .computed { receiver in
+    },
+    "var NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.hashValue: Int": .computed { receiver in
         let recv: NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy = try unboxOpaque(receiver, as: NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy.self, typeName: "NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy")
         return .int(recv.hashValue)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let numberFormatStyleConfigurationDecimalSeparatorDisplayStrategy: [String: Bridge] = [:]
+}
+#endif

@@ -5,27 +5,29 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let predicateError: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var PredicateError.localizedDescription: String"] = .computed { receiver in
+    nonisolated(unsafe) static let predicateError: [String: Bridge] = [
+    "var PredicateError.localizedDescription: String": .computed { receiver in
         let recv: PredicateError = try unboxOpaque(receiver, as: PredicateError.self, typeName: "PredicateError")
         return .string(recv.localizedDescription)
-    }
-    d["var PredicateError.debugDescription: String"] = .computed { receiver in
+    },
+    "var PredicateError.debugDescription: String": .computed { receiver in
         let recv: PredicateError = try unboxOpaque(receiver, as: PredicateError.self, typeName: "PredicateError")
         return .string(recv.debugDescription)
-    }
-    d["static let PredicateError.undefinedVariable"] = .staticValue(boxOpaque(PredicateError.undefinedVariable, typeName: "PredicateError"))
-    d["static let PredicateError.forceUnwrapFailure"] = .staticValue(boxOpaque(PredicateError.forceUnwrapFailure, typeName: "PredicateError"))
-    d["static let PredicateError.forceCastFailure"] = .staticValue(boxOpaque(PredicateError.forceCastFailure, typeName: "PredicateError"))
-    d["static let PredicateError.invalidInput"] = .staticValue(boxOpaque(PredicateError.invalidInput, typeName: "PredicateError"))
-    d["var PredicateError.hashValue: Int"] = .computed { receiver in
+    },
+    "static let PredicateError.undefinedVariable": .staticValue(boxOpaque(PredicateError.undefinedVariable, typeName: "PredicateError")),
+    "static let PredicateError.forceUnwrapFailure": .staticValue(boxOpaque(PredicateError.forceUnwrapFailure, typeName: "PredicateError")),
+    "static let PredicateError.forceCastFailure": .staticValue(boxOpaque(PredicateError.forceCastFailure, typeName: "PredicateError")),
+    "static let PredicateError.invalidInput": .staticValue(boxOpaque(PredicateError.invalidInput, typeName: "PredicateError")),
+    "var PredicateError.hashValue: Int": .computed { receiver in
         let recv: PredicateError = try unboxOpaque(receiver, as: PredicateError.self, typeName: "PredicateError")
         return .int(recv.hashValue)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let predicateError: [String: Bridge] = [:]
+}
+#endif

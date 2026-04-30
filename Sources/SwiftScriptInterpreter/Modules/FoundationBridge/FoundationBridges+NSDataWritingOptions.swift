@@ -5,29 +5,28 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSDataWritingOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init NSData.WritingOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let nSDataWritingOptions: [String: Bridge] = [
+    "init NSData.WritingOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSData.WritingOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(NSData.WritingOptions(), typeName: "NSData.WritingOptions")
-    }
-    d["var NSData.WritingOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var NSData.WritingOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSData.WritingOptions = try unboxOpaque(receiver, as: NSData.WritingOptions.self, typeName: "NSData.WritingOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let NSData.WritingOptions.atomic"] = .staticValue(boxOpaque(NSData.WritingOptions.atomic, typeName: "NSData.WritingOptions"))
-    d["static let NSData.WritingOptions.withoutOverwriting"] = .staticValue(boxOpaque(NSData.WritingOptions.withoutOverwriting, typeName: "NSData.WritingOptions"))
-    d["static let NSData.WritingOptions.noFileProtection"] = .staticValue(boxOpaque(NSData.WritingOptions.noFileProtection, typeName: "NSData.WritingOptions"))
-    d["static let NSData.WritingOptions.completeFileProtection"] = .staticValue(boxOpaque(NSData.WritingOptions.completeFileProtection, typeName: "NSData.WritingOptions"))
-    d["static let NSData.WritingOptions.completeFileProtectionUnlessOpen"] = .staticValue(boxOpaque(NSData.WritingOptions.completeFileProtectionUnlessOpen, typeName: "NSData.WritingOptions"))
-    d["static let NSData.WritingOptions.completeFileProtectionUntilFirstUserAuthentication"] = .staticValue(boxOpaque(NSData.WritingOptions.completeFileProtectionUntilFirstUserAuthentication, typeName: "NSData.WritingOptions"))
-    d["static let NSData.WritingOptions.fileProtectionMask"] = .staticValue(boxOpaque(NSData.WritingOptions.fileProtectionMask, typeName: "NSData.WritingOptions"))
-    d["static let NSData.WritingOptions.atomicWrite"] = .staticValue(boxOpaque(NSData.WritingOptions.atomicWrite, typeName: "NSData.WritingOptions"))
-        d["init NSData.WritingOptions(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let NSData.WritingOptions.atomic": .staticValue(boxOpaque(NSData.WritingOptions.atomic, typeName: "NSData.WritingOptions")),
+    "static let NSData.WritingOptions.withoutOverwriting": .staticValue(boxOpaque(NSData.WritingOptions.withoutOverwriting, typeName: "NSData.WritingOptions")),
+    "static let NSData.WritingOptions.noFileProtection": .staticValue(boxOpaque(NSData.WritingOptions.noFileProtection, typeName: "NSData.WritingOptions")),
+    "static let NSData.WritingOptions.completeFileProtection": .staticValue(boxOpaque(NSData.WritingOptions.completeFileProtection, typeName: "NSData.WritingOptions")),
+    "static let NSData.WritingOptions.completeFileProtectionUnlessOpen": .staticValue(boxOpaque(NSData.WritingOptions.completeFileProtectionUnlessOpen, typeName: "NSData.WritingOptions")),
+    "static let NSData.WritingOptions.completeFileProtectionUntilFirstUserAuthentication": .staticValue(boxOpaque(NSData.WritingOptions.completeFileProtectionUntilFirstUserAuthentication, typeName: "NSData.WritingOptions")),
+    "static let NSData.WritingOptions.fileProtectionMask": .staticValue(boxOpaque(NSData.WritingOptions.fileProtectionMask, typeName: "NSData.WritingOptions")),
+    "static let NSData.WritingOptions.atomicWrite": .staticValue(boxOpaque(NSData.WritingOptions.atomicWrite, typeName: "NSData.WritingOptions")),
+        "init NSData.WritingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSData.WritingOptions(arrayLiteral:): expected array literal")
             }
@@ -39,8 +38,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "NSData.WritingOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSDataWritingOptions: [String: Bridge] = [:]
+}
+#endif

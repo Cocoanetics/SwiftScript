@@ -5,22 +5,21 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSXPCConnectionOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init NSXPCConnection.Options()"] = .`init` { args in
+    nonisolated(unsafe) static let nSXPCConnectionOptions: [String: Bridge] = [
+    "init NSXPCConnection.Options()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSXPCConnection.Options(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(NSXPCConnection.Options(), typeName: "NSXPCConnection.Options")
-    }
-    d["var NSXPCConnection.Options.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var NSXPCConnection.Options.isEmpty: Bool": .computed { receiver in
         let recv: NSXPCConnection.Options = try unboxOpaque(receiver, as: NSXPCConnection.Options.self, typeName: "NSXPCConnection.Options")
         return .bool(recv.isEmpty)
-    }
-    d["static let NSXPCConnection.Options.privileged"] = .staticValue(boxOpaque(NSXPCConnection.Options.privileged, typeName: "NSXPCConnection.Options"))
-        d["init NSXPCConnection.Options(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let NSXPCConnection.Options.privileged": .staticValue(boxOpaque(NSXPCConnection.Options.privileged, typeName: "NSXPCConnection.Options")),
+        "init NSXPCConnection.Options(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSXPCConnection.Options(arrayLiteral:): expected array literal")
             }
@@ -32,8 +31,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "NSXPCConnection.Options")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSXPCConnectionOptions: [String: Bridge] = [:]
+}
+#endif

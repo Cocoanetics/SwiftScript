@@ -5,23 +5,25 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let stringLocalizationValue: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init String.LocalizationValue(_:)"] = .`init` { args in
+    nonisolated(unsafe) static let stringLocalizationValue: [String: Bridge] = [
+    "init String.LocalizationValue(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init String.LocalizationValue(_:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(String.LocalizationValue(try unboxString(args[0])), typeName: "String.LocalizationValue")
-    }
-    d["init String.LocalizationValue(stringLiteral:)"] = .`init` { args in
+    },
+    "init String.LocalizationValue(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init String.LocalizationValue(stringLiteral:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(String.LocalizationValue(stringLiteral: try unboxString(args[0])), typeName: "String.LocalizationValue")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let stringLocalizationValue: [String: Bridge] = [:]
+}
+#endif

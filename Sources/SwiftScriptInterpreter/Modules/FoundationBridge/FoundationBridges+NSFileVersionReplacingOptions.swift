@@ -5,22 +5,21 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSFileVersionReplacingOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init NSFileVersion.ReplacingOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let nSFileVersionReplacingOptions: [String: Bridge] = [
+    "init NSFileVersion.ReplacingOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSFileVersion.ReplacingOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(NSFileVersion.ReplacingOptions(), typeName: "NSFileVersion.ReplacingOptions")
-    }
-    d["var NSFileVersion.ReplacingOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var NSFileVersion.ReplacingOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSFileVersion.ReplacingOptions = try unboxOpaque(receiver, as: NSFileVersion.ReplacingOptions.self, typeName: "NSFileVersion.ReplacingOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let NSFileVersion.ReplacingOptions.byMoving"] = .staticValue(boxOpaque(NSFileVersion.ReplacingOptions.byMoving, typeName: "NSFileVersion.ReplacingOptions"))
-        d["init NSFileVersion.ReplacingOptions(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let NSFileVersion.ReplacingOptions.byMoving": .staticValue(boxOpaque(NSFileVersion.ReplacingOptions.byMoving, typeName: "NSFileVersion.ReplacingOptions")),
+        "init NSFileVersion.ReplacingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSFileVersion.ReplacingOptions(arrayLiteral:): expected array literal")
             }
@@ -32,8 +31,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "NSFileVersion.ReplacingOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSFileVersionReplacingOptions: [String: Bridge] = [:]
+}
+#endif

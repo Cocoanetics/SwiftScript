@@ -5,18 +5,20 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let regexRepetitionBehavior: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var RegexRepetitionBehavior.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let regexRepetitionBehavior: [String: Bridge] = [
+    "var RegexRepetitionBehavior.hashValue: Int": .computed { receiver in
         let recv: RegexRepetitionBehavior = try unboxOpaque(receiver, as: RegexRepetitionBehavior.self, typeName: "RegexRepetitionBehavior")
         return .int(recv.hashValue)
-    }
-    d["static let RegexRepetitionBehavior.eager"] = .staticValue(boxOpaque(RegexRepetitionBehavior.eager, typeName: "RegexRepetitionBehavior"))
-    d["static let RegexRepetitionBehavior.reluctant"] = .staticValue(boxOpaque(RegexRepetitionBehavior.reluctant, typeName: "RegexRepetitionBehavior"))
-    d["static let RegexRepetitionBehavior.possessive"] = .staticValue(boxOpaque(RegexRepetitionBehavior.possessive, typeName: "RegexRepetitionBehavior"))
-        #endif
-        return d
-    }()
+    },
+    "static let RegexRepetitionBehavior.eager": .staticValue(boxOpaque(RegexRepetitionBehavior.eager, typeName: "RegexRepetitionBehavior")),
+    "static let RegexRepetitionBehavior.reluctant": .staticValue(boxOpaque(RegexRepetitionBehavior.reluctant, typeName: "RegexRepetitionBehavior")),
+    "static let RegexRepetitionBehavior.possessive": .staticValue(boxOpaque(RegexRepetitionBehavior.possessive, typeName: "RegexRepetitionBehavior")),
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let regexRepetitionBehavior: [String: Bridge] = [:]
+}
+#endif

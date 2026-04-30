@@ -188,6 +188,15 @@ struct SCLOracle {
     func isTypeCrossPlatform(_ typeName: String) -> Bool {
         if stdlibCrossPlatformOwners.contains(typeName) { return true }
         if unavailableTypes.contains(typeName) { return false }
+        // For nested types (`DateComponentsFormatter.ZeroFormattingBehavior`),
+        // walk up the dotted path — if any ancestor is unavailable, the
+        // nested type is too.
+        var ancestor = typeName
+        while let dot = ancestor.lastIndex(of: ".") {
+            ancestor = String(ancestor[..<dot])
+            if unavailableTypes.contains(ancestor) { return false }
+            if unavailableTypes.contains("NS\(ancestor)") { return false }
+        }
         if crossPlatform.contains("\(typeName).") { return true }
         // NS-prefixed fallback.
         let nsCandidate: String
@@ -197,7 +206,10 @@ struct SCLOracle {
             nsCandidate = "NS\(typeName)."
         }
         if unavailableTypes.contains(String(nsCandidate.dropLast())) { return false }
-        return crossPlatform.contains(nsCandidate)
+        if crossPlatform.contains(nsCandidate) { return true }
+        // For nested types: if neither the type nor its NS-prefixed
+        // form is in the cross-platform set, it's Apple-only.
+        return false
     }
 }
 
@@ -1127,9 +1139,9 @@ struct EmitEntry {
 
 /// Parse a bridge entry's display key (e.g. `"var URL.path: String"` or
 /// `"init URL(_:)"` or `"static func URL.allocate()"`) into a
-/// `(typeName, memberName)` pair. Returns nil for free-function entries
-/// that have no owning type. Used to look the entry up in the scl
-/// oracle for cross-platform classification.
+/// `(typeName, memberName)` pair. Returns `("", funcName)` for free
+/// functions with no owning type. Used to look the entry up in the
+/// scl oracle for cross-platform classification.
 func ownerAndMember(forBridgeKey key: String) -> (String, String)? {
     // Normalize `"static let X.foo"` and similar prefixes — the trailing
     // tokens are what matter.
@@ -1147,8 +1159,10 @@ func ownerAndMember(forBridgeKey key: String) -> (String, String)? {
     if let openParen = s.firstIndex(of: "(") { s = String(s[..<openParen]) }
     s = s.trimmingCharacters(in: .whitespaces)
     // Split on the LAST `.` so nested types like `String.Index.foo`
-    // resolve owner=`String.Index`, member=`foo`.
-    guard let lastDot = s.lastIndex(of: ".") else { return nil }
+    // resolve owner=`String.Index`, member=`foo`. No dot at all means
+    // a free function with no owning type — return empty owner so the
+    // oracle's free-function set gets consulted.
+    guard let lastDot = s.lastIndex(of: ".") else { return ("", s) }
     let owner = String(s[..<lastDot])
     let member = String(s[s.index(after: lastDot)...])
     return (owner, member)
@@ -1286,6 +1300,21 @@ for (usr, bridge) in bridgedTypes {
         }
     }
     bridgeableReceivers[bridge.swiftSpelling] = bridge
+}
+
+/// Type spellings classified Apple-only by the scl oracle. The whole
+/// per-type bridge file gets wrapped in `#if canImport(Darwin)` so
+/// Linux/Windows skip referencing the type at all.
+nonisolated(unsafe) var appleOnlyTypes: Set<String> = []
+if let oracle = sclOracle {
+    for (_, bridge) in bridgedTypes {
+        let spelling = bridge.swiftSpelling
+        // Stdlib types and primitive bridges are always present.
+        if stdlibCrossPlatformOwners.contains(spelling) { continue }
+        if !oracle.isTypeCrossPlatform(spelling) {
+            appleOnlyTypes.insert(spelling)
+        }
+    }
 }
 
 /// Tracks `(receiver, member)` registrations across emit so we can flag
@@ -1867,6 +1896,12 @@ func toAssignmentForm(_ entry: String) -> String {
 struct PlatformedEntries {
     var crossPlatform: [String] = []   // dict-literal form
     var appleOnly: [String] = []       // dict-literal form (will be converted)
+    /// When true, the type itself doesn't exist on the cross-platform
+    /// side (e.g. `DateComponentsFormatter`, `MeasurementFormatter`
+    /// — both `@available(*, unavailable)` in scl). The whole per-type
+    /// file gets wrapped in `#if canImport(Darwin)` and the manifest's
+    /// reference to it is gated too.
+    var typeIsAppleOnly: Bool = false
     var isEmpty: Bool { crossPlatform.isEmpty && appleOnly.isEmpty }
 }
 
@@ -1879,6 +1914,35 @@ struct PlatformedEntries {
 func renderPerTypeFile(
     namespace: String, typeName: String, entries: PlatformedEntries
 ) -> String {
+    // Whole-file gating: when the type itself is Apple-only every
+    // entry is too, so wrap the whole `extension { … }` block. The
+    // dict still exists on Linux as an empty `[:]` so the manifest's
+    // reference doesn't dangle.
+    if entries.typeIsAppleOnly {
+        let dictName = staticLetName(for: typeName)
+        let allEntries = (entries.crossPlatform + entries.appleOnly)
+            .joined(separator: "\n")
+        let body = allEntries.isEmpty ? "        // (no entries)" : allEntries
+        return """
+        \(autogenBanner)import Foundation
+        #if canImport(FoundationNetworking)
+        import FoundationNetworking
+        #endif
+
+        #if canImport(Darwin)
+        extension \(namespace) {
+            nonisolated(unsafe) static let \(dictName): [String: Bridge] = [
+        \(body)
+            ]
+        }
+        #else
+        extension \(namespace) {
+            nonisolated(unsafe) static let \(dictName): [String: Bridge] = [:]
+        }
+        #endif
+
+        """
+    }
     let dictName = staticLetName(for: typeName)
     if entries.appleOnly.isEmpty {
         // Pure cross-platform dict — emit the literal form directly.
@@ -2000,6 +2064,12 @@ func groupedByType(_ entries: [EmitEntry]) -> [(String, PlatformedEntries)] {
         case .appleOnly:     current.appleOnly.append(entry.code)
         }
         bodies[name] = current
+    }
+    // Stamp `typeIsAppleOnly` on every type the scl oracle classified
+    // as not-cross-platform. Used by `renderPerTypeFile` to wrap the
+    // whole `extension { … }` block in `#if canImport(Darwin)`.
+    for name in order where appleOnlyTypes.contains(name) {
+        bodies[name]?.typeIsAppleOnly = true
     }
     return order.map { ($0, bodies[$0]!) }
 }

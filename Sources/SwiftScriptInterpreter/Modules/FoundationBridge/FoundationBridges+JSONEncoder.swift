@@ -5,9 +5,23 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let jSONEncoder: [String: Bridge] = {
-        var d: [String: Bridge] = [
+    nonisolated(unsafe) static let jSONEncoder: [String: Bridge] = [
+    "var JSONEncoder.outputFormatting: JSONEncoder.OutputFormatting": .computed { receiver in
+        let recv: JSONEncoder = try unboxOpaque(receiver, as: JSONEncoder.self, typeName: "JSONEncoder")
+        return boxOpaque(recv.outputFormatting, typeName: "JSONEncoder.OutputFormatting")
+    },
+        "set var JSONEncoder.outputFormatting: JSONEncoder.OutputFormatting": .setter { receiver, newValue in
+            let recv: JSONEncoder = try unboxOpaque(receiver, as: JSONEncoder.self, typeName: "JSONEncoder")
+            recv.outputFormatting = try unboxOpaque(newValue, as: JSONEncoder.OutputFormatting.self, typeName: "JSONEncoder.OutputFormatting")
+        },
+    "init JSONEncoder()": .`init` { args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("init JSONEncoder(): expected 0 argument(s), got \(args.count)")
+        }
+        return boxOpaque(JSONEncoder(), typeName: "JSONEncoder")
+    },
         "func JSONEncoder.encode<T: Encodable>(_: T) throws -> Data": .method { receiver, args in
             guard args.count == 1 else {
                 throw RuntimeError.invalid("JSONEncoder.encode: expected 1 argument(s), got \(args.count)")
@@ -19,23 +33,10 @@ extension FoundationBridges {
                 throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
             }
         },
-        ]
-        #if canImport(Darwin)
-    d["var JSONEncoder.outputFormatting: JSONEncoder.OutputFormatting"] = .computed { receiver in
-        let recv: JSONEncoder = try unboxOpaque(receiver, as: JSONEncoder.self, typeName: "JSONEncoder")
-        return boxOpaque(recv.outputFormatting, typeName: "JSONEncoder.OutputFormatting")
-    }
-        d["set var JSONEncoder.outputFormatting: JSONEncoder.OutputFormatting"] = .setter { receiver, newValue in
-            let recv: JSONEncoder = try unboxOpaque(receiver, as: JSONEncoder.self, typeName: "JSONEncoder")
-            recv.outputFormatting = try unboxOpaque(newValue, as: JSONEncoder.OutputFormatting.self, typeName: "JSONEncoder.OutputFormatting")
-        }
-    d["init JSONEncoder()"] = .`init` { args in
-        guard args.count == 0 else {
-            throw RuntimeError.invalid("init JSONEncoder(): expected 0 argument(s), got \(args.count)")
-        }
-        return boxOpaque(JSONEncoder(), typeName: "JSONEncoder")
-    }
-        #endif
-        return d
-    }()
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let jSONEncoder: [String: Bridge] = [:]
+}
+#endif

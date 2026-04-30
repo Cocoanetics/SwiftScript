@@ -5,40 +5,42 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let localeCurrency: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var Locale.Currency.identifier: String"] = .computed { receiver in
+    nonisolated(unsafe) static let localeCurrency: [String: Bridge] = [
+    "var Locale.Currency.identifier: String": .computed { receiver in
         let recv: Locale.Currency = try unboxOpaque(receiver, as: Locale.Currency.self, typeName: "Locale.Currency")
         return .string(recv.identifier)
-    }
-    d["var Locale.Currency.debugDescription: String"] = .computed { receiver in
+    },
+    "var Locale.Currency.debugDescription: String": .computed { receiver in
         let recv: Locale.Currency = try unboxOpaque(receiver, as: Locale.Currency.self, typeName: "Locale.Currency")
         return .string(recv.debugDescription)
-    }
-    d["var Locale.Currency.hashValue: Int"] = .computed { receiver in
+    },
+    "var Locale.Currency.hashValue: Int": .computed { receiver in
         let recv: Locale.Currency = try unboxOpaque(receiver, as: Locale.Currency.self, typeName: "Locale.Currency")
         return .int(recv.hashValue)
-    }
-    d["var Locale.Currency.isISOCurrency: Bool"] = .computed { receiver in
+    },
+    "var Locale.Currency.isISOCurrency: Bool": .computed { receiver in
         let recv: Locale.Currency = try unboxOpaque(receiver, as: Locale.Currency.self, typeName: "Locale.Currency")
         return .bool(recv.isISOCurrency)
-    }
-    d["static let Locale.Currency.unknown"] = .staticValue(boxOpaque(Locale.Currency.unknown, typeName: "Locale.Currency"))
-    d["init Locale.Currency(stringLiteral:)"] = .`init` { args in
+    },
+    "static let Locale.Currency.unknown": .staticValue(boxOpaque(Locale.Currency.unknown, typeName: "Locale.Currency")),
+    "init Locale.Currency(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Currency(stringLiteral:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.Currency(stringLiteral: try unboxString(args[0])), typeName: "Locale.Currency")
-    }
-    d["init Locale.Currency(_:)"] = .`init` { args in
+    },
+    "init Locale.Currency(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Currency(_:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.Currency(try unboxString(args[0])), typeName: "Locale.Currency")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let localeCurrency: [String: Bridge] = [:]
+}
+#endif

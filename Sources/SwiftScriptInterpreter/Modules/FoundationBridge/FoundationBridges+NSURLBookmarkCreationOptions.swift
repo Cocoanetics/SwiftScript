@@ -5,24 +5,23 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSURLBookmarkCreationOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init NSURL.BookmarkCreationOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let nSURLBookmarkCreationOptions: [String: Bridge] = [
+    "init NSURL.BookmarkCreationOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSURL.BookmarkCreationOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(NSURL.BookmarkCreationOptions(), typeName: "NSURL.BookmarkCreationOptions")
-    }
-    d["var NSURL.BookmarkCreationOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var NSURL.BookmarkCreationOptions.isEmpty: Bool": .computed { receiver in
         let recv: NSURL.BookmarkCreationOptions = try unboxOpaque(receiver, as: NSURL.BookmarkCreationOptions.self, typeName: "NSURL.BookmarkCreationOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let NSURL.BookmarkCreationOptions.minimalBookmark"] = .staticValue(boxOpaque(NSURL.BookmarkCreationOptions.minimalBookmark, typeName: "NSURL.BookmarkCreationOptions"))
-    d["static let NSURL.BookmarkCreationOptions.suitableForBookmarkFile"] = .staticValue(boxOpaque(NSURL.BookmarkCreationOptions.suitableForBookmarkFile, typeName: "NSURL.BookmarkCreationOptions"))
-    d["static let NSURL.BookmarkCreationOptions.withoutImplicitSecurityScope"] = .staticValue(boxOpaque(NSURL.BookmarkCreationOptions.withoutImplicitSecurityScope, typeName: "NSURL.BookmarkCreationOptions"))
-        d["init NSURL.BookmarkCreationOptions(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let NSURL.BookmarkCreationOptions.minimalBookmark": .staticValue(boxOpaque(NSURL.BookmarkCreationOptions.minimalBookmark, typeName: "NSURL.BookmarkCreationOptions")),
+    "static let NSURL.BookmarkCreationOptions.suitableForBookmarkFile": .staticValue(boxOpaque(NSURL.BookmarkCreationOptions.suitableForBookmarkFile, typeName: "NSURL.BookmarkCreationOptions")),
+    "static let NSURL.BookmarkCreationOptions.withoutImplicitSecurityScope": .staticValue(boxOpaque(NSURL.BookmarkCreationOptions.withoutImplicitSecurityScope, typeName: "NSURL.BookmarkCreationOptions")),
+        "init NSURL.BookmarkCreationOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSURL.BookmarkCreationOptions(arrayLiteral:): expected array literal")
             }
@@ -34,8 +33,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "NSURL.BookmarkCreationOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSURLBookmarkCreationOptions: [String: Bridge] = [:]
+}
+#endif

@@ -5,37 +5,39 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let attributedStringMarkdownSourcePosition: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var AttributedString.MarkdownSourcePosition.startLine: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let attributedStringMarkdownSourcePosition: [String: Bridge] = [
+    "var AttributedString.MarkdownSourcePosition.startLine: Int": .computed { receiver in
         let recv: AttributedString.MarkdownSourcePosition = try unboxOpaque(receiver, as: AttributedString.MarkdownSourcePosition.self, typeName: "AttributedString.MarkdownSourcePosition")
         return .int(recv.startLine)
-    }
-    d["var AttributedString.MarkdownSourcePosition.startColumn: Int"] = .computed { receiver in
+    },
+    "var AttributedString.MarkdownSourcePosition.startColumn: Int": .computed { receiver in
         let recv: AttributedString.MarkdownSourcePosition = try unboxOpaque(receiver, as: AttributedString.MarkdownSourcePosition.self, typeName: "AttributedString.MarkdownSourcePosition")
         return .int(recv.startColumn)
-    }
-    d["var AttributedString.MarkdownSourcePosition.endLine: Int"] = .computed { receiver in
+    },
+    "var AttributedString.MarkdownSourcePosition.endLine: Int": .computed { receiver in
         let recv: AttributedString.MarkdownSourcePosition = try unboxOpaque(receiver, as: AttributedString.MarkdownSourcePosition.self, typeName: "AttributedString.MarkdownSourcePosition")
         return .int(recv.endLine)
-    }
-    d["var AttributedString.MarkdownSourcePosition.endColumn: Int"] = .computed { receiver in
+    },
+    "var AttributedString.MarkdownSourcePosition.endColumn: Int": .computed { receiver in
         let recv: AttributedString.MarkdownSourcePosition = try unboxOpaque(receiver, as: AttributedString.MarkdownSourcePosition.self, typeName: "AttributedString.MarkdownSourcePosition")
         return .int(recv.endColumn)
-    }
-    d["var AttributedString.MarkdownSourcePosition.hashValue: Int"] = .computed { receiver in
+    },
+    "var AttributedString.MarkdownSourcePosition.hashValue: Int": .computed { receiver in
         let recv: AttributedString.MarkdownSourcePosition = try unboxOpaque(receiver, as: AttributedString.MarkdownSourcePosition.self, typeName: "AttributedString.MarkdownSourcePosition")
         return .int(recv.hashValue)
-    }
-    d["init AttributedString.MarkdownSourcePosition(startLine:startColumn:endLine:endColumn:)"] = .`init` { args in
+    },
+    "init AttributedString.MarkdownSourcePosition(startLine:startColumn:endLine:endColumn:)": .`init` { args in
         guard args.count == 4 else {
             throw RuntimeError.invalid("init AttributedString.MarkdownSourcePosition(startLine:startColumn:endLine:endColumn:): expected 4 argument(s), got \(args.count)")
         }
         return boxOpaque(AttributedString.MarkdownSourcePosition(startLine: try unboxInt(args[0]), startColumn: try unboxInt(args[1]), endLine: try unboxInt(args[2]), endColumn: try unboxInt(args[3])), typeName: "AttributedString.MarkdownSourcePosition")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let attributedStringMarkdownSourcePosition: [String: Bridge] = [:]
+}
+#endif

@@ -5,39 +5,41 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let attributeContainer: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init AttributeContainer()"] = .`init` { args in
+    nonisolated(unsafe) static let attributeContainer: [String: Bridge] = [
+    "init AttributeContainer()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init AttributeContainer(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(AttributeContainer(), typeName: "AttributeContainer")
-    }
-    d["var AttributeContainer.hashValue: Int"] = .computed { receiver in
+    },
+    "var AttributeContainer.hashValue: Int": .computed { receiver in
         let recv: AttributeContainer = try unboxOpaque(receiver, as: AttributeContainer.self, typeName: "AttributeContainer")
         return .int(recv.hashValue)
-    }
-    d["var AttributeContainer.description: String"] = .computed { receiver in
+    },
+    "var AttributeContainer.description: String": .computed { receiver in
         let recv: AttributeContainer = try unboxOpaque(receiver, as: AttributeContainer.self, typeName: "AttributeContainer")
         return .string(recv.description)
-    }
-    d["func AttributeContainer.filter()"] = .method { receiver, args in
+    },
+    "func AttributeContainer.filter()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("AttributeContainer.filter: expected 1 argument(s), got \(args.count)")
         }
         let recv: AttributeContainer = try unboxOpaque(receiver, as: AttributeContainer.self, typeName: "AttributeContainer")
         return boxOpaque(recv.filter(inheritedByAddedText: try unboxBool(args[0])), typeName: "AttributeContainer")
-    }
-    d["func AttributeContainer.merging()"] = .method { receiver, args in
+    },
+    "func AttributeContainer.merging()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("AttributeContainer.merging: expected 1 argument(s), got \(args.count)")
         }
         let recv: AttributeContainer = try unboxOpaque(receiver, as: AttributeContainer.self, typeName: "AttributeContainer")
         return boxOpaque(recv.merging(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributeContainer")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let attributeContainer: [String: Bridge] = [:]
+}
+#endif

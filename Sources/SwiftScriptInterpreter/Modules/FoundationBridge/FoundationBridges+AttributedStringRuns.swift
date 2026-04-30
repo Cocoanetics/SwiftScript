@@ -5,27 +5,29 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let attributedStringRuns: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var AttributedString.Runs.isEmpty: Bool"] = .computed { receiver in
+    nonisolated(unsafe) static let attributedStringRuns: [String: Bridge] = [
+    "var AttributedString.Runs.isEmpty: Bool": .computed { receiver in
         let recv: AttributedString.Runs = try unboxOpaque(receiver, as: AttributedString.Runs.self, typeName: "AttributedString.Runs")
         return .bool(recv.isEmpty)
-    }
-    d["var AttributedString.Runs.underestimatedCount: Int"] = .computed { receiver in
+    },
+    "var AttributedString.Runs.underestimatedCount: Int": .computed { receiver in
         let recv: AttributedString.Runs = try unboxOpaque(receiver, as: AttributedString.Runs.self, typeName: "AttributedString.Runs")
         return .int(recv.underestimatedCount)
-    }
-    d["var AttributedString.Runs.count: Int"] = .computed { receiver in
+    },
+    "var AttributedString.Runs.count: Int": .computed { receiver in
         let recv: AttributedString.Runs = try unboxOpaque(receiver, as: AttributedString.Runs.self, typeName: "AttributedString.Runs")
         return .int(recv.count)
-    }
-    d["var AttributedString.Runs.description: String"] = .computed { receiver in
+    },
+    "var AttributedString.Runs.description: String": .computed { receiver in
         let recv: AttributedString.Runs = try unboxOpaque(receiver, as: AttributedString.Runs.self, typeName: "AttributedString.Runs")
         return .string(recv.description)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let attributedStringRuns: [String: Bridge] = [:]
+}
+#endif

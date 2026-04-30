@@ -5,23 +5,22 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let fileWrapperReadingOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init FileWrapper.ReadingOptions()"] = .`init` { args in
+    nonisolated(unsafe) static let fileWrapperReadingOptions: [String: Bridge] = [
+    "init FileWrapper.ReadingOptions()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init FileWrapper.ReadingOptions(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(FileWrapper.ReadingOptions(), typeName: "FileWrapper.ReadingOptions")
-    }
-    d["var FileWrapper.ReadingOptions.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var FileWrapper.ReadingOptions.isEmpty: Bool": .computed { receiver in
         let recv: FileWrapper.ReadingOptions = try unboxOpaque(receiver, as: FileWrapper.ReadingOptions.self, typeName: "FileWrapper.ReadingOptions")
         return .bool(recv.isEmpty)
-    }
-    d["static let FileWrapper.ReadingOptions.immediate"] = .staticValue(boxOpaque(FileWrapper.ReadingOptions.immediate, typeName: "FileWrapper.ReadingOptions"))
-    d["static let FileWrapper.ReadingOptions.withoutMapping"] = .staticValue(boxOpaque(FileWrapper.ReadingOptions.withoutMapping, typeName: "FileWrapper.ReadingOptions"))
-        d["init FileWrapper.ReadingOptions(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let FileWrapper.ReadingOptions.immediate": .staticValue(boxOpaque(FileWrapper.ReadingOptions.immediate, typeName: "FileWrapper.ReadingOptions")),
+    "static let FileWrapper.ReadingOptions.withoutMapping": .staticValue(boxOpaque(FileWrapper.ReadingOptions.withoutMapping, typeName: "FileWrapper.ReadingOptions")),
+        "init FileWrapper.ReadingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("FileWrapper.ReadingOptions(arrayLiteral:): expected array literal")
             }
@@ -33,8 +32,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "FileWrapper.ReadingOptions")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let fileWrapperReadingOptions: [String: Bridge] = [:]
+}
+#endif

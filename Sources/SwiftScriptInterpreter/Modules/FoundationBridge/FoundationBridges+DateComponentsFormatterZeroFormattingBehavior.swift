@@ -5,9 +5,9 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateComponentsFormatterZeroFormattingBehavior: [String: Bridge] = {
-        var d: [String: Bridge] = [
+    nonisolated(unsafe) static let dateComponentsFormatterZeroFormattingBehavior: [String: Bridge] = [
     "init DateComponentsFormatter.ZeroFormattingBehavior()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init DateComponentsFormatter.ZeroFormattingBehavior(): expected 0 argument(s), got \(args.count)")
@@ -32,14 +32,15 @@ extension FoundationBridges {
             }
             return boxOpaque(result, typeName: "DateComponentsFormatter.ZeroFormattingBehavior")
         },
-        ]
-        #if canImport(Darwin)
-    d["var DateComponentsFormatter.ZeroFormattingBehavior.isEmpty: Bool"] = .computed { receiver in
+    "var DateComponentsFormatter.ZeroFormattingBehavior.isEmpty: Bool": .computed { receiver in
         let recv: DateComponentsFormatter.ZeroFormattingBehavior = try unboxOpaque(receiver, as: DateComponentsFormatter.ZeroFormattingBehavior.self, typeName: "DateComponentsFormatter.ZeroFormattingBehavior")
         return .bool(recv.isEmpty)
-    }
-    d["static let DateComponentsFormatter.ZeroFormattingBehavior.default"] = .staticValue(boxOpaque(DateComponentsFormatter.ZeroFormattingBehavior.default, typeName: "DateComponentsFormatter.ZeroFormattingBehavior"))
-        #endif
-        return d
-    }()
+    },
+    "static let DateComponentsFormatter.ZeroFormattingBehavior.default": .staticValue(boxOpaque(DateComponentsFormatter.ZeroFormattingBehavior.default, typeName: "DateComponentsFormatter.ZeroFormattingBehavior")),
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let dateComponentsFormatterZeroFormattingBehavior: [String: Bridge] = [:]
+}
+#endif

@@ -5,30 +5,32 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let stringComparator: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["static let String.Comparator.localizedStandard"] = .staticValue(boxOpaque(String.Comparator.localizedStandard, typeName: "String.Comparator"))
-    d["static let String.Comparator.localized"] = .staticValue(boxOpaque(String.Comparator.localized, typeName: "String.Comparator"))
-    d["var String.Comparator.locale: Locale?"] = .computed { receiver in
+    nonisolated(unsafe) static let stringComparator: [String: Bridge] = [
+    "static let String.Comparator.localizedStandard": .staticValue(boxOpaque(String.Comparator.localizedStandard, typeName: "String.Comparator")),
+    "static let String.Comparator.localized": .staticValue(boxOpaque(String.Comparator.localized, typeName: "String.Comparator")),
+    "var String.Comparator.locale: Locale?": .computed { receiver in
         let recv: String.Comparator = try unboxOpaque(receiver, as: String.Comparator.self, typeName: "String.Comparator")
         if let _v = recv.locale {
             return .optional(boxOpaque(_v, typeName: "Locale"))
         }
         return .optional(nil)
-    }
-    d["var String.Comparator.hashValue: Int"] = .computed { receiver in
+    },
+    "var String.Comparator.hashValue: Int": .computed { receiver in
         let recv: String.Comparator = try unboxOpaque(receiver, as: String.Comparator.self, typeName: "String.Comparator")
         return .int(recv.hashValue)
-    }
-    d["init String.Comparator(_:)"] = .`init` { args in
+    },
+    "init String.Comparator(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init String.Comparator(_:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(String.Comparator(try unboxOpaque(args[0], as: String.StandardComparator.self, typeName: "String.StandardComparator")), typeName: "String.Comparator")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let stringComparator: [String: Bridge] = [:]
+}
+#endif

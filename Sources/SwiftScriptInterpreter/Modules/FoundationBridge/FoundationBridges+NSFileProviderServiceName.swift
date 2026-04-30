@@ -5,27 +5,29 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSFileProviderServiceName: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var NSFileProviderServiceName.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let nSFileProviderServiceName: [String: Bridge] = [
+    "var NSFileProviderServiceName.hashValue: Int": .computed { receiver in
         let recv: NSFileProviderServiceName = try unboxOpaque(receiver, as: NSFileProviderServiceName.self, typeName: "NSFileProviderServiceName")
         return .int(recv.hashValue)
-    }
-    d["init NSFileProviderServiceName(_:)"] = .`init` { args in
+    },
+    "init NSFileProviderServiceName(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init NSFileProviderServiceName(_:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(NSFileProviderServiceName(try unboxString(args[0])), typeName: "NSFileProviderServiceName")
-    }
-    d["init NSFileProviderServiceName(rawValue:)"] = .`init` { args in
+    },
+    "init NSFileProviderServiceName(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init NSFileProviderServiceName(rawValue:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(NSFileProviderServiceName(rawValue: try unboxString(args[0])), typeName: "NSFileProviderServiceName")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSFileProviderServiceName: [String: Bridge] = [:]
+}
+#endif

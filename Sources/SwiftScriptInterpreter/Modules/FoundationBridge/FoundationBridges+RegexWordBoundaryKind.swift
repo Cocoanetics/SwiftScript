@@ -5,17 +5,19 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let regexWordBoundaryKind: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["static let RegexWordBoundaryKind.simple"] = .staticValue(boxOpaque(RegexWordBoundaryKind.simple, typeName: "RegexWordBoundaryKind"))
-    d["static let RegexWordBoundaryKind.default"] = .staticValue(boxOpaque(RegexWordBoundaryKind.default, typeName: "RegexWordBoundaryKind"))
-    d["var RegexWordBoundaryKind.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let regexWordBoundaryKind: [String: Bridge] = [
+    "static let RegexWordBoundaryKind.simple": .staticValue(boxOpaque(RegexWordBoundaryKind.simple, typeName: "RegexWordBoundaryKind")),
+    "static let RegexWordBoundaryKind.default": .staticValue(boxOpaque(RegexWordBoundaryKind.default, typeName: "RegexWordBoundaryKind")),
+    "var RegexWordBoundaryKind.hashValue: Int": .computed { receiver in
         let recv: RegexWordBoundaryKind = try unboxOpaque(receiver, as: RegexWordBoundaryKind.self, typeName: "RegexWordBoundaryKind")
         return .int(recv.hashValue)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let regexWordBoundaryKind: [String: Bridge] = [:]
+}
+#endif

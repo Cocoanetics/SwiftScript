@@ -5,16 +5,18 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let attributedStringAttributeInvalidationCondition: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["static let AttributedString.AttributeInvalidationCondition.textChanged"] = .staticValue(boxOpaque(AttributedString.AttributeInvalidationCondition.textChanged, typeName: "AttributedString.AttributeInvalidationCondition"))
-    d["var AttributedString.AttributeInvalidationCondition.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let attributedStringAttributeInvalidationCondition: [String: Bridge] = [
+    "static let AttributedString.AttributeInvalidationCondition.textChanged": .staticValue(boxOpaque(AttributedString.AttributeInvalidationCondition.textChanged, typeName: "AttributedString.AttributeInvalidationCondition")),
+    "var AttributedString.AttributeInvalidationCondition.hashValue: Int": .computed { receiver in
         let recv: AttributedString.AttributeInvalidationCondition = try unboxOpaque(receiver, as: AttributedString.AttributeInvalidationCondition.self, typeName: "AttributedString.AttributeInvalidationCondition")
         return .int(recv.hashValue)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let attributedStringAttributeInvalidationCondition: [String: Bridge] = [:]
+}
+#endif

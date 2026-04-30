@@ -5,47 +5,49 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let personNameComponentsFormatStyle: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var PersonNameComponents.FormatStyle.locale: Locale"] = .computed { receiver in
+    nonisolated(unsafe) static let personNameComponentsFormatStyle: [String: Bridge] = [
+    "var PersonNameComponents.FormatStyle.locale: Locale": .computed { receiver in
         let recv: PersonNameComponents.FormatStyle = try unboxOpaque(receiver, as: PersonNameComponents.FormatStyle.self, typeName: "PersonNameComponents.FormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
-    }
-    d["var PersonNameComponents.FormatStyle.attributed: PersonNameComponents.AttributedStyle"] = .computed { receiver in
+    },
+    "var PersonNameComponents.FormatStyle.attributed: PersonNameComponents.AttributedStyle": .computed { receiver in
         let recv: PersonNameComponents.FormatStyle = try unboxOpaque(receiver, as: PersonNameComponents.FormatStyle.self, typeName: "PersonNameComponents.FormatStyle")
         return boxOpaque(recv.attributed, typeName: "PersonNameComponents.AttributedStyle")
-    }
-    d["var PersonNameComponents.FormatStyle.hashValue: Int"] = .computed { receiver in
+    },
+    "var PersonNameComponents.FormatStyle.hashValue: Int": .computed { receiver in
         let recv: PersonNameComponents.FormatStyle = try unboxOpaque(receiver, as: PersonNameComponents.FormatStyle.self, typeName: "PersonNameComponents.FormatStyle")
         return .int(recv.hashValue)
-    }
-    d["var PersonNameComponents.FormatStyle.parseStrategy: PersonNameComponents.ParseStrategy"] = .computed { receiver in
+    },
+    "var PersonNameComponents.FormatStyle.parseStrategy: PersonNameComponents.ParseStrategy": .computed { receiver in
         let recv: PersonNameComponents.FormatStyle = try unboxOpaque(receiver, as: PersonNameComponents.FormatStyle.self, typeName: "PersonNameComponents.FormatStyle")
         return boxOpaque(recv.parseStrategy, typeName: "PersonNameComponents.ParseStrategy")
-    }
-    d["func PersonNameComponents.FormatStyle.locale()"] = .method { receiver, args in
+    },
+    "func PersonNameComponents.FormatStyle.locale()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("PersonNameComponents.FormatStyle.locale: expected 1 argument(s), got \(args.count)")
         }
         let recv: PersonNameComponents.FormatStyle = try unboxOpaque(receiver, as: PersonNameComponents.FormatStyle.self, typeName: "PersonNameComponents.FormatStyle")
         return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "PersonNameComponents.FormatStyle")
-    }
-    d["func PersonNameComponents.FormatStyle.format()"] = .method { receiver, args in
+    },
+    "func PersonNameComponents.FormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("PersonNameComponents.FormatStyle.format: expected 1 argument(s), got \(args.count)")
         }
         let recv: PersonNameComponents.FormatStyle = try unboxOpaque(receiver, as: PersonNameComponents.FormatStyle.self, typeName: "PersonNameComponents.FormatStyle")
         return .string(recv.format(try unboxOpaque(args[0], as: PersonNameComponents.self, typeName: "PersonNameComponents")))
-    }
-    d["init PersonNameComponents.FormatStyle(locale:)"] = .`init` { args in
+    },
+    "init PersonNameComponents.FormatStyle(locale:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init PersonNameComponents.FormatStyle(locale:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(PersonNameComponents.FormatStyle(locale: try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "PersonNameComponents.FormatStyle")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let personNameComponentsFormatStyle: [String: Bridge] = [:]
+}
+#endif

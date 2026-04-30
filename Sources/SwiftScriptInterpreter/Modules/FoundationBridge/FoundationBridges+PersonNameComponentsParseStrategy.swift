@@ -5,22 +5,21 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let personNameComponentsParseStrategy: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["static let PersonNameComponents.ParseStrategy.name"] = .staticValue(boxOpaque(PersonNameComponents.ParseStrategy.name, typeName: "PersonNameComponents.ParseStrategy"))
-    d["init PersonNameComponents.ParseStrategy()"] = .`init` { args in
+    nonisolated(unsafe) static let personNameComponentsParseStrategy: [String: Bridge] = [
+    "static let PersonNameComponents.ParseStrategy.name": .staticValue(boxOpaque(PersonNameComponents.ParseStrategy.name, typeName: "PersonNameComponents.ParseStrategy")),
+    "init PersonNameComponents.ParseStrategy()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init PersonNameComponents.ParseStrategy(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(PersonNameComponents.ParseStrategy(), typeName: "PersonNameComponents.ParseStrategy")
-    }
-    d["var PersonNameComponents.ParseStrategy.hashValue: Int"] = .computed { receiver in
+    },
+    "var PersonNameComponents.ParseStrategy.hashValue: Int": .computed { receiver in
         let recv: PersonNameComponents.ParseStrategy = try unboxOpaque(receiver, as: PersonNameComponents.ParseStrategy.self, typeName: "PersonNameComponents.ParseStrategy")
         return .int(recv.hashValue)
-    }
-    d["func PersonNameComponents.ParseStrategy.parse()"] = .method { receiver, args in
+    },
+    "func PersonNameComponents.ParseStrategy.parse()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("PersonNameComponents.ParseStrategy.parse: expected 1 argument(s), got \(args.count)")
         }
@@ -30,8 +29,11 @@ extension FoundationBridges {
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let personNameComponentsParseStrategy: [String: Bridge] = [:]
+}
+#endif

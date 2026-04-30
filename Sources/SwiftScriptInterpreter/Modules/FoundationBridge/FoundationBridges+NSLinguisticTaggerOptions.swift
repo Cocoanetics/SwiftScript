@@ -5,26 +5,25 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let nSLinguisticTaggerOptions: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["init NSLinguisticTagger.Options()"] = .`init` { args in
+    nonisolated(unsafe) static let nSLinguisticTaggerOptions: [String: Bridge] = [
+    "init NSLinguisticTagger.Options()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init NSLinguisticTagger.Options(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(NSLinguisticTagger.Options(), typeName: "NSLinguisticTagger.Options")
-    }
-    d["var NSLinguisticTagger.Options.isEmpty: Bool"] = .computed { receiver in
+    },
+    "var NSLinguisticTagger.Options.isEmpty: Bool": .computed { receiver in
         let recv: NSLinguisticTagger.Options = try unboxOpaque(receiver, as: NSLinguisticTagger.Options.self, typeName: "NSLinguisticTagger.Options")
         return .bool(recv.isEmpty)
-    }
-    d["static let NSLinguisticTagger.Options.omitWords"] = .staticValue(boxOpaque(NSLinguisticTagger.Options.omitWords, typeName: "NSLinguisticTagger.Options"))
-    d["static let NSLinguisticTagger.Options.omitPunctuation"] = .staticValue(boxOpaque(NSLinguisticTagger.Options.omitPunctuation, typeName: "NSLinguisticTagger.Options"))
-    d["static let NSLinguisticTagger.Options.omitWhitespace"] = .staticValue(boxOpaque(NSLinguisticTagger.Options.omitWhitespace, typeName: "NSLinguisticTagger.Options"))
-    d["static let NSLinguisticTagger.Options.omitOther"] = .staticValue(boxOpaque(NSLinguisticTagger.Options.omitOther, typeName: "NSLinguisticTagger.Options"))
-    d["static let NSLinguisticTagger.Options.joinNames"] = .staticValue(boxOpaque(NSLinguisticTagger.Options.joinNames, typeName: "NSLinguisticTagger.Options"))
-        d["init NSLinguisticTagger.Options(arrayLiteral:)"] = .`init` { args in
+    },
+    "static let NSLinguisticTagger.Options.omitWords": .staticValue(boxOpaque(NSLinguisticTagger.Options.omitWords, typeName: "NSLinguisticTagger.Options")),
+    "static let NSLinguisticTagger.Options.omitPunctuation": .staticValue(boxOpaque(NSLinguisticTagger.Options.omitPunctuation, typeName: "NSLinguisticTagger.Options")),
+    "static let NSLinguisticTagger.Options.omitWhitespace": .staticValue(boxOpaque(NSLinguisticTagger.Options.omitWhitespace, typeName: "NSLinguisticTagger.Options")),
+    "static let NSLinguisticTagger.Options.omitOther": .staticValue(boxOpaque(NSLinguisticTagger.Options.omitOther, typeName: "NSLinguisticTagger.Options")),
+    "static let NSLinguisticTagger.Options.joinNames": .staticValue(boxOpaque(NSLinguisticTagger.Options.joinNames, typeName: "NSLinguisticTagger.Options")),
+        "init NSLinguisticTagger.Options(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSLinguisticTagger.Options(arrayLiteral:): expected array literal")
             }
@@ -36,8 +35,11 @@ extension FoundationBridges {
                 result.formUnion(item)
             }
             return boxOpaque(result, typeName: "NSLinguisticTagger.Options")
-        }
-        #endif
-        return d
-    }()
+        },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let nSLinguisticTaggerOptions: [String: Bridge] = [:]
+}
+#endif

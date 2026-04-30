@@ -5,33 +5,35 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let jSONDecoder: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var JSONDecoder.allowsJSON5: Bool"] = .computed { receiver in
+    nonisolated(unsafe) static let jSONDecoder: [String: Bridge] = [
+    "var JSONDecoder.allowsJSON5: Bool": .computed { receiver in
         let recv: JSONDecoder = try unboxOpaque(receiver, as: JSONDecoder.self, typeName: "JSONDecoder")
         return .bool(recv.allowsJSON5)
-    }
-        d["set var JSONDecoder.allowsJSON5: Bool"] = .setter { receiver, newValue in
+    },
+        "set var JSONDecoder.allowsJSON5: Bool": .setter { receiver, newValue in
             let recv: JSONDecoder = try unboxOpaque(receiver, as: JSONDecoder.self, typeName: "JSONDecoder")
             recv.allowsJSON5 = try unboxBool(newValue)
-        }
-    d["var JSONDecoder.assumesTopLevelDictionary: Bool"] = .computed { receiver in
+        },
+    "var JSONDecoder.assumesTopLevelDictionary: Bool": .computed { receiver in
         let recv: JSONDecoder = try unboxOpaque(receiver, as: JSONDecoder.self, typeName: "JSONDecoder")
         return .bool(recv.assumesTopLevelDictionary)
-    }
-        d["set var JSONDecoder.assumesTopLevelDictionary: Bool"] = .setter { receiver, newValue in
+    },
+        "set var JSONDecoder.assumesTopLevelDictionary: Bool": .setter { receiver, newValue in
             let recv: JSONDecoder = try unboxOpaque(receiver, as: JSONDecoder.self, typeName: "JSONDecoder")
             recv.assumesTopLevelDictionary = try unboxBool(newValue)
-        }
-    d["init JSONDecoder()"] = .`init` { args in
+        },
+    "init JSONDecoder()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init JSONDecoder(): expected 0 argument(s), got \(args.count)")
         }
         return boxOpaque(JSONDecoder(), typeName: "JSONDecoder")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let jSONDecoder: [String: Bridge] = [:]
+}
+#endif

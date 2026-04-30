@@ -5,15 +5,17 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let presentationIntentTableColumn: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var PresentationIntent.TableColumn.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let presentationIntentTableColumn: [String: Bridge] = [
+    "var PresentationIntent.TableColumn.hashValue: Int": .computed { receiver in
         let recv: PresentationIntent.TableColumn = try unboxOpaque(receiver, as: PresentationIntent.TableColumn.self, typeName: "PresentationIntent.TableColumn")
         return .int(recv.hashValue)
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let presentationIntentTableColumn: [String: Bridge] = [:]
+}
+#endif

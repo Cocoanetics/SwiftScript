@@ -5,23 +5,25 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let hTTPCookieStringPolicy: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["var HTTPCookieStringPolicy.hashValue: Int"] = .computed { receiver in
+    nonisolated(unsafe) static let hTTPCookieStringPolicy: [String: Bridge] = [
+    "var HTTPCookieStringPolicy.hashValue: Int": .computed { receiver in
         let recv: HTTPCookieStringPolicy = try unboxOpaque(receiver, as: HTTPCookieStringPolicy.self, typeName: "HTTPCookieStringPolicy")
         return .int(recv.hashValue)
-    }
-    d["static let HTTPCookieStringPolicy.sameSiteLax"] = .staticValue(boxOpaque(HTTPCookieStringPolicy.sameSiteLax, typeName: "HTTPCookieStringPolicy"))
-    d["static let HTTPCookieStringPolicy.sameSiteStrict"] = .staticValue(boxOpaque(HTTPCookieStringPolicy.sameSiteStrict, typeName: "HTTPCookieStringPolicy"))
-    d["init HTTPCookieStringPolicy(rawValue:)"] = .`init` { args in
+    },
+    "static let HTTPCookieStringPolicy.sameSiteLax": .staticValue(boxOpaque(HTTPCookieStringPolicy.sameSiteLax, typeName: "HTTPCookieStringPolicy")),
+    "static let HTTPCookieStringPolicy.sameSiteStrict": .staticValue(boxOpaque(HTTPCookieStringPolicy.sameSiteStrict, typeName: "HTTPCookieStringPolicy")),
+    "init HTTPCookieStringPolicy(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init HTTPCookieStringPolicy(rawValue:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(HTTPCookieStringPolicy(rawValue: try unboxString(args[0])), typeName: "HTTPCookieStringPolicy")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let hTTPCookieStringPolicy: [String: Bridge] = [:]
+}
+#endif

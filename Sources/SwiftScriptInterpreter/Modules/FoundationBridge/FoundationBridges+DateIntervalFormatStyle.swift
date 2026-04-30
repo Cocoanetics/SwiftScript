@@ -5,97 +5,99 @@ import Foundation
 import FoundationNetworking
 #endif
 
+#if canImport(Darwin)
 extension FoundationBridges {
-    nonisolated(unsafe) static let dateIntervalFormatStyle: [String: Bridge] = {
-        var d: [String: Bridge] = [:]
-        #if canImport(Darwin)
-    d["static let Date.IntervalFormatStyle.interval"] = .staticValue(boxOpaque(Date.IntervalFormatStyle.interval, typeName: "Date.IntervalFormatStyle"))
-    d["var Date.IntervalFormatStyle.locale: Locale"] = .computed { receiver in
+    nonisolated(unsafe) static let dateIntervalFormatStyle: [String: Bridge] = [
+    "static let Date.IntervalFormatStyle.interval": .staticValue(boxOpaque(Date.IntervalFormatStyle.interval, typeName: "Date.IntervalFormatStyle")),
+    "var Date.IntervalFormatStyle.locale: Locale": .computed { receiver in
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
-    }
-    d["var Date.IntervalFormatStyle.timeZone: TimeZone"] = .computed { receiver in
+    },
+    "var Date.IntervalFormatStyle.timeZone: TimeZone": .computed { receiver in
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return boxOpaque(recv.timeZone, typeName: "TimeZone")
-    }
-    d["var Date.IntervalFormatStyle.calendar: Calendar"] = .computed { receiver in
+    },
+    "var Date.IntervalFormatStyle.calendar: Calendar": .computed { receiver in
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return boxOpaque(recv.calendar, typeName: "Calendar")
-    }
-    d["var Date.IntervalFormatStyle.hashValue: Int"] = .computed { receiver in
+    },
+    "var Date.IntervalFormatStyle.hashValue: Int": .computed { receiver in
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return .int(recv.hashValue)
-    }
-    d["func Date.IntervalFormatStyle.year()"] = .method { receiver, args in
+    },
+    "func Date.IntervalFormatStyle.year()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("Date.IntervalFormatStyle.year: expected 0 argument(s), got \(args.count)")
         }
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return boxOpaque(recv.year(), typeName: "Date.IntervalFormatStyle")
-    }
-    d["func Date.IntervalFormatStyle.day()"] = .method { receiver, args in
+    },
+    "func Date.IntervalFormatStyle.day()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("Date.IntervalFormatStyle.day: expected 0 argument(s), got \(args.count)")
         }
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return boxOpaque(recv.day(), typeName: "Date.IntervalFormatStyle")
-    }
-    d["func Date.IntervalFormatStyle.minute()"] = .method { receiver, args in
+    },
+    "func Date.IntervalFormatStyle.minute()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("Date.IntervalFormatStyle.minute: expected 0 argument(s), got \(args.count)")
         }
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return boxOpaque(recv.minute(), typeName: "Date.IntervalFormatStyle")
-    }
-    d["func Date.IntervalFormatStyle.second()"] = .method { receiver, args in
+    },
+    "func Date.IntervalFormatStyle.second()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("Date.IntervalFormatStyle.second: expected 0 argument(s), got \(args.count)")
         }
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return boxOpaque(recv.second(), typeName: "Date.IntervalFormatStyle")
-    }
-    d["func Date.IntervalFormatStyle.locale()"] = .method { receiver, args in
+    },
+    "func Date.IntervalFormatStyle.locale()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.IntervalFormatStyle.locale: expected 1 argument(s), got \(args.count)")
         }
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Date.IntervalFormatStyle")
-    }
-    d["func Date.IntervalFormatStyle.month()"] = .method { receiver, args in
+    },
+    "func Date.IntervalFormatStyle.month()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("Date.IntervalFormatStyle.month: expected 0 argument(s), got \(args.count)")
         }
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return boxOpaque(recv.month(), typeName: "Date.IntervalFormatStyle")
-    }
-    d["func Date.IntervalFormatStyle.weekday()"] = .method { receiver, args in
+    },
+    "func Date.IntervalFormatStyle.weekday()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("Date.IntervalFormatStyle.weekday: expected 0 argument(s), got \(args.count)")
         }
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return boxOpaque(recv.weekday(), typeName: "Date.IntervalFormatStyle")
-    }
-    d["func Date.IntervalFormatStyle.hour()"] = .method { receiver, args in
+    },
+    "func Date.IntervalFormatStyle.hour()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("Date.IntervalFormatStyle.hour: expected 0 argument(s), got \(args.count)")
         }
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return boxOpaque(recv.hour(), typeName: "Date.IntervalFormatStyle")
-    }
-    d["func Date.IntervalFormatStyle.timeZone()"] = .method { receiver, args in
+    },
+    "func Date.IntervalFormatStyle.timeZone()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("Date.IntervalFormatStyle.timeZone: expected 0 argument(s), got \(args.count)")
         }
         let recv: Date.IntervalFormatStyle = try unboxOpaque(receiver, as: Date.IntervalFormatStyle.self, typeName: "Date.IntervalFormatStyle")
         return boxOpaque(recv.timeZone(), typeName: "Date.IntervalFormatStyle")
-    }
-    d["init Date.IntervalFormatStyle(locale:calendar:timeZone:)"] = .`init` { args in
+    },
+    "init Date.IntervalFormatStyle(locale:calendar:timeZone:)": .`init` { args in
         guard args.count == 3 else {
             throw RuntimeError.invalid("init Date.IntervalFormatStyle(locale:calendar:timeZone:): expected 3 argument(s), got \(args.count)")
         }
         return boxOpaque(Date.IntervalFormatStyle(locale: try unboxOpaque(args[0], as: Locale.self, typeName: "Locale"), calendar: try unboxOpaque(args[1], as: Calendar.self, typeName: "Calendar"), timeZone: try unboxOpaque(args[2], as: TimeZone.self, typeName: "TimeZone")), typeName: "Date.IntervalFormatStyle")
-    }
-        #endif
-        return d
-    }()
+    },
+    ]
 }
+#else
+extension FoundationBridges {
+    nonisolated(unsafe) static let dateIntervalFormatStyle: [String: Bridge] = [:]
+}
+#endif
