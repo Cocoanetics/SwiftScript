@@ -104,15 +104,16 @@ public struct FoundationModule: BuiltinModule {
     // MARK: - C math constants
 
     private func registerCMathConstants(into i: Interpreter) {
-        // `M_PI`, `M_E` come from Darwin's <math.h>; available under
-        // `import Foundation` because Foundation re-exports them.
+        // Literal value of <math.h>'s M_E. Hardcoded because Swift on Windows
+        // does not re-export M_E through Foundation.
+        let eulerNumber = 2.71828182845904523536028747135266250
         i.registerGlobal(name: "M_PI") { _ in .double(.pi) }
-        i.registerGlobal(name: "M_E")  { _ in .double(M_E) }
+        i.registerGlobal(name: "M_E")  { _ in .double(eulerNumber) }
         // We also keep convenience bare globals so existing scripts that
         // wrote `pi` / `e` keep working when Foundation is imported. Real
         // Swift doesn't have these — they're an interpreter convenience.
         i.registerGlobal(name: "pi") { _ in .double(.pi) }
-        i.registerGlobal(name: "e")  { _ in .double(M_E) }
+        i.registerGlobal(name: "e")  { _ in .double(eulerNumber) }
     }
 
     // MARK: - Foundation-only String methods

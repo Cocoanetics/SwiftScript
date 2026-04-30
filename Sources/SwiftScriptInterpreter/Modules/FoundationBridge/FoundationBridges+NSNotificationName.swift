@@ -8,8 +8,8 @@ import FoundationNetworking
 extension FoundationBridges {
     nonisolated(unsafe) static let nSNotificationName: [String: Bridge] = {
         var d: [String: Bridge] = [
-    "static let NSNotification.Name.NSCalendarDayChanged": .staticValue(boxOpaque(NSNotification.Name.NSCalendarDayChanged, typeName: "NSNotification.Name")),
     "static let NSNotification.Name.NSSystemTimeZoneDidChange": .staticValue(boxOpaque(NSNotification.Name.NSSystemTimeZoneDidChange, typeName: "NSNotification.Name")),
+    "static let NSNotification.Name.NSCalendarDayChanged": .staticValue(boxOpaque(NSNotification.Name.NSCalendarDayChanged, typeName: "NSNotification.Name")),
     "init NSNotification.Name(_:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init NSNotification.Name(_:): expected 1 argument(s), got \(args.count)")
@@ -24,6 +24,17 @@ extension FoundationBridges {
     },
         ]
         #if canImport(Darwin)
+    d["static let NSNotification.Name.NSUbiquityIdentityDidChange"] = .staticValue(boxOpaque(NSNotification.Name.NSUbiquityIdentityDidChange, typeName: "NSNotification.Name"))
+    d["static let NSNotification.Name.NSHTTPCookieManagerCookiesChanged"] = .staticValue(boxOpaque(NSNotification.Name.NSHTTPCookieManagerCookiesChanged, typeName: "NSNotification.Name"))
+    d["static let NSNotification.Name.NSUndoManagerCheckpoint"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerCheckpoint, typeName: "NSNotification.Name"))
+    d["static let NSNotification.Name.NSUndoManagerWillUndoChange"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerWillUndoChange, typeName: "NSNotification.Name"))
+    d["static let NSNotification.Name.NSUndoManagerWillRedoChange"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerWillRedoChange, typeName: "NSNotification.Name"))
+    d["static let NSNotification.Name.NSUndoManagerDidUndoChange"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerDidUndoChange, typeName: "NSNotification.Name"))
+    d["static let NSNotification.Name.NSUndoManagerDidRedoChange"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerDidRedoChange, typeName: "NSNotification.Name"))
+    d["static let NSNotification.Name.NSUndoManagerDidOpenUndoGroup"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerDidOpenUndoGroup, typeName: "NSNotification.Name"))
+    d["static let NSNotification.Name.NSUndoManagerWillCloseUndoGroup"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerWillCloseUndoGroup, typeName: "NSNotification.Name"))
+    d["static let NSNotification.Name.NSUndoManagerDidCloseUndoGroup"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerDidCloseUndoGroup, typeName: "NSNotification.Name"))
+    d["static let NSNotification.Name.NSSystemClockDidChange"] = .staticValue(boxOpaque(NSNotification.Name.NSSystemClockDidChange, typeName: "NSNotification.Name"))
     d["static let NSNotification.Name.NSFileHandleReadToEndOfFileCompletion"] = .staticValue(boxOpaque(NSNotification.Name.NSFileHandleReadToEndOfFileCompletion, typeName: "NSNotification.Name"))
     d["static let NSNotification.Name.NSFileHandleConnectionAccepted"] = .staticValue(boxOpaque(NSNotification.Name.NSFileHandleConnectionAccepted, typeName: "NSNotification.Name"))
     d["static let NSNotification.Name.NSFileHandleDataAvailable"] = .staticValue(boxOpaque(NSNotification.Name.NSFileHandleDataAvailable, typeName: "NSNotification.Name"))
@@ -36,17 +47,6 @@ extension FoundationBridges {
         let recv: NSNotification.Name = try unboxOpaque(receiver, as: NSNotification.Name.self, typeName: "NSNotification.Name")
         return .int(recv.hashValue)
     }
-    d["static let NSNotification.Name.NSUbiquityIdentityDidChange"] = .staticValue(boxOpaque(NSNotification.Name.NSUbiquityIdentityDidChange, typeName: "NSNotification.Name"))
-    d["static let NSNotification.Name.NSHTTPCookieManagerCookiesChanged"] = .staticValue(boxOpaque(NSNotification.Name.NSHTTPCookieManagerCookiesChanged, typeName: "NSNotification.Name"))
-    d["static let NSNotification.Name.NSUndoManagerCheckpoint"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerCheckpoint, typeName: "NSNotification.Name"))
-    d["static let NSNotification.Name.NSUndoManagerWillUndoChange"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerWillUndoChange, typeName: "NSNotification.Name"))
-    d["static let NSNotification.Name.NSUndoManagerWillRedoChange"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerWillRedoChange, typeName: "NSNotification.Name"))
-    d["static let NSNotification.Name.NSUndoManagerDidUndoChange"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerDidUndoChange, typeName: "NSNotification.Name"))
-    d["static let NSNotification.Name.NSUndoManagerDidRedoChange"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerDidRedoChange, typeName: "NSNotification.Name"))
-    d["static let NSNotification.Name.NSUndoManagerDidOpenUndoGroup"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerDidOpenUndoGroup, typeName: "NSNotification.Name"))
-    d["static let NSNotification.Name.NSUndoManagerWillCloseUndoGroup"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerWillCloseUndoGroup, typeName: "NSNotification.Name"))
-    d["static let NSNotification.Name.NSUndoManagerDidCloseUndoGroup"] = .staticValue(boxOpaque(NSNotification.Name.NSUndoManagerDidCloseUndoGroup, typeName: "NSNotification.Name"))
-    d["static let NSNotification.Name.NSSystemClockDidChange"] = .staticValue(boxOpaque(NSNotification.Name.NSSystemClockDidChange, typeName: "NSNotification.Name"))
         #endif
         return d
     }()

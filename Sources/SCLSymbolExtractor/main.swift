@@ -85,8 +85,18 @@ final class PublicMemberVisitor: SyntaxVisitor {
     /// for a method on a nested type). Used to qualify member names with
     /// their dotted owning-type path.
     private var typeStack: [String] = []
+    /// Parallel stack tracking whether each enclosing scope (extension,
+    /// class, struct, …) is itself marked `@available(*, deprecated/
+    /// unavailable)`. scl puts the attribute on the containing
+    /// `extension` rather than each member, so members must inherit it.
+    private var unavailableScopeStack: [Bool] = []
     /// Set of records collected so far. Keyed for dedup of overloads.
     var records: Set<SymbolRecord> = []
+
+    /// True if any enclosing scope is marked unavailable/deprecated.
+    private var enclosingScopeUnavailable: Bool {
+        unavailableScopeStack.contains(true)
+    }
 
     /// Whether a declaration's modifier list grants public/open access.
     /// `internal`/`fileprivate`/`private` are skipped — bridge generator
@@ -130,8 +140,14 @@ final class PublicMemberVisitor: SyntaxVisitor {
         return false
     }
 
-    private func push(_ name: String) { typeStack.append(name) }
-    private func pop() { _ = typeStack.popLast() }
+    private func push(_ name: String, unavailable: Bool = false) {
+        typeStack.append(name)
+        unavailableScopeStack.append(unavailable)
+    }
+    private func pop() {
+        _ = typeStack.popLast()
+        _ = unavailableScopeStack.popLast()
+    }
 
     /// Resolve the dotted owner type. For a top-level decl this is the
     /// outermost `extension`/`struct`/`class` name; for a nested decl
@@ -143,7 +159,9 @@ final class PublicMemberVisitor: SyntaxVisitor {
     private func record(_ memberName: String, unavailable: Bool) {
         guard let owner = currentTypeName() else { return }
         records.insert(SymbolRecord(
-            typeName: owner, memberName: memberName, unavailable: unavailable
+            typeName: owner,
+            memberName: memberName,
+            unavailable: unavailable || enclosingScopeUnavailable
         ))
     }
 
@@ -155,52 +173,54 @@ final class PublicMemberVisitor: SyntaxVisitor {
     private func recordTypeMarker(name: String, unavailable: Bool) {
         let qualified = (typeStack + [name]).joined(separator: ".")
         records.insert(SymbolRecord(
-            typeName: qualified, memberName: "", unavailable: unavailable
+            typeName: qualified,
+            memberName: "",
+            unavailable: unavailable || enclosingScopeUnavailable
         ))
     }
 
     override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
+        let unavail = Self.isUnavailable(node.attributes)
         if Self.isPublic(node.modifiers) {
-            recordTypeMarker(name: node.name.text,
-                             unavailable: Self.isUnavailable(node.attributes))
+            recordTypeMarker(name: node.name.text, unavailable: unavail)
         }
-        push(node.name.text); return .visitChildren
+        push(node.name.text, unavailable: unavail); return .visitChildren
     }
     override func visitPost(_ node: ClassDeclSyntax) { pop() }
 
     override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
+        let unavail = Self.isUnavailable(node.attributes)
         if Self.isPublic(node.modifiers) {
-            recordTypeMarker(name: node.name.text,
-                             unavailable: Self.isUnavailable(node.attributes))
+            recordTypeMarker(name: node.name.text, unavailable: unavail)
         }
-        push(node.name.text); return .visitChildren
+        push(node.name.text, unavailable: unavail); return .visitChildren
     }
     override func visitPost(_ node: StructDeclSyntax) { pop() }
 
     override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
+        let unavail = Self.isUnavailable(node.attributes)
         if Self.isPublic(node.modifiers) {
-            recordTypeMarker(name: node.name.text,
-                             unavailable: Self.isUnavailable(node.attributes))
+            recordTypeMarker(name: node.name.text, unavailable: unavail)
         }
-        push(node.name.text); return .visitChildren
+        push(node.name.text, unavailable: unavail); return .visitChildren
     }
     override func visitPost(_ node: EnumDeclSyntax) { pop() }
 
     override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
+        let unavail = Self.isUnavailable(node.attributes)
         if Self.isPublic(node.modifiers) {
-            recordTypeMarker(name: node.name.text,
-                             unavailable: Self.isUnavailable(node.attributes))
+            recordTypeMarker(name: node.name.text, unavailable: unavail)
         }
-        push(node.name.text); return .visitChildren
+        push(node.name.text, unavailable: unavail); return .visitChildren
     }
     override func visitPost(_ node: ProtocolDeclSyntax) { pop() }
 
     override func visit(_ node: ActorDeclSyntax) -> SyntaxVisitorContinueKind {
+        let unavail = Self.isUnavailable(node.attributes)
         if Self.isPublic(node.modifiers) {
-            recordTypeMarker(name: node.name.text,
-                             unavailable: Self.isUnavailable(node.attributes))
+            recordTypeMarker(name: node.name.text, unavailable: unavail)
         }
-        push(node.name.text); return .visitChildren
+        push(node.name.text, unavailable: unavail); return .visitChildren
     }
     override func visitPost(_ node: ActorDeclSyntax) { pop() }
 
@@ -210,7 +230,8 @@ final class PublicMemberVisitor: SyntaxVisitor {
         // we just want the dotted name (`URLSession.DataTaskPublisher`).
         let raw = node.extendedType.trimmedDescription
             .components(separatedBy: "<").first ?? ""
-        push(raw.trimmingCharacters(in: .whitespaces))
+        push(raw.trimmingCharacters(in: .whitespaces),
+             unavailable: Self.isUnavailable(node.attributes))
         return .visitChildren
     }
     override func visitPost(_ node: ExtensionDeclSyntax) { pop() }
@@ -220,6 +241,7 @@ final class PublicMemberVisitor: SyntaxVisitor {
     override func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
         if Self.isPublic(node.modifiers) {
             let unavail = Self.isUnavailable(node.attributes)
+                || enclosingScopeUnavailable
             if typeStack.isEmpty {
                 // Top-level function — record under empty owner so the
                 // consumer can distinguish "exists at module scope" from

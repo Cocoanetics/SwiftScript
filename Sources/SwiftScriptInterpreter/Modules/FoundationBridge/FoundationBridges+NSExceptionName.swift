@@ -27,6 +27,11 @@ extension FoundationBridges {
     },
         ]
         #if canImport(Darwin)
+    d["var NSExceptionName.hashValue: Int"] = .computed { receiver in
+        let recv: NSExceptionName = try unboxOpaque(receiver, as: NSExceptionName.self, typeName: "NSExceptionName")
+        return .int(recv.hashValue)
+    }
+    d["static let NSExceptionName.undefinedKeyException"] = .staticValue(boxOpaque(NSExceptionName.undefinedKeyException, typeName: "NSExceptionName"))
     d["static let NSExceptionName.invalidArchiveOperationException"] = .staticValue(boxOpaque(NSExceptionName.invalidArchiveOperationException, typeName: "NSExceptionName"))
     d["static let NSExceptionName.invalidUnarchiveOperationException"] = .staticValue(boxOpaque(NSExceptionName.invalidUnarchiveOperationException, typeName: "NSExceptionName"))
     d["static let NSExceptionName.genericException"] = .staticValue(boxOpaque(NSExceptionName.genericException, typeName: "NSExceptionName"))
@@ -48,11 +53,6 @@ extension FoundationBridges {
     d["static let NSExceptionName.parseErrorException"] = .staticValue(boxOpaque(NSExceptionName.parseErrorException, typeName: "NSExceptionName"))
     d["static let NSExceptionName.invocationOperationVoidResultException"] = .staticValue(boxOpaque(NSExceptionName.invocationOperationVoidResultException, typeName: "NSExceptionName"))
     d["static let NSExceptionName.invocationOperationCancelledException"] = .staticValue(boxOpaque(NSExceptionName.invocationOperationCancelledException, typeName: "NSExceptionName"))
-    d["var NSExceptionName.hashValue: Int"] = .computed { receiver in
-        let recv: NSExceptionName = try unboxOpaque(receiver, as: NSExceptionName.self, typeName: "NSExceptionName")
-        return .int(recv.hashValue)
-    }
-    d["static let NSExceptionName.undefinedKeyException"] = .staticValue(boxOpaque(NSExceptionName.undefinedKeyException, typeName: "NSExceptionName"))
         #endif
         return d
     }()

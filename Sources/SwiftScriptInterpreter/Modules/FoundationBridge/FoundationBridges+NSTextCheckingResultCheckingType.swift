@@ -14,19 +14,7 @@ extension FoundationBridges {
         }
         return boxOpaque(NSTextCheckingResult.CheckingType(), typeName: "NSTextCheckingResult.CheckingType")
     },
-    "static let NSTextCheckingResult.CheckingType.orthography": .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.orthography, typeName: "NSTextCheckingResult.CheckingType")),
-    "static let NSTextCheckingResult.CheckingType.spelling": .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.spelling, typeName: "NSTextCheckingResult.CheckingType")),
-    "static let NSTextCheckingResult.CheckingType.grammar": .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.grammar, typeName: "NSTextCheckingResult.CheckingType")),
-    "static let NSTextCheckingResult.CheckingType.date": .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.date, typeName: "NSTextCheckingResult.CheckingType")),
-    "static let NSTextCheckingResult.CheckingType.address": .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.address, typeName: "NSTextCheckingResult.CheckingType")),
-    "static let NSTextCheckingResult.CheckingType.link": .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.link, typeName: "NSTextCheckingResult.CheckingType")),
-    "static let NSTextCheckingResult.CheckingType.quote": .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.quote, typeName: "NSTextCheckingResult.CheckingType")),
-    "static let NSTextCheckingResult.CheckingType.dash": .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.dash, typeName: "NSTextCheckingResult.CheckingType")),
-    "static let NSTextCheckingResult.CheckingType.replacement": .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.replacement, typeName: "NSTextCheckingResult.CheckingType")),
-    "static let NSTextCheckingResult.CheckingType.correction": .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.correction, typeName: "NSTextCheckingResult.CheckingType")),
     "static let NSTextCheckingResult.CheckingType.regularExpression": .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.regularExpression, typeName: "NSTextCheckingResult.CheckingType")),
-    "static let NSTextCheckingResult.CheckingType.phoneNumber": .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.phoneNumber, typeName: "NSTextCheckingResult.CheckingType")),
-    "static let NSTextCheckingResult.CheckingType.transitInformation": .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.transitInformation, typeName: "NSTextCheckingResult.CheckingType")),
         "init NSTextCheckingResult.CheckingType(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSTextCheckingResult.CheckingType(arrayLiteral:): expected array literal")
@@ -49,6 +37,18 @@ extension FoundationBridges {
         let recv: NSTextCheckingResult.CheckingType = try unboxOpaque(receiver, as: NSTextCheckingResult.CheckingType.self, typeName: "NSTextCheckingResult.CheckingType")
         return .bool(recv.isEmpty)
     }
+    d["static let NSTextCheckingResult.CheckingType.orthography"] = .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.orthography, typeName: "NSTextCheckingResult.CheckingType"))
+    d["static let NSTextCheckingResult.CheckingType.spelling"] = .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.spelling, typeName: "NSTextCheckingResult.CheckingType"))
+    d["static let NSTextCheckingResult.CheckingType.grammar"] = .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.grammar, typeName: "NSTextCheckingResult.CheckingType"))
+    d["static let NSTextCheckingResult.CheckingType.date"] = .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.date, typeName: "NSTextCheckingResult.CheckingType"))
+    d["static let NSTextCheckingResult.CheckingType.address"] = .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.address, typeName: "NSTextCheckingResult.CheckingType"))
+    d["static let NSTextCheckingResult.CheckingType.link"] = .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.link, typeName: "NSTextCheckingResult.CheckingType"))
+    d["static let NSTextCheckingResult.CheckingType.quote"] = .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.quote, typeName: "NSTextCheckingResult.CheckingType"))
+    d["static let NSTextCheckingResult.CheckingType.dash"] = .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.dash, typeName: "NSTextCheckingResult.CheckingType"))
+    d["static let NSTextCheckingResult.CheckingType.replacement"] = .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.replacement, typeName: "NSTextCheckingResult.CheckingType"))
+    d["static let NSTextCheckingResult.CheckingType.correction"] = .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.correction, typeName: "NSTextCheckingResult.CheckingType"))
+    d["static let NSTextCheckingResult.CheckingType.phoneNumber"] = .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.phoneNumber, typeName: "NSTextCheckingResult.CheckingType"))
+    d["static let NSTextCheckingResult.CheckingType.transitInformation"] = .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.transitInformation, typeName: "NSTextCheckingResult.CheckingType"))
         #endif
         return d
     }()
