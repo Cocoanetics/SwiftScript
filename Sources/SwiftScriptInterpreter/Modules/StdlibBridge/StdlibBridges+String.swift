@@ -45,6 +45,9 @@ extension StdlibBridges {
         let recv: String = try unboxString(receiver)
         return .string(recv.precomposedStringWithCompatibilityMapping)
     },
+    // `propertyList` (NSString) and `String(localized:)` (Apple-only
+    // `LocalizedStringResource`) entries are added below in
+    // `appleOnlyStringEntries` to avoid `#if` inside a dict literal.
     "var String.smallestEncoding: String.Encoding": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return boxOpaque(recv.smallestEncoding, typeName: "String.Encoding")
@@ -55,12 +58,6 @@ extension StdlibBridges {
             return .optional(.string(_v))
         }
         return .optional(nil)
-    },
-    "init String(localized:)": .`init` { args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("init String(localized:): expected 1 argument(s), got \(args.count)")
-        }
-        return .string(String(localized: try unboxOpaque(args[0], as: LocalizedStringResource.self, typeName: "LocalizedStringResource")))
     },
     "static func String.localizedName()": .staticMethod { args in
         guard args.count == 1 else {
@@ -161,7 +158,7 @@ extension StdlibBridges {
         }
         let recv: String = try unboxString(receiver)
         do {
-            try recv.write(to: try unboxOpaque(args[0], as: URL.self, typeName: "URL"), atomically: try unboxBool(args[1]), encoding: try unboxOpaque(args[2], as: String.Encoding.self, typeName: "String.Encoding"))
+            _ = try recv.write(to: try unboxOpaque(args[0], as: URL.self, typeName: "URL"), atomically: try unboxBool(args[1]), encoding: try unboxOpaque(args[2], as: String.Encoding.self, typeName: "String.Encoding"))
             return .void
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))

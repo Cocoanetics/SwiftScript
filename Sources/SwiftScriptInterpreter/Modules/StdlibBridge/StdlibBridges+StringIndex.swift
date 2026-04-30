@@ -4,13 +4,22 @@ import Foundation
 
 extension StdlibBridges {
     nonisolated(unsafe) static let stringIndex: [String: Bridge] = [
+    "var String.Index.encodedOffset: Int": .computed { receiver in
+        let recv: String.Index = try unboxOpaque(receiver, as: String.Index.self, typeName: "String.Index")
+        return .int(recv.encodedOffset)
+    },
     "var String.Index.hashValue: Int": .computed { receiver in
         let recv: String.Index = try unboxOpaque(receiver, as: String.Index.self, typeName: "String.Index")
         return .int(recv.hashValue)
     },
-    "var String.Index.debugDescription: String": .computed { receiver in
-        let recv: String.Index = try unboxOpaque(receiver, as: String.Index.self, typeName: "String.Index")
-        return .string(recv.debugDescription)
+    // `String.Index.debugDescription` is on Apple's stdlib; not in
+    // swift-corelibs equivalents. Apple-only entry lives in
+    // `StdlibBridges+StringIndexApple.swift`.
+    "init String.Index(encodedOffset:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init String.Index(encodedOffset:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(String.Index(encodedOffset: try unboxInt(args[0])), typeName: "String.Index")
     },
     "func String.Index.samePosition()": .method { receiver, args in
         guard args.count == 1 else {
