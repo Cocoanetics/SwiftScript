@@ -107,3 +107,33 @@ jobs:
         run: swift build --build-tests -v
       - name: Test (Windows)
         run: swift test -v --skip-build
+
+  # Uses skiptools/swift-android-action which wraps the swift.org Android
+  # SDK setup AND runs the SwiftPM tests on an x86_64 Android emulator.
+  # No `container:` here — the action provisions its own toolchain and
+  # the emulator setup needs nested KVM, which only works on the bare
+  # ubuntu-* runner image.
+  #
+  # Split into two action invocations to surface build vs. test timing
+  # separately in the Actions UI (mirrors the other platforms' pattern).
+  # The second invocation reuses the SDK + NDK + AVD caches the first
+  # populated, so the marginal cost is just the emulator boot + tests.
+  build-android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build (Android)
+        uses: skiptools/swift-android-action@v2
+        with:
+          swift-version: "6.3"
+          # The default GitHub Linux runner has ~14 GiB free; the SDK,
+          # NDK, and emulator together push past that without cleanup.
+          free-disk-space: true
+          run-tests: false
+      - name: Test (Android emulator)
+        uses: skiptools/swift-android-action@v2
+        with:
+          swift-version: "6.3"
+          build-package: false
+          build-tests: false
