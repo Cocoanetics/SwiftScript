@@ -107,3 +107,38 @@ jobs:
         run: swift build --build-tests -v
       - name: Test (Windows)
         run: swift test -v --skip-build
+
+  # Cross-compile only — there's no Android runner, and emulating an
+  # Android device on a GitHub runner to actually run the tests is out
+  # of scope for now. A clean cross-build is enough to catch the usual
+  # Darwin-only / Foundation-on-Linux drift before it reaches users.
+  # See https://www.swift.org/documentation/articles/swift-sdk-for-android-getting-started.html
+  build-android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [aarch64, x86_64]
+    container:
+      image: swift:6.3-jammy
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify Swift version
+        run: swift --version
+      # The official Android Swift SDK bundle ships matched to a single
+      # toolchain release. Keep the URL + checksum pinned to the same
+      # 6.3.1 release the host swift:6.3-jammy image carries; if the
+      # base image is bumped, bump these together.
+      - name: Install Swift SDK for Android
+        run: |
+          swift sdk install \
+            https://download.swift.org/swift-6.3.1-release/android-sdk/swift-6.3.1-RELEASE/swift-6.3.1-RELEASE_android.artifactbundle.tar.gz \
+            --checksum 8193a4e96538635131a154736c8896fba0e5a1c30e065524f00ed78719bac35a
+          swift sdk list
+      - name: Build (Android ${{ matrix.arch }})
+        run: |
+          swift build \
+            --swift-sdk ${{ matrix.arch }}-unknown-linux-android28 \
+            --build-tests \
+            -v
