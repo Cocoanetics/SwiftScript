@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="Docs/SwiftScript.jpg" alt="SwiftScript — a Swift interpreter written in Swift" width="100%">
+</p>
+
 # SwiftScript
 
 A tree-walking interpreter for Swift, written in Swift. Parses real Swift
