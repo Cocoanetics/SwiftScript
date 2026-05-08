@@ -221,6 +221,294 @@ struct ShellKitIntegrationTests {
         #expect(r == .bool(true))
     }
 
+    // MARK: sandbox — FileHandle path inits
+
+    @Test func sandboxBlocksFileHandleReadingAtPathOutsideRoot() async throws {
+        // FileHandle(forReadingAtPath:) is the canonical "open a file"
+        // door outside FileManager. Without the new gate it bypassed
+        // the sandbox entirely.
+        let root = NSTemporaryDirectory()
+            + "swiftscript-sandbox-\(UUID().uuidString)"
+        try FileManager.default.createDirectory(
+            atPath: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(atPath: root) }
+        let shell = TestShell(
+            sandbox: .rooted(at: URL(fileURLWithPath: root),
+                             allowedHosts: []))
+        var caughtError: Error?
+        await shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            do {
+                _ = try await interp.eval(#"""
+                    import Foundation
+                    FileHandle(forReadingAtPath: "/etc/passwd")
+                    """#)
+            } catch {
+                caughtError = error
+            }
+        }
+        #expect(caughtError != nil)
+        if let signal = caughtError as? UserThrowSignal,
+           case .opaque(_, let payload) = signal.value,
+           payload is ShellKit.Sandbox.Denial
+        {
+            // ok
+        } else {
+            Issue.record("expected Sandbox.Denial, got \(caughtError as Any)")
+        }
+    }
+
+    @Test func sandboxBlocksFileHandleWritingAtPathOutsideRoot() async throws {
+        // The forWritingAtPath / forUpdatingAtPath inits gate as
+        // `.write` so a sandbox that allows read but not write also
+        // denies them. Validates the read-vs-write intent split.
+        let root = NSTemporaryDirectory()
+            + "swiftscript-sandbox-\(UUID().uuidString)"
+        try FileManager.default.createDirectory(
+            atPath: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(atPath: root) }
+        let shell = TestShell(
+            sandbox: .rooted(at: URL(fileURLWithPath: root),
+                             allowedHosts: []))
+        var caughtError: Error?
+        await shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            do {
+                _ = try await interp.eval(#"""
+                    import Foundation
+                    FileHandle(forWritingAtPath: "/etc/passwd")
+                    """#)
+            } catch {
+                caughtError = error
+            }
+        }
+        #expect(caughtError != nil)
+        if let signal = caughtError as? UserThrowSignal,
+           case .opaque(_, let payload) = signal.value,
+           payload is ShellKit.Sandbox.Denial
+        {
+            // ok
+        } else {
+            Issue.record("expected Sandbox.Denial, got \(caughtError as Any)")
+        }
+    }
+
+    @Test func sandboxAllowsFileHandleReadingInsideRoot() async throws {
+        let root = NSTemporaryDirectory()
+            + "swiftscript-sandbox-\(UUID().uuidString)"
+        try FileManager.default.createDirectory(
+            atPath: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(atPath: root) }
+        let sentinel = root + "/marker"
+        try "hello".write(toFile: sentinel, atomically: true, encoding: .utf8)
+        let shell = TestShell(
+            sandbox: .rooted(at: URL(fileURLWithPath: root),
+                             allowedHosts: []))
+        let escaped = sentinel.replacingOccurrences(of: "\\", with: "\\\\")
+        try await shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            // The init returns an Optional<FileHandle>; presence in the
+            // result confirms the gate let it through and the open
+            // succeeded.
+            let r = try await interp.eval(#"""
+                import Foundation
+                let h = FileHandle(forReadingAtPath: "\#(escaped)")
+                h != nil
+                """#)
+            #expect(r == .bool(true))
+        }
+    }
+
+    // MARK: sandbox — Bundle path init
+
+    @Test func sandboxBlocksBundlePathOutsideRoot() async throws {
+        // Bundle(path:) opens a bundle root the script later reads
+        // resources from. The gate fires at construction so a
+        // pathological root (`/etc`) is denied before the script can
+        // call .url(forResource:withExtension:).
+        let root = NSTemporaryDirectory()
+            + "swiftscript-sandbox-\(UUID().uuidString)"
+        try FileManager.default.createDirectory(
+            atPath: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(atPath: root) }
+        let shell = TestShell(
+            sandbox: .rooted(at: URL(fileURLWithPath: root),
+                             allowedHosts: []))
+        var caughtError: Error?
+        await shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            do {
+                _ = try await interp.eval(#"""
+                    import Foundation
+                    Bundle(path: "/etc")
+                    """#)
+            } catch {
+                caughtError = error
+            }
+        }
+        #expect(caughtError != nil)
+        if let signal = caughtError as? UserThrowSignal,
+           case .opaque(_, let payload) = signal.value,
+           payload is ShellKit.Sandbox.Denial
+        {
+            // ok
+        } else {
+            Issue.record("expected Sandbox.Denial, got \(caughtError as Any)")
+        }
+    }
+
+    // MARK: sandbox — InputStream / OutputStream path inits
+
+    @Test func sandboxBlocksOutputStreamWriteOutsideRoot() async throws {
+        let root = NSTemporaryDirectory()
+            + "swiftscript-sandbox-\(UUID().uuidString)"
+        try FileManager.default.createDirectory(
+            atPath: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(atPath: root) }
+        let shell = TestShell(
+            sandbox: .rooted(at: URL(fileURLWithPath: root),
+                             allowedHosts: []))
+        var caughtError: Error?
+        await shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            do {
+                _ = try await interp.eval(#"""
+                    import Foundation
+                    OutputStream(toFileAtPath: "/etc/secrets", append: false)
+                    """#)
+            } catch {
+                caughtError = error
+            }
+        }
+        #expect(caughtError != nil)
+        if let signal = caughtError as? UserThrowSignal,
+           case .opaque(_, let payload) = signal.value,
+           payload is ShellKit.Sandbox.Denial
+        {
+            // ok
+        } else {
+            Issue.record("expected Sandbox.Denial, got \(caughtError as Any)")
+        }
+    }
+
+    // MARK: sandbox — Process deny
+
+    @Test func sandboxDeniesProcessConstructionEntirely() async throws {
+        // Foundation.Process spawns a real OS subprocess that escapes
+        // every host gate, so the policy is "denied entirely whenever
+        // a sandbox is bound". Even constructing a Process — without
+        // calling .run() — has to fail so the script can't capture the
+        // instance and pass it around.
+        let root = NSTemporaryDirectory()
+            + "swiftscript-sandbox-\(UUID().uuidString)"
+        try FileManager.default.createDirectory(
+            atPath: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(atPath: root) }
+        let shell = TestShell(
+            sandbox: .rooted(at: URL(fileURLWithPath: root),
+                             allowedHosts: []))
+        var caughtError: Error?
+        await shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            do {
+                _ = try await interp.eval(#"""
+                    import Foundation
+                    Process()
+                    """#)
+            } catch {
+                caughtError = error
+            }
+        }
+        #expect(caughtError != nil)
+        if let signal = caughtError as? UserThrowSignal,
+           case .opaque(_, let payload) = signal.value,
+           payload is ProcessSandboxDenied
+        {
+            // ok
+        } else {
+            Issue.record("expected ProcessSandboxDenied, got \(caughtError as Any)")
+        }
+    }
+
+    @Test func processConstructionAllowedWithoutSandbox() async throws {
+        // Without a bound sandbox the deny check is a no-op, so the
+        // standalone `swift-script` CLI behaves as before. Construct
+        // a Process and check it boxes — we don't `.run()` it because
+        // CI environments shouldn't fork test-time subprocesses.
+        let shell = TestShell()  // no sandbox
+        try await shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            let r = try await interp.eval(#"""
+                import Foundation
+                let p = Process()
+                p.isRunning
+                """#)
+            #expect(r == .bool(false))
+        }
+    }
+
+    // MARK: network — URLRequest variants gate
+
+    @Test func networkConfigBlocksURLSessionDataForRequestOffAllowList() async throws {
+        // URLSession.data(for: URLRequest) was the headline hole the
+        // generalised gate closes — the request-bearing overload now
+        // pulls URL+method out of the URLRequest and runs them through
+        // `authorizeURL` the same as the bare-URL overload.
+        let net = NetworkConfig(
+            allowedURLPrefixes: [AllowedURLEntry("https://allowed.example.com")],
+            allowedMethods: [.GET])
+        let shell = TestShell(networkConfig: net)
+        var caughtError: Error?
+        await shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            do {
+                _ = try await interp.eval(#"""
+                    import Foundation
+                    let url = URL(string: "https://denied.example.com/secret")!
+                    let req = URLRequest(url: url, timeoutInterval: 30.0)
+                    try await URLSession.shared.upload(for: req, fromFile: url)
+                    """#)
+            } catch {
+                caughtError = error
+            }
+        }
+        #expect(caughtError != nil)
+        if let signal = caughtError as? UserThrowSignal,
+           case .opaque(_, let payload) = signal.value,
+           payload is NetworkConfig.NetworkAccessDenied
+        {
+            // ok
+        } else {
+            Issue.record(
+                "expected NetworkAccessDenied, got \(caughtError as Any)")
+        }
+    }
+
+    @Test func networkConfigRejectsUnknownHTTPMethod() throws {
+        // Earlier `NetworkConfig.checkAllowed` fell back to `.GET`
+        // when `HTTPMethod(rawValue:)` returned nil, so a request
+        // with `httpMethod = "FOO"` would be evaluated against GET
+        // permissions and could pass when only GET was allowed —
+        // even though the actual method stayed `FOO`. The fix is in
+        // the helper itself; URLRequest's `httpMethod` setter isn't
+        // bridged (it's a struct, the bridge generator only emits
+        // setters for class-typed receivers), so this is a direct
+        // unit test on the gate rather than through a script.
+        let net = NetworkConfig(
+            allowedURLPrefixes: [AllowedURLEntry("https://allowed.example.com")],
+            allowedMethods: [.GET, .POST, .PUT, .DELETE, .HEAD, .PATCH, .OPTIONS])
+        let url = URL(string: "https://allowed.example.com/x")!
+        do {
+            try net.checkAllowed(url: url, method: "FOO")
+            Issue.record("expected NetworkAccessDenied for unknown method")
+        } catch let denial as NetworkConfig.NetworkAccessDenied {
+            #expect(denial.reason.contains("FOO not supported"),
+                    "got: \(denial.reason)")
+        } catch {
+            Issue.record("expected NetworkAccessDenied, got \(error)")
+        }
+    }
+
     // MARK: identity
 
     @Test func processInfoUserNameReadsHostInfo() async throws {

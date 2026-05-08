@@ -45,6 +45,13 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+    "var URLRequest.httpBodyStream: InputStream?": .computed { receiver in
+        let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+        if let _v = recv.httpBodyStream {
+            return .optional(boxOpaque(_v, typeName: "InputStream"))
+        }
+        return .optional(nil)
+    },
     "var URLRequest.httpShouldHandleCookies: Bool": .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         return .bool(recv.httpShouldHandleCookies)

@@ -79,6 +79,33 @@ public func authorizeURL(
     }
 }
 
+// MARK: Subprocess deny
+
+/// Thrown by every `Process` bridge entry when a sandbox is bound.
+/// `Foundation.Process` spawns a real OS subprocess that escapes
+/// every host gate (path, network, identity), so the policy is
+/// "denied entirely whenever a sandbox is configured". Embedders
+/// that want subprocess execution under a sandbox must register
+/// SwiftBash's virtual-process table instead.
+public struct ProcessSandboxDenied: Error, CustomStringConvertible {
+    public let reason: String
+    public init(reason: String = "Process is denied when a sandbox is active") {
+        self.reason = reason
+    }
+    public var description: String { reason }
+}
+
+/// Throw ``ProcessSandboxDenied`` when a sandbox is bound on the
+/// current shell. Generated `Process(...)` bridges call this before
+/// touching any Foundation API. Returns silently in the standalone
+/// passthrough case (no sandbox configured).
+@inlinable
+public func denyProcessIfSandboxed() throws {
+    if ShellKit.Shell.current.sandbox != nil {
+        throw ProcessSandboxDenied()
+    }
+}
+
 // MARK: Identity
 
 /// Synthetic user-name override — script-side `ProcessInfo
@@ -157,9 +184,18 @@ extension ShellKit.NetworkConfig {
     @usableFromInline
     func checkAllowed(url: URL, method: String) throws {
         if dangerouslyAllowFullInternetAccess { return }
-        // Method gate.
+        // Method gate. Unknown verbs (LINK, UNLINK, custom WebDAV, …)
+        // must be rejected outright — falling back to `.GET` would
+        // silently grant a method the embedder never approved, since
+        // a request with `httpMethod = "FOO"` would be evaluated
+        // against GET permissions while the actual request method
+        // stayed `FOO`.
         let normalised = method.uppercased()
-        let knownMethod = HTTPMethod(rawValue: normalised) ?? .GET
+        guard let knownMethod = HTTPMethod(rawValue: normalised) else {
+            throw NetworkAccessDenied(
+                url: url,
+                reason: "HTTP method \(normalised) not supported by network gate")
+        }
         if !allowedMethods.contains(knownMethod) {
             throw NetworkAccessDenied(
                 url: url,

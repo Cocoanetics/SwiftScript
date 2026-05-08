@@ -367,6 +367,19 @@ let bridgeableTypeAllowlist: Set<String> = [
     "PropertyListDecoder",
     "FileManager",
     "ProcessInfo",
+    // File-IO doors. Each gets path/URL gating in `gates(...)` so a
+    // script can't open a file outside the sandbox via a class init
+    // (FileHandle(forReadingAtPath:), Bundle(path:), etc.).
+    "FileHandle",
+    "Bundle",
+    "InputStream",
+    "OutputStream",
+    "FileWrapper",
+    // Subprocess: denied entirely under a sandbox via `gates(...)`.
+    // `Foundation.Process` spawns a real OS subprocess that escapes
+    // every host gate; the bridge throws `ProcessSandboxDenied` when
+    // a sandbox is configured.
+    "Process",
     // OptionSet-style nested types under bridged classes
     "JSONEncoder.OutputFormatting",
 ]
@@ -672,6 +685,55 @@ enum GateKind {
     case networkRequest
 }
 
+/// Parameter labels that carry a `String`-typed filesystem path.
+/// Receiver-driven rules consult this set as part of the per-arg scan
+/// (in addition to the conventional first-arg-is-path heuristic for
+/// FileManager). Membership here means "this label is a path; the
+/// intent is fsRead by default unless the receiver/method overrides".
+let pathStringLabelsRead: Set<String> = [
+    "atPath", "atFilePath", "fromFile",
+    "forReadingAtPath",
+    "contentsOfFile", "withContentsOfFile", "atFile",
+    // FileManager second-arg labels. `andPath` covers
+    // `contentsEqual(atPath:andPath:)`; without it the comparison's
+    // second path slipped past the gate.
+    "andPath",
+    // Bundle init / open-by-path doors. `path` is widespread in
+    // Foundation but only the I/O receivers in `gates(...)` reach
+    // this set, so keeping it here doesn't gate unrelated APIs.
+    "path", "filePath", "fileAtPath",
+]
+/// As above, but for write-shaped path labels.
+let pathStringLabelsWrite: Set<String> = [
+    "toFile", "forWritingAtPath", "toFileAtPath",
+    // `forUpdating*` opens for read+write — be conservative and gate
+    // as a write so a sandbox that allows read but not write still
+    // denies the open.
+    "forUpdatingAtPath",
+    // FileManager second-arg labels for `copyItem(atPath:toPath:)`,
+    // `moveItem(atPath:toPath:)`, `linkItem(atPath:toPath:)`. The
+    // first arg is gated by the receiver-rule's positional fallback;
+    // the label scan picks up the second.
+    "toPath", "andDestinationPath",
+]
+/// Parameter labels that carry a `URL`-typed filesystem-or-network
+/// resource. Combined with the receiver/method intent to pick the
+/// gate kind. `at` and `to` map to the same intent as the method
+/// itself (read for `String(contentsOf:)`, write for `Data.write(to:)`,
+/// etc.). The catch-all set below leans read; write-shaped methods
+/// should be looked up in the receiver-rule's `writeMethods`.
+let urlLabelsRead: Set<String> = [
+    "at", "from", "url", "contentsOf", "forResource",
+    "withContentsOf", "fileURL",
+    // FileManager `setUbiquitous(_:itemAt:destinationURL:)` and
+    // similar "URL of the item being acted on" labels.
+    "itemAt", "ofItemAt",
+]
+let urlLabelsWrite: Set<String> = [
+    "to", "atURL", "toURL", "destinationURL",
+    "withDestinationURL",
+]
+
 /// One gate to inject: bind `args[index]` to a local name, then call
 /// the appropriate authorizer. The bound name replaces the inline
 /// `try unbox…` in the call expression so we don't double-unbox.
@@ -697,132 +759,278 @@ struct GateDirective {
 /// method itself is read-only metadata (`fileExists`, `attributesOfItem`).
 /// Embedders that want cheaper introspection can grant a permissive
 /// sandbox; the policy stays simple.
+///
+/// The receiver-driven rules also do a generalised per-parameter scan
+/// across all positions: every `String`/`URL` arg whose label looks
+/// path-bearing (`pathStringLabelsRead/Write`, `urlLabelsRead/Write`)
+/// gets a gate at its position, not just position 0. That closes the
+/// holes around methods like `FileManager.setUbiquitous(_:itemAt:
+/// destinationURL:)` (where the URL args sit at indices 1+2) and
+/// `createSymbolicLink(at:withDestinationURL:)` (both URLs are
+/// writes). The receiver-rule supplies a *default intent*; the label
+/// scan upgrades it to a more specific intent when the label says so.
+///
+/// The argLabels parameter carries the per-position call-site labels
+/// (extracted from `sym.names.title`) used by the label scan. Receivers
+/// without a known I/O personality return `[]` regardless of labels —
+/// labels alone don't unlock gating, the receiver has to opt in.
 func gates(
     forReceiver receiverTypeName: String?,
     methodName: String?,
     initFor: String? = nil,
+    argLabels: [String] = [],
     signature sig: ResolvedSignature
 ) -> [GateDirective] {
-    // Identify which arg(s) carry path-or-URL data. Most FileManager /
-    // URL-init signatures put the path/URL first; a few methods
-    // (`copyItem`, `moveItem`, `linkItem`) pass two paths.
     var directives: [GateDirective] = []
+    var gatedIndices: Set<Int> = []
 
-    func appendIfPathish(
+    /// Gate a `String`/`URL` parameter by absolute position. Skips
+    /// non-path-shaped args silently so callers can fire-and-forget
+    /// across an unknown signature. `replace` lets a later, more
+    /// specific call upgrade the intent (e.g. label scan finding a
+    /// `to:` write where the receiver default was read).
+    func gatePathish(
         _ paramIndex: Int,
-        kind: GateKind
+        kind: GateKind,
+        replace: Bool = false
     ) {
         guard paramIndex < sig.parameters.count else { return }
         let p = sig.parameters[paramIndex]
         let spelling = p.type.swiftSpelling
-        // Only path-shaped args: `String` and `URL`. Bool / Int / etc.
-        // are introspection params — the gate doesn't apply.
         guard spelling == "String" || spelling == "URL" else { return }
+        if gatedIndices.contains(paramIndex) {
+            if replace, let i = directives.firstIndex(where: { $0.argIndex == paramIndex }) {
+                directives[i] = GateDirective(
+                    argIndex: paramIndex,
+                    argSwiftType: spelling,
+                    boundName: "arg\(paramIndex)",
+                    kind: kind)
+            }
+            return
+        }
         directives.append(GateDirective(
             argIndex: paramIndex,
             argSwiftType: spelling,
             boundName: "arg\(paramIndex)",
             kind: kind))
+        gatedIndices.insert(paramIndex)
     }
 
-    /// Like `appendIfPathish` but for `URLRequest`-typed args: gate
-    /// via the request's embedded URL + method. Used for the
-    /// URLSession overloads that take a `URLRequest` instead of a
-    /// bare `URL` (`data(for:)`, `upload(for:fromFile:)`,
-    /// `download(for:)`, etc.) so the network policy fires the same
-    /// way it does for the URL-arg variants.
-    func appendIfURLRequestish(_ paramIndex: Int) {
+    /// `URLRequest`-typed args route to the `.networkRequest` gate
+    /// (URL + method extracted from the request struct). Used for
+    /// the URLSession overloads that take a `URLRequest`
+    /// (`data(for:)`, `upload(for:fromFile:)`, `download(for:)`, …)
+    /// so the network policy fires the same as the bare-URL
+    /// overloads.
+    func gateURLRequest(_ paramIndex: Int) {
         guard paramIndex < sig.parameters.count else { return }
         let p = sig.parameters[paramIndex]
         guard p.type.swiftSpelling == "URLRequest" else { return }
+        if gatedIndices.contains(paramIndex) { return }
         directives.append(GateDirective(
             argIndex: paramIndex,
             argSwiftType: "URLRequest",
             boundName: "arg\(paramIndex)",
             kind: .networkRequest))
+        gatedIndices.insert(paramIndex)
     }
 
-    // FileManager — every method that takes a path or URL.
+    /// Walk every parameter and gate any `String`/`URL` arg whose
+    /// label appears in the path/URL label sets. Pulls intent from
+    /// the label (writeLabels → fsWrite, readLabels → fsRead). The
+    /// `defaultIntent` applies when the label doesn't disambiguate
+    /// — typically the method-name-driven receiver-rule intent.
+    /// Skips already-gated indices so a receiver's positional rule
+    /// (e.g. URLSession's index-0 URL = .network) wins over the
+    /// generic label scan.
+    func scanByLabel(defaultIntent: GateKind) {
+        for (i, label) in argLabels.enumerated() {
+            guard i < sig.parameters.count else { break }
+            if gatedIndices.contains(i) { continue }
+            let p = sig.parameters[i]
+            let spelling = p.type.swiftSpelling
+            guard spelling == "String" || spelling == "URL" else { continue }
+            let intent: GateKind?
+            if spelling == "String" {
+                if pathStringLabelsWrite.contains(label) { intent = .fsWrite }
+                else if pathStringLabelsRead.contains(label) { intent = .fsRead }
+                else { intent = nil }
+            } else {  // URL
+                if urlLabelsWrite.contains(label) { intent = defaultIntent.isWrite ? defaultIntent : .fsWrite }
+                else if urlLabelsRead.contains(label) { intent = defaultIntent }
+                else { intent = nil }
+            }
+            guard let intent else { continue }
+            gatePathish(i, kind: intent)
+        }
+    }
+
+    // FileManager — every method that takes a path or URL. The
+    // receiver-rule picks the *default intent* by method name; the
+    // label scan that follows then catches index-1+ URL/path args
+    // (e.g. `setUbiquitous(_: Bool, itemAt: URL, destinationURL: URL)`,
+    // `createSymbolicLink(at: URL, withDestinationURL: URL)`) that
+    // the prior position-0/1 rule missed.
     if receiverTypeName == "FileManager" || initFor == "FileManager" {
-        // Pick intent from the method name. Anything that mutates
-        // disk is `.fsWrite` (or `.fsDelete` for explicit deletes);
-        // pure inspection is `.fsRead`. Two-path operations
-        // (`copyItem`, `moveItem`, `linkItem`, `replaceItemAt`)
-        // gate both paths.
         let writeMethods: Set<String> = [
             "createDirectory", "createFile", "createSymbolicLink",
             "setAttributes", "changeCurrentDirectoryPath",
+            "linkItem", "copyItem", "moveItem", "replaceItemAt",
+            "setUbiquitous",
         ]
         let deleteMethods: Set<String> = ["removeItem", "trashItem"]
-        let twoPathMethods: Set<String> = [
-            "copyItem", "moveItem", "linkItem", "replaceItemAt",
-        ]
         let intent: GateKind
         if let m = methodName {
             if deleteMethods.contains(m) { intent = .fsDelete }
             else if writeMethods.contains(m) { intent = .fsWrite }
-            else if twoPathMethods.contains(m) { intent = .fsWrite }
             else { intent = .fsRead }
         } else { intent = .fsRead }
-        if let m = methodName, twoPathMethods.contains(m) {
-            appendIfPathish(0, kind: intent)
-            appendIfPathish(1, kind: intent)
-        } else {
-            appendIfPathish(0, kind: intent)
-        }
+        // Position-0 fallback for the rare overloads whose label
+        // doesn't appear in our sets (older Foundation kept some as
+        // unlabeled `_`).
+        gatePathish(0, kind: intent)
+        scanByLabel(defaultIntent: intent)
     }
 
-    // URL initializers — `URL(fileURLWithPath:)`, `URL(string:)` —
-    // bind into a sandbox or network gate so a script can't escape
-    // by constructing URLs whose origin lies outside the policy.
-    // Pure URL construction is cheap; the authorize call adds the
-    // policy enforcement without changing the result.
-    //
-    // We only gate `init URL(fileURLWithPath:)` and the
-    // `String`-shaped `init URL(string:)` here — `URL(filePath:)`
-    // is a macOS-13+ alias, and the `URL.init(string:relativeTo:)`
-    // overload routes through the same single-string path.
-    // `URLComponents` and `URLRequest` get covered by their consumer
-    // methods (URLSession.data(from:) etc.) rather than at init.
-    //
-    // (We deliberately *don't* gate at URL construction time today
-    // because the current `Sandbox.authorize` is async and many URL
-    // inits are non-async; the gating happens at the I/O call site.)
+    // URL initializers — pure construction, not gated at init time.
+    // `Sandbox.authorize` is async; many URL inits are sync. The gate
+    // fires at the I/O call site (URLSession.data(from:),
+    // String(contentsOf:), …) regardless of how the URL was built.
 
-    // String / Data file-IO inits — `init String(contentsOf:)`,
-    // `init String(contentsOfFile:)`, `init Data(contentsOf:)`,
-    // and the corresponding `.write(to:)` methods. Each takes either
-    // a `String` path or a `URL` as the first arg.
-    if initFor == "String" || initFor == "Data" {
+    // String / Data / NSString / NSData file-IO inits — read-shaped
+    // (`init X(contentsOf:)`, `init X(contentsOfFile:)`) take a
+    // path/URL at index 0; the label-scan picks up `contentsOf` /
+    // `contentsOfFile` directly.
+    if initFor == "String" || initFor == "Data"
+        || initFor == "NSString" || initFor == "NSData"
+    {
         if let m = methodName, m.contains("contentsOfFile") || m.contains("contentsOf") {
-            appendIfPathish(0, kind: .fsRead)
+            gatePathish(0, kind: .fsRead)
+            scanByLabel(defaultIntent: .fsRead)
         }
     }
-    if receiverTypeName == "String" || receiverTypeName == "Data" {
+    if receiverTypeName == "String" || receiverTypeName == "Data"
+        || receiverTypeName == "NSString" || receiverTypeName == "NSData"
+    {
         if methodName == "write" {
-            // String/Data.write(to: URL/path, …) — first arg.
-            appendIfPathish(0, kind: .fsWrite)
+            gatePathish(0, kind: .fsWrite)
+            scanByLabel(defaultIntent: .fsWrite)
         }
     }
 
-    // URLSession — the high-level `data(from:)`, `data(for:)`,
-    // `download(from:)`, `upload(for:fromFile:)`, etc. take either a
-    // bare `URL` or a `URLRequest` at index 0; some (`upload(for:
-    // fromFile:)`) carry a second `URL` arg pointing at a local
-    // file we should also `authorizePath`.
+    // URLSession — first arg is a network destination (URL or
+    // URLRequest); the `fromFile:` overloads carry a local-file URL
+    // at a later index that needs an fsRead gate. The label-scan
+    // generalises this to any `fromFile:` / `from:` / `forResource:`
+    // URL arg at any position.
     if receiverTypeName == "URLSession" {
-        // First arg: URL → network gate; URLRequest → network gate
-        // via embedded URL + method.
-        appendIfPathish(0, kind: .network)
-        appendIfURLRequestish(0)
-        // Second arg: a `fromFile:` URL is a real local file the
-        // session reads to upload — gate as `.fsRead`. The first arg
-        // already handled the network policy; this one closes the
-        // file-read door for upload-from-file overloads.
-        appendIfPathish(1, kind: .fsRead)
+        gatePathish(0, kind: .network)
+        gateURLRequest(0)
+        // Position-1 fsRead retained as a fallback for symbol graphs
+        // whose label spelling doesn't make it through the extractor.
+        gatePathish(1, kind: .fsRead)
+        scanByLabel(defaultIntent: .fsRead)
+    }
+
+    // FileHandle — `init(forReadingAtPath:)`,
+    // `init(forWritingAtPath:)`, `init(forUpdatingAtPath:)` plus the
+    // URL-init variants `init(forReadingFrom:)`, `init(forWritingTo:)`,
+    // `init(forUpdating:)`. The String-arg labels are in the
+    // `pathStringLabels*` sets; the URL-arg labels (`forWritingTo` /
+    // `forUpdating`) aren't in `urlLabelsWrite` because they're
+    // FileHandle-specific spellings, so we infer the intent from the
+    // method-label here and fall through to a positional gate.
+    // `init(fileDescriptor:)` is out of scope — there's no path to
+    // authorise. Methods on an opened FileHandle (read/write/seek)
+    // are not gated here; the host process already constrains those
+    // via fd permissions established at open time.
+    if initFor == "FileHandle" {
+        let intent: GateKind
+        if let m = methodName,
+           m.contains("forWriting") || m.contains("forUpdating")
+        {
+            intent = .fsWrite
+        } else {
+            intent = .fsRead
+        }
+        scanByLabel(defaultIntent: intent)
+        if directives.isEmpty { gatePathish(0, kind: intent) }
+    }
+
+    // Bundle — `init(path:)`, `init(url:)` open a bundle root the
+    // script later reads resources from. Gate as `.fsRead` so a
+    // pathological root (`/etc`) gets denied.
+    // `Bundle.path(forResource:ofType:inDirectory:)` similarly
+    // returns a path inside the bundle; the gate at the consumer
+    // call (`String(contentsOfFile:)`) will catch any further hop.
+    if initFor == "Bundle" || receiverTypeName == "Bundle" {
+        scanByLabel(defaultIntent: .fsRead)
+    }
+
+    // OutputStream — `init(toFileAtPath:append:)`,
+    // `init(url:append:)` open a file for writing.
+    if initFor == "OutputStream" {
+        scanByLabel(defaultIntent: .fsWrite)
+    }
+
+    // InputStream — `init(fileAtPath:)`, `init(url:)` open a file
+    // for reading.
+    if initFor == "InputStream" {
+        scanByLabel(defaultIntent: .fsRead)
+    }
+
+    // FileWrapper — `init(url:options:)` reads a wrapper from disk;
+    // `.read(from:options:)` is read-shaped; `.write(to:options:
+    // originalContentsURL:)` is write-shaped. The label-scan catches
+    // each via `at` (read) / `to` (write) / `originalContentsURL`
+    // (read of the prior copy).
+    if initFor == "FileWrapper" {
+        scanByLabel(defaultIntent: .fsRead)
+    }
+    if receiverTypeName == "FileWrapper" {
+        let intent: GateKind
+        if methodName == "write" { intent = .fsWrite }
+        else { intent = .fsRead }
+        scanByLabel(defaultIntent: intent)
     }
 
     return directives
+}
+
+extension GateKind {
+    /// True if this kind expresses a write-side operation. Used by
+    /// the label scan to decide whether a `to:`-shaped URL arg
+    /// keeps the receiver-default intent or upgrades to fsWrite.
+    var isWrite: Bool {
+        switch self {
+        case .fsWrite, .fsDelete: return true
+        case .fsRead, .network, .networkRequest: return false
+        }
+    }
+}
+
+/// Receiver-type spellings whose every bridge entry must short-
+/// circuit with `try denyProcessIfSandboxed()` before doing any host
+/// work. Used for `Foundation.Process` — it spawns a real OS
+/// subprocess that escapes every host gate (path, network, identity),
+/// so the policy is "denied entirely whenever a sandbox is active".
+/// Embedders that want subprocess execution under a sandbox bind
+/// SwiftBash's virtual-process table instead.
+let denyWhenSandboxedReceivers: Set<String> = ["Process"]
+
+/// Render the deny-when-sandboxed prologue. Wraps the synchronous
+/// `denyProcessIfSandboxed()` throw in a `do/catch` that re-raises as
+/// a `UserThrowSignal` — same shape as the path/URL gates — so
+/// script-side `do/catch` blocks can pattern-match the typed denial
+/// instead of seeing it as an opaque host-side error.
+func denyPrologueLines(indent: String) -> [String] {
+    return [
+        "\(indent)do {",
+        "\(indent)    try denyProcessIfSandboxed()",
+        "\(indent)} catch {",
+        "\(indent)    throw UserThrowSignal(value: .opaque(typeName: \"Error\", value: error))",
+        "\(indent)}",
+    ]
 }
 
 /// Identity-leaking property reads on `ProcessInfo` / `Bundle` /
@@ -1777,11 +1985,20 @@ for annotated in prioritizedSymbols {
         let key = "method:\(receiverTypeName).\(methodName)"
         if !claim(key, clashLabel: "\(receiverTypeName).\(methodName)") { continue }
         let recvUnbox = render(recvType.unboxTemplate, "receiver")
+        let methodLabels = sig.parameters.map(\.label)
         let methodGates = gates(
             forReceiver: receiverTypeName,
             methodName: methodName,
+            argLabels: methodLabels,
             signature: sig)
-        let methodGated = renderGates(methodGates, sig: sig, indent: "        ")
+        var methodGated = renderGates(methodGates, sig: sig, indent: "        ")
+        // Process: every method is denied when a sandbox is bound.
+        // Inject the deny check in front of any other gate prologue
+        // so even a sandbox-passing arg never reaches the
+        // subprocess-spawning Foundation API.
+        if denyWhenSandboxedReceivers.contains(receiverTypeName) {
+            methodGated.prologue.insert(contentsOf: denyPrologueLines(indent: "        "), at: 0)
+        }
         record(key, bucket: .type(receiverTypeName), code: renderEmit(EmitConfig(
             registerLine: "\"func \(receiverTypeName).\(methodName)()\": .method",
             closureParams: "receiver, args",
@@ -1831,8 +2048,14 @@ for annotated in prioritizedSymbols {
             forReceiver: nil,
             methodName: initMethodName,
             initFor: receiverTypeName,
+            argLabels: labels,
             signature: sig)
-        let initGated = renderGates(initGates, sig: sig, indent: "        ")
+        var initGated = renderGates(initGates, sig: sig, indent: "        ")
+        // Process: even constructing a Process is denied under sandbox,
+        // so a script can't capture an instance and pass it around.
+        if denyWhenSandboxedReceivers.contains(receiverTypeName) {
+            initGated.prologue.insert(contentsOf: denyPrologueLines(indent: "        "), at: 0)
+        }
         record(key, bucket: .type(receiverTypeName), code: renderEmit(EmitConfig(
             registerLine: "\"\(initKey)\": .`init`",
             closureParams: "args",
@@ -1876,6 +2099,13 @@ for annotated in prioritizedSymbols {
         // unbox where the redirect doesn't need it.
         let redirected = redirectedPropertyCall(
             receiver: receiverTypeName, member: memberName)
+        // Process: every property read/write requires the deny check
+        // up front so a sandboxed script can't inspect or set
+        // `arguments`/`environment`/etc. on the way to a `.run()` call.
+        var propPrologue: [String] = []
+        if denyWhenSandboxedReceivers.contains(receiverTypeName) {
+            propPrologue.append(contentsOf: denyPrologueLines(indent: "        "))
+        }
         record(key, bucket: .type(receiverTypeName), code: renderEmit(EmitConfig(
             registerLine: "\"var \(receiverTypeName).\(memberName): \(propTypeSpelling)\": .computed",
             closureParams: redirected != nil ? "_" : "receiver",
@@ -1888,7 +2118,8 @@ for annotated in prioritizedSymbols {
             isOptional: propType.isOptional,
             isThrowing: false,
             isAsync: false,
-            tupleElements: []
+            tupleElements: [],
+            prologue: propPrologue
         )))
         // For `var` properties on bridged classes, emit a setter
         // alongside the getter. The reference can be mutated in place
@@ -1902,9 +2133,12 @@ for annotated in prioritizedSymbols {
            isVarMutable(sym)
         {
             let unboxNew = render(propType.bridge.unboxTemplate, "newValue")
+            let setterDeny = denyWhenSandboxedReceivers.contains(receiverTypeName)
+                ? denyPrologueLines(indent: "            ").joined(separator: "\n") + "\n"
+                : ""
             let setterCode = """
                     \"set var \(receiverTypeName).\(memberName): \(propTypeSpelling)\": .setter { receiver, newValue in
-                        let recv: \(recvType.swiftSpelling) = \(recvUnbox)
+            \(setterDeny)            let recv: \(recvType.swiftSpelling) = \(recvUnbox)
                         recv.\(memberName) = \(unboxNew)
                     },
             """
@@ -1953,6 +2187,12 @@ for annotated in prioritizedSymbols {
         let methodName = sym.names.title.split(separator: "(").first.map(String.init) ?? sym.names.title
         let key = "static-method:\(receiverTypeName).\(methodName)"
         if !claim(key, clashLabel: "\(receiverTypeName).\(methodName)") { continue }
+        // Process: static factories (e.g. `Process.launchedProcess`)
+        // need the same deny check as instance methods/inits.
+        var staticPrologue: [String] = []
+        if denyWhenSandboxedReceivers.contains(receiverTypeName) {
+            staticPrologue.append(contentsOf: denyPrologueLines(indent: "        "))
+        }
         record(key, bucket: .type(receiverTypeName), code: renderEmit(EmitConfig(
             registerLine: "\"static func \(receiverTypeName).\(methodName)()\": .staticMethod",
             closureParams: "args",
@@ -1964,7 +2204,8 @@ for annotated in prioritizedSymbols {
             isOptional: sig.returnIsOptional,
             isThrowing: isThrowing(sym),
             isAsync: isAsync(sym),
-            tupleElements: sig.returnTupleElements
+            tupleElements: sig.returnTupleElements,
+            prologue: staticPrologue
         )))
 
     default:

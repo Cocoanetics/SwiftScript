@@ -9,6 +9,10 @@ import FoundationNetworking
 #if canImport(Darwin)
 extension FoundationBridges {
     nonisolated(unsafe) static let uRLResource: [String: Bridge] = [
+    "var URLResource.bundle: Bundle": .computed { receiver in
+        let recv: URLResource = try unboxOpaque(receiver, as: URLResource.self, typeName: "URLResource")
+        return boxOpaque(recv.bundle, typeName: "Bundle")
+    },
     "var URLResource.name: String": .computed { receiver in
         let recv: URLResource = try unboxOpaque(receiver, as: URLResource.self, typeName: "URLResource")
         return .string(recv.name)

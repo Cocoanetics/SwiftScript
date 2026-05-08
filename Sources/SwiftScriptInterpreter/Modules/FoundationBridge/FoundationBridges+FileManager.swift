@@ -169,8 +169,14 @@ extension FoundationBridges {
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
+        let arg1 = try unboxOpaque(args[1], as: URL.self, typeName: "URL")
         do {
-            try await recv.createSymbolicLink(at: arg0, withDestinationURL: try unboxOpaque(args[1], as: URL.self, typeName: "URL"))
+            try await authorizePath(arg1, for: .write)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
+            try await recv.createSymbolicLink(at: arg0, withDestinationURL: arg1)
             return .void
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
@@ -259,7 +265,13 @@ extension FoundationBridges {
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
-        return .bool(await recv.contentsEqual(atPath: arg0, andPath: try unboxString(args[1])))
+        let arg1 = try unboxString(args[1])
+        do {
+            try await authorizePath(arg1, for: .read)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        return .bool(await recv.contentsEqual(atPath: arg0, andPath: arg1))
     },
     "func FileManager.createDirectory()": .method { receiver, args in
         guard args.count == 2 else {
@@ -351,8 +363,20 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.setUbiquitous: expected 3 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
+        let arg1 = try unboxOpaque(args[1], as: URL.self, typeName: "URL")
         do {
-            try recv.setUbiquitous(try unboxBool(args[0]), itemAt: try unboxOpaque(args[1], as: URL.self, typeName: "URL"), destinationURL: try unboxOpaque(args[2], as: URL.self, typeName: "URL"))
+            try await authorizePath(arg1, for: .write)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        let arg2 = try unboxOpaque(args[2], as: URL.self, typeName: "URL")
+        do {
+            try await authorizePath(arg2, for: .write)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
+            try await recv.setUbiquitous(try unboxBool(args[0]), itemAt: arg1, destinationURL: arg2)
             return .void
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
