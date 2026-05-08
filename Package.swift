@@ -4,8 +4,10 @@ import PackageDescription
 let package = Package(
     name: "SwiftScript",
     platforms: [
-        .macOS("26.0"),
-        .iOS("26.0"),
+        .macOS(.v13),
+        .iOS(.v16),
+        .tvOS(.v16),
+        .watchOS(.v9),
     ],
     products: [
         .library(name: "SwiftScriptAST", targets: ["SwiftScriptAST"]),
@@ -20,6 +22,17 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-syntax", from: "603.0.0"),
+        // ShellKit owns the virtualised runtime context — IO sinks,
+        // Environment, Sandbox URL gate, NetworkConfig, ProcessTable,
+        // HostInfo, Command/ExitStatus. SwiftScript reads it through
+        // `ShellKit.Shell.current` so script output, input, file I/O,
+        // network calls, identity, and exit codes are all hookable by
+        // an embedder (SwiftBash, an iOS app, anything that builds a
+        // virtualised Shell). The standalone `swift-script` CLI uses
+        // `Shell.processDefault` so the binary still talks to real
+        // FileHandles when run on its own.
+        .package(url: "https://github.com/Cocoanetics/ShellKit",
+                 branch: "main"),
     ],
     targets: [
         .target(
@@ -38,6 +51,7 @@ let package = Package(
             dependencies: [
                 "SwiftScriptAST",
                 .product(name: "SwiftSyntax", package: "swift-syntax"),
+                .product(name: "ShellKit", package: "ShellKit"),
             ],
             path: "Sources/SwiftScriptInterpreter"
         ),
@@ -45,6 +59,7 @@ let package = Package(
             name: "swift-script",
             dependencies: [
                 "SwiftScriptInterpreter",
+                .product(name: "ShellKit", package: "ShellKit"),
             ],
             path: "Sources/swift-script"
         ),

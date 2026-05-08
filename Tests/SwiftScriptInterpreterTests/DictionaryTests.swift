@@ -1,4 +1,5 @@
 import Testing
+import Foundation
 @testable import SwiftScriptInterpreter
 
 @Suite("Dictionaries")
@@ -58,7 +59,7 @@ struct DictionaryTests {
     @Test func iteration() async throws {
         let interp = Interpreter()
         var lines: [String] = []
-        interp.output = { lines.append($0) }
+        interp.output = { lines.append($0.trimmingCharacters(in: .newlines)) }
         try await interp.eval(#"""
             let d = ["a": 1, "b": 2, "c": 3]
             var sum = 0

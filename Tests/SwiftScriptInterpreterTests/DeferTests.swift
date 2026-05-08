@@ -1,4 +1,5 @@
 import Testing
+import Foundation
 @testable import SwiftScriptInterpreter
 
 @Suite("defer")
@@ -6,7 +7,7 @@ struct DeferTests {
     @Test func runsAtFunctionExit() async throws {
         let interp = Interpreter()
         var lines: [String] = []
-        interp.output = { lines.append($0) }
+        interp.output = { lines.append($0.trimmingCharacters(in: .newlines)) }
         try await interp.eval("""
             func f() async throws {
                 defer { print("d1") }
@@ -20,7 +21,7 @@ struct DeferTests {
     @Test func multipleRunInReverseOrder() async throws {
         let interp = Interpreter()
         var lines: [String] = []
-        interp.output = { lines.append($0) }
+        interp.output = { lines.append($0.trimmingCharacters(in: .newlines)) }
         try await interp.eval("""
             func f() async throws {
                 defer { print("d1") }
@@ -35,7 +36,7 @@ struct DeferTests {
     @Test func runsBeforeReturnValueIsConsumed() async throws {
         let interp = Interpreter()
         var lines: [String] = []
-        interp.output = { lines.append($0) }
+        interp.output = { lines.append($0.trimmingCharacters(in: .newlines)) }
         try await interp.eval("""
             func f() -> Int {
                 defer { print("cleanup") }
@@ -49,7 +50,7 @@ struct DeferTests {
     @Test func runsOnThrow() async throws {
         let interp = Interpreter()
         var lines: [String] = []
-        interp.output = { lines.append($0) }
+        interp.output = { lines.append($0.trimmingCharacters(in: .newlines)) }
         try await interp.eval("""
             enum E: Error { case bad }
             func f() async throws {
@@ -65,7 +66,7 @@ struct DeferTests {
         // defer fires at the end of its enclosing scope, not the function.
         let interp = Interpreter()
         var lines: [String] = []
-        interp.output = { lines.append($0) }
+        interp.output = { lines.append($0.trimmingCharacters(in: .newlines)) }
         try await interp.eval("""
             func f() async throws {
                 if true {

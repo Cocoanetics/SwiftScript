@@ -655,6 +655,256 @@ func render(_ template: String, _ expr: String) -> String {
     return template.replacingOccurrences(of: "%@", with: expr)
 }
 
+// MARK: - Sandbox / network gating policy
+
+/// What kind of host resource a bridge body touches at runtime.
+/// Controls which `authorize…` call gets injected into the generated
+/// closure and how the call args are reshaped to use the bound names.
+enum GateKind {
+    case fsRead
+    case fsWrite
+    case fsDelete
+    case network
+}
+
+/// One gate to inject: bind `args[index]` to a local name, then call
+/// the appropriate authorizer. The bound name replaces the inline
+/// `try unbox…` in the call expression so we don't double-unbox.
+struct GateDirective {
+    /// The arg index this gate applies to.
+    let argIndex: Int
+    /// Source-Swift type of the arg as bound. Driven by the symbol's
+    /// `BridgedType.swiftSpelling`.
+    let argSwiftType: String
+    /// Local-variable name used in the bound let + the call site.
+    let boundName: String
+    /// Kind of resource — picks the authorize function to call.
+    let kind: GateKind
+}
+
+/// Decide which gates apply to a method/init based on its receiver,
+/// method name, and the resolved signature. Returns an empty array
+/// when no gating is needed (the default — most bridges pass through
+/// untouched).
+///
+/// The policy is intentionally conservative: gate every path-bearing
+/// or URL-bearing arg of a known I/O receiver, even when the host
+/// method itself is read-only metadata (`fileExists`, `attributesOfItem`).
+/// Embedders that want cheaper introspection can grant a permissive
+/// sandbox; the policy stays simple.
+func gates(
+    forReceiver receiverTypeName: String?,
+    methodName: String?,
+    initFor: String? = nil,
+    signature sig: ResolvedSignature
+) -> [GateDirective] {
+    // Identify which arg(s) carry path-or-URL data. Most FileManager /
+    // URL-init signatures put the path/URL first; a few methods
+    // (`copyItem`, `moveItem`, `linkItem`) pass two paths.
+    var directives: [GateDirective] = []
+
+    func appendIfPathish(
+        _ paramIndex: Int,
+        kind: GateKind
+    ) {
+        guard paramIndex < sig.parameters.count else { return }
+        let p = sig.parameters[paramIndex]
+        let spelling = p.type.swiftSpelling
+        // Only path-shaped args: `String` and `URL`. Bool / Int / etc.
+        // are introspection params — the gate doesn't apply.
+        guard spelling == "String" || spelling == "URL" else { return }
+        directives.append(GateDirective(
+            argIndex: paramIndex,
+            argSwiftType: spelling,
+            boundName: "arg\(paramIndex)",
+            kind: kind))
+    }
+
+    // FileManager — every method that takes a path or URL.
+    if receiverTypeName == "FileManager" || initFor == "FileManager" {
+        // Pick intent from the method name. Anything that mutates
+        // disk is `.fsWrite` (or `.fsDelete` for explicit deletes);
+        // pure inspection is `.fsRead`. Two-path operations
+        // (`copyItem`, `moveItem`, `linkItem`, `replaceItemAt`)
+        // gate both paths.
+        let writeMethods: Set<String> = [
+            "createDirectory", "createFile", "createSymbolicLink",
+            "setAttributes", "changeCurrentDirectoryPath",
+        ]
+        let deleteMethods: Set<String> = ["removeItem", "trashItem"]
+        let twoPathMethods: Set<String> = [
+            "copyItem", "moveItem", "linkItem", "replaceItemAt",
+        ]
+        let intent: GateKind
+        if let m = methodName {
+            if deleteMethods.contains(m) { intent = .fsDelete }
+            else if writeMethods.contains(m) { intent = .fsWrite }
+            else if twoPathMethods.contains(m) { intent = .fsWrite }
+            else { intent = .fsRead }
+        } else { intent = .fsRead }
+        if let m = methodName, twoPathMethods.contains(m) {
+            appendIfPathish(0, kind: intent)
+            appendIfPathish(1, kind: intent)
+        } else {
+            appendIfPathish(0, kind: intent)
+        }
+    }
+
+    // URL initializers — `URL(fileURLWithPath:)`, `URL(string:)` —
+    // bind into a sandbox or network gate so a script can't escape
+    // by constructing URLs whose origin lies outside the policy.
+    // Pure URL construction is cheap; the authorize call adds the
+    // policy enforcement without changing the result.
+    //
+    // We only gate `init URL(fileURLWithPath:)` and the
+    // `String`-shaped `init URL(string:)` here — `URL(filePath:)`
+    // is a macOS-13+ alias, and the `URL.init(string:relativeTo:)`
+    // overload routes through the same single-string path.
+    // `URLComponents` and `URLRequest` get covered by their consumer
+    // methods (URLSession.data(from:) etc.) rather than at init.
+    //
+    // (We deliberately *don't* gate at URL construction time today
+    // because the current `Sandbox.authorize` is async and many URL
+    // inits are non-async; the gating happens at the I/O call site.)
+
+    // String / Data file-IO inits — `init String(contentsOf:)`,
+    // `init String(contentsOfFile:)`, `init Data(contentsOf:)`,
+    // and the corresponding `.write(to:)` methods. Each takes either
+    // a `String` path or a `URL` as the first arg.
+    if initFor == "String" || initFor == "Data" {
+        if let m = methodName, m.contains("contentsOfFile") || m.contains("contentsOf") {
+            appendIfPathish(0, kind: .fsRead)
+        }
+    }
+    if receiverTypeName == "String" || receiverTypeName == "Data" {
+        if methodName == "write" {
+            // String/Data.write(to: URL/path, …) — first arg.
+            appendIfPathish(0, kind: .fsWrite)
+        }
+    }
+
+    // URLSession — the high-level `data(from:)`, `data(for:)`,
+    // `download(from:)`, etc. all take a `URL` (or `URLRequest`)
+    // as their first arg. `URLRequest` carries the URL inline, so
+    // the gate function authorizes it via a different shape.
+    if receiverTypeName == "URLSession" {
+        // Only gate URL-shaped first args here. Methods that take
+        // `URLRequest` are covered by the hand-rolled
+        // `URLSessionModule` since the auto-generated variant
+        // unboxes the request differently.
+        appendIfPathish(0, kind: .network)
+    }
+
+    return directives
+}
+
+/// Identity-leaking property reads on `ProcessInfo` / `Bundle` /
+/// `FileManager` get redirected to the bound shell's `HostInfo` /
+/// `Environment` / `scriptName`. Returns the substitute call
+/// expression (a string that produces a Swift value of the same
+/// declared type) when the receiver/member match, or `nil` to leave
+/// the bridge untouched.
+///
+/// The redirected expressions are top-level helpers from
+/// `HostHooks.swift` — `hostUserName()`, `hostEnvironment()`, etc.
+/// — that read `ShellKit.Shell.current` directly. Standalone
+/// (`swift-script` CLI without an embedder) the helpers see
+/// `Shell.processDefault` which mirrors the real OS values, so the
+/// binary's behaviour is unchanged.
+func redirectedPropertyCall(receiver: String, member: String) -> String? {
+    switch (receiver, member) {
+    case ("ProcessInfo", "userName"):           return "hostUserName()"
+    case ("ProcessInfo", "fullUserName"):       return "hostFullUserName()"
+    case ("ProcessInfo", "hostName"):           return "hostNameOverride()"
+    case ("ProcessInfo", "processIdentifier"):  return "hostProcessIdentifier()"
+    case ("ProcessInfo", "processName"):        return "hostProcessName()"
+    case ("ProcessInfo", "environment"):        return "hostEnvironment()"
+    case ("ProcessInfo", "arguments"):          return "hostProcessArguments()"
+    // FileManager.currentDirectoryPath is the shell's logical cwd —
+    // route through the bound environment so `cd /foo` from a
+    // bash script is observable from a SwiftScript script in the
+    // same Shell.
+    case ("FileManager", "currentDirectoryPath"):
+        return "ShellKit.Shell.current.environment.workingDirectory"
+    default:
+        return nil
+    }
+}
+
+/// Render the prologue lines that bind the gated args to local names
+/// and call the authorizer. Returns `(prologue, callExprRewriter)`
+/// — the rewriter takes the original `unboxedCallArgs` string and
+/// substitutes the bound names in for the gated positions.
+func renderGates(
+    _ directives: [GateDirective],
+    sig: ResolvedSignature,
+    indent: String
+) -> (prologue: [String], callArgs: String, anyAsync: Bool) {
+    guard !directives.isEmpty else {
+        return ([], unboxedCallArgs(for: sig), false)
+    }
+    var prologue: [String] = []
+    let directivesByIndex: [Int: GateDirective] =
+        Dictionary(uniqueKeysWithValues: directives.map { ($0.argIndex, $0) })
+    // Bind each gated arg to its bound name. Non-gated args are left
+    // inline in the call args (built below).
+    for d in directives {
+        let unbox: String
+        switch d.argSwiftType {
+        case "String":
+            unbox = "try unboxString(args[\(d.argIndex)])"
+        case "URL":
+            unbox = "try unboxOpaque(args[\(d.argIndex)], as: URL.self, typeName: \"URL\")"
+        default:
+            // Should be rejected by `gates(...)` above.
+            unbox = "try unboxString(args[\(d.argIndex)])"
+        }
+        prologue.append("\(indent)let \(d.boundName) = \(unbox)")
+        // Wrap the authorize call in a do/catch that re-throws the
+        // sandbox denial (or any other gate error) as a
+        // `UserThrowSignal`. Without the wrap, Foundation-side
+        // errors like `Sandbox.Denial` propagate as raw Swift errors
+        // — script-side `do { … } catch { }` can't see them, and
+        // hosts get an opaque error rather than the typed thrown
+        // value the rest of the bridge ABI uses.
+        let authorizeCall: String
+        switch d.kind {
+        case .fsRead:
+            authorizeCall = "try await authorizePath(\(d.boundName), for: .read)"
+        case .fsWrite:
+            authorizeCall = "try await authorizePath(\(d.boundName), for: .write)"
+        case .fsDelete:
+            authorizeCall = "try await authorizePath(\(d.boundName), for: .delete)"
+        case .network:
+            // Network gate is `URL`-only — `String` URLs are out of
+            // scope here (no async URL parser available); embedders
+            // who care about that path can layer their own check.
+            if d.argSwiftType == "URL" {
+                authorizeCall = "try await authorizeURL(\(d.boundName))"
+            } else {
+                continue
+            }
+        }
+        prologue.append("\(indent)do {")
+        prologue.append("\(indent)    \(authorizeCall)")
+        prologue.append("\(indent)} catch {")
+        prologue.append("\(indent)    throw UserThrowSignal(value: .opaque(typeName: \"Error\", value: error))")
+        prologue.append("\(indent)}")
+    }
+    // Rebuild the call-args string: gated positions use the bound
+    // name, ungated positions keep their inline `try unbox…`.
+    let unboxed = sig.parameters.enumerated().map { (i, p) -> String in
+        if let d = directivesByIndex[i] {
+            return d.boundName
+        }
+        return render(p.type.unboxTemplate, "args[\(i)]")
+    }
+    let callArgs = zip(sig.parameters, unboxed)
+        .map { (p, u) in (p.label == "_" ? "" : "\(p.label): ") + u }
+        .joined(separator: ", ")
+    return (prologue, callArgs, true)
+}
+
 // MARK: - Unified closure-emit helper
 //
 // The five callable kinds (`swift.func`, `swift.method`, `swift.init`,
@@ -694,6 +944,12 @@ struct EmitConfig {
     let isThrowing: Bool
     let isAsync: Bool
     let tupleElements: [BridgedType]
+    /// Extra body lines emitted between the receiver unbox and the
+    /// call expression. Used by the sandbox/network gating policy
+    /// (see `gates(...)` and `renderGates(...)`) to bind path args
+    /// and call `authorizePath` / `authorizeURL` before touching
+    /// disk or the network.
+    var prologue: [String] = []
 }
 
 /// Render a runtime-time call: `i.<registerLine> { <params> in <body> }`.
@@ -716,6 +972,9 @@ func renderRuntimeEmit(_ c: EmitConfig) -> String {
     }
     if let recv = c.recvUnboxLine {
         bodyLines.append("            \(recv)")
+    }
+    for line in c.prologue {
+        bodyLines.append(line)
     }
     bodyLines.append("            \(returnExpr)")
     return """
@@ -745,6 +1004,9 @@ func renderEmit(_ c: EmitConfig) -> String {
     }
     if let recv = c.recvUnboxLine {
         bodyLines.append("        \(recv)")
+    }
+    for line in c.prologue {
+        bodyLines.append(line)
     }
     bodyLines.append("        \(returnExpr)")
     return """
@@ -801,9 +1063,16 @@ func isVarMutable(_ sym: SymbolGraph.Symbol) -> Bool {
 
 /// True for `@available(*, deprecated)`, `unavailable`, or symbols
 /// introduced after our deployment target. The deployment target lives
-/// in `Package.swift` (macOS 26 today); we bake it in here to keep the
-/// generator self-contained.
-let deploymentMacOSMajor = 26
+/// in `Package.swift` (macOS 13 today — the SwiftBash floor); we bake
+/// it in here to keep the generator self-contained.
+///
+/// Lowering this skips any Foundation symbol whose `introduced` major
+/// version is higher than the floor, so the generated bridges link
+/// cleanly on the same platforms SwiftBash supports. Bumping it back
+/// up just regenerates a richer bridge surface — the scl oracle
+/// continues to gate Apple-only entries behind `#if canImport(Darwin)`
+/// independently.
+let deploymentMacOSMajor = 13
 let deploymentMacOSMinor = 0
 
 func isDeprecated(_ sym: SymbolGraph.Symbol) -> Bool {
@@ -1447,18 +1716,27 @@ for annotated in prioritizedSymbols {
         let key = "method:\(receiverTypeName).\(methodName)"
         if !claim(key, clashLabel: "\(receiverTypeName).\(methodName)") { continue }
         let recvUnbox = render(recvType.unboxTemplate, "receiver")
+        let methodGates = gates(
+            forReceiver: receiverTypeName,
+            methodName: methodName,
+            signature: sig)
+        let methodGated = renderGates(methodGates, sig: sig, indent: "        ")
         record(key, bucket: .type(receiverTypeName), code: renderEmit(EmitConfig(
             registerLine: "\"func \(receiverTypeName).\(methodName)()\": .method",
             closureParams: "receiver, args",
             arity: sig.parameters.count,
             recvUnboxLine: "let recv: \(recvType.swiftSpelling) = \(recvUnbox)",
-            callExpr: "recv.\(methodName)(\(unboxedCallArgs(for: sig)))",
+            callExpr: "recv.\(methodName)(\(methodGated.callArgs))",
             errorPrefix: "\(receiverTypeName).\(methodName)",
             returnType: sig.returnType,
             isOptional: sig.returnIsOptional,
             isThrowing: isThrowing(sym),
-            isAsync: isAsync(sym),
-            tupleElements: sig.returnTupleElements
+            // Sandbox/network gates use `await` on the bound shell's
+            // `Sandbox.authorize(_:)`, so any gated bridge becomes
+            // async even if the underlying Swift call is sync.
+            isAsync: isAsync(sym) || methodGated.anyAsync,
+            tupleElements: sig.returnTupleElements,
+            prologue: methodGated.prologue
         )))
 
     case "swift.init" where (2...3).contains(sym.pathComponents.count) && !isDeprecated(sym) && !isGeneric(sym) && !isAsync(sym):
@@ -1484,18 +1762,29 @@ for annotated in prioritizedSymbols {
         }
         let labelDoc = labels.isEmpty ? "" : labels.map { "\($0):" }.joined()
         let initKey = "init \(receiverTypeName)(\(labelDoc))"
+        // Inits like `String(contentsOfFile:)` and `Data(contentsOf:)`
+        // hit disk; route them through `authorizePath` exactly like
+        // a method on the same type.
+        let initMethodName = labels.first
+        let initGates = gates(
+            forReceiver: nil,
+            methodName: initMethodName,
+            initFor: receiverTypeName,
+            signature: sig)
+        let initGated = renderGates(initGates, sig: sig, indent: "        ")
         record(key, bucket: .type(receiverTypeName), code: renderEmit(EmitConfig(
             registerLine: "\"\(initKey)\": .`init`",
             closureParams: "args",
             arity: sig.parameters.count,
             recvUnboxLine: nil,
-            callExpr: "\(receiverTypeName)(\(unboxedCallArgs(for: sig)))",
+            callExpr: "\(receiverTypeName)(\(initGated.callArgs))",
             errorPrefix: initKey,
             returnType: recvType,
             isOptional: failable,
             isThrowing: isThrowing(sym),
-            isAsync: isAsync(sym),
-            tupleElements: []
+            isAsync: isAsync(sym) || initGated.anyAsync,
+            tupleElements: [],
+            prologue: initGated.prologue
         )))
 
     case "swift.property" where (2...3).contains(sym.pathComponents.count) && !isDeprecated(sym) && !isAsync(sym):
@@ -1519,12 +1808,20 @@ for annotated in prioritizedSymbols {
         // assignment RHS (`.prettyPrinted` against the property's
         // declared `JSONEncoder.OutputFormatting`).
         let propTypeSpelling = propType.bridge.swiftSpelling + (propType.isOptional ? "?" : "")
+        // Identity-leaking ProcessInfo / Bundle properties get
+        // redirected to the shell's `HostInfo` / `Environment` /
+        // `scriptName` so a sandboxed embedder doesn't fingerprint
+        // the host. Swap the call expression and drop the receiver
+        // unbox where the redirect doesn't need it.
+        let redirected = redirectedPropertyCall(
+            receiver: receiverTypeName, member: memberName)
         record(key, bucket: .type(receiverTypeName), code: renderEmit(EmitConfig(
             registerLine: "\"var \(receiverTypeName).\(memberName): \(propTypeSpelling)\": .computed",
-            closureParams: "receiver",
+            closureParams: redirected != nil ? "_" : "receiver",
             arity: nil,
-            recvUnboxLine: "let recv: \(recvType.swiftSpelling) = \(recvUnbox)",
-            callExpr: "recv.\(memberName)",
+            recvUnboxLine: redirected != nil ? nil
+                : "let recv: \(recvType.swiftSpelling) = \(recvUnbox)",
+            callExpr: redirected ?? "recv.\(memberName)",
             errorPrefix: "\(receiverTypeName).\(memberName)",
             returnType: propType.bridge,
             isOptional: propType.isOptional,
@@ -1787,6 +2084,21 @@ for (usr, bridge) in bridgedTypes {
     registeredKeys.insert(claimKey)
 }
 
+// Types whose `Comparable` conformance arrives after our deployment
+// floor — the conformance declaration itself carries `@available(macOS X)`
+// and the symbol-graph relationship metadata doesn't surface that
+// gating, so we maintain it by hand here. Update when the floor moves.
+//
+// Bake-by-bake: whenever a regen at the current floor fails with
+// "conformance of X to Comparable is only available in macOS Y or
+// newer", add the spelling here. The fallback (`Equatable`-only)
+// still lets scripts compare with `==`; ordering becomes a no-op.
+let comparableUnavailableAtFloor: Set<String> = [
+    // UUID gets `Comparable` at macOS 14 / iOS 17 (FB-IDs in
+    // Apple's release notes for Foundation 2023).
+    "UUID",
+]
+
 // Emit `registerComparator` calls for every bridged opaque type that
 // conforms to `Equatable` (and use `<`/`>` ordering for those that also
 // conform to `Comparable`). Lets script code write `dateA < dateB`,
@@ -1797,6 +2109,7 @@ for (usr, bridge) in bridgedTypes {
     let conformances = conformancesByUSR[usr] ?? []
     guard conformances.contains(equatableUSR) else { continue }
     let isComparable = conformances.contains(comparableUSR)
+        && !comparableUnavailableAtFloor.contains(bridge.swiftSpelling)
     let typeName = bridge.swiftSpelling
     let body: String
     if isComparable {
@@ -1952,6 +2265,7 @@ func renderPerTypeFile(
         let body = allEntries.isEmpty ? "        // (no entries)" : allEntries
         return """
         \(autogenBanner)import Foundation
+        import ShellKit
         #if canImport(FoundationNetworking)
         import FoundationNetworking
         #endif
@@ -1980,6 +2294,7 @@ func renderPerTypeFile(
         if entries.crossPlatform.isEmpty {
             return """
             \(autogenBanner)import Foundation
+            import ShellKit
             #if canImport(FoundationNetworking)
             import FoundationNetworking
             #endif
@@ -1992,6 +2307,7 @@ func renderPerTypeFile(
         }
         return """
         \(autogenBanner)import Foundation
+        import ShellKit
         #if canImport(FoundationNetworking)
         import FoundationNetworking
         #endif
@@ -2012,6 +2328,7 @@ func renderPerTypeFile(
         : "        var d: [String: Bridge] = [\n\(entries.crossPlatform.joined(separator: "\n"))\n        ]"
     return """
     \(autogenBanner)import Foundation
+        import ShellKit
     #if canImport(FoundationNetworking)
     import FoundationNetworking
     #endif
@@ -2046,6 +2363,7 @@ func renderManifest(
         : runtimeBodies.joined(separator: "\n\n")
     return """
     \(autogenBanner)import Foundation
+        import ShellKit
     #if canImport(FoundationNetworking)
     import FoundationNetworking
     #endif

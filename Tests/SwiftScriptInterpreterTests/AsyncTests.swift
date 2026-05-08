@@ -7,7 +7,7 @@ struct AsyncTests {
     @Test func awaitOnBridgedSleepActuallySuspends() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         let start = Date()
         try await interp.eval("""
             print("a")
@@ -36,7 +36,7 @@ struct AsyncTests {
     @Test func awaitCanBeUsedInAFunctionBody() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval("""
             func work() async {
                 print("start")

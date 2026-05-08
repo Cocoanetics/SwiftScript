@@ -1,6 +1,24 @@
 {
-  "originHash" : "aec35e3117707d5dfad488aa657c662f4864f9d4ec818bf1f2e0f3d63980f777",
+  "originHash" : "723f256dacf5a9bc49a4e3f3e3199b1f10b82b02c55d2ad4ae5a576846570b90",
   "pins" : [
+    {
+      "identity" : "shellkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Cocoanetics/ShellKit",
+      "state" : {
+        "branch" : "main",
+        "revision" : "3901e20158a2260586a4332ae244b74449da893a"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser",
+      "state" : {
+        "revision" : "626b5b7b2f45e1b0b1c6f4a309296d1d21d7311b",
+        "version" : "1.7.1"
+      }
+    },
     {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",

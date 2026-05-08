@@ -6,7 +6,7 @@ struct ThrowsTests {
     @Test func throwAndCatchDefault() async throws {
         let interp = Interpreter()
         var captured = ""
-        let i = Interpreter(output: { captured += $0 + "\n" })
+        let i = Interpreter(output: { captured += $0 })
         try await i.eval("""
             enum E: Error { case bad }
             func f() async throws { throw E.bad }
@@ -19,7 +19,7 @@ struct ThrowsTests {
     @Test func throwWithPayloadCaughtByPattern() async throws {
         let i = Interpreter()
         var captured = ""
-        i.output = { captured += $0 + "\n" }
+        i.output = { captured += $0 }
         try await i.eval("""
             enum E: Error { case parse(String) }
             func f() throws -> Int { throw E.parse("oops") }
@@ -77,7 +77,7 @@ struct ThrowsTests {
     @Test func doWithoutThrow() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval(#"do { print("hello") }"#)
         #expect(captured == "hello\n")
     }

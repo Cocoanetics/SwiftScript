@@ -69,6 +69,20 @@ extension Interpreter {
         registerOnImport("Glibc",      module: urlSessionModule)
         registerOnImport("ucrt",       module: urlSessionModule)
         registerOnImport("WinSDK",     module: urlSessionModule)
+        // ProcessInfo identity overrides — bridges that route
+        // `userName` / `processIdentifier` / `arguments` /
+        // `environment` through `ShellKit.Shell.current`'s
+        // `HostInfo` / `Environment` / `scriptName`. The generator
+        // already redirects the auto-discovered identity reads
+        // (`hostName`, `processName`); this module fills in the
+        // ones whose Swift type the generator can't bridge
+        // (`Int32`, `[String]`, `[String: String]`).
+        let identityModule = IdentityModule()
+        registerOnImport("Foundation", module: identityModule)
+        registerOnImport("Darwin",     module: identityModule)
+        registerOnImport("Glibc",      module: identityModule)
+        registerOnImport("ucrt",       module: identityModule)
+        registerOnImport("WinSDK",     module: identityModule)
     }
 
     func registerBuiltin(name: String, body: @escaping ([Value]) async throws -> Value) {

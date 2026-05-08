@@ -11,7 +11,7 @@ struct BridgedSubclassTests {
     @Test func tagAFoundationDate() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval("""
             import Foundation
             class TaggedDate: Date {
@@ -29,7 +29,7 @@ struct BridgedSubclassTests {
     @Test func failableBridgedInitPropagates() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval(#"""
             import Foundation
             class LabeledURL: URL {
@@ -47,7 +47,7 @@ struct BridgedSubclassTests {
     @Test func wrapperSatisfiesIsCheckForBridgedParent() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval("""
             import Foundation
             class TaggedDate: Date {
@@ -68,7 +68,7 @@ struct BridgedSubclassTests {
     @Test func failableInitReturnsNilOnFailure() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval(#"""
             import Foundation
             class LabeledURL: URL {

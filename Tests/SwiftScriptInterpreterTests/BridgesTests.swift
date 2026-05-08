@@ -100,7 +100,7 @@ struct BridgesTests {
     @Test func scriptDefinedSequenceIteratesWithForLoop() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval("""
             struct Counter: Sequence {
                 let limit: Int
@@ -131,7 +131,7 @@ struct BridgesTests {
         // commonly use the increment-on-exit pattern.
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval("""
             struct Box {
                 var n: Int = 0
@@ -154,7 +154,7 @@ struct BridgesTests {
     @Test func scriptDescriptionWinsOverDefault() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval("""
             struct Point: CustomStringConvertible {
                 var x: Int
@@ -171,7 +171,7 @@ struct BridgesTests {
     @Test func scriptDescriptionRecursesThroughCollections() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval("""
             struct Tag: CustomStringConvertible {
                 var name: String
@@ -189,7 +189,7 @@ struct BridgesTests {
     @Test func caseIterableSynthesizesAllCases() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval("""
             enum Direction: CaseIterable {
                 case north, south, east, west
@@ -207,7 +207,7 @@ struct BridgesTests {
         // generated allCases array.
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval("""
             enum E: CaseIterable {
                 case a
@@ -223,7 +223,7 @@ struct BridgesTests {
     @Test func dumpUsesDebugDescription() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval("""
             struct Point: CustomDebugStringConvertible {
                 var x: Int
@@ -238,7 +238,7 @@ struct BridgesTests {
     @Test func dumpReturnsValueForChaining() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval("""
             let n = dump(42)
             print(n + 1)
@@ -251,7 +251,7 @@ struct BridgesTests {
     @Test func scriptDefinedAsyncSequenceWithForAwait() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval("""
             struct AsyncCounterIterator {
                 var current: Int
@@ -280,7 +280,7 @@ struct BridgesTests {
     @Test func failableScriptInitReturnsNilOnFailure() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval(#"""
             struct Money {
                 var amount: Int
@@ -298,7 +298,7 @@ struct BridgesTests {
     @Test func failableInitWrapsResultInOptional() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval("""
             struct Money {
                 var amount: Int
@@ -318,7 +318,7 @@ struct BridgesTests {
     @Test func expressibleByIntegerLiteral() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval("""
             struct Money {
                 var amount: Int
@@ -333,7 +333,7 @@ struct BridgesTests {
     @Test func expressibleByFloatLiteral() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval("""
             struct Distance {
                 var meters: Double
@@ -348,7 +348,7 @@ struct BridgesTests {
     @Test func expressibleByStringLiteral() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval(#"""
             struct Tag {
                 var name: String
@@ -365,7 +365,7 @@ struct BridgesTests {
     @Test func keyPathSugarPassesAsClosure() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval("""
             struct Person { var name: String; var age: Int }
             let people = [Person(name: "Alice", age: 30), Person(name: "Bob", age: 25)]
@@ -377,7 +377,7 @@ struct BridgesTests {
     @Test func nestedKeyPath() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval("""
             struct Inner { var n: Int }
             struct Outer { var inner: Inner }
@@ -392,7 +392,7 @@ struct BridgesTests {
     @Test func mirrorReportsStructFields() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval("""
             struct Person { var name: String; var age: Int }
             let m = Mirror(reflecting: Person(name: "Alice", age: 30))
@@ -410,7 +410,7 @@ struct BridgesTests {
     @Test func dynamicMemberLookupRoutesToSubscript() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval(#"""
             @dynamicMemberLookup
             struct Bag {

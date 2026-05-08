@@ -1,5 +1,6 @@
 import SwiftSyntax
 import SwiftScriptAST
+import ShellKit
 
 /// `@unchecked Sendable`: the interpreter holds extensive mutable state
 /// (scopes, bridge tables, struct/class/enum defs) and is **not**
@@ -12,7 +13,26 @@ import SwiftScriptAST
 /// the same logical owner.
 public final class Interpreter: @unchecked Sendable {
     public let rootScope: Scope
+
+    /// Where script-emitted text goes — every `print`, `dump`, and
+    /// any other stdout-style write. The closure receives the
+    /// **verbatim** bytes the script wrote, including any trailing
+    /// newline `print` chose to add. Set this to capture or redirect.
+    ///
+    /// **Default behaviour** routes through ``ShellKit/Shell/current``'s
+    /// stdout sink. Standalone (`swift-script foo.swift`) that means
+    /// real fd 1 (`Shell.processDefault.stdout`); under an embedder
+    /// (SwiftBash, an iOS app) it means whatever sink the embedder
+    /// has bound for the current task. Same code path, different
+    /// destinations — no separate plumbing needed for capture.
     public var output: (String) -> Void
+
+    /// Where parse errors and runtime-error renders go — the
+    /// stderr-shaped channel. Same verbatim-text contract as
+    /// ``output``. Defaults to ``ShellKit/Shell/current``'s stderr
+    /// sink so embedder capture / sandbox routing works out of
+    /// the box.
+    public var error: (String) -> Void
 
     /// Stack of declared return types for the currently-active user function
     /// calls. Used by `return` statements (and implicit returns) to coerce
@@ -74,10 +94,22 @@ public final class Interpreter: @unchecked Sendable {
     /// `register(module:)` idempotent.
     var registeredModules: Set<String> = []
 
-    /// Script-side `CommandLine.arguments`. Populated by the host
-    /// (`swift-script` main) before evaluation; index 0 is the script
-    /// path or `<expression>` sentinel, followed by any positional
-    /// arguments the user passed on the CLI.
+    /// Script-side `CommandLine.arguments`. Three ways for a host to
+    /// supply this, checked in order at the start of each ``eval(_:fileName:)``:
+    ///
+    /// 1. **Explicit** — set this property directly. Useful for tests
+    ///    or embedders that want to override host argv. Index 0 is the
+    ///    script path / `<expression>` sentinel; indices 1+ are the
+    ///    user-supplied positional arguments.
+    /// 2. **From the bound shell** — leave this empty and bind a
+    ///    `ShellKit.Shell` whose `scriptName` + `positionalParameters`
+    ///    describe the script's argv. SwiftBash's shebang dispatch
+    ///    sets these on the subshell it constructs for the script,
+    ///    so `CommandLine.arguments[0]` becomes the script path
+    ///    automatically.
+    /// 3. **Process default** — neither of the above. Falls through to
+    ///    `Shell.processDefault`, which mirrors `ProcessInfo.processInfo
+    ///    .arguments`. That's the standalone-CLI path.
     public var scriptArguments: [String] = []
 
     /// Modules whose import name (`Foundation`, `Darwin`, …) has appeared
@@ -131,9 +163,27 @@ public final class Interpreter: @unchecked Sendable {
     var currentSourceFile: SourceFileSyntax?
     var currentFileName: String?
 
-    public init(output: @escaping (String) -> Void = { Swift.print($0) }) {
+    /// Construct an interpreter.
+    ///
+    /// Without arguments, output and error route through
+    /// ``ShellKit/Shell/current`` so the same code does the right
+    /// thing both standalone and under an embedder. Tests that need
+    /// to capture override `output:` / `error:` directly.
+    ///
+    /// **Output contract.** Both closures receive the **verbatim**
+    /// bytes the script emitted, including any trailing newline
+    /// `print(_:terminator:)` chose to add. (This is a deliberate
+    /// change from earlier SwiftScript versions, where `output`
+    /// took a newline-less line and the closure was expected to add
+    /// the terminator — a contract that prevented routing
+    /// `print(x, terminator: "")` correctly.)
+    public init(
+        output: @escaping (String) -> Void = { ShellKit.Shell.current.stdout($0) },
+        error: @escaping (String) -> Void = { ShellKit.Shell.current.stderr($0) }
+    ) {
         self.rootScope = Scope()
         self.output = output
+        self.error = error
         registerBuiltins()
     }
 
@@ -144,6 +194,15 @@ public final class Interpreter: @unchecked Sendable {
     /// or `.void` if there were no expressions.
     @discardableResult
     public func eval(_ source: String, fileName: String = "<input>") async throws -> Value {
+        // Refresh `CommandLine.arguments` from whichever of
+        // {scriptArguments, Shell.current.scriptName +
+        // positionalParameters, Shell.processDefault} is populated.
+        // Done on every eval so a single Interpreter instance can run
+        // multiple scripts with different argv (rare, but the
+        // alternative — relying on the host to register the bridge by
+        // hand — is the leakage that motivated this whole refactor).
+        bindCommandLineArguments()
+
         let result = ScriptParser.parse(source, fileName: fileName)
         currentSourceFile = result.sourceFile
         currentFileName = fileName
@@ -158,6 +217,50 @@ public final class Interpreter: @unchecked Sendable {
             last = try await execute(item: item, in: rootScope)
         }
         return last
+    }
+
+    /// Like ``eval(_:fileName:)`` but tailored for whole-script
+    /// execution: catches ``ScriptExit`` thrown by `exit(_:)` /
+    /// `abort()` and converts it into the returned ``ShellKit/ExitStatus``.
+    /// Anything else (parse error, runtime error) propagates.
+    ///
+    /// Hosts that want to honor `exit(N)` from script use this in
+    /// place of `eval`; existing callers that consume the last-
+    /// expression value keep using `eval` and handle `ScriptExit`
+    /// themselves if they care.
+    public func evalScript(
+        _ source: String,
+        fileName: String = "<input>"
+    ) async throws -> ExitStatus {
+        do {
+            _ = try await eval(source, fileName: fileName)
+            return .success
+        } catch let exit as ScriptExit {
+            return exit.status
+        }
+    }
+
+    /// Resolve the script's `CommandLine.arguments` from the layered
+    /// sources documented on ``scriptArguments`` and register the
+    /// resulting array as a static-value bridge. Called from
+    /// ``eval(_:fileName:)`` immediately before parsing.
+    private func bindCommandLineArguments() {
+        let argv: [String]
+        if !scriptArguments.isEmpty {
+            argv = scriptArguments
+        } else {
+            // Pull from the active `ShellKit.Shell`. `scriptName` ends
+            // up as argv[0]; positional parameters fill 1+. Fallback
+            // to an empty argv only if both are empty (the very-edge
+            // case where an embedder built a Shell from scratch
+            // without arguments).
+            let shell = ShellKit.Shell.current
+            var assembled = [shell.scriptName]
+            assembled.append(contentsOf: shell.positionalParameters)
+            argv = assembled.first == "" && assembled.count == 1 ? [] : assembled
+        }
+        bridges["static let CommandLine.arguments"] =
+            .staticValue(.array(argv.map { .string($0) }))
     }
 }
 

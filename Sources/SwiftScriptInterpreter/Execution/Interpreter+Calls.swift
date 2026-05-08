@@ -639,18 +639,14 @@ extension Interpreter {
         // style lookup) before falling back to Value's default.
         let parts = try await items.asyncMap { try await describe($0) }
         let body = parts.joined(separator: separator)
-        // The default-`output` closure adds its own newline (it wraps
-        // `Swift.print` in the binary, "$0 + \n" in tests). When the
-        // user's terminator is `\n` we route through `output` so test
-        // captures see it. For other terminators we go straight through
-        // `Swift.print`'s terminator parameter — same buffering as
-        // `output`'s underlying `Swift.print`, so ordering with sibling
-        // `print(...)` calls is preserved.
-        if terminator == "\n" {
-            output(body)
-        } else {
-            Swift.print(body, terminator: terminator)
-        }
+        // `output` receives verbatim bytes; append the user-chosen
+        // terminator so `print(x, terminator: "")` and
+        // `print(x, terminator: "|")` route through the same sink
+        // as a regular `print(x)`. Earlier versions bypassed `output`
+        // for non-`\n` terminators by calling `Swift.print` directly,
+        // which leaked to the host process's real fd 1 even when an
+        // embedder had bound a custom `output`.
+        output(body + terminator)
         return .void
     }
 

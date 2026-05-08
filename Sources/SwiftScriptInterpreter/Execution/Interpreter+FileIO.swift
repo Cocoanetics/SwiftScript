@@ -1,4 +1,5 @@
 import Foundation
+import ShellKit
 import SwiftSyntax
 
 extension Interpreter {
@@ -14,6 +15,10 @@ extension Interpreter {
     /// regular `String(...)` builtin dispatch. Gated on Foundation import:
     /// without it, the path is dormant and the call falls through to the
     /// stdlib String builtin which will reject the labeled args.
+    ///
+    /// **Sandbox-aware**: routes the path through ``authorizePath(_:for:)``
+    /// before reading from disk so an embedder's bound sandbox can deny
+    /// off-root access.
     func tryStringContentsOfFile(_ call: FunctionCallExprSyntax, in scope: Scope) async throws -> Value? {
         guard isImported(any: "Foundation", "Darwin", "Glibc", "ucrt", "WinSDK") else { return nil }
         guard let ref = call.calledExpression.as(DeclReferenceExprSyntax.self),
@@ -31,6 +36,11 @@ extension Interpreter {
             throw RuntimeError.invalid("String(contentsOfFile:): path must be String")
         }
         do {
+            try await authorizePath(path, for: .read)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
             let s = try String(contentsOfFile: path, encoding: .utf8)
             return .string(s)
         } catch {
@@ -39,16 +49,22 @@ extension Interpreter {
     }
 
     /// Dispatch a method call on the `FileManager` singleton sentinel.
+    /// Each method authorises its path arg(s) against the bound shell's
+    /// sandbox before touching disk.
     func invokeFileManagerMethod(_ name: String, args: [Value]) async throws -> Value {
         switch name {
         case "fileExists":
             try expectStringArg(args, methodName: "FileManager.fileExists(atPath:)")
             if case .string(let path) = args[0] {
+                try await gatePath(path, for: .read,
+                                   methodName: "FileManager.fileExists(atPath:)")
                 return .bool(FileManager.default.fileExists(atPath: path))
             }
         case "contentsOfDirectory":
             try expectStringArg(args, methodName: "FileManager.contentsOfDirectory(atPath:)")
             if case .string(let path) = args[0] {
+                try await gatePath(path, for: .read,
+                                   methodName: "FileManager.contentsOfDirectory(atPath:)")
                 do {
                     let entries = try FileManager.default.contentsOfDirectory(atPath: path)
                     return .array(entries.map { .string($0) })
@@ -59,6 +75,8 @@ extension Interpreter {
         case "removeItem":
             try expectStringArg(args, methodName: "FileManager.removeItem(atPath:)")
             if case .string(let path) = args[0] {
+                try await gatePath(path, for: .delete,
+                                   methodName: "FileManager.removeItem(atPath:)")
                 do {
                     try FileManager.default.removeItem(atPath: path)
                     return .void
@@ -77,6 +95,8 @@ extension Interpreter {
                     "FileManager.createDirectory(atPath:withIntermediateDirectories:): bad args"
                 )
             }
+            try await gatePath(path, for: .write,
+                               methodName: "FileManager.createDirectory(atPath:)")
             do {
                 try FileManager.default.createDirectory(
                     atPath: path,
@@ -98,6 +118,9 @@ extension Interpreter {
     /// `encoding:` argument is typically `.utf8` — an implicit-member
     /// expression we can't otherwise resolve without `String.Encoding`.
     /// Gated on Foundation import.
+    ///
+    /// **Sandbox-aware**: the path arg is authorized for `.write` before
+    /// the `String.write(toFile:)` call.
     func tryStringWriteCall(_ call: FunctionCallExprSyntax, in scope: Scope) async throws -> Value? {
         guard isImported(any: "Foundation", "Darwin", "Glibc", "ucrt", "WinSDK") else { return nil }
         guard let memberAccess = call.calledExpression.as(MemberAccessExprSyntax.self),
@@ -122,6 +145,8 @@ extension Interpreter {
         }
         // The third arg (encoding:) is intentionally ignored — we always
         // use UTF-8.
+        try await gatePath(path, for: .write,
+                           methodName: "String.write(toFile:)")
         do {
             try s.write(toFile: path, atomically: atomically, encoding: .utf8)
             return .void
@@ -136,6 +161,22 @@ extension Interpreter {
         }
         guard case .string = args[0] else {
             throw RuntimeError.invalid("\(methodName): argument must be String")
+        }
+    }
+
+    /// Shared sandbox-gate path used by every fast-path FileManager
+    /// dispatch. Wraps the denial as a `UserThrowSignal` so the call
+    /// site error path stays consistent with the auto-generated
+    /// bridges.
+    private func gatePath(
+        _ path: String,
+        for intent: PathAccessIntent,
+        methodName: String
+    ) async throws {
+        do {
+            try await authorizePath(path, for: intent)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
     }
 }

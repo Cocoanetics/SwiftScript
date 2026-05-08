@@ -1,5 +1,6 @@
 import Foundation
 import SwiftScriptInterpreter
+import ShellKit
 
 /// CLI entry. Wrapped in a `@main` struct (rather than top-level code)
 /// so `main()` is nonisolated — top-level code becomes implicitly
@@ -7,14 +8,20 @@ import SwiftScriptInterpreter
 /// the `try await interpreter.eval(...)` call cross an actor boundary
 /// and trip on `Value` not being `Sendable`. Keeping `main` nonisolated
 /// matches where the interpreter actually runs.
+///
+/// All IO routes through ``ShellKit/Shell/current`` — in standalone
+/// mode that resolves to ``ShellKit/Shell/processDefault`` whose
+/// stdout / stderr forward to real `FileHandle.standard*`, so the
+/// binary behaves exactly as before. Under an embedder (SwiftBash,
+/// an iOS app) the bound Shell's sinks receive the bytes instead.
 @main
 struct SwiftScriptCLI {
     static func usage() -> Never {
-        FileHandle.standardError.write(Data("""
+        Shell.current.stderr("""
             usage: swift-script <file.swift>
                    swift-script -e <expression>
 
-            """.utf8))
+            """)
         exit(2)
     }
 
@@ -54,7 +61,7 @@ struct SwiftScriptCLI {
                 }
                 source = contents
             } catch {
-                FileHandle.standardError.write(Data("error reading \(args[1]): \(error)\n".utf8))
+                Shell.current.stderr("error reading \(args[1]): \(error)\n")
                 exit(1)
             }
             fileName = args[1]
@@ -63,32 +70,44 @@ struct SwiftScriptCLI {
         }
 
         let interpreter = Interpreter()
+        // The interpreter binds `CommandLine.arguments` automatically
+        // at eval time from `scriptArguments` (or, when that's empty,
+        // from `Shell.current.scriptName` + `positionalParameters`).
+        // The CLI just supplies argv here.
         interpreter.scriptArguments = scriptArgs
-        // Surface `CommandLine.arguments` to the script. Registered here
-        // (rather than as part of the always-on stdlib bridges) because
-        // the argv list comes from the host's CLI parsing and isn't
-        // known at interpreter-init time. Static-let semantics is fine —
-        // script argv is fixed for the lifetime of one run.
-        interpreter.bridges["static let CommandLine.arguments"] =
-            .staticValue(.array(scriptArgs.map { .string($0) }))
 
         do {
-            let result = try await interpreter.eval(source, fileName: fileName)
-            if isInline, case .void = result {
-                // nothing to print
-            } else if isInline {
-                print(result.description)
+            // Inline `-e` keeps the legacy `eval(_:fileName:)` path so we
+            // can print the resulting expression value. File scripts
+            // route through `evalScript(_:fileName:)`, which converts
+            // a thrown `ScriptExit` into the returned `ExitStatus`.
+            if isInline {
+                let result = try await interpreter.eval(source, fileName: fileName)
+                if case .void = result {
+                    // nothing to print
+                } else {
+                    Shell.current.stdout(result.description + "\n")
+                }
+                exit(0)
+            } else {
+                let status = try await interpreter.evalScript(
+                    source, fileName: fileName)
+                exit(status.code)
             }
         } catch let parseError as ParseError {
-            FileHandle.standardError.write(Data(parseError.formatted.utf8))
+            interpreter.error(parseError.formatted)
             if !parseError.formatted.hasSuffix("\n") {
-                FileHandle.standardError.write(Data("\n".utf8))
+                interpreter.error("\n")
             }
             exit(1)
+        } catch let scriptExit as ScriptExit {
+            // Inline `-e` path: a script-side `exit(N)` still needs
+            // to translate into the host's exit code.
+            exit(scriptExit.status.code)
         } catch {
             // Runtime errors get the same caret-style rendering as
             // parse errors when the error carries source-location info.
-            FileHandle.standardError.write(Data(interpreter.renderRuntimeError(error).utf8))
+            interpreter.error(interpreter.renderRuntimeError(error))
             exit(1)
         }
     }

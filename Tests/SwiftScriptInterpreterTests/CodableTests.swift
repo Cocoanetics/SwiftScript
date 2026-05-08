@@ -11,7 +11,7 @@ struct CodableTests {
     @Test func roundTripStruct() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval(#"""
             import Foundation
             struct Person: Codable {
@@ -29,7 +29,7 @@ struct CodableTests {
     @Test func optionalFieldsOmitNilOnEncode() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval(#"""
             import Foundation
             struct Maybe: Codable {
@@ -49,7 +49,7 @@ struct CodableTests {
     @Test func decodeMissingOptionalFieldAsNil() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval(#"""
             import Foundation
             struct Maybe: Codable {
@@ -66,7 +66,7 @@ struct CodableTests {
     @Test func roundTripArrayOfStructs() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval(#"""
             import Foundation
             struct Tag: Codable { var name: String }
@@ -81,7 +81,7 @@ struct CodableTests {
     @Test func nestedStruct() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval(#"""
             import Foundation
             struct Inner: Codable { var n: Int }
@@ -100,7 +100,7 @@ struct CodableTests {
     @Test func foundationDateRidesItsOwnConformance() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         // Foundation's default Date encoding is timeIntervalSinceReference —
         // a single number. We don't reimplement that strategy; we just
         // verify the round-trip works.
@@ -122,7 +122,7 @@ struct CodableTests {
     @Test func foundationURLRoundTrips() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval(#"""
             import Foundation
             struct Bookmark: Codable {
@@ -141,7 +141,7 @@ struct CodableTests {
     @Test func decodeRawValueEnum() async throws {
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval(#"""
             import Foundation
             enum Status: Int, Codable {
@@ -162,7 +162,7 @@ struct CodableTests {
         // to reimplement it.
         let interp = Interpreter()
         var captured = ""
-        interp.output = { captured += $0 + "\n" }
+        interp.output = { captured += $0 }
         try await interp.eval(#"""
             import Foundation
             struct A: Codable { var z: Int; var a: Int }

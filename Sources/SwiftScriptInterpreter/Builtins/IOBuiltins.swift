@@ -1,3 +1,6 @@
+import Foundation
+import ShellKit
+
 extension Interpreter {
     func registerIOBuiltins() {
         registerBuiltin(name: "print") { [weak self] args in
@@ -8,7 +11,12 @@ extension Interpreter {
             // `print(x)` / `print(x, y)`.
             guard let self else { return .void }
             let parts = try await args.asyncMap { try await self.describe($0) }
-            self.output(parts.joined(separator: " "))
+            // `output` receives verbatim bytes — append the default
+            // terminator here so a bare `print(x)` writes
+            // `"<x>\n"`. The labelled form (`print(x, terminator:)`)
+            // is handled in `tryPrintCall` and passes its own
+            // terminator.
+            self.output(parts.joined(separator: " ") + "\n")
             return .void
         }
 
@@ -21,7 +29,7 @@ extension Interpreter {
             guard let self else { return .void }
             guard let v = args.first else { return .void }
             let s = try await self.debugDescribe(v)
-            self.output("- " + s)
+            self.output("- " + s + "\n")
             // Real `dump` returns the value it was given, so chained
             // `let x = dump(expr)` works.
             return v
@@ -88,8 +96,39 @@ extension Interpreter {
             else { msg = "fatal error" }
             throw RuntimeError.invalid("fatal error: \(msg)")
         }
+        // `exit(_:)` and `abort()` unwind the script back to the host.
+        // Routed via `ScriptExit` rather than the host's `Swift.exit`
+        // — that's the embedder's call (SwiftBash returns the code
+        // through `ExitStatus`, an iOS app may want to surface it as
+        // an in-app event). The standalone `swift-script` CLI catches
+        // and calls real `exit`.
+        registerBuiltin(name: "exit") { args in
+            let code: Int32
+            if args.isEmpty {
+                code = 0
+            } else if case .int(let i) = args[0] {
+                code = Int32(truncatingIfNeeded: i)
+            } else {
+                throw RuntimeError.invalid(
+                    "exit: argument must be Int, got \(typeName(args[0]))")
+            }
+            throw ScriptExit(code)
+        }
+        registerBuiltin(name: "abort") { _ in
+            // Swift's `abort()` raises SIGABRT and exits 134 on Unix.
+            // We route the same conventional code through ScriptExit
+            // — there's no actual signal in-process.
+            throw ScriptExit(134)
+        }
         // `readLine()` reads a line from stdin, returns String? (nil on
         // EOF). `readLine(strippingNewline:)` mirrors the stdlib overload.
+        //
+        // Routes through `ShellKit.Shell.current.stdin` so embedders
+        // (SwiftBash pipelines, an iOS app feeding a fixed string) can
+        // supply input without hitting the host's real fd 0. Standalone
+        // `swift-script` mode resolves to `Shell.processDefault.stdin`,
+        // which wraps `FileHandle.standardInput`, so the binary's
+        // behaviour is unchanged.
         registerBuiltin(name: "readLine") { args in
             // Either no args, or a single bool with `strippingNewline`
             // semantics. Default is true (matches stdlib).
@@ -100,10 +139,15 @@ extension Interpreter {
                 }
                 stripping = v
             }
-            if let line = Swift.readLine(strippingNewline: stripping) {
-                return .optional(.string(line))
+            // `InputSource.readLine()` already strips the trailing `\n`.
+            // When `strippingNewline: false`, append it back unless we
+            // hit EOF on a final line that happened to lack a newline
+            // — Swift's stdlib readLine has no way to distinguish those
+            // cases either, so we don't try to.
+            guard let line = await ShellKit.Shell.current.stdin.readLine() else {
+                return .optional(nil)
             }
-            return .optional(nil)
+            return .optional(.string(stripping ? line : line + "\n"))
         }
 
         registerBuiltin(name: "String") { [weak self] args in

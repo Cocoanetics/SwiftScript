@@ -1,4 +1,5 @@
 import Foundation
+import ShellKit
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
@@ -45,6 +46,11 @@ struct URLSessionModule: BuiltinModule {
             else {
                 throw RuntimeError.invalid("URLSession.bytes(from:): expected a URL argument")
             }
+            // Route the URL through the bound shell's network policy
+            // before opening a connection. Standalone mode is a
+            // no-op; an embedder with a `NetworkConfig` rejects URLs
+            // outside its allow-list.
+            try await authorizeURL(url)
             do {
                 let (bytes, response) = try await session.bytes(from: url)
                 var iterator = bytes.makeAsyncIterator()

@@ -14,7 +14,13 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 SDK="$(xcrun --sdk macosx --show-sdk-path)"
-TARGET="${BRIDGE_TARGET:-arm64-apple-macos26.0}"
+# Match the package's deployment floor (macOS 13). Any symbol whose
+# `@available(macOS X, *)` requires a newer OS gets filtered by the
+# generator's `isDeprecated` check, so the resulting bridges link on
+# every platform SwiftBash supports. Override via `BRIDGE_TARGET=...`
+# to regen against a different floor — also update
+# `deploymentMacOSMajor` in `Sources/BridgeGeneratorTool/main.swift`.
+TARGET="${BRIDGE_TARGET:-arm64-apple-macos13.0}"
 SG_DIR="$(mktemp -d)"
 trap 'rm -rf "$SG_DIR"' EXIT
 
