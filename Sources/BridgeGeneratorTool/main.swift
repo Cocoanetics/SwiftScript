@@ -665,6 +665,11 @@ enum GateKind {
     case fsWrite
     case fsDelete
     case network
+    /// Network gate that pulls the URL+method out of a `URLRequest`
+    /// arg. The bound name binds the request itself; the gate-emit
+    /// step uses `\(name).url` and `\(name).httpMethod` to reach the
+    /// authorize call.
+    case networkRequest
 }
 
 /// One gate to inject: bind `args[index]` to a local name, then call
@@ -718,6 +723,23 @@ func gates(
             argSwiftType: spelling,
             boundName: "arg\(paramIndex)",
             kind: kind))
+    }
+
+    /// Like `appendIfPathish` but for `URLRequest`-typed args: gate
+    /// via the request's embedded URL + method. Used for the
+    /// URLSession overloads that take a `URLRequest` instead of a
+    /// bare `URL` (`data(for:)`, `upload(for:fromFile:)`,
+    /// `download(for:)`, etc.) so the network policy fires the same
+    /// way it does for the URL-arg variants.
+    func appendIfURLRequestish(_ paramIndex: Int) {
+        guard paramIndex < sig.parameters.count else { return }
+        let p = sig.parameters[paramIndex]
+        guard p.type.swiftSpelling == "URLRequest" else { return }
+        directives.append(GateDirective(
+            argIndex: paramIndex,
+            argSwiftType: "URLRequest",
+            boundName: "arg\(paramIndex)",
+            kind: .networkRequest))
     }
 
     // FileManager — every method that takes a path or URL.
@@ -784,15 +806,20 @@ func gates(
     }
 
     // URLSession — the high-level `data(from:)`, `data(for:)`,
-    // `download(from:)`, etc. all take a `URL` (or `URLRequest`)
-    // as their first arg. `URLRequest` carries the URL inline, so
-    // the gate function authorizes it via a different shape.
+    // `download(from:)`, `upload(for:fromFile:)`, etc. take either a
+    // bare `URL` or a `URLRequest` at index 0; some (`upload(for:
+    // fromFile:)`) carry a second `URL` arg pointing at a local
+    // file we should also `authorizePath`.
     if receiverTypeName == "URLSession" {
-        // Only gate URL-shaped first args here. Methods that take
-        // `URLRequest` are covered by the hand-rolled
-        // `URLSessionModule` since the auto-generated variant
-        // unboxes the request differently.
+        // First arg: URL → network gate; URLRequest → network gate
+        // via embedded URL + method.
         appendIfPathish(0, kind: .network)
+        appendIfURLRequestish(0)
+        // Second arg: a `fromFile:` URL is a real local file the
+        // session reads to upload — gate as `.fsRead`. The first arg
+        // already handled the network policy; this one closes the
+        // file-read door for upload-from-file overloads.
+        appendIfPathish(1, kind: .fsRead)
     }
 
     return directives
@@ -855,6 +882,8 @@ func renderGates(
             unbox = "try unboxString(args[\(d.argIndex)])"
         case "URL":
             unbox = "try unboxOpaque(args[\(d.argIndex)], as: URL.self, typeName: \"URL\")"
+        case "URLRequest":
+            unbox = "try unboxOpaque(args[\(d.argIndex)], as: URLRequest.self, typeName: \"URLRequest\")"
         default:
             // Should be rejected by `gates(...)` above.
             unbox = "try unboxString(args[\(d.argIndex)])"
@@ -884,6 +913,13 @@ func renderGates(
             } else {
                 continue
             }
+        case .networkRequest:
+            // URLRequest carries the URL + method inline. A request
+            // built from a relative URL has `.url == nil`; we treat
+            // that as an unauthorisable empty-URL (the network
+            // policy will deny it explicitly rather than silently
+            // skipping the gate).
+            authorizeCall = "try await authorizeURL(\(d.boundName).url ?? URL(fileURLWithPath: \"\"), method: \(d.boundName).httpMethod ?? \"GET\")"
         }
         prologue.append("\(indent)do {")
         prologue.append("\(indent)    \(authorizeCall)")

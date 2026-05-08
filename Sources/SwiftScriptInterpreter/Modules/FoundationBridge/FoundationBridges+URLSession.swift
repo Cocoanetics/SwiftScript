@@ -39,8 +39,20 @@ extension FoundationBridges {
             throw RuntimeError.invalid("URLSession.upload: expected 2 argument(s), got \(args.count)")
         }
         let recv: URLSession = try unboxOpaque(receiver, as: URLSession.self, typeName: "URLSession")
+        let arg0 = try unboxOpaque(args[0], as: URLRequest.self, typeName: "URLRequest")
         do {
-            let _t = try await recv.upload(for: try unboxOpaque(args[0], as: URLRequest.self, typeName: "URLRequest"), fromFile: try unboxOpaque(args[1], as: URL.self, typeName: "URL"))
+            try await authorizeURL(arg0.url ?? URL(fileURLWithPath: ""), method: arg0.httpMethod ?? "GET")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        let arg1 = try unboxOpaque(args[1], as: URL.self, typeName: "URL")
+        do {
+            try await authorizePath(arg1, for: .read)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
+            let _t = try await recv.upload(for: arg0, fromFile: arg1)
         return .tuple([boxOpaque(_t.0, typeName: "Data"), boxOpaque(_t.1, typeName: "URLResponse")])
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
