@@ -87,10 +87,6 @@ extension FoundationBridges {
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         return .bool(recv.assumesHTTP3Capable)
     }
-    d["var URLRequest.requiresDNSSECValidation: Bool"] = .computed { receiver in
-        let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
-        return .bool(recv.requiresDNSSECValidation)
-    }
     d["var URLRequest.hashValue: Int"] = .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         return .int(recv.hashValue)

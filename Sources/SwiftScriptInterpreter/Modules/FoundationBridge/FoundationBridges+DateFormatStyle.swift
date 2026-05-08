@@ -25,6 +25,10 @@ extension FoundationBridges {
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
         return boxOpaque(recv.capitalizationContext, typeName: "FormatStyleCapitalizationContext")
     },
+    "var Date.FormatStyle.attributed: Date.AttributedStyle": .computed { receiver in
+        let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
+        return boxOpaque(recv.attributed, typeName: "Date.AttributedStyle")
+    },
     "var Date.FormatStyle.parseStrategy: Date.FormatStyle": .computed { receiver in
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
         return boxOpaque(recv.parseStrategy, typeName: "Date.FormatStyle")

@@ -15,6 +15,16 @@ extension FoundationBridges {
         }
         return boxOpaque(Morphology(), typeName: "Morphology")
     },
+    "func Morphology.customPronoun()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Morphology.customPronoun: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Morphology = try unboxOpaque(receiver, as: Morphology.self, typeName: "Morphology")
+        if let _v = recv.customPronoun(forLanguage: try unboxString(args[0])) {
+            return .optional(boxOpaque(_v, typeName: "Morphology.CustomPronoun"))
+        }
+        return .optional(nil)
+    },
         ]
         #if canImport(Darwin)
     d["var Morphology.hashValue: Int"] = .computed { receiver in

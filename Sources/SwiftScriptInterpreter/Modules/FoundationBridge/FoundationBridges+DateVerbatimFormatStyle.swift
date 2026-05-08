@@ -24,6 +24,10 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+    "var Date.VerbatimFormatStyle.attributed: Date.AttributedStyle": .computed { receiver in
+        let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
+        return boxOpaque(recv.attributed, typeName: "Date.AttributedStyle")
+    },
     "var Date.VerbatimFormatStyle.parseStrategy: Date.ParseStrategy": .computed { receiver in
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return boxOpaque(recv.parseStrategy, typeName: "Date.ParseStrategy")

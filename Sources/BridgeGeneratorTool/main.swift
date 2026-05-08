@@ -1062,18 +1062,42 @@ func isVarMutable(_ sym: SymbolGraph.Symbol) -> Bool {
 }
 
 /// True for `@available(*, deprecated)`, `unavailable`, or symbols
-/// introduced after our deployment target. The deployment target lives
-/// in `Package.swift` (macOS 13 today — the SwiftBash floor); we bake
-/// it in here to keep the generator self-contained.
+/// introduced after our deployment target on any of the bridged
+/// Apple platforms. The deployment targets live in `Package.swift`
+/// (today: macOS 13 / iOS 16 / tvOS 16 / watchOS 9 — the SwiftBash
+/// floor); we bake them in here to keep the generator self-
+/// contained.
 ///
-/// Lowering this skips any Foundation symbol whose `introduced` major
-/// version is higher than the floor, so the generated bridges link
-/// cleanly on the same platforms SwiftBash supports. Bumping it back
-/// up just regenerates a richer bridge surface — the scl oracle
-/// continues to gate Apple-only entries behind `#if canImport(Darwin)`
-/// independently.
+/// All four platform floors are checked independently — a symbol
+/// introduced in iOS 16.1 on top of a macOS 13.0 conformance still
+/// fails to link on iOS 16.0, so the iOS check has to fire even
+/// when the macOS check passes.
+///
+/// Lowering any of these skips any Foundation symbol whose
+/// `introduced` major version is higher than the floor, so the
+/// generated bridges link cleanly on every platform SwiftBash
+/// supports. The scl oracle continues to gate Apple-only entries
+/// behind `#if canImport(Darwin)` independently.
 let deploymentMacOSMajor = 13
 let deploymentMacOSMinor = 0
+let deploymentIOSMajor = 16
+let deploymentIOSMinor = 0
+let deploymentTVOSMajor = 16
+let deploymentTVOSMinor = 0
+let deploymentWatchOSMajor = 9
+let deploymentWatchOSMinor = 0
+
+/// `(major, minor)` deployment floor for `domain`, or `nil` for
+/// non-platform domains (`*`, `swift`).
+private func deploymentFloor(forDomain domain: String) -> (Int, Int)? {
+    switch domain {
+    case "macOS":   return (deploymentMacOSMajor,   deploymentMacOSMinor)
+    case "iOS":     return (deploymentIOSMajor,     deploymentIOSMinor)
+    case "tvOS":    return (deploymentTVOSMajor,    deploymentTVOSMinor)
+    case "watchOS": return (deploymentWatchOSMajor, deploymentWatchOSMinor)
+    default:        return nil
+    }
+}
 
 func isDeprecated(_ sym: SymbolGraph.Symbol) -> Bool {
     guard let avail = sym.availability else { return false }
@@ -1084,29 +1108,30 @@ func isDeprecated(_ sym: SymbolGraph.Symbol) -> Bool {
         // "Soft-deprecated" symbols carry `deprecated: { major: 100000 }` —
         // a sentinel meaning "we'd like you to migrate, but the symbol
         // still compiles and runs". Only treat as deprecated if the
-        // version is below the sentinel. macOS-domain entries also gate
-        // on the deployment target so a future-macOS deprecation
-        // doesn't pre-emptively trip when building for an older OS.
+        // version is below the sentinel. Per-platform-domain entries
+        // gate on the deployment target so a future-platform
+        // deprecation doesn't pre-emptively trip when building for an
+        // older OS.
         if let dep = a.deprecated?.major {
             let softSentinel = 100000
             if dep < softSentinel {
-                if a.domain == "macOS" {
-                    if dep <= deploymentMacOSMajor { return true }
+                if let floor = deploymentFloor(forDomain: a.domain ?? "") {
+                    if dep <= floor.0 { return true }
                 } else {
-                    // `swift`, `*`, and per-platform domains other than
-                    // macOS — if the version says deprecated, swiftc
-                    // emits the warning, so skip the bridge.
+                    // `swift`, `*`, and unknown domains — if the
+                    // version says deprecated, swiftc emits the
+                    // warning, so skip the bridge.
                     return true
                 }
             }
         }
-        if a.domain == "macOS",
+        if let floor = deploymentFloor(forDomain: a.domain ?? ""),
            let major = a.introduced?.major
         {
-            if major > deploymentMacOSMajor { return true }
-            if major == deploymentMacOSMajor,
+            if major > floor.0 { return true }
+            if major == floor.0,
                let minor = a.introduced?.minor,
-               minor > deploymentMacOSMinor
+               minor > floor.1
             {
                 return true
             }

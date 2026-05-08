@@ -66,6 +66,38 @@ extension StdlibBridges {
         }
         return .string(String.localizedName(of: try unboxOpaque(args[0], as: String.Encoding.self, typeName: "String.Encoding")))
     },
+    "init String(contentsOfFile:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init String(contentsOfFile:): expected 1 argument(s), got \(args.count)")
+        }
+        let arg0 = try unboxString(args[0])
+        do {
+            try await authorizePath(arg0, for: .read)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
+            return .string(try await String(contentsOfFile: arg0))
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
+    "init String(contentsOf:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init String(contentsOf:): expected 1 argument(s), got \(args.count)")
+        }
+        let arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        do {
+            try await authorizePath(arg0, for: .read)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
+            return .string(try await String(contentsOf: arg0))
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
     "func String.canBeConverted()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("String.canBeConverted: expected 1 argument(s), got \(args.count)")
