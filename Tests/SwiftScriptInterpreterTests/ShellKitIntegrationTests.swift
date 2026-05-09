@@ -435,6 +435,10 @@ struct ShellKitIntegrationTests {
 
     // MARK: sandbox — Process deny
 
+    // `Foundation.Process` is unavailable on the iOS family (iOS,
+    // tvOS, watchOS, visionOS), so these tests only run where the
+    // type exists.
+    #if !os(iOS) && !os(tvOS) && !os(watchOS) && !os(visionOS)
     @Test func sandboxDeniesProcessConstructionEntirely() async throws {
         // Foundation.Process spawns a real OS subprocess that escapes
         // every host gate, so the policy is "denied entirely whenever
@@ -488,6 +492,7 @@ struct ShellKitIntegrationTests {
             #expect(r == .bool(false))
         }
     }
+    #endif
 
     // MARK: network — URLRequest variants gate
 

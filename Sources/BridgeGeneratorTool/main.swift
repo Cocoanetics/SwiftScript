@@ -1672,7 +1672,23 @@ enum EmitBucket {
 enum Platform {
     case crossPlatform
     case appleOnly
+    /// Available on macOS / Linux / Windows / Android but NOT on the
+    /// iOS family (iOS, tvOS, watchOS, visionOS). Currently just
+    /// `Foundation.Process` — the scl oracle classifies it
+    /// cross-platform because Linux Foundation has it, but Apple's
+    /// non-macOS overlays mark it `@available(*, unavailable)`.
+    case nonIOSOnly
 }
+
+/// Type spellings that require the non-iOS-family guard. The scl
+/// oracle classifies these as cross-platform (they exist on at least
+/// one non-Apple platform), but Apple's iOS-family Foundation
+/// overlays mark them unavailable, so a plain cross-platform emit
+/// fails to compile for iOS Simulator. Wrap their per-type bridge
+/// file and any runtime-body emits with `#if !os(iOS) && !os(tvOS)
+/// && !os(watchOS) && !os(visionOS)`.
+let nonIOSOnlyTypes: Set<String> = ["Process"]
+let nonIOSGuardCondition = "!os(iOS) && !os(tvOS) && !os(watchOS) && !os(visionOS)"
 
 struct EmitEntry {
     let symbolPath: String   // "sqrt(_:)" or "String.foo(...)"
@@ -1746,10 +1762,11 @@ func extractBridgeKey(fromCode code: String) -> String? {
 /// Classify a bridge key against the scl oracle. Without an oracle,
 /// every entry is cross-platform (legacy behavior).
 func platform(forBridgeKey key: String) -> Platform {
-    guard let oracle = sclOracle else { return .crossPlatform }
     guard let (owner, member) = ownerAndMember(forBridgeKey: key) else {
-        return .crossPlatform
+        return sclOracle == nil ? .crossPlatform : .crossPlatform
     }
+    if nonIOSOnlyTypes.contains(owner) { return .nonIOSOnly }
+    guard let oracle = sclOracle else { return .crossPlatform }
     return oracle.isCrossPlatform(typeName: owner, memberName: member)
         ? .crossPlatform : .appleOnly
 }
@@ -1871,6 +1888,10 @@ if let oracle = sclOracle {
         let spelling = bridge.swiftSpelling
         // Stdlib types and primitive bridges are always present.
         if stdlibCrossPlatformOwners.contains(spelling) { continue }
+        // `nonIOSOnlyTypes` get their own guard wrap; never classify
+        // them Apple-only or the non-Apple platforms (Linux/Windows/
+        // Android) lose them.
+        if nonIOSOnlyTypes.contains(spelling) { continue }
         if !oracle.isTypeCrossPlatform(spelling) {
             appleOnlyTypes.insert(spelling)
         }
@@ -2454,7 +2475,9 @@ for (usr, bridge) in bridgedTypes {
     // without an Equatable conformance the auto-comparator can use).
     // Force those to Apple-only regardless of scl type-presence.
     let comparatorPlatform: Platform
-    if bridgeableTypeAllowlist.contains(typeName)
+    if nonIOSOnlyTypes.contains(typeName) {
+        comparatorPlatform = .nonIOSOnly
+    } else if bridgeableTypeAllowlist.contains(typeName)
         && bridgedClassTypeNames.contains(typeName)
     {
         comparatorPlatform = .appleOnly
@@ -2551,6 +2574,12 @@ struct PlatformedEntries {
     /// file gets wrapped in `#if canImport(Darwin)` and the manifest's
     /// reference to it is gated too.
     var typeIsAppleOnly: Bool = false
+    /// When true, the type is unavailable on the iOS family (iOS,
+    /// tvOS, watchOS, visionOS) but exists on macOS / Linux / Windows
+    /// / Android. The whole per-type file gets wrapped in
+    /// `#if !os(iOS) && !os(tvOS) && !os(watchOS) && !os(visionOS)`.
+    /// Mutually exclusive with `typeIsAppleOnly`.
+    var typeIsNonIOSOnly: Bool = false
     var isEmpty: Bool { crossPlatform.isEmpty && appleOnly.isEmpty }
 }
 
@@ -2580,6 +2609,36 @@ func renderPerTypeFile(
         #endif
 
         #if canImport(Darwin)
+        extension \(namespace) {
+            nonisolated(unsafe) static let \(dictName): [String: Bridge] = [
+        \(body)
+            ]
+        }
+        #else
+        extension \(namespace) {
+            nonisolated(unsafe) static let \(dictName): [String: Bridge] = [:]
+        }
+        #endif
+
+        """
+    }
+    if entries.typeIsNonIOSOnly {
+        // Available on macOS / Linux / Windows / Android but not on
+        // the iOS family — emit the dict under the non-iOS guard and
+        // a `[:]` stub elsewhere so the manifest's reference still
+        // resolves on every platform.
+        let dictName = staticLetName(for: typeName)
+        let allEntries = (entries.crossPlatform + entries.appleOnly)
+            .joined(separator: "\n")
+        let body = allEntries.isEmpty ? "        // (no entries)" : allEntries
+        return """
+        \(autogenBanner)import Foundation
+        import ShellKit
+        #if canImport(FoundationNetworking)
+        import FoundationNetworking
+        #endif
+
+        #if \(nonIOSGuardCondition)
         extension \(namespace) {
             nonisolated(unsafe) static let \(dictName): [String: Bridge] = [
         \(body)
@@ -2716,6 +2775,7 @@ func groupedByType(_ entries: [EmitEntry]) -> [(String, PlatformedEntries)] {
         switch entry.platform {
         case .crossPlatform: current.crossPlatform.append(entry.code)
         case .appleOnly:     current.appleOnly.append(entry.code)
+        case .nonIOSOnly:    current.crossPlatform.append(entry.code)
         }
         bodies[name] = current
     }
@@ -2724,6 +2784,13 @@ func groupedByType(_ entries: [EmitEntry]) -> [(String, PlatformedEntries)] {
     // whole `extension { … }` block in `#if canImport(Darwin)`.
     for name in order where appleOnlyTypes.contains(name) {
         bodies[name]?.typeIsAppleOnly = true
+    }
+    // Same for the non-iOS-family wrap. Entries are folded into
+    // `crossPlatform` above (the per-type file uses a single dict
+    // literal under the file-level guard), so `appleOnly` stays
+    // empty and the renderer takes the literal-dict path.
+    for name in order where nonIOSOnlyTypes.contains(name) {
+        bodies[name]?.typeIsNonIOSOnly = true
     }
     return order.map { ($0, bodies[$0]!) }
 }
@@ -2739,6 +2806,8 @@ func runtimeBodies(_ entries: [EmitEntry]) -> [String] {
             return entry.code
         case .appleOnly:
             return "#if canImport(Darwin)\n\(entry.code)\n#endif"
+        case .nonIOSOnly:
+            return "#if \(nonIOSGuardCondition)\n\(entry.code)\n#endif"
         }
     }
 }
