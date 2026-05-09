@@ -82,7 +82,13 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileWrapper.matchesContents: expected 1 argument(s), got \(args.count)")
         }
         let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
-        return .bool(recv.matchesContents(of: try unboxOpaque(args[0], as: URL.self, typeName: "URL")))
+        let arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        do {
+            try await authorizePath(arg0, for: .read)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        return .bool(await recv.matchesContents(of: arg0))
     },
     "func FileWrapper.addFileWrapper()": .method { receiver, args in
         guard args.count == 1 else {

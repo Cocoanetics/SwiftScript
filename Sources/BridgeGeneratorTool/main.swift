@@ -991,6 +991,13 @@ func gates(
         let intent: GateKind
         if methodName == "write" { intent = .fsWrite }
         else { intent = .fsRead }
+        // `matchesContents(of:)` carries the URL under the `of:`
+        // label which isn't in `urlLabelsRead` (too generic to add
+        // globally — appears all over Foundation on non-URL args).
+        // Gate index 0 positionally so any URL-typed first arg on
+        // FileWrapper is authorised; the label scan still upgrades
+        // higher-index args (e.g. `originalContentsURL:`).
+        gatePathish(0, kind: intent)
         scanByLabel(defaultIntent: intent)
     }
 

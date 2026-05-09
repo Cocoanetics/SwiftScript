@@ -391,6 +391,48 @@ struct ShellKitIntegrationTests {
         }
     }
 
+    // MARK: sandbox — FileWrapper URL methods
+
+    @Test func sandboxBlocksFileWrapperMatchesContentsOutsideRoot() async throws {
+        // FileWrapper.matchesContents(of:) reads filesystem state at
+        // the supplied URL to decide if the wrapper still matches. The
+        // `of:` label isn't in the generic urlLabelsRead set (too
+        // collision-prone across Foundation), so the FileWrapper
+        // receiver branch positionally gates index 0. Without that
+        // gate, a script could construct an in-memory FileWrapper and
+        // probe arbitrary host paths via matchesContents.
+        let root = NSTemporaryDirectory()
+            + "swiftscript-sandbox-\(UUID().uuidString)"
+        try FileManager.default.createDirectory(
+            atPath: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(atPath: root) }
+        let shell = TestShell(
+            sandbox: .rooted(at: URL(fileURLWithPath: root),
+                             allowedHosts: []))
+        var caughtError: Error?
+        await shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            do {
+                _ = try await interp.eval(#"""
+                    import Foundation
+                    let w = FileWrapper(regularFileWithContents: Data())
+                    w.matchesContents(of: URL(fileURLWithPath: "/etc/passwd"))
+                    """#)
+            } catch {
+                caughtError = error
+            }
+        }
+        #expect(caughtError != nil)
+        if let signal = caughtError as? UserThrowSignal,
+           case .opaque(_, let payload) = signal.value,
+           payload is ShellKit.Sandbox.Denial
+        {
+            // ok
+        } else {
+            Issue.record("expected Sandbox.Denial, got \(caughtError as Any)")
+        }
+    }
+
     // MARK: sandbox — Process deny
 
     @Test func sandboxDeniesProcessConstructionEntirely() async throws {
