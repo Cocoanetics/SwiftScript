@@ -1,5 +1,5 @@
 {
-  "originHash" : "723f256dacf5a9bc49a4e3f3e3199b1f10b82b02c55d2ad4ae5a576846570b90",
+  "originHash" : "0cd8515406137deb69d604344cc3fc16f80b2518f4dd27a5eeda64f7673d3cbd",
   "pins" : [
     {
       "identity" : "shellkit",
@@ -7,7 +7,7 @@
       "location" : "https://github.com/Cocoanetics/ShellKit",
       "state" : {
         "branch" : "main",
-        "revision" : "3901e20158a2260586a4332ae244b74449da893a"
+        "revision" : "4395986d5c90e763daf8a92af739c5382b675bea"
       }
     },
     {
@@ -20,12 +20,30 @@
       }
     },
     {
+      "identity" : "swift-subprocess",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-subprocess",
+      "state" : {
+        "revision" : "13d087685b95d64d6aac9b94500d347bbe84c39b",
+        "version" : "0.4.0"
+      }
+    },
+    {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax",
       "state" : {
         "revision" : "9de99a78f099e59caf2b2beec65a4c45d54b2081",
         "version" : "603.0.1"
+      }
+    },
+    {
+      "identity" : "swift-system",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-system",
+      "state" : {
+        "revision" : "7c6ad0fc39d0763e0b699210e4124afd5041c5df",
+        "version" : "1.6.4"
       }
     }
   ],

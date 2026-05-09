@@ -83,6 +83,13 @@ extension Interpreter {
         registerOnImport("Glibc",      module: identityModule)
         registerOnImport("ucrt",       module: identityModule)
         registerOnImport("WinSDK",     module: identityModule)
+        // `Subprocess.run(...)` — collected-output bridge that mirrors
+        // swift-subprocess's API shape and routes every call through
+        // `ShellKit.Shell.current.processLauncher.launch(...)`.
+        // Standalone gets `DefaultProcessLauncher` (real exec via
+        // swift-subprocess); under SwiftBash gets `BashProcessLauncher`
+        // (resolves against the bash command registry, no `posix_spawn`).
+        registerOnImport("Subprocess", module: SubprocessModule())
     }
 
     func registerBuiltin(name: String, body: @escaping ([Value]) async throws -> Value) {
