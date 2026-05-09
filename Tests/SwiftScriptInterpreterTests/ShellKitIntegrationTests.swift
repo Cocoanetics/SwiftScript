@@ -393,6 +393,10 @@ struct ShellKitIntegrationTests {
 
     // MARK: sandbox — FileWrapper URL methods
 
+    // `Foundation.FileWrapper` is only bridged on Darwin (the type
+    // is `@available(*, unavailable)` on swift-corelibs-foundation),
+    // so this test only runs there.
+    #if canImport(Darwin)
     @Test func sandboxBlocksFileWrapperMatchesContentsOutsideRoot() async throws {
         // FileWrapper.matchesContents(of:) reads filesystem state at
         // the supplied URL to decide if the wrapper still matches. The
@@ -432,6 +436,7 @@ struct ShellKitIntegrationTests {
             Issue.record("expected Sandbox.Denial, got \(caughtError as Any)")
         }
     }
+    #endif
 
     // MARK: sandbox — Process deny
 
