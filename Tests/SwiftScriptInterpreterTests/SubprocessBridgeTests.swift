@@ -65,6 +65,79 @@ struct SubprocessBridgeTests {
         }
     }
 
+    @Test func outputStringPreservesEmptyCaptureAsEmptyString() async throws {
+        // `.string(limit:)` with zero captured bytes returns
+        // `Optional("")` — distinct from `nil` for `.discarded`. Lets
+        // a script tell a silent command apart from a discarded
+        // stream.
+        let launcher = RecordingLauncher(stubStdout: "")
+        let shell = TestShell(launcher: launcher)
+        try await shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            let r = try await interp.eval(#"""
+                import Subprocess
+                let result = try await Subprocess.run(
+                    Executable.name("silent"),
+                    arguments: [],
+                    output: Output.string(limit: 4096))
+                result.standardOutput
+                """#)
+            #expect(r == .optional(.string("")))
+        }
+    }
+
+    @Test func outputStringThrowsOnLimitOverflow() async throws {
+        // `.string(limit: N)` is documented to throw if emitted bytes
+        // exceed N — silently truncating would hand the script
+        // partial data with no way to detect the loss. Configure a
+        // launcher that produces 50 bytes against a 10-byte limit and
+        // verify the bridge surfaces the overflow as an error.
+        let launcher = RecordingLauncher(stubStdout: String(repeating: "x", count: 50))
+        let shell = TestShell(launcher: launcher)
+        var caught: String?
+        await shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            do {
+                _ = try await interp.eval(#"""
+                    import Subprocess
+                    _ = try await Subprocess.run(
+                        Executable.name("noisy"),
+                        arguments: [],
+                        output: Output.string(limit: 10))
+                    """#)
+            } catch {
+                caught = String(describing: error)
+            }
+        }
+        #expect(caught != nil)
+        #expect(caught?.contains("standardOutput") == true)
+        #expect(caught?.contains("10 bytes") == true)
+    }
+
+    @Test func errorStringThrowsOnLimitOverflow() async throws {
+        // Same overflow contract on the stderr side.
+        let launcher = RecordingLauncher(stubStderr: String(repeating: "y", count: 100))
+        let shell = TestShell(launcher: launcher)
+        var caught: String?
+        await shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            do {
+                _ = try await interp.eval(#"""
+                    import Subprocess
+                    _ = try await Subprocess.run(
+                        Executable.name("noisy"),
+                        arguments: [],
+                        output: Output.discarded,
+                        error: ErrorOutput.string(limit: 5))
+                    """#)
+            } catch {
+                caught = String(describing: error)
+            }
+        }
+        #expect(caught != nil)
+        #expect(caught?.contains("standardError") == true)
+    }
+
     @Test func outputDiscardedReturnsNil() async throws {
         let launcher = RecordingLauncher(stubStdout: "ignored\n")
         let shell = TestShell(launcher: launcher)

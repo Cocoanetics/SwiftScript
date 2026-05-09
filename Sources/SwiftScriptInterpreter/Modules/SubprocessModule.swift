@@ -143,28 +143,31 @@ struct SubprocessModule: BuiltinModule {
 
     private func registerExecutionRecord(into i: Interpreter) {
         i.bridges["var ExecutionRecord.terminationStatus"] = .computed { recv in
-            let r: ExecutionRecord = try unboxOpaque(recv, as: ExecutionRecord.self, typeName: "ExecutionRecord")
-            return boxOpaque(r.terminationStatus, typeName: "TerminationStatus")
+            let r: ScriptExecutionRecord = try unboxOpaque(
+                recv, as: ScriptExecutionRecord.self, typeName: "ExecutionRecord")
+            return boxOpaque(r.record.terminationStatus, typeName: "TerminationStatus")
         }
+        // `.discarded` → `nil`. `.string(limit:)` → `Optional(String)`
+        // even if the captured byte buffer is empty — that's how a
+        // script distinguishes a silent command from a discarded
+        // stream (matches swift-subprocess's `Optional<String>` with
+        // empty-string-on-no-output semantics).
         i.bridges["var ExecutionRecord.standardOutput"] = .computed { recv in
-            let r: ExecutionRecord = try unboxOpaque(recv, as: ExecutionRecord.self, typeName: "ExecutionRecord")
-            // Optional<String> — `nil` if the output strategy was
-            // `.discarded` (no buffer to read).
-            if r.standardOutput.isEmpty {
-                return .optional(nil)
-            }
-            return .optional(.string(String(decoding: r.standardOutput, as: UTF8.self)))
+            let r: ScriptExecutionRecord = try unboxOpaque(
+                recv, as: ScriptExecutionRecord.self, typeName: "ExecutionRecord")
+            guard r.outputCaptured else { return .optional(nil) }
+            return .optional(.string(String(decoding: r.record.standardOutput, as: UTF8.self)))
         }
         i.bridges["var ExecutionRecord.standardError"] = .computed { recv in
-            let r: ExecutionRecord = try unboxOpaque(recv, as: ExecutionRecord.self, typeName: "ExecutionRecord")
-            if r.standardError.isEmpty {
-                return .optional(nil)
-            }
-            return .optional(.string(String(decoding: r.standardError, as: UTF8.self)))
+            let r: ScriptExecutionRecord = try unboxOpaque(
+                recv, as: ScriptExecutionRecord.self, typeName: "ExecutionRecord")
+            guard r.errorCaptured else { return .optional(nil) }
+            return .optional(.string(String(decoding: r.record.standardError, as: UTF8.self)))
         }
         i.bridges["var ExecutionRecord.processIdentifier"] = .computed { recv in
-            let r: ExecutionRecord = try unboxOpaque(recv, as: ExecutionRecord.self, typeName: "ExecutionRecord")
-            return .int(Int(r.processIdentifier))
+            let r: ScriptExecutionRecord = try unboxOpaque(
+                recv, as: ScriptExecutionRecord.self, typeName: "ExecutionRecord")
+            return .int(Int(r.record.processIdentifier))
         }
     }
 
@@ -203,6 +206,39 @@ struct SubprocessModule: BuiltinModule {
 enum SubprocessIOStrategy: Sendable {
     case discarded
     case string(limit: Int)
+}
+
+/// Wraps the launcher's `ExecutionRecord` with per-stream "captured"
+/// flags so ``ExecutionRecord/standardOutput`` /
+/// ``ExecutionRecord/standardError`` can return `Optional("")` for a
+/// `.string(limit:)` capture that produced zero bytes — distinct from
+/// `nil` for `.discarded` which never captured at all. Without this
+/// the script can't tell a silent command apart from a discarded
+/// stream (Codex P1 on PR #5).
+struct ScriptExecutionRecord: Sendable {
+    let record: ExecutionRecord
+    let outputCaptured: Bool   // false when `Output.discarded`
+    let errorCaptured: Bool    // false when `ErrorOutput.discarded`
+}
+
+/// Thrown when a stream produced more bytes than the supplied
+/// `Output.string(limit:)` / `ErrorOutput.string(limit:)` budget.
+/// Matches swift-subprocess's "throw on overflow" contract — silently
+/// truncating would hand scripts incomplete data with no way to
+/// detect the loss (Codex P1 on PR #5).
+struct SubprocessOutputLimitExceeded: Error, CustomStringConvertible, Sendable {
+    /// Which stream overflowed.
+    let stream: Stream
+    /// The limit that was exceeded.
+    let limit: Int
+
+    enum Stream: String, Sendable {
+        case standardOutput, standardError
+    }
+
+    var description: String {
+        "Subprocess.\(stream.rawValue) exceeded the configured limit of \(limit) bytes"
+    }
 }
 
 /// Shared body for every `Subprocess.run` overload. Resolves the
@@ -256,29 +292,50 @@ private func runImpl(
         error: errBuf.sink)
 
     // Strategy semantics:
-    // - `.discarded` → script-visible buffer is empty regardless of
-    //   what the launcher returned. The launcher MAY still populate
-    //   `record.standardOutput` (DefaultProcessLauncher does); we
-    //   honour the script's "don't capture" contract by dropping it.
+    // - `.discarded` → no captured bytes; script reads `nil` regardless
+    //   of what the launcher returned. Honours the script's "don't
+    //   capture" contract — `DefaultProcessLauncher` does populate
+    //   `record.standardOutput` even when the supplied sink is
+    //   discarding, so we drop the launcher copy here too.
     // - `.string(limit:)` → prefer the bridge-supplied buffer (what
     //   actually landed in the user's allocation), fall back to the
     //   launcher's record buffer. `BashProcessLauncher` streams to the
     //   sink only and leaves the record empty; `DefaultProcessLauncher`
-    //   populates both. Both styles produce the same script-visible
-    //   string.
+    //   populates both. If the buffer overflowed the configured limit,
+    //   throw rather than silently truncate (matches swift-subprocess).
     let outBytes: Data
     switch outStrategy {
     case .discarded:
         outBytes = Data()
-    case .string:
-        outBytes = outBuf.capturedBytes ?? record.standardOutput
+    case .string(let limit):
+        if let captured = outBuf.captured {
+            if captured.overflowed {
+                throw SubprocessOutputLimitExceeded(stream: .standardOutput, limit: limit)
+            }
+            outBytes = captured.data
+        } else {
+            outBytes = record.standardOutput
+            if outBytes.count > limit {
+                throw SubprocessOutputLimitExceeded(stream: .standardOutput, limit: limit)
+            }
+        }
     }
     let errBytes: Data
     switch errStrategy {
     case .discarded:
         errBytes = Data()
-    case .string:
-        errBytes = errBuf.capturedBytes ?? record.standardError
+    case .string(let limit):
+        if let captured = errBuf.captured {
+            if captured.overflowed {
+                throw SubprocessOutputLimitExceeded(stream: .standardError, limit: limit)
+            }
+            errBytes = captured.data
+        } else {
+            errBytes = record.standardError
+            if errBytes.count > limit {
+                throw SubprocessOutputLimitExceeded(stream: .standardError, limit: limit)
+            }
+        }
     }
 
     let merged = ExecutionRecord(
@@ -286,8 +343,12 @@ private func runImpl(
         terminationStatus: record.terminationStatus,
         standardOutput: outBytes,
         standardError: errBytes)
+    let scriptRecord = ScriptExecutionRecord(
+        record: merged,
+        outputCaptured: { if case .string = outStrategy { return true } else { return false } }(),
+        errorCaptured: { if case .string = errStrategy { return true } else { return false } }())
 
-    return boxOpaque(merged, typeName: "ExecutionRecord")
+    return boxOpaque(scriptRecord, typeName: "ExecutionRecord")
 }
 
 /// Pair of `OutputSink` + optional capture buffer driven by a
@@ -296,11 +357,13 @@ private func runImpl(
 /// chunk to a length-bounded byte buffer the run body reads back.
 private struct StrategyBuffer {
     let sink: OutputSink
-    /// Captured bytes if the strategy was `.string(limit:)`; nil for
-    /// `.discarded`. Empty `Data` (vs. `nil`) distinguishes "captured
-    /// nothing" from "didn't capture" so the run body can decide
-    /// whether to fall back to the launcher's own record buffer.
-    var capturedBytes: Data? { box?.read() }
+    /// Captured bytes plus an overflow flag if the strategy was
+    /// `.string(limit:)`; nil for `.discarded`. The presence-vs-nil
+    /// distinction lets the run body tell "no buffer was allocated"
+    /// (fall back to the launcher's record) from "buffer was
+    /// allocated and produced zero bytes" (script-visible empty
+    /// string).
+    var captured: (data: Data, overflowed: Bool)? { box?.read() }
 
     private let box: BufferBox?
 
@@ -319,15 +382,23 @@ private struct StrategyBuffer {
     }
 }
 
+/// Length-bounded byte buffer that records overflow without
+/// throwing — `OutputSink.onWrite` is non-throwing, so the throw
+/// has to happen later out of the run body when it inspects the
+/// captured state.
 private final class BufferBox: @unchecked Sendable {
     private let lock = NSLock()
     private var buf = Data()
+    private var overflowed = false
     private let limit: Int
 
     init(limit: Int) { self.limit = limit }
 
     func append(_ d: Data) {
         lock.lock(); defer { lock.unlock() }
+        if buf.count + d.count > limit {
+            overflowed = true
+        }
         let remaining = limit - buf.count
         guard remaining > 0 else { return }
         if d.count <= remaining {
@@ -337,8 +408,8 @@ private final class BufferBox: @unchecked Sendable {
         }
     }
 
-    func read() -> Data {
+    func read() -> (data: Data, overflowed: Bool) {
         lock.lock(); defer { lock.unlock() }
-        return buf
+        return (buf, overflowed)
     }
 }
