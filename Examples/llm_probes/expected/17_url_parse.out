@@ -1,0 +1,11 @@
+https
+example.com
+/path/to/page.html
+page.html
+html
+q=swift
+top
+empty string yields nil
+https://example.com/api/v1/users
+true
+foo.txt

@@ -288,25 +288,44 @@ extension Interpreter {
     func evaluate(asExpr: AsExprSyntax, in scope: Scope) async throws -> Value {
         let value = try await evaluate(asExpr.expression, in: scope)
         let mark = asExpr.questionOrExclamationMark?.text
-        let matches = valueMatchesType(value, asExpr.type)
         switch mark {
         case "?":
-            return matches ? .optional(value) : .optional(nil)
+            if let cast = castValue(value, to: asExpr.type) {
+                return .optional(cast)
+            }
+            return .optional(nil)
         case "!":
-            if matches { return value }
+            if let cast = castValue(value, to: asExpr.type) { return cast }
             throw RuntimeError.invalid(
                 "could not cast value of type '\(typeName(value))' to '\(asExpr.type.description.trimmingCharacters(in: .whitespaces))'"
             )
         default:
-            // Bare `as` — bridge cast. swiftc has already checked it.
-            return value
+            // Bare `as` — bridge cast. swiftc has already checked it,
+            // but still unwrap Optional layers where the target asks
+            // for the wrapped type.
+            return castValue(value, to: asExpr.type) ?? value
         }
     }
 
     /// `value is T` — runtime type check, returns Bool.
     func evaluate(isExpr: IsExprSyntax, in scope: Scope) async throws -> Value {
         let value = try await evaluate(isExpr.expression, in: scope)
-        return .bool(valueMatchesType(value, isExpr.type))
+        return .bool(castValue(value, to: isExpr.type) != nil)
+    }
+
+    /// Swift's dynamic-cast semantics over `Value`: `Optional` layers
+    /// unwrap before matching a non-optional target — `dict["k"] as?
+    /// Int` sees the boxed `Int`, not the `Optional` box — and the
+    /// cast *result* is the unwrapped value. Returns `nil` when the
+    /// cast fails (including `nil as? Int`).
+    func castValue(_ value: Value, to type: TypeSyntax) -> Value? {
+        let raw = type.description.trimmingCharacters(in: .whitespaces)
+        let optionalTarget = raw.hasSuffix("?") || raw.hasPrefix("Optional<")
+        if !optionalTarget, case .optional(let inner) = value {
+            guard let inner else { return nil }
+            return castValue(inner, to: type)
+        }
+        return valueMatchesTypeSpelling(value, raw) ? value : nil
     }
 
     /// True if `value`'s runtime type satisfies the target type spelling.
@@ -314,7 +333,13 @@ extension Interpreter {
     /// types (matched by `typeName`), user struct/enum types, and the
     /// generic-collection family.
     func valueMatchesType(_ value: Value, _ type: TypeSyntax) -> Bool {
-        let raw = type.description.trimmingCharacters(in: .whitespaces)
+        valueMatchesTypeSpelling(
+            value, type.description.trimmingCharacters(in: .whitespaces))
+    }
+
+    /// String-spelling core of ``valueMatchesType(_:_:)`` so collection
+    /// element types can recurse without re-parsing syntax nodes.
+    func valueMatchesTypeSpelling(_ value: Value, _ raw: String) -> Bool {
         if raw == "Any" || raw == "AnyObject" { return true }
         // Duck-typed protocol existentials: we don't track conformances
         // statically, so any value passes a protocol-typed slot. Real
@@ -330,24 +355,56 @@ extension Interpreter {
         default: break
         }
 
-        // Generic collections: `[T]`, `[K: V]`, `Set<T>`, `Range<T>`, etc.
-        // We don't track element types, so any `.array` matches `[T]`,
-        // any `.dict` matches `[K: V]`. This is laxer than swiftc but
-        // matches our runtime model where collection element types are
-        // dynamic.
-        if raw.hasPrefix("[") && raw.contains(":") && !raw.contains("...") {
-            if case .dict = value { return true }
-        } else if raw.hasPrefix("[") && raw.hasSuffix("]") {
-            if case .array = value { return true }
+        // Generic collections: `[T]`, `[K: V]`, `Set<T>` check every
+        // element against the spelled element type — `["a"] as? [Int]`
+        // must fail like it does in stock Swift, not smuggle Strings
+        // through an Int-typed slot. Empty collections match any
+        // element type, same as a dynamic cast of an empty container.
+        if raw.hasPrefix("["), raw.hasSuffix("]"), !raw.contains("...") {
+            let inner = String(raw.dropFirst().dropLast())
+            if let colon = topLevelColonIndex(in: inner) {
+                guard case .dict(let entries) = value else { return false }
+                let keySpelling = String(inner[..<colon])
+                    .trimmingCharacters(in: .whitespaces)
+                let valueSpelling = String(inner[inner.index(after: colon)...])
+                    .trimmingCharacters(in: .whitespaces)
+                return entries.allSatisfy {
+                    valueMatchesTypeSpelling($0.key, keySpelling)
+                        && valueMatchesTypeSpelling($0.value, valueSpelling)
+                }
+            }
+            guard case .array(let elements) = value else { return false }
+            let elementSpelling = inner.trimmingCharacters(in: .whitespaces)
+            return elements.allSatisfy {
+                valueMatchesTypeSpelling($0, elementSpelling)
+            }
         }
-        if raw.hasPrefix("Set<") {
-            if case .set = value { return true }
+        if raw.hasPrefix("Set<"), raw.hasSuffix(">") {
+            guard case .set(let elements) = value else { return false }
+            let elementSpelling = String(raw.dropFirst(4).dropLast())
+                .trimmingCharacters(in: .whitespaces)
+            return elements.allSatisfy {
+                valueMatchesTypeSpelling($0, elementSpelling)
+            }
         }
         if raw.hasPrefix("Range<") || raw.hasPrefix("ClosedRange<") {
             if case .range = value { return true }
         }
-        if raw.hasPrefix("Optional<") || raw.hasSuffix("?") {
-            if case .optional = value { return true }
+        // Optional targets: `nil` matches, a wrapped value matches if
+        // its payload matches the wrapped spelling, and a non-optional
+        // value matches its own optional promotion (`1 is Int?`).
+        if raw.hasSuffix("?") || raw.hasPrefix("Optional<") {
+            let inner = raw.hasSuffix("?")
+                ? String(raw.dropLast())
+                : String(raw.dropFirst("Optional<".count).dropLast())
+            switch value {
+            case .optional(nil):
+                return true
+            case .optional(let wrapped?):
+                return valueMatchesTypeSpelling(wrapped, inner)
+            default:
+                return valueMatchesTypeSpelling(value, inner)
+            }
         }
 
         // Opaque-carried types and user-defined structs/enums match by
@@ -367,5 +424,23 @@ extension Interpreter {
         }
 
         return false
+    }
+
+    /// Index of the first colon at bracket/generic depth zero, for
+    /// splitting a `[K: V]` spelling without tripping over nested
+    /// generics (`[String: [Int: Bool]]`).
+    private func topLevelColonIndex(in s: String) -> String.Index? {
+        var depth = 0
+        var i = s.startIndex
+        while i < s.endIndex {
+            switch s[i] {
+            case "[", "<", "(": depth += 1
+            case "]", ">", ")": depth -= 1
+            case ":" where depth == 0: return i
+            default: break
+            }
+            i = s.index(after: i)
+        }
+        return nil
     }
 }

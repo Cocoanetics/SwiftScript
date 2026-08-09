@@ -1,0 +1,11 @@
+5
+string: abc
+int: 1
+double: 3.14
+bool: true
+string: tail
+true
+true
+false
+ABC
+6.0

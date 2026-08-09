@@ -1,0 +1,4 @@
+ok: 3.14
+err: not a number: hello
+ok: 42.0
+err: not a number: 

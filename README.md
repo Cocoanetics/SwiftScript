@@ -134,10 +134,15 @@ work — and won't:
 - **Protocol witness checking.** Protocols are accepted in annotations but
   conformance isn't verified — dispatch is dynamic. `extension Foo: P { ... }`
   works, but the compiler won't tell you if `Foo` is missing a requirement.
-- **Generics beyond the basics.** Generic functions with simple constraints
-  work; full generic specialization, conditional conformances, opaque return
-  types (`some P`), and primary associated types do not.
-- **Property wrappers, result builders, macros, actors.** Not implemented.
+- **Generics beyond the basics.** Generic functions with simple constraints,
+  opaque return types (`some P`), and actors all work at runtime; full
+  generic specialization, conditional conformances, and primary associated
+  types do not.
+- **Property wrappers, result builders, macros.** Not implemented — and
+  *refused loudly*: a script declaring `@propertyWrapper`, `@resultBuilder`,
+  or any custom attribute fails with an `unsupported attribute` error before
+  execution rather than running with the attribute ignored and silently
+  producing a different value than stock Swift.
 - **Objective-C interop / `@objc` / KVO / `NotificationCenter` selectors.**
   The Foundation bridge is value-shaped: methods that return values, not
   ones that need a real Objective-C runtime.

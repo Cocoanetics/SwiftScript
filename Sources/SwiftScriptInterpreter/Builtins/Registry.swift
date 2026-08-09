@@ -10,6 +10,7 @@ extension Interpreter {
         // (`String.propertyList`, `LocalizedStringResource`,
         // `OperationQueue.SchedulerTimeType`, …) out of the Linux build.
         registerGeneratedStdlib(into: self)
+        registerStringCodeUnitViews()
 
         // `MathExtras` extras (gcd, factorial, .clamped, .median, …) ship
         // as a real Swift library target as well, so the same source
@@ -95,5 +96,45 @@ extension Interpreter {
     func registerBuiltin(name: String, body: @escaping ([Value]) async throws -> Value) {
         let fn = Function(name: name, parameters: [], kind: .builtin(body))
         rootScope.bind(name, value: .function(fn), mutable: false)
+    }
+
+    /// `String.utf8` / `.utf16` / `.unicodeScalars` — modeled as eager
+    /// arrays of code units so `.count` reports what stock Swift
+    /// reports (`"héllo".utf8.count == 6`, not the Character count)
+    /// and `for`-loops iterate units, not Characters. Stdlib surface:
+    /// always registered, no import required — matching stock Swift.
+    func registerStringCodeUnitViews() {
+        bridges["var String.utf8"] = .computed { recv in
+            guard case .string(let s) = recv else {
+                throw RuntimeError.invalid("String.utf8: receiver must be String")
+            }
+            return .array(s.utf8.map { .int(Int($0)) })
+        }
+        bridges["var String.utf16"] = .computed { recv in
+            guard case .string(let s) = recv else {
+                throw RuntimeError.invalid("String.utf16: receiver must be String")
+            }
+            return .array(s.utf16.map { .int(Int($0)) })
+        }
+        // Scalars stay opaque `Unicode.Scalar`s (not bare Ints) so
+        // `String(describing:)` shows the character and property
+        // reads beyond `.value` fail loudly instead of silently
+        // acting like integers.
+        bridges["var String.unicodeScalars"] = .computed { recv in
+            guard case .string(let s) = recv else {
+                throw RuntimeError.invalid("String.unicodeScalars: receiver must be String")
+            }
+            return .array(s.unicodeScalars.map {
+                .opaque(typeName: "Unicode.Scalar", value: $0)
+            })
+        }
+        bridges["var Unicode.Scalar.value: Int"] = .computed { recv in
+            guard case .opaque(_, let any) = recv,
+                  let scalar = any as? Unicode.Scalar
+            else {
+                throw RuntimeError.invalid("Unicode.Scalar.value: receiver must be Unicode.Scalar")
+            }
+            return .int(Int(scalar.value))
+        }
     }
 }

@@ -105,11 +105,11 @@ struct JSONModule: BuiltinModule {
                 )
             }
         }
-        // `String.utf8` — model as a pass-through to the receiver string.
-        // Real Swift returns `String.UTF8View` (a sequence of bytes); for
-        // our purposes the only common consumer is `Data(_:)` above, which
-        // accepts `.string` directly.
-        i.bridges["var String.utf8"] = .computed { recv in recv }
+        // `String.utf8` / `.utf16` / `.unicodeScalars` are stdlib
+        // surface, not Foundation — they register unconditionally in
+        // `registerStringCodeUnitViews()` (Builtins/Registry.swift).
+        // `Data(_:)` above accepts the byte array that `.utf8` now
+        // produces, so `Data(s.utf8)` keeps working.
 
         // `String(data:encoding:)` — failable init, returns String?.
         i.bridges["init String(data:encoding:)"] = .`init` { args in

@@ -1,0 +1,14 @@
+Optional(1)
+nil
+Optional("one")
+nil
+Optional([1, 2, 3])
+nil
+nil
+Optional(["a", "b"])
+Optional(7)
+nil
+int 5
+string hi
+int array
+int 1

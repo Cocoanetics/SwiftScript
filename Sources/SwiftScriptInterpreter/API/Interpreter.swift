@@ -212,6 +212,12 @@ public final class Interpreter: @unchecked Sendable {
                 formatted: result.formattedDiagnostics()
             )
         }
+        // Boundary check before any execution: declarations carrying
+        // attributes we'd silently ignore (`@propertyWrapper`,
+        // `@resultBuilder`, custom wrappers/macros) are refused whole
+        // — running them would produce plausible values that disagree
+        // with stock Swift.
+        try rejectUnsupportedAttributes(in: result.sourceFile)
         var last: Value = .void
         for item in result.sourceFile.statements {
             last = try await execute(item: item, in: rootScope)

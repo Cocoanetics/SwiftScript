@@ -287,14 +287,13 @@ extension Interpreter {
                         let castType = asExpr.type
                         let isOptional = asExpr.questionOrExclamationMark?.tokenKind == .postfixQuestionMark
                         if isOptional {
-                            let bound: Value = valueMatchesType(subject, castType)
-                                ? .optional(subject)
-                                : .optional(nil)
+                            let bound: Value = castValue(subject, to: castType)
+                                .map { .optional($0) } ?? .optional(nil)
                             bindScope.bind(bindName, value: bound, mutable: !isLet)
                             return bindScope
                         }
-                        guard valueMatchesType(subject, castType) else { return nil }
-                        bindScope.bind(bindName, value: subject, mutable: !isLet)
+                        guard let cast = castValue(subject, to: castType) else { return nil }
+                        bindScope.bind(bindName, value: cast, mutable: !isLet)
                         return bindScope
                     }
                 }
@@ -359,7 +358,7 @@ extension Interpreter {
         }
         // `case is Int:` — bare type-check pattern.
         if let isPattern = pattern.as(IsTypePatternSyntax.self) {
-            return valueMatchesType(subject, isPattern.type)
+            return castValue(subject, to: isPattern.type) != nil
                 ? Scope(parent: scope) : nil
         }
         // `case let i as Int:` may also parse as ExpressionPattern at the
@@ -370,7 +369,7 @@ extension Interpreter {
            asExpr.expression.is(DiscardAssignmentExprSyntax.self)
         {
             // `_ as Int` (rare) — type-only check.
-            return valueMatchesType(subject, asExpr.type)
+            return castValue(subject, to: asExpr.type) != nil
                 ? Scope(parent: scope) : nil
         }
         throw RuntimeError.unsupported(
