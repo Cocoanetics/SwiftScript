@@ -323,6 +323,37 @@ public struct FoundationModule: BuiltinModule {
                 URL(fileURLWithPath: anchored.path, isDirectory: try unboxBool(args[1])),
                 typeName: "URL")
         }
+        // The `relativeTo:` overloads: when a base URL is given, honour
+        // it; when it's nil, anchor to the shell's virtual CWD like the
+        // no-base inits (otherwise Foundation would absolutize against
+        // the host process CWD, leaking the host workspace and making
+        // later gated access resolve a host-absolute path).
+        i.bridges["init URL(fileURLWithPath:relativeTo:)"] = .`init` { args in
+            guard args.count == 2 else {
+                throw RuntimeError.invalid("init URL(fileURLWithPath:relativeTo:): expected 2 argument(s), got \(args.count)")
+            }
+            let path = try unboxString(args[0])
+            if let base = try unboxOptionalValue(args[1]).map({
+                try unboxOpaque($0, as: URL.self, typeName: "URL")
+            }) {
+                return boxOpaque(URL(fileURLWithPath: path, relativeTo: base), typeName: "URL")
+            }
+            return boxOpaque(anchoredFileURL(path), typeName: "URL")
+        }
+        i.bridges["init URL(fileURLWithPath:isDirectory:relativeTo:)"] = .`init` { args in
+            guard args.count == 3 else {
+                throw RuntimeError.invalid("init URL(fileURLWithPath:isDirectory:relativeTo:): expected 3 argument(s), got \(args.count)")
+            }
+            let path = try unboxString(args[0])
+            let isDir = try unboxBool(args[1])
+            if let base = try unboxOptionalValue(args[2]).map({
+                try unboxOpaque($0, as: URL.self, typeName: "URL")
+            }) {
+                return boxOpaque(URL(fileURLWithPath: path, isDirectory: isDir, relativeTo: base), typeName: "URL")
+            }
+            let anchored = anchoredFileURL(path)
+            return boxOpaque(URL(fileURLWithPath: anchored.path, isDirectory: isDir), typeName: "URL")
+        }
         // Statics whose generated form captures the host value once at
         // registration. `.staticComputed` re-reads the bound shell on
         // every access; standalone (no sandbox) the shell accessors

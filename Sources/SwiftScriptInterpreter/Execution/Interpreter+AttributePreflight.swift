@@ -51,10 +51,16 @@ final class UnsupportedAttributeScanner: SyntaxVisitor {
 
     override func visit(_ node: AttributeSyntax) -> SyntaxVisitorContinueKind {
         if offense != nil { return .skipChildren }
-        // Type-position attributes hang off `AttributedTypeSyntax`
-        // (the attribute list's parent); declaration attributes hang
-        // off a decl node.
-        if node.parent?.parent?.is(AttributedTypeSyntax.self) == true {
+        // Only *declaration* attributes are in scope. A declaration
+        // attribute sits in an `AttributeListSyntax` whose parent is
+        // the declaration itself. Everything else is fine to ignore:
+        //   - type-position attributes (`@escaping`, `@Sendable` in a
+        //     function type) hang off `AttributedTypeSyntax`;
+        //   - `@unknown` on a `switch` default and other statement /
+        //     closure / switch-case attributes have no runtime
+        //     semantics and stock Swift accepts them.
+        guard node.parent?.parent?.asProtocol(DeclSyntaxProtocol.self) != nil
+        else {
             return .skipChildren
         }
         let name = node.attributeName.description

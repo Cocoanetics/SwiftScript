@@ -101,10 +101,6 @@ extension FoundationBridges {
         recv.waitForDataInBackgroundAndNotify()
             return .void
     },
-    "var FileHandle.fileDescriptor: Int32": .computed { receiver in
-        let recv: FileHandle = try unboxOpaque(receiver, as: FileHandle.self, typeName: "FileHandle")
-        return .int(Int(recv.fileDescriptor))
-    },
     "func FileHandle.readDataToEndOfFile()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("FileHandle.readDataToEndOfFile: expected 0 argument(s), got \(args.count)")

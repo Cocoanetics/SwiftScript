@@ -391,6 +391,53 @@ struct ConfinedSandboxTests {
         #expect(!out.contains(fx.temp.path))
     }
 
+    @Test func relativeFileURLWithNilBaseAnchorsToVirtualCWD() async throws {
+        // `URL(fileURLWithPath: "rel", relativeTo: nil)` must anchor
+        // to the shell's virtual CWD like the no-base init — not the
+        // host process CWD — so the URL door and String door agree.
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        let r = try await fx.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            return try await interp.eval(#"""
+                import Foundation
+                try "rel-nil-base".write(toFile: "viaString.txt", atomically: true, encoding: .utf8)
+                let u = URL(fileURLWithPath: "viaString.txt", relativeTo: nil)
+                let back = try Data(contentsOf: u)
+                String(data: back, encoding: .utf8)!
+                """#)
+        }
+        #expect(r == .string("rel-nil-base"))
+        #expect(FileManager.default.fileExists(
+            atPath: fx.workspace.appendingPathComponent("viaString.txt").path))
+    }
+
+    @Test func urlHomeDirectoryForUserNotReachable() async throws {
+        // `URL.homeDirectory(forUser:)` reads the host account
+        // database — it must not be a reachable bridge under a
+        // sandbox (nor at all), like the blocked FileManager twin.
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        var errored = false
+        var out = ""
+        await fx.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            do {
+                _ = try await interp.eval(#"""
+                    import Foundation
+                    URL.homeDirectory(forUser: "root")
+                    """#)
+                Issue.record("URL.homeDirectory(forUser:) should not be bridged")
+            } catch {
+                errored = true
+                out = "\(error)"
+            }
+        }
+        #expect(errored)
+        #expect(!out.contains("/Users"))
+        #expect(!out.contains("/var"))
+    }
+
     @Test func relativeFileURLDoorAgreesWithStringDoor() async throws {
         // `URL(fileURLWithPath: "rel")` anchors to the shell's logical
         // CWD, so the URL door and the String door name the same file.

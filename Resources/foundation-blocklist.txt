@@ -70,15 +70,59 @@ NSHFSTypeOfFile(_:)
 # sentinel wins the lookup.
 FileManager.default
 
-# URLSession overloads are label-keyed now, so the URLRequest-based
-# variants coexist with the URL-based ones (POST + headers via
-# `data(for: request)`). The `delegate:`-bearing spellings collapse
-# onto the same keys after the defaulted-arg drop and dedupe
-# naturally. Only `bytes` stays blocked: its AsyncBytes return isn't
-# bridgeable, and blocking beats a confusing skip diagnostic.
+# URLSession async overloads: prefer the simple URL-based `data(from:)`
+# / `upload(for:fromFile:)` (which swift-corelibs-foundation also
+# ships). The `data(for:)` / `download(*)` / `upload(for:from:)`
+# async forms and their `delegate:` spellings exist only on Apple's
+# Foundation — emitting them unguarded breaks the Linux / Windows /
+# Android builds ("missing argument for parameter 'completionHandler'"
+# / "no exact matches"). Blocking them also keeps the bare `data()` /
+# `download()` / `upload()` aliases pointed at the cross-platform
+# overload, and removes the `download(*)` bridges that returned an
+# untranslated host temp URL under a sandbox.
+URLSession.data(for:)
+URLSession.data(for:delegate:)
+URLSession.data(from:delegate:)
 URLSession.bytes(for:)
 URLSession.bytes(for:delegate:)
 URLSession.bytes(from:delegate:)
+URLSession.download(for:)
+URLSession.download(for:delegate:)
+URLSession.download(from:)
+URLSession.download(from:delegate:)
+URLSession.download(resumeFrom:)
+URLSession.download(resumeFrom:delegate:)
+URLSession.upload(for:from:)
+URLSession.upload(for:from:delegate:)
+URLSession.upload(for:fromFile:delegate:)
+# `flush()` / `reset()` async forms are Apple-only too (corelibs ships
+# only the `completionHandler:` spellings) — newly reachable through
+# the Void-return handling, so block like the other async overloads.
+URLSession.flush()
+URLSession.reset()
+
+# Newly reachable through the wider generator surface but Apple-only
+# (or platform-specific), and not correctly Darwin-gated by the
+# name-based scl oracle — block so the cross-platform builds stay
+# green:
+#   - propertyListFromStringsFileFormat: Apple-only String parser.
+#   - ProcessInfo sudden/automatic-termination hints: macOS-only,
+#     unavailable on iOS.
+#   - FileManager.unmountVolume: macOS-only, unavailable on iOS.
+#   - FileHandle.fileDescriptor: unavailable on Windows.
+#   - URL.homeDirectory(forUser:): reads the host account database and
+#     returns the real host home dir even under a sandbox — the
+#     virtualized `URL.homeDirectory` property and the already-blocked
+#     `FileManager.homeDirectory(forUser:)` are the sanctioned forms.
+NSString.propertyListFromStringsFileFormat()
+StringProtocol.propertyListFromStringsFileFormat()
+ProcessInfo.disableAutomaticTermination(_:)
+ProcessInfo.enableAutomaticTermination(_:)
+ProcessInfo.disableSuddenTermination()
+ProcessInfo.enableSuddenTermination()
+FileManager.unmountVolume(at:options:)
+FileHandle.fileDescriptor
+URL.homeDirectory(forUser:)
 
 # Host-topology / arbitrary-directory disclosure through the
 # FileManager.default sentinel and Bundle statics. These take no

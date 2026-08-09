@@ -1083,42 +1083,6 @@ extension FoundationBridges {
         }
         return .optional(nil)
     }
-    d["func FileManager.unmountVolume(at:)"] = .method { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("FileManager.unmountVolume: expected 1 argument(s), got \(args.count)")
-        }
-        let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
-        do {
-            arg0 = try await authorizePath(arg0, for: .read)
-        } catch {
-            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
-        }
-        do {
-            try await recv.unmountVolume(at: arg0)
-            return .void
-        } catch {
-            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
-        }
-    }
-    d["func FileManager.unmountVolume()"] = .method { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("FileManager.unmountVolume: expected 1 argument(s), got \(args.count)")
-        }
-        let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
-        do {
-            arg0 = try await authorizePath(arg0, for: .read)
-        } catch {
-            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
-        }
-        do {
-            try await recv.unmountVolume(at: arg0)
-            return .void
-        } catch {
-            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
-        }
-    }
     d["func FileManager.setUbiquitous(_:itemAt:destinationURL:)"] = .method { receiver, args in
         guard args.count == 3 else {
             throw RuntimeError.invalid("FileManager.setUbiquitous: expected 3 argument(s), got \(args.count)")

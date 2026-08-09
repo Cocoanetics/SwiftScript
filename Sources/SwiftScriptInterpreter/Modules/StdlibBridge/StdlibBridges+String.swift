@@ -50,13 +50,6 @@ extension StdlibBridges {
         let recv: String = try unboxString(receiver)
         return .string(recv.precomposedStringWithCompatibilityMapping)
     },
-    "func String.propertyListFromStringsFileFormat()": .method { receiver, args in
-        guard args.count == 0 else {
-            throw RuntimeError.invalid("String.propertyListFromStringsFileFormat: expected 0 argument(s), got \(args.count)")
-        }
-        let recv: String = try unboxString(receiver)
-        return .dict(recv.propertyListFromStringsFileFormat().map { DictEntry(key: .string($0.key), value: .string($0.value)) })
-    },
     "var String.smallestEncoding: String.Encoding": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return boxOpaque(recv.smallestEncoding, typeName: "String.Encoding")

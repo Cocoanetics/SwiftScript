@@ -336,15 +336,6 @@ extension FoundationBridges {
         let recv: URL = try unboxOpaque(receiver, as: URL.self, typeName: "URL")
         return boxOpaque(recv.appending(queryItems: try unboxArray(args[0]).map { try unboxOpaque($0, as: URLQueryItem.self, typeName: "URLQueryItem") }), typeName: "URL")
     },
-    "static func URL.homeDirectory()": .staticMethod { args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("URL.homeDirectory: expected 1 argument(s), got \(args.count)")
-        }
-        if let _v = URL.homeDirectory(forUser: try unboxString(args[0])) {
-            return .optional(boxOpaque(_v, typeName: "URL"))
-        }
-        return .optional(nil)
-    },
     "init URL(fileReferenceLiteralResourceName:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init URL(fileReferenceLiteralResourceName:): expected 1 argument(s), got \(args.count)")

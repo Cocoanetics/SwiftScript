@@ -193,4 +193,23 @@ struct SilentDivergenceTests {
             """#)
         #expect(r == .int(3))
     }
+
+    @Test func unknownDefaultAttributeIsAccepted() async throws {
+        // `@unknown default:` is a switch-case attribute, not a
+        // declaration attribute — it has no runtime semantics and
+        // stock Swift accepts it, so the preflight must not reject it.
+        let interp = Interpreter()
+        let r = try await interp.eval(#"""
+            enum E { case a, b }
+            func f(_ e: E) -> String {
+                switch e {
+                case .a: return "a"
+                case .b: return "b"
+                @unknown default: return "?"
+                }
+            }
+            f(.a)
+            """#)
+        #expect(r == .string("a"))
+    }
 }
