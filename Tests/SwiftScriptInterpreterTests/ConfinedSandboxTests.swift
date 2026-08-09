@@ -322,6 +322,75 @@ struct ConfinedSandboxTests {
         #expect(!out.contains(fx.temp.path))
     }
 
+    @Test func urlStaticsAndGlobalsStayVirtual() async throws {
+        // The URL statics and NS* globals answer from the bound shell,
+        // not from host values captured at bridge registration.
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        try await fx.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            _ = try await interp.eval(#"""
+                import Foundation
+                print(URL.temporaryDirectory.path)
+                print(URL.homeDirectory.path)
+                print(URL.currentDirectory().path)
+                print(NSTemporaryDirectory())
+                print(NSHomeDirectory())
+                """#)
+        }
+        let out = fx.shell.stdout
+        #expect(out == "/tmp\n/batch\n/batch\n/tmp\n/batch\n")
+        #expect(!out.contains(fx.workspace.path))
+        #expect(!out.contains(fx.temp.path))
+    }
+
+    @Test func relativeFileURLDoorAgreesWithStringDoor() async throws {
+        // `URL(fileURLWithPath: "rel")` anchors to the shell's logical
+        // CWD, so the URL door and the String door name the same file.
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        let r = try await fx.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            return try await interp.eval(#"""
+                import Foundation
+                try "same file".write(toFile: "agree.txt", atomically: true, encoding: .utf8)
+                let viaURL = try Data(contentsOf: URL(fileURLWithPath: "agree.txt"))
+                String(data: viaURL, encoding: .utf8)!
+                """#)
+        }
+        #expect(r == .string("same file"))
+        #expect(FileManager.default.fileExists(
+            atPath: fx.workspace.appendingPathComponent("agree.txt").path))
+    }
+
+    @Test func emptyPathStaysAGuaranteedError() async throws {
+        // Foundation rejects "" everywhere; resolving it to the CWD
+        // would turn removeItem(atPath: "") into rm -rf of the working
+        // directory. It must keep failing — and must not delete.
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        try "canary".write(
+            to: fx.workspace.appendingPathComponent("canary.txt"),
+            atomically: true, encoding: .utf8)
+        let r = try await fx.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            return try await interp.eval(#"""
+                import Foundation
+                let existsEmpty = FileManager.default.fileExists(atPath: "")
+                var removeFailed = false
+                do {
+                    try FileManager.default.removeItem(atPath: "")
+                } catch {
+                    removeFailed = true
+                }
+                (existsEmpty, removeFailed)
+                """#)
+        }
+        #expect(r == .tuple([.bool(false), .bool(true)]))
+        #expect(FileManager.default.fileExists(
+            atPath: fx.workspace.appendingPathComponent("canary.txt").path))
+    }
+
     @Test func denialDoesNotLeakHostPaths() async throws {
         let fx = try Fixture()
         defer { fx.tearDown() }

@@ -56,6 +56,14 @@ public func authorizePath(
     for intent: PathAccessIntent = .read
 ) async throws -> String {
     _ = intent  // reserved for future per-intent rules
+    // Foundation treats an empty path as invalid: every call on it
+    // fails without touching anything. Resolving it would join ""
+    // onto the working directory and return the CWD itself — turning
+    // `removeItem(atPath: "")` (a classic unset-variable script bug
+    // that must stay a guaranteed error) into a recursive delete of
+    // the current directory. Pass it through untouched so Foundation
+    // rejects it exactly as it always did.
+    guard !path.isEmpty else { return path }
     let shell = ShellKit.Shell.current
     let resolved = shell.resolve(path)
     if let sandbox = shell.sandbox {

@@ -1,4 +1,5 @@
 import Foundation
+import ShellKit
 
 /// Everything that `swiftc` requires `import Foundation` (or `Darwin` /
 /// `Glibc`) for: free C math globals, `String(format:)`, `String`'s
@@ -28,6 +29,113 @@ public struct FoundationModule: BuiltinModule {
         // `#if canImport(Darwin)` blocks. The same per-type files
         // therefore work on macOS, iOS, Linux, and Windows.
         registerGenerated(into: i)
+        // Must run AFTER registerGenerated — these replace generated
+        // entries whose host-process answers would leak the embedder's
+        // layout into a virtualised shell.
+        registerShellVirtualizationOverrides(into: i)
+    }
+
+    // MARK: - Shell-virtualization overrides
+
+    /// Generated bridges answer from the host process; a handful of
+    /// them must answer from the *bound shell* instead, or a confined
+    /// script sees the embedder's real filesystem layout and identity
+    /// (issue #6's "display stays virtual" contract). Registered after
+    /// `registerGenerated` so they replace the generated entries.
+    private func registerShellVirtualizationOverrides(into i: Interpreter) {
+        // `URL(fileURLWithPath:)` absolutizes a relative spelling
+        // against the host process CWD at construction, which made the
+        // URL door disagree with the String door (whose gate anchors
+        // to the shell's logical CWD). Anchor lexically to the shell
+        // CWD instead — the spelling stays script-visible text; the
+        // gate translates it at I/O time.
+        func anchoredFileURL(_ path: String) -> URL {
+            if path.hasPrefix("/") { return URL(fileURLWithPath: path) }
+            let cwd = ShellKit.Shell.current.environment.workingDirectory
+            guard !cwd.isEmpty else { return URL(fileURLWithPath: path) }
+            if path.isEmpty {
+                return URL(fileURLWithPath: cwd, isDirectory: true)
+            }
+            return URL(fileURLWithPath: ShellKit.Shell.normalizePath(cwd + "/" + path))
+        }
+        i.bridges["init URL(fileURLWithPath:)"] = .`init` { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("init URL(fileURLWithPath:): expected 1 argument(s), got \(args.count)")
+            }
+            return boxOpaque(anchoredFileURL(try unboxString(args[0])), typeName: "URL")
+        }
+        i.bridges["init URL(fileURLWithPath:isDirectory:)"] = .`init` { args in
+            guard args.count == 2 else {
+                throw RuntimeError.invalid("init URL(fileURLWithPath:isDirectory:): expected 2 argument(s), got \(args.count)")
+            }
+            let anchored = anchoredFileURL(try unboxString(args[0]))
+            return boxOpaque(
+                URL(fileURLWithPath: anchored.path, isDirectory: try unboxBool(args[1])),
+                typeName: "URL")
+        }
+        // Statics whose generated form captures the host value once at
+        // registration. `.staticComputed` re-reads the bound shell on
+        // every access; standalone (no sandbox) the shell accessors
+        // fall through to the same host answers as before.
+        i.bridges["static let URL.temporaryDirectory"] = .staticComputed {
+            boxOpaque(
+                URL(fileURLWithPath: ShellKit.Shell.displayPath(for: ShellKit.Shell.temporaryDirectory),
+                    isDirectory: true),
+                typeName: "URL")
+        }
+        i.bridges["static let URL.homeDirectory"] = .staticComputed {
+            boxOpaque(
+                URL(fileURLWithPath: ShellKit.Shell.displayPath(for: ShellKit.Shell.homeDirectory),
+                    isDirectory: true),
+                typeName: "URL")
+        }
+        i.bridges["static func URL.currentDirectory()"] = .staticMethod { args in
+            guard args.isEmpty else {
+                throw RuntimeError.invalid("URL.currentDirectory(): expected 0 argument(s), got \(args.count)")
+            }
+            // Same source of truth as `FileManager.currentDirectoryPath`:
+            // the shell's logical CWD (virtual spelling), host CWD only
+            // when no embedder bound one.
+            let cwd = ShellKit.Shell.current.environment.workingDirectory
+            let path = cwd.isEmpty ? FileManager.default.currentDirectoryPath : cwd
+            return boxOpaque(URL(fileURLWithPath: path, isDirectory: true), typeName: "URL")
+        }
+        // Global functions with the same host-capture problem. Under a
+        // sandbox they fold through the shell; standalone they keep the
+        // stock Foundation answers byte-for-byte (including
+        // NSTemporaryDirectory's trailing slash).
+        i.registerGlobal(name: "NSTemporaryDirectory") { args in
+            guard args.isEmpty else {
+                throw RuntimeError.invalid("NSTemporaryDirectory: expected 0 argument(s), got \(args.count)")
+            }
+            guard ShellKit.Shell.current.sandbox != nil else {
+                return .string(NSTemporaryDirectory())
+            }
+            return .string(ShellKit.Shell.displayPath(for: ShellKit.Shell.temporaryDirectory))
+        }
+        i.registerGlobal(name: "NSHomeDirectory") { args in
+            guard args.isEmpty else {
+                throw RuntimeError.invalid("NSHomeDirectory: expected 0 argument(s), got \(args.count)")
+            }
+            guard ShellKit.Shell.current.sandbox != nil else {
+                return .string(NSHomeDirectory())
+            }
+            return .string(ShellKit.Shell.displayPath(for: ShellKit.Shell.homeDirectory))
+        }
+        // Identity globals route to the same HostInfo the ProcessInfo
+        // redirects use.
+        i.registerGlobal(name: "NSUserName") { args in
+            guard args.isEmpty else {
+                throw RuntimeError.invalid("NSUserName: expected 0 argument(s), got \(args.count)")
+            }
+            return .string(hostUserName())
+        }
+        i.registerGlobal(name: "NSFullUserName") { args in
+            guard args.isEmpty else {
+                throw RuntimeError.invalid("NSFullUserName: expected 0 argument(s), got \(args.count)")
+            }
+            return .string(hostFullUserName())
+        }
     }
 
     // MARK: - Data subscripts

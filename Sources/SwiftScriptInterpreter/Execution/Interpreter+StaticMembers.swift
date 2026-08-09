@@ -71,8 +71,13 @@ extension Interpreter {
         // `static func X.Y(...)`) so they don't collide with same-
         // named instance computeds. Consulted before the legacy
         // `extensions[]` table; both coexist during migration.
-        if case .staticValue(let v)? = bridges[bridgeKey(forStaticValue: member, on: typeName)] {
+        switch bridges[bridgeKey(forStaticValue: member, on: typeName)] {
+        case .staticValue(let v)?:
             return v
+        case .staticComputed(let body)?:
+            return try await body()
+        default:
+            break
         }
         if case .staticMethod(let body)? = bridges[bridgeKey(forStaticMethod: member, on: typeName, labels: [])] {
             return .function(Function(

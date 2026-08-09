@@ -33,6 +33,13 @@ public enum Bridge {
     /// Static value (`static let`). The value is fixed at registration
     /// time.
     case staticValue(Value)
+    /// Static value computed at every access — for the few statics
+    /// whose answer depends on the *bound shell* rather than the
+    /// process (`URL.temporaryDirectory` under a path-mapped sandbox
+    /// must answer `/tmp`, not the host temp captured at registration).
+    /// Shares the `static let Type.member` key space with
+    /// ``staticValue``.
+    case staticComputed(() async throws -> Value)
     /// Static method (`Int.random(in:)`, `URL.init`-shaped factories
     /// reached through a static slot). Wrapped into a `.function`
     /// value at lookup time so call sites see it as a callable.

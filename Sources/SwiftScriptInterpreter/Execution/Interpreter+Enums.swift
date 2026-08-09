@@ -201,8 +201,13 @@ extension Interpreter {
                memberAccess.base == nil
             {
                 let memberName = memberAccess.declName.baseName.text
-                if case .staticValue(let v)? = bridges["static let \(typeName).\(memberName)"] {
+                switch bridges["static let \(typeName).\(memberName)"] {
+                case .staticValue(let v)?:
                     return v
+                case .staticComputed(let body)?:
+                    return try await body()
+                default:
+                    break
                 }
             }
             // `[.a, .b]` against a target with `init(arrayLiteral:)`
