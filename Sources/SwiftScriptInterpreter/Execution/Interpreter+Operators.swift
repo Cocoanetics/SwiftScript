@@ -571,6 +571,22 @@ extension Interpreter {
                 arr[i] = value
                 _ = scope.assign(varName, value: .array(arr))
                 return .void
+            case .opaque(let opaqueType, _):
+                // Bridged subscript write (`data[0] = 255`). The bridge
+                // returns the receiver to store back: value-typed
+                // carriers can't be mutated through the opaque box, so
+                // the body hands back a fresh box; reference-typed
+                // carriers mutate in place and return the receiver.
+                guard case .subscriptSet(let body)? =
+                    bridges[bridgeKey(forSubscriptSetOn: opaqueType)]
+                else {
+                    throw RuntimeError.invalid(
+                        "value of type '\(opaqueType)' has no settable subscript"
+                    )
+                }
+                let updated = try await body(binding.value, args, value)
+                _ = scope.assign(varName, value: updated)
+                return .void
             default:
                 throw RuntimeError.invalid(
                     "value of type '\(typeName(binding.value))' is not subscriptable for assignment"

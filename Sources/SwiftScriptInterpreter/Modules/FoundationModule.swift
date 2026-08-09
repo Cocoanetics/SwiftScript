@@ -16,6 +16,7 @@ public struct FoundationModule: BuiltinModule {
         registerCMathGlobals(into: i)
         registerCMathConstants(into: i)
         registerStringMethods(into: i)
+        registerDataSubscripts(into: i)
         // Auto-generated Foundation bridges. Regenerate via
         //   bash Tools/regen-foundation-bridge.sh
         //
@@ -27,6 +28,65 @@ public struct FoundationModule: BuiltinModule {
         // `#if canImport(Darwin)` blocks. The same per-type files
         // therefore work on macOS, iOS, Linux, and Windows.
         registerGenerated(into: i)
+    }
+
+    // MARK: - Data subscripts
+
+    /// `data[0]` (byte read), `data[0..<4]` / `data[1...2]` (sub-Data,
+    /// rebased to zero), `data[0] = 255` (byte write). Routed through
+    /// the `.subscriptGet` / `.subscriptSet` bridge kinds — the same
+    /// door any external module uses to expose subscript-first APIs
+    /// (issue #9). Data is a value type, so the setter returns a
+    /// fresh box for the assignment site to write back.
+    private func registerDataSubscripts(into i: Interpreter) {
+        i.bridges[i.bridgeKey(forSubscriptGetOn: "Data")] = .subscriptGet { receiver, args in
+            let data: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("Data subscript expects 1 argument, got \(args.count)")
+            }
+            switch args[0] {
+            case .int(let i):
+                guard i >= 0 && i < data.count else {
+                    throw RuntimeError.invalid(
+                        "Data index \(i) out of bounds (count \(data.count))"
+                    )
+                }
+                return .int(Int(data[data.startIndex + i]))
+            case .range(let lo, let hi, let closed):
+                let upper = closed ? hi + 1 : hi
+                guard lo >= 0, upper <= data.count, lo <= upper else {
+                    throw RuntimeError.invalid(
+                        "Data slice \(lo)..<\(upper) out of bounds (count \(data.count))"
+                    )
+                }
+                let base = data.startIndex
+                return boxOpaque(
+                    data.subdata(in: (base + lo)..<(base + upper)),
+                    typeName: "Data")
+            default:
+                throw RuntimeError.invalid(
+                    "cannot subscript Data with \(typeName(args[0]))"
+                )
+            }
+        }
+        i.bridges[i.bridgeKey(forSubscriptSetOn: "Data")] = .subscriptSet { receiver, args, newValue in
+            var data: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
+            guard args.count == 1, case .int(let index) = args[0] else {
+                throw RuntimeError.invalid("Data subscript assignment expects 1 Int index")
+            }
+            guard index >= 0 && index < data.count else {
+                throw RuntimeError.invalid(
+                    "Data index \(index) out of bounds (count \(data.count))"
+                )
+            }
+            guard case .int(let byte) = newValue, (0...255).contains(byte) else {
+                throw RuntimeError.invalid(
+                    "Data subscript assignment expects a UInt8 (0...255) value"
+                )
+            }
+            data[data.startIndex + index] = UInt8(byte)
+            return boxOpaque(data, typeName: "Data")
+        }
     }
 
     // MARK: - C math globals

@@ -37,6 +37,21 @@ public enum Bridge {
     /// reached through a static slot). Wrapped into a `.function`
     /// value at lookup time so call sites see it as a callable.
     case staticMethod(([Value]) async throws -> Value)
+    /// Subscript read on a bridged (opaque-carried) type — keyed
+    /// `"subscript Type.get"`. Receives the receiver and the
+    /// subscript arguments. Args are variadic (labels dropped), so
+    /// `data[0]`, `data[0..<4]`, `app.buttons["Sign In"]`, and
+    /// `query[boundBy: 3]`-shaped access all land here; the body
+    /// switches on the arg shapes it supports.
+    case subscriptGet((Value, [Value]) async throws -> Value)
+    /// Subscript write on a bridged type — keyed
+    /// `"subscript Type.set"`. Receives receiver, args, and the new
+    /// value, and returns the receiver to store back: value-typed
+    /// carriers (`Data`) can't be mutated through the opaque box, so
+    /// the body returns a fresh box and the assignment site writes
+    /// it back to the variable; reference-typed carriers mutate in
+    /// place and return the receiver unchanged.
+    case subscriptSet((Value, [Value], Value) async throws -> Value)
 }
 
 /// Indexed view of a property bridge — getter (always present for
@@ -184,7 +199,7 @@ extension Interpreter {
     /// Drop the leading kind keyword from a bridge key, returning the
     /// remainder (`Type.member` / `Type(labels)` shape).
     private func stripKindKeyword(_ key: String) -> Substring {
-        for prefix in ["set var ", "static let ", "static func ", "func ", "var ", "init "] {
+        for prefix in ["set var ", "static let ", "static func ", "func ", "var ", "init ", "subscript "] {
             if key.hasPrefix(prefix) {
                 return key.dropFirst(prefix.count)
             }
@@ -245,5 +260,15 @@ extension Interpreter {
     func bridgeKey(forStaticMethod methodName: String, on typeName: String, labels: [String?]) -> String {
         let labelText = labels.map { ($0 ?? "_") + ":" }.joined()
         return "static func \(typeName).\(methodName)(\(labelText))"
+    }
+
+    /// `subscript Type.get` — read access on a bridged type.
+    func bridgeKey(forSubscriptGetOn typeName: String) -> String {
+        "subscript \(typeName).get"
+    }
+
+    /// `subscript Type.set` — write access on a bridged type.
+    func bridgeKey(forSubscriptSetOn typeName: String) -> String {
+        "subscript \(typeName).set"
     }
 }

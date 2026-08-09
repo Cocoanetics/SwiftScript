@@ -92,7 +92,22 @@ extension Interpreter {
         return try await doSubscript(receiver: receiver, args: args)
     }
 
-    fileprivate func doSubscript(receiver: Value, args: [Value]) async throws -> Value {
+    func doSubscript(receiver: Value, args: [Value]) async throws -> Value {
+        // Bridged types expose subscripts through the bridge table —
+        // `data[0]`, `app.buttons["Sign In"]`. Checked before the
+        // built-in container cases so a module-registered subscript
+        // wins, and before the 1-arg guard because bridged subscripts
+        // may be variadic (`element(boundBy:)`-shaped access).
+        if case .opaque(let opaqueType, _) = receiver {
+            if case .subscriptGet(let body)? =
+                bridges[bridgeKey(forSubscriptGetOn: opaqueType)]
+            {
+                return try await body(receiver, args)
+            }
+            throw RuntimeError.invalid(
+                "value of type '\(opaqueType)' has no subscript"
+            )
+        }
         guard args.count == 1 else {
             throw RuntimeError.invalid("subscript expects 1 argument, got \(args.count)")
         }

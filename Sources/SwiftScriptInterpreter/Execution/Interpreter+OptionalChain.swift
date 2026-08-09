@@ -98,25 +98,11 @@ extension Interpreter {
         return .alive(value)
     }
 
-    /// Subscript evaluation duplicated for the chain walker because the
-    /// non-chain version is `fileprivate` to its file. Tiny method, kept
-    /// inline rather than exposing the helper publicly.
+    /// Chain subscripts share the full `doSubscript` dispatch —
+    /// containers, string slices, dict lookups, and bridged
+    /// (`.subscriptGet`) types behave identically inside and outside
+    /// an optional chain.
     private func doSubscriptInChain(receiver: Value, args: [Value]) async throws -> Value {
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("subscript expects 1 argument, got \(args.count)")
-        }
-        switch (receiver, args[0]) {
-        case let (.array(arr), .int(i)):
-            guard i >= 0 && i < arr.count else {
-                throw RuntimeError.invalid(
-                    "array index \(i) out of bounds (count \(arr.count))"
-                )
-            }
-            return arr[i]
-        default:
-            throw RuntimeError.invalid(
-                "cannot subscript \(typeName(receiver)) with \(typeName(args[0]))"
-            )
-        }
+        try await doSubscript(receiver: receiver, args: args)
     }
 }
