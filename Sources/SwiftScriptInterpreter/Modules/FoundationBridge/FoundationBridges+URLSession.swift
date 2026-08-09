@@ -45,9 +45,9 @@ extension FoundationBridges {
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
-        let arg1 = try unboxOpaque(args[1], as: URL.self, typeName: "URL")
+        var arg1 = try unboxOpaque(args[1], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg1, for: .read)
+            arg1 = try await authorizePath(arg1, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }

@@ -82,9 +82,9 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileWrapper.matchesContents: expected 1 argument(s), got \(args.count)")
         }
         let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
-        let arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -111,9 +111,9 @@ extension FoundationBridges {
         guard args.count == 2 else {
             throw RuntimeError.invalid("init FileWrapper(url:options:): expected 2 argument(s), got \(args.count)")
         }
-        let arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -128,9 +128,9 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileWrapper.read: expected 2 argument(s), got \(args.count)")
         }
         let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
-        let arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }

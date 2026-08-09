@@ -12,23 +12,22 @@ extension FoundationBridges {
     "var FileManager.currentDirectoryPath: String": .computed { _ in
         return .string(ShellKit.Shell.current.environment.workingDirectory)
     },
-    "var FileManager.temporaryDirectory: URL": .computed { receiver in
-        let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        return boxOpaque(recv.temporaryDirectory, typeName: "URL")
+    "var FileManager.temporaryDirectory: URL": .computed { _ in
+        return boxOpaque(URL(fileURLWithPath: ShellKit.Shell.displayPath(for: ShellKit.Shell.temporaryDirectory), isDirectory: true), typeName: "URL")
     },
     "func FileManager.destinationOfSymbolicLink()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("FileManager.destinationOfSymbolicLink: expected 1 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxString(args[0])
+        var arg0 = try unboxString(args[0])
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
         do {
-            return .string(try await recv.destinationOfSymbolicLink(atPath: arg0))
+            return .string(ShellKit.Shell.displayPath(for: try await recv.destinationOfSymbolicLink(atPath: arg0)))
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -38,9 +37,9 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.removeItem: expected 1 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxString(args[0])
+        var arg0 = try unboxString(args[0])
         do {
-            try await authorizePath(arg0, for: .delete)
+            arg0 = try await authorizePath(arg0, for: .delete)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -56,9 +55,9 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.changeCurrentDirectoryPath: expected 1 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxString(args[0])
+        var arg0 = try unboxString(args[0])
         do {
-            try await authorizePath(arg0, for: .write)
+            arg0 = try await authorizePath(arg0, for: .write)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -69,9 +68,9 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.fileExists: expected 1 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxString(args[0])
+        var arg0 = try unboxString(args[0])
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -82,9 +81,9 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.isReadableFile: expected 1 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxString(args[0])
+        var arg0 = try unboxString(args[0])
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -95,9 +94,9 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.isWritableFile: expected 1 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxString(args[0])
+        var arg0 = try unboxString(args[0])
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -108,9 +107,9 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.isExecutableFile: expected 1 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxString(args[0])
+        var arg0 = try unboxString(args[0])
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -121,9 +120,9 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.isDeletableFile: expected 1 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxString(args[0])
+        var arg0 = try unboxString(args[0])
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -134,22 +133,22 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.displayName: expected 1 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxString(args[0])
+        var arg0 = try unboxString(args[0])
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
-        return .string(await recv.displayName(atPath: arg0))
+        return .string(ShellKit.Shell.displayPath(for: await recv.displayName(atPath: arg0)))
     },
     "func FileManager.contents()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("FileManager.contents: expected 1 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxString(args[0])
+        var arg0 = try unboxString(args[0])
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -163,15 +162,15 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.createSymbolicLink: expected 2 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg0, for: .write)
+            arg0 = try await authorizePath(arg0, for: .write)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
-        let arg1 = try unboxOpaque(args[1], as: URL.self, typeName: "URL")
+        var arg1 = try unboxOpaque(args[1], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg1, for: .write)
+            arg1 = try await authorizePath(arg1, for: .write)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -187,15 +186,15 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.copyItem: expected 2 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxString(args[0])
+        var arg0 = try unboxString(args[0])
         do {
-            try await authorizePath(arg0, for: .write)
+            arg0 = try await authorizePath(arg0, for: .write)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
-        let arg1 = try unboxString(args[1])
+        var arg1 = try unboxString(args[1])
         do {
-            try await authorizePath(arg1, for: .write)
+            arg1 = try await authorizePath(arg1, for: .write)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -211,15 +210,15 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.moveItem: expected 2 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxString(args[0])
+        var arg0 = try unboxString(args[0])
         do {
-            try await authorizePath(arg0, for: .write)
+            arg0 = try await authorizePath(arg0, for: .write)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
-        let arg1 = try unboxString(args[1])
+        var arg1 = try unboxString(args[1])
         do {
-            try await authorizePath(arg1, for: .write)
+            arg1 = try await authorizePath(arg1, for: .write)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -235,15 +234,15 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.linkItem: expected 2 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxString(args[0])
+        var arg0 = try unboxString(args[0])
         do {
-            try await authorizePath(arg0, for: .write)
+            arg0 = try await authorizePath(arg0, for: .write)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
-        let arg1 = try unboxString(args[1])
+        var arg1 = try unboxString(args[1])
         do {
-            try await authorizePath(arg1, for: .write)
+            arg1 = try await authorizePath(arg1, for: .write)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -259,15 +258,15 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.contentsEqual: expected 2 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxString(args[0])
+        var arg0 = try unboxString(args[0])
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
-        let arg1 = try unboxString(args[1])
+        var arg1 = try unboxString(args[1])
         do {
-            try await authorizePath(arg1, for: .read)
+            arg1 = try await authorizePath(arg1, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -278,9 +277,9 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.createDirectory: expected 2 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg0, for: .write)
+            arg0 = try await authorizePath(arg0, for: .write)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -298,9 +297,9 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.isUbiquitousItem: expected 1 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -311,9 +310,9 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.startDownloadingUbiquitousItem: expected 1 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -329,9 +328,9 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.evictUbiquitousItem: expected 1 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -347,14 +346,8 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.containerURL: expected 1 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg0 = try unboxString(args[0])
-        do {
-            try await authorizePath(arg0, for: .read)
-        } catch {
-            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
-        }
-        if let _v = await recv.containerURL(forSecurityApplicationGroupIdentifier: arg0) {
-            return .optional(boxOpaque(_v, typeName: "URL"))
+        if let _v = recv.containerURL(forSecurityApplicationGroupIdentifier: try unboxString(args[0])) {
+            return .optional(boxOpaque(URL(fileURLWithPath: ShellKit.Shell.displayPath(for: _v)), typeName: "URL"))
         }
         return .optional(nil)
     }
@@ -363,15 +356,15 @@ extension FoundationBridges {
             throw RuntimeError.invalid("FileManager.setUbiquitous: expected 3 argument(s), got \(args.count)")
         }
         let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        let arg1 = try unboxOpaque(args[1], as: URL.self, typeName: "URL")
+        var arg1 = try unboxOpaque(args[1], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg1, for: .write)
+            arg1 = try await authorizePath(arg1, for: .write)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
-        let arg2 = try unboxOpaque(args[2], as: URL.self, typeName: "URL")
+        var arg2 = try unboxOpaque(args[2], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg2, for: .write)
+            arg2 = try await authorizePath(arg2, for: .write)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }

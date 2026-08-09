@@ -68,7 +68,13 @@ extension FoundationBridges {
         guard args.count == 1 else {
             throw RuntimeError.invalid("init CharacterSet(contentsOfFile:): expected 1 argument(s), got \(args.count)")
         }
-        if let _v = CharacterSet(contentsOfFile: try unboxString(args[0])) {
+        var arg0 = try unboxString(args[0])
+        do {
+            arg0 = try await authorizePath(arg0, for: .read)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        if let _v = await CharacterSet(contentsOfFile: arg0) {
             return .optional(boxOpaque(_v, typeName: "CharacterSet"))
         }
         return .optional(nil)

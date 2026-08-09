@@ -70,9 +70,9 @@ extension FoundationBridges {
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Data(contentsOf:): expected 1 argument(s), got \(args.count)")
         }
-        let arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -87,9 +87,9 @@ extension FoundationBridges {
             throw RuntimeError.invalid("Data.write: expected 1 argument(s), got \(args.count)")
         }
         let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
-        let arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg0, for: .write)
+            arg0 = try await authorizePath(arg0, for: .write)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }

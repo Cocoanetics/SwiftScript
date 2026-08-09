@@ -22,9 +22,9 @@ extension FoundationBridges {
         guard args.count == 2 else {
             throw RuntimeError.invalid("init OutputStream(url:append:): expected 2 argument(s), got \(args.count)")
         }
-        let arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg0, for: .write)
+            arg0 = try await authorizePath(arg0, for: .write)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -37,9 +37,9 @@ extension FoundationBridges {
         guard args.count == 2 else {
             throw RuntimeError.invalid("init OutputStream(toFileAtPath:append:): expected 2 argument(s), got \(args.count)")
         }
-        let arg0 = try unboxString(args[0])
+        var arg0 = try unboxString(args[0])
         do {
-            try await authorizePath(arg0, for: .write)
+            arg0 = try await authorizePath(arg0, for: .write)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }

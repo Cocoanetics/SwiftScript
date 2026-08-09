@@ -29,34 +29,65 @@ public enum PathAccessIntent: Sendable {
     case delete
 }
 
-/// Authorize a filesystem access against the bound shell's sandbox.
+/// Authorize a filesystem access against the bound shell's sandbox
+/// and return the path the Foundation call must consume.
+///
+/// The script-supplied spelling is resolved through
+/// ``ShellKit/Shell/resolve(_:)`` first: relative paths anchor to the
+/// shell's virtual CWD (`environment.workingDirectory`) instead of
+/// the host process CWD, and — under a sandbox that carries a
+/// ``ShellKit/PathMapping`` — the virtual spelling translates to the
+/// host directory that backs it. The *host* form is what gets
+/// authorized and what comes back.
+///
+/// The return value is deliberately not discardable: authorizing the
+/// translated path while the Foundation call consumes the literal
+/// spelling (or vice versa) is a sandbox escape — the check would
+/// pass against the mapped host space while the I/O touches the
+/// host's own `/tmp/x`. Whoever authorizes must also consume.
 ///
 /// Throws ``ShellKit/Sandbox/Denial`` (rethrown as a
 /// ``UserThrowSignal`` from the bridge wrapper) when the bound
-/// sandbox rejects the path. Returns silently when no sandbox is
-/// bound.
+/// sandbox rejects the path. Without a sandbox the resolved path
+/// passes through unauthorized.
 @inlinable
 public func authorizePath(
     _ path: String,
     for intent: PathAccessIntent = .read
-) async throws {
+) async throws -> String {
     _ = intent  // reserved for future per-intent rules
-    guard let sandbox = ShellKit.Shell.current.sandbox else { return }
-    try await sandbox.authorize(URL(fileURLWithPath: path))
+    let shell = ShellKit.Shell.current
+    let resolved = shell.resolve(path)
+    if let sandbox = shell.sandbox {
+        try await sandbox.authorize(resolved)
+    }
+    return resolved.path
 }
 
 /// URL-form variant for bridges that get a `URL` arg rather than a
-/// path string. Foundation URL types include both `file://` and
-/// scheme-bearing URLs; the same `Sandbox.authorize(_:)` handles
-/// both.
+/// path string. File URLs resolve through the same virtual→host
+/// translation as the String form and the translated URL is
+/// returned for the Foundation call to consume. Scheme-bearing
+/// (non-file) URLs pass through untranslated — the same
+/// `Sandbox.authorize(_:)` gates both.
 @inlinable
 public func authorizePath(
     _ url: URL,
     for intent: PathAccessIntent = .read
-) async throws {
+) async throws -> URL {
     _ = intent
-    guard let sandbox = ShellKit.Shell.current.sandbox else { return }
-    try await sandbox.authorize(url)
+    let shell = ShellKit.Shell.current
+    guard url.isFileURL else {
+        if let sandbox = shell.sandbox {
+            try await sandbox.authorize(url)
+        }
+        return url
+    }
+    let resolved = shell.resolve(url.path)
+    if let sandbox = shell.sandbox {
+        try await sandbox.authorize(resolved)
+    }
+    return resolved
 }
 
 // MARK: Network

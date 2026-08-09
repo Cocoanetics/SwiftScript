@@ -70,9 +70,9 @@ extension StdlibBridges {
         guard args.count == 1 else {
             throw RuntimeError.invalid("init String(contentsOfFile:): expected 1 argument(s), got \(args.count)")
         }
-        let arg0 = try unboxString(args[0])
+        var arg0 = try unboxString(args[0])
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -86,9 +86,9 @@ extension StdlibBridges {
         guard args.count == 1 else {
             throw RuntimeError.invalid("init String(contentsOf:): expected 1 argument(s), got \(args.count)")
         }
-        let arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -149,9 +149,9 @@ extension StdlibBridges {
         guard args.count == 2 else {
             throw RuntimeError.invalid("init String(contentsOfFile:encoding:): expected 2 argument(s), got \(args.count)")
         }
-        let arg0 = try unboxString(args[0])
+        var arg0 = try unboxString(args[0])
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -165,9 +165,9 @@ extension StdlibBridges {
         guard args.count == 2 else {
             throw RuntimeError.invalid("init String(contentsOf:encoding:): expected 2 argument(s), got \(args.count)")
         }
-        let arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -202,9 +202,9 @@ extension StdlibBridges {
             throw RuntimeError.invalid("String.write: expected 3 argument(s), got \(args.count)")
         }
         let recv: String = try unboxString(receiver)
-        let arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg0, for: .write)
+            arg0 = try await authorizePath(arg0, for: .write)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }

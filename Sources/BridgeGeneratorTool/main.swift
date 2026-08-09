@@ -872,6 +872,15 @@ func gates(
     // `createSymbolicLink(at: URL, withDestinationURL: URL)`) that
     // the prior position-0/1 rule missed.
     if receiverTypeName == "FileManager" || initFor == "FileManager" {
+        // `containerURL(forSecurityApplicationGroupIdentifier:)`
+        // takes a security group *identifier*, not a path. Gating it
+        // would now also rewrite the identifier to a resolved host
+        // path (the fs gates rebind their arg to `authorizePath`'s
+        // return), corrupting the lookup. The returned container URL
+        // is host-spelled; any subsequent I/O on it is gated at the
+        // consuming call, and under a `PathMapping` a host spelling
+        // resolves to the unmapped sentinel and is denied.
+        if methodName == "containerURL" { return directives }
         let writeMethods: Set<String> = [
             "createDirectory", "createFile", "createSymbolicLink",
             "setAttributes", "changeCurrentDirectoryPath",
@@ -897,12 +906,16 @@ func gates(
     // fires at the I/O call site (URLSession.data(from:),
     // String(contentsOf:), …) regardless of how the URL was built.
 
-    // String / Data / NSString / NSData file-IO inits — read-shaped
-    // (`init X(contentsOf:)`, `init X(contentsOfFile:)`) take a
-    // path/URL at index 0; the label-scan picks up `contentsOf` /
-    // `contentsOfFile` directly.
+    // String / Data / NSString / NSData / CharacterSet file-IO inits
+    // — read-shaped (`init X(contentsOf:)`, `init X(contentsOfFile:)`)
+    // take a path/URL at index 0; the label-scan picks up
+    // `contentsOf` / `contentsOfFile` directly. CharacterSet is here
+    // because `CharacterSet(contentsOfFile:)` reads a bitmap
+    // representation off disk — previously the only file-reading
+    // init that shipped ungated.
     if initFor == "String" || initFor == "Data"
         || initFor == "NSString" || initFor == "NSData"
+        || initFor == "CharacterSet"
     {
         if let m = methodName, m.contains("contentsOfFile") || m.contains("contentsOf") {
             gatePathish(0, kind: .fsRead)
@@ -1068,6 +1081,46 @@ func redirectedPropertyCall(receiver: String, member: String) -> String? {
     // same Shell.
     case ("FileManager", "currentDirectoryPath"):
         return "ShellKit.Shell.current.environment.workingDirectory"
+    // FileManager.temporaryDirectory reports the bound sandbox's
+    // temp region, folded back to its script-visible spelling
+    // (`/tmp` under a path-mapped sandbox) — never the host's
+    // shared temp root. Standalone, `Shell.temporaryDirectory`
+    // falls through to the platform temp dir and `displayPath`
+    // is the identity, so the CLI behaviour is unchanged.
+    case ("FileManager", "temporaryDirectory"):
+        return "URL(fileURLWithPath: ShellKit.Shell.displayPath(for: ShellKit.Shell.temporaryDirectory), isDirectory: true)"
+    default:
+        return nil
+    }
+}
+
+/// Receivers whose `String`/`URL`-returning members echo filesystem
+/// paths back to the script (`destinationOfSymbolicLink`,
+/// `Bundle.bundlePath`, `Bundle.url(forResource:…)`, …). Their
+/// returns fold through `Shell.displayPath(for:)` so a path-mapped
+/// sandbox's host layout never leaks into script-visible values —
+/// and so a script can feed the answer straight back into a gated
+/// call (which treats script text as virtual spelling). Non-path
+/// strings on these receivers (`bundleIdentifier`, `displayName`)
+/// pass through `displayPath` untouched: it only rewrites paths that
+/// land under a mount's host root.
+let displayFoldReceivers: Set<String> = ["FileManager", "Bundle"]
+
+/// Wrap a `String`/`URL` return's box template so the value folds
+/// through the bound shell's mapping before the script sees it.
+/// Returns `nil` for non-path-shaped return types (leave unchanged).
+func displayFoldedReturn(_ type: BridgedType) -> BridgedType? {
+    switch type.swiftSpelling {
+    case "String":
+        return BridgedType(
+            swiftSpelling: type.swiftSpelling,
+            unboxTemplate: type.unboxTemplate,
+            boxTemplate: ".string(ShellKit.Shell.displayPath(for: %@))")
+    case "URL":
+        return BridgedType(
+            swiftSpelling: type.swiftSpelling,
+            unboxTemplate: type.unboxTemplate,
+            boxTemplate: "boxOpaque(URL(fileURLWithPath: ShellKit.Shell.displayPath(for: %@)), typeName: \"URL\")")
     default:
         return nil
     }
@@ -1103,7 +1156,20 @@ func renderGates(
             // Should be rejected by `gates(...)` above.
             unbox = "try unboxString(args[\(d.argIndex)])"
         }
-        prologue.append("\(indent)let \(d.boundName) = \(unbox)")
+        // Filesystem gates rebind the arg to the resolved host form
+        // `authorizePath` returns — translated through the bound
+        // sandbox's `PathMapping` — so the Foundation call consumes
+        // exactly the path that was authorized. Binding as `var` and
+        // assigning the return is what keeps check and I/O on the
+        // same path; authorizing one spelling and touching another
+        // is a sandbox escape. Network gates keep a `let`: the URL
+        // is checked, never rewritten.
+        let rebindsToAuthorized: Bool
+        switch d.kind {
+        case .fsRead, .fsWrite, .fsDelete: rebindsToAuthorized = true
+        case .network, .networkRequest: rebindsToAuthorized = false
+        }
+        prologue.append("\(indent)\(rebindsToAuthorized ? "var" : "let") \(d.boundName) = \(unbox)")
         // Wrap the authorize call in a do/catch that re-throws the
         // sandbox denial (or any other gate error) as a
         // `UserThrowSignal`. Without the wrap, Foundation-side
@@ -1114,11 +1180,11 @@ func renderGates(
         let authorizeCall: String
         switch d.kind {
         case .fsRead:
-            authorizeCall = "try await authorizePath(\(d.boundName), for: .read)"
+            authorizeCall = "\(d.boundName) = try await authorizePath(\(d.boundName), for: .read)"
         case .fsWrite:
-            authorizeCall = "try await authorizePath(\(d.boundName), for: .write)"
+            authorizeCall = "\(d.boundName) = try await authorizePath(\(d.boundName), for: .write)"
         case .fsDelete:
-            authorizeCall = "try await authorizePath(\(d.boundName), for: .delete)"
+            authorizeCall = "\(d.boundName) = try await authorizePath(\(d.boundName), for: .delete)"
         case .network:
             // Network gate is `URL`-only — `String` URLs are out of
             // scope here (no async URL parser available); embedders
@@ -2027,6 +2093,13 @@ for annotated in prioritizedSymbols {
         if denyWhenSandboxedReceivers.contains(receiverTypeName) {
             methodGated.prologue.insert(contentsOf: denyPrologueLines(indent: "        "), at: 0)
         }
+        // Path-echoing returns fold to the script-visible spelling.
+        var methodReturn = sig.returnType
+        if displayFoldReceivers.contains(receiverTypeName),
+           let ret = methodReturn, let folded = displayFoldedReturn(ret)
+        {
+            methodReturn = folded
+        }
         record(key, bucket: .type(receiverTypeName), code: renderEmit(EmitConfig(
             registerLine: "\"func \(receiverTypeName).\(methodName)()\": .method",
             closureParams: "receiver, args",
@@ -2034,7 +2107,7 @@ for annotated in prioritizedSymbols {
             recvUnboxLine: "let recv: \(recvType.swiftSpelling) = \(recvUnbox)",
             callExpr: "recv.\(methodName)(\(methodGated.callArgs))",
             errorPrefix: "\(receiverTypeName).\(methodName)",
-            returnType: sig.returnType,
+            returnType: methodReturn,
             isOptional: sig.returnIsOptional,
             isThrowing: isThrowing(sym),
             // Sandbox/network gates use `await` on the bound shell's
@@ -2134,6 +2207,15 @@ for annotated in prioritizedSymbols {
         if denyWhenSandboxedReceivers.contains(receiverTypeName) {
             propPrologue.append(contentsOf: denyPrologueLines(indent: "        "))
         }
+        // Path-echoing property reads fold to the script-visible
+        // spelling. Redirected properties already produce it.
+        var propReturn = propType.bridge
+        if redirected == nil,
+           displayFoldReceivers.contains(receiverTypeName),
+           let folded = displayFoldedReturn(propReturn)
+        {
+            propReturn = folded
+        }
         record(key, bucket: .type(receiverTypeName), code: renderEmit(EmitConfig(
             registerLine: "\"var \(receiverTypeName).\(memberName): \(propTypeSpelling)\": .computed",
             closureParams: redirected != nil ? "_" : "receiver",
@@ -2142,7 +2224,7 @@ for annotated in prioritizedSymbols {
                 : "let recv: \(recvType.swiftSpelling) = \(recvUnbox)",
             callExpr: redirected ?? "recv.\(memberName)",
             errorPrefix: "\(receiverTypeName).\(memberName)",
-            returnType: propType.bridge,
+            returnType: propReturn,
             isOptional: propType.isOptional,
             isThrowing: false,
             isAsync: false,

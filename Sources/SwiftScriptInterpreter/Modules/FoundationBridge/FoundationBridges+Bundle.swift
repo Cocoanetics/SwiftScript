@@ -47,114 +47,114 @@ extension FoundationBridges {
     },
     "var Bundle.bundleURL: URL": .computed { receiver in
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
-        return boxOpaque(recv.bundleURL, typeName: "URL")
+        return boxOpaque(URL(fileURLWithPath: ShellKit.Shell.displayPath(for: recv.bundleURL)), typeName: "URL")
     },
     "var Bundle.resourceURL: URL?": .computed { receiver in
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
         if let _v = recv.resourceURL {
-            return .optional(boxOpaque(_v, typeName: "URL"))
+            return .optional(boxOpaque(URL(fileURLWithPath: ShellKit.Shell.displayPath(for: _v)), typeName: "URL"))
         }
         return .optional(nil)
     },
     "var Bundle.executableURL: URL?": .computed { receiver in
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
         if let _v = recv.executableURL {
-            return .optional(boxOpaque(_v, typeName: "URL"))
+            return .optional(boxOpaque(URL(fileURLWithPath: ShellKit.Shell.displayPath(for: _v)), typeName: "URL"))
         }
         return .optional(nil)
     },
     "var Bundle.privateFrameworksURL: URL?": .computed { receiver in
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
         if let _v = recv.privateFrameworksURL {
-            return .optional(boxOpaque(_v, typeName: "URL"))
+            return .optional(boxOpaque(URL(fileURLWithPath: ShellKit.Shell.displayPath(for: _v)), typeName: "URL"))
         }
         return .optional(nil)
     },
     "var Bundle.sharedFrameworksURL: URL?": .computed { receiver in
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
         if let _v = recv.sharedFrameworksURL {
-            return .optional(boxOpaque(_v, typeName: "URL"))
+            return .optional(boxOpaque(URL(fileURLWithPath: ShellKit.Shell.displayPath(for: _v)), typeName: "URL"))
         }
         return .optional(nil)
     },
     "var Bundle.sharedSupportURL: URL?": .computed { receiver in
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
         if let _v = recv.sharedSupportURL {
-            return .optional(boxOpaque(_v, typeName: "URL"))
+            return .optional(boxOpaque(URL(fileURLWithPath: ShellKit.Shell.displayPath(for: _v)), typeName: "URL"))
         }
         return .optional(nil)
     },
     "var Bundle.builtInPlugInsURL: URL?": .computed { receiver in
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
         if let _v = recv.builtInPlugInsURL {
-            return .optional(boxOpaque(_v, typeName: "URL"))
+            return .optional(boxOpaque(URL(fileURLWithPath: ShellKit.Shell.displayPath(for: _v)), typeName: "URL"))
         }
         return .optional(nil)
     },
     "var Bundle.appStoreReceiptURL: URL?": .computed { receiver in
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
         if let _v = recv.appStoreReceiptURL {
-            return .optional(boxOpaque(_v, typeName: "URL"))
+            return .optional(boxOpaque(URL(fileURLWithPath: ShellKit.Shell.displayPath(for: _v)), typeName: "URL"))
         }
         return .optional(nil)
     },
     "var Bundle.bundlePath: String": .computed { receiver in
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
-        return .string(recv.bundlePath)
+        return .string(ShellKit.Shell.displayPath(for: recv.bundlePath))
     },
     "var Bundle.resourcePath: String?": .computed { receiver in
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
         if let _v = recv.resourcePath {
-            return .optional(.string(_v))
+            return .optional(.string(ShellKit.Shell.displayPath(for: _v)))
         }
         return .optional(nil)
     },
     "var Bundle.executablePath: String?": .computed { receiver in
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
         if let _v = recv.executablePath {
-            return .optional(.string(_v))
+            return .optional(.string(ShellKit.Shell.displayPath(for: _v)))
         }
         return .optional(nil)
     },
     "var Bundle.privateFrameworksPath: String?": .computed { receiver in
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
         if let _v = recv.privateFrameworksPath {
-            return .optional(.string(_v))
+            return .optional(.string(ShellKit.Shell.displayPath(for: _v)))
         }
         return .optional(nil)
     },
     "var Bundle.sharedFrameworksPath: String?": .computed { receiver in
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
         if let _v = recv.sharedFrameworksPath {
-            return .optional(.string(_v))
+            return .optional(.string(ShellKit.Shell.displayPath(for: _v)))
         }
         return .optional(nil)
     },
     "var Bundle.sharedSupportPath: String?": .computed { receiver in
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
         if let _v = recv.sharedSupportPath {
-            return .optional(.string(_v))
+            return .optional(.string(ShellKit.Shell.displayPath(for: _v)))
         }
         return .optional(nil)
     },
     "var Bundle.builtInPlugInsPath: String?": .computed { receiver in
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
         if let _v = recv.builtInPlugInsPath {
-            return .optional(.string(_v))
+            return .optional(.string(ShellKit.Shell.displayPath(for: _v)))
         }
         return .optional(nil)
     },
     "var Bundle.bundleIdentifier: String?": .computed { receiver in
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
         if let _v = recv.bundleIdentifier {
-            return .optional(.string(_v))
+            return .optional(.string(ShellKit.Shell.displayPath(for: _v)))
         }
         return .optional(nil)
     },
     "var Bundle.developmentLocalization: String?": .computed { receiver in
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
         if let _v = recv.developmentLocalization {
-            return .optional(.string(_v))
+            return .optional(.string(ShellKit.Shell.displayPath(for: _v)))
         }
         return .optional(nil)
     },
@@ -162,9 +162,9 @@ extension FoundationBridges {
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Bundle(path:): expected 1 argument(s), got \(args.count)")
         }
-        let arg0 = try unboxString(args[0])
+        var arg0 = try unboxString(args[0])
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -177,9 +177,9 @@ extension FoundationBridges {
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Bundle(url:): expected 1 argument(s), got \(args.count)")
         }
-        let arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
         do {
-            try await authorizePath(arg0, for: .read)
+            arg0 = try await authorizePath(arg0, for: .read)
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
@@ -203,7 +203,7 @@ extension FoundationBridges {
         }
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
         if let _v = recv.url(forAuxiliaryExecutable: try unboxString(args[0])) {
-            return .optional(boxOpaque(_v, typeName: "URL"))
+            return .optional(boxOpaque(URL(fileURLWithPath: ShellKit.Shell.displayPath(for: _v)), typeName: "URL"))
         }
         return .optional(nil)
     },
@@ -213,7 +213,7 @@ extension FoundationBridges {
         }
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
         if let _v = recv.path(forAuxiliaryExecutable: try unboxString(args[0])) {
-            return .optional(.string(_v))
+            return .optional(.string(ShellKit.Shell.displayPath(for: _v)))
         }
         return .optional(nil)
     },

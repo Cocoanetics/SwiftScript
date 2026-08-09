@@ -1,0 +1,376 @@
+import Testing
+import Foundation
+import ShellKit
+@testable import SwiftScriptInterpreter
+
+/// The SwiftBash#83 contract at the SwiftScript level: one
+/// ``PathMapping`` drives both the virtual→host translation
+/// (`Shell.resolve`, consumed via `authorizePath`'s return) and the
+/// confinement gate (`Sandbox.confined(to:)`), so a script that
+/// spells `/tmp/x` reads and writes the per-instance host directory
+/// backing `/tmp` — and never the host's shared `/tmp`, never any
+/// host spelling at all.
+@Suite("Confined sandbox (PathMapping)")
+struct ConfinedSandboxTests {
+
+    /// Two real host dirs behind a two-mount virtual namespace —
+    /// the same layout `swift-bash exec --sandbox` builds.
+    private struct Fixture {
+        let workspace: URL   // backs /batch
+        let temp: URL        // backs /tmp
+        let shell: TestShell
+
+        init() throws {
+            let root = URL(fileURLWithPath: NSTemporaryDirectory())
+                .appendingPathComponent("swiftscript-confined-\(UUID().uuidString)")
+            workspace = root.appendingPathComponent("workspace", isDirectory: true)
+            temp = root.appendingPathComponent("temp", isDirectory: true)
+            try FileManager.default.createDirectory(
+                at: workspace, withIntermediateDirectories: true)
+            try FileManager.default.createDirectory(
+                at: temp, withIntermediateDirectories: true)
+            let mapping = PathMapping(mounts: [
+                .init(virtual: "/batch", host: workspace.path),
+                .init(virtual: "/tmp", host: temp.path),
+            ])
+            shell = TestShell(sandbox: .confined(to: mapping, home: "/batch"))
+            shell.shellKit.environment.workingDirectory = "/batch"
+            shell.shellKit.environment.variables["HOME"] = "/batch"
+            shell.shellKit.environment.variables["TMPDIR"] = "/tmp"
+        }
+
+        func tearDown() {
+            try? FileManager.default.removeItem(
+                at: workspace.deletingLastPathComponent())
+        }
+    }
+
+    /// Escape backslashes so a host path can sit inside a script
+    /// string literal on Windows.
+    private static func esc(_ s: String) -> String {
+        s.replacingOccurrences(of: "\\", with: "\\\\")
+    }
+
+    /// Run `source` in the fixture's shell and expect a
+    /// `Sandbox.Denial` surfaced as a `UserThrowSignal`.
+    private func expectDenial(
+        _ fixture: Fixture,
+        _ source: String,
+        sourceLocation: SourceLocation = #_sourceLocation
+    ) async {
+        var caught: Error?
+        await fixture.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            do {
+                _ = try await interp.eval(source)
+            } catch {
+                caught = error
+            }
+        }
+        guard let signal = caught as? UserThrowSignal,
+              case .opaque(_, let payload) = signal.value,
+              payload is ShellKit.Sandbox.Denial
+        else {
+            Issue.record(
+                "expected Sandbox.Denial, got \(String(describing: caught))",
+                sourceLocation: sourceLocation)
+            return
+        }
+    }
+
+    // MARK: - Bytes land in the mapped host dirs
+
+    @Test func virtualTmpWriteLandsInMappedHostDir() async throws {
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        try await fx.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            _ = try await interp.eval(#"""
+                import Foundation
+                try "hello mapped".write(toFile: "/tmp/x.txt", atomically: true, encoding: .utf8)
+                """#)
+        }
+        // The bytes are in the per-instance host dir backing /tmp…
+        let hostSide = try String(
+            contentsOf: fx.temp.appendingPathComponent("x.txt"),
+            encoding: .utf8)
+        #expect(hostSide == "hello mapped")
+        // …and the script reads them back under the virtual spelling.
+        let readBack = try await fx.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            return try await interp.eval(#"""
+                import Foundation
+                try String(contentsOfFile: "/tmp/x.txt", encoding: .utf8)
+                """#)
+        }
+        #expect(readBack == .string("hello mapped"))
+    }
+
+    @Test func relativePathsAnchorToVirtualCWD() async throws {
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        try await fx.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            _ = try await interp.eval(#"""
+                import Foundation
+                try "relative".write(toFile: "rel.txt", atomically: true, encoding: .utf8)
+                """#)
+        }
+        // CWD is /batch, backed by the workspace dir — not the host
+        // process CWD.
+        let hostSide = try String(
+            contentsOf: fx.workspace.appendingPathComponent("rel.txt"),
+            encoding: .utf8)
+        #expect(hostSide == "relative")
+    }
+
+    @Test func dataRoundTripsThroughURLDoor() async throws {
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        let r = try await fx.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            return try await interp.eval(#"""
+                import Foundation
+                let d = "payload".data(using: .utf8)!
+                try d.write(to: URL(fileURLWithPath: "/tmp/d.bin"))
+                let back = try Data(contentsOf: URL(fileURLWithPath: "/tmp/d.bin"))
+                String(data: back, encoding: .utf8)!
+                """#)
+        }
+        #expect(r == .string("payload"))
+        #expect(FileManager.default.fileExists(
+            atPath: fx.temp.appendingPathComponent("d.bin").path))
+    }
+
+    @Test func fileManagerDoorsTranslate() async throws {
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        try "seed".write(
+            to: fx.temp.appendingPathComponent("seed.txt"),
+            atomically: true, encoding: .utf8)
+        let r = try await fx.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            return try await interp.eval(#"""
+                import Foundation
+                let fm = FileManager.default
+                let existed = fm.fileExists(atPath: "/tmp/seed.txt")
+                try fm.createDirectory(atPath: "/tmp/sub", withIntermediateDirectories: true)
+                let listing = try fm.contentsOfDirectory(atPath: "/tmp")
+                try fm.removeItem(atPath: "/tmp/seed.txt")
+                let gone = !fm.fileExists(atPath: "/tmp/seed.txt")
+                (existed, listing.sorted().joined(separator: ","), gone)
+                """#)
+        }
+        #expect(r == .tuple([.bool(true), .string("seed.txt,sub"), .bool(true)]))
+        var isDir: ObjCBool = false
+        #expect(FileManager.default.fileExists(
+            atPath: fx.temp.appendingPathComponent("sub").path,
+            isDirectory: &isDir) && isDir.boolValue)
+        #expect(!FileManager.default.fileExists(
+            atPath: fx.temp.appendingPathComponent("seed.txt").path))
+    }
+
+    @Test func fileHandleOpensTranslatedPath() async throws {
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        try "handle bytes".write(
+            to: fx.temp.appendingPathComponent("h.txt"),
+            atomically: true, encoding: .utf8)
+        let r = try await fx.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            return try await interp.eval(#"""
+                import Foundation
+                FileHandle(forReadingAtPath: "/tmp/h.txt") != nil
+                """#)
+        }
+        #expect(r == .bool(true))
+    }
+
+    // MARK: - Virtual cd
+
+    @Test func changeCurrentDirectoryPathIsVirtual() async throws {
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        let hostCWDBefore = FileManager.default.currentDirectoryPath
+        let r = try await fx.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            return try await interp.eval(#"""
+                import Foundation
+                let fm = FileManager.default
+                let ok = fm.changeCurrentDirectoryPath("/tmp")
+                try "moved".write(toFile: "after-cd.txt", atomically: true, encoding: .utf8)
+                (ok, fm.currentDirectoryPath)
+                """#)
+        }
+        #expect(r == .tuple([.bool(true), .string("/tmp")]))
+        // The relative write followed the virtual cd into the /tmp
+        // mount's host dir…
+        let hostSide = try String(
+            contentsOf: fx.temp.appendingPathComponent("after-cd.txt"),
+            encoding: .utf8)
+        #expect(hostSide == "moved")
+        // …and the host process CWD never moved.
+        #expect(FileManager.default.currentDirectoryPath == hostCWDBefore)
+    }
+
+    @Test func changeCurrentDirectoryPathToMissingDirFails() async throws {
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        let r = try await fx.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            return try await interp.eval(#"""
+                import Foundation
+                FileManager.default.changeCurrentDirectoryPath("/tmp/nope")
+                """#)
+        }
+        #expect(r == .bool(false))
+    }
+
+    // MARK: - Denials
+
+    @Test func readOutsideMountsIsDenied() async throws {
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        await expectDenial(fx, #"""
+            import Foundation
+            try String(contentsOfFile: "/etc/passwd", encoding: .utf8)
+            """#)
+    }
+
+    @Test func writeOutsideMountsIsDenied() async throws {
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        await expectDenial(fx, #"""
+            import Foundation
+            try "leak".write(toFile: "/outside.txt", atomically: true, encoding: .utf8)
+            """#)
+    }
+
+    @Test func hostSpellingOfMountedDirIsDenied() async throws {
+        // Script-visible text is the only addressing scheme: holding
+        // the *host* path of a mounted directory must not grant
+        // access through the virtual namespace.
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        try "secret".write(
+            to: fx.temp.appendingPathComponent("s.txt"),
+            atomically: true, encoding: .utf8)
+        let hostSpelling = Self.esc(fx.temp.appendingPathComponent("s.txt").path)
+        await expectDenial(fx, """
+            import Foundation
+            try String(contentsOfFile: "\(hostSpelling)", encoding: .utf8)
+            """)
+    }
+
+    @Test func fileManagerProbeOutsideMountsIsDenied() async throws {
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        await expectDenial(fx, #"""
+            import Foundation
+            FileManager.default.fileExists(atPath: "/etc")
+            """#)
+    }
+
+    #if !os(Windows)
+    @Test func symlinkEscapeIsDenied() async throws {
+        // A link planted inside the mount pointing at the filesystem
+        // root: translation follows the mount, canonicalisation
+        // lands outside every host root, the gate denies.
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        try FileManager.default.createSymbolicLink(
+            at: fx.temp.appendingPathComponent("escape"),
+            withDestinationURL: URL(fileURLWithPath: "/"))
+        await expectDenial(fx, #"""
+            import Foundation
+            try String(contentsOfFile: "/tmp/escape/etc/passwd", encoding: .utf8)
+            """#)
+    }
+    #endif
+
+    // MARK: - No host paths in script-visible answers
+
+    @Test func temporaryDirectoryReportsVirtualSpelling() async throws {
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        let r = try await fx.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            return try await interp.eval(#"""
+                import Foundation
+                FileManager.default.temporaryDirectory.path
+                """#)
+        }
+        #expect(r == .string("/tmp"))
+    }
+
+    @Test func scriptVisibleAnswersNeverCarryHostPaths() async throws {
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        try await fx.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            _ = try await interp.eval(#"""
+                import Foundation
+                let fm = FileManager.default
+                print(fm.currentDirectoryPath)
+                print(fm.temporaryDirectory.path)
+                print(ProcessInfo.processInfo.environment["TMPDIR"] ?? "unset")
+                """#)
+        }
+        let out = fx.shell.stdout
+        #expect(out == "/batch\n/tmp\n/tmp\n")
+        #expect(!out.contains(fx.workspace.path))
+        #expect(!out.contains(fx.temp.path))
+    }
+
+    @Test func denialDoesNotLeakHostPaths() async throws {
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        var message = ""
+        await fx.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            do {
+                _ = try await interp.eval(#"""
+                    import Foundation
+                    try String(contentsOfFile: "/tmp/../secret", encoding: .utf8)
+                    """#)
+            } catch let signal as UserThrowSignal {
+                if case .opaque(_, let payload) = signal.value,
+                   let denial = payload as? ShellKit.Sandbox.Denial
+                {
+                    message = "\(denial)" + (denial.errorDescription ?? "")
+                }
+            } catch {
+                Issue.record("expected UserThrowSignal, got \(error)")
+            }
+        }
+        #expect(!message.isEmpty)
+        #expect(!message.contains(fx.workspace.path))
+        #expect(!message.contains(fx.temp.path))
+    }
+
+    // MARK: - Virtual CWD without a sandbox
+
+    @Test func relativePathsHonourVirtualCWDWithoutSandbox() async throws {
+        // An embedder that binds a working directory but no sandbox
+        // still gets its CWD honoured — resolution and confinement
+        // are separate concerns.
+        let dir = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent("swiftscript-cwd-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(
+            at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let shell = TestShell()
+        shell.shellKit.environment.workingDirectory = dir.path
+        try await shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            _ = try await interp.eval(#"""
+                import Foundation
+                try "anchored".write(toFile: "anchor.txt", atomically: true, encoding: .utf8)
+                """#)
+        }
+        let hostSide = try String(
+            contentsOf: dir.appendingPathComponent("anchor.txt"),
+            encoding: .utf8)
+        #expect(hostSide == "anchored")
+    }
+}
