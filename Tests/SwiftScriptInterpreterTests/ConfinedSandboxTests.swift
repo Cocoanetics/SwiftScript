@@ -250,16 +250,59 @@ struct ConfinedSandboxTests {
         // Script-visible text is the only addressing scheme: holding
         // the *host* path of a mounted directory must not grant
         // access through the virtual namespace.
-        let fx = try Fixture()
-        defer { fx.tearDown() }
+        //
+        // This test deliberately uses a single `/work` mount rather
+        // than the shared `/tmp` fixture: on Linux `NSTemporaryDirectory()`
+        // *is* `/tmp`, so the host spelling of a `/tmp`-backed mount
+        // starts with `/tmp` and would re-match the `/tmp` virtual
+        // prefix instead of landing outside the namespace. Backing a
+        // `/work` mount means the host spelling matches no mount on
+        // either platform and voids. (SwiftBash's ConfinedSandboxTests
+        // avoids a `/tmp` mount here for the same reason.)
+        let root = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent("swiftscript-hostspell-\(UUID().uuidString)")
+        let workHost = root.appendingPathComponent("work", isDirectory: true)
+        try FileManager.default.createDirectory(
+            at: workHost, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
         try "secret".write(
-            to: fx.temp.appendingPathComponent("s.txt"),
+            to: workHost.appendingPathComponent("s.txt"),
             atomically: true, encoding: .utf8)
-        let hostSpelling = Self.esc(fx.temp.appendingPathComponent("s.txt").path)
-        await expectDenial(fx, """
-            import Foundation
-            try String(contentsOfFile: "\(hostSpelling)", encoding: .utf8)
-            """)
+        let mapping = PathMapping(mounts: [
+            .init(virtual: "/work", host: workHost.path),
+        ])
+        let shell = TestShell(sandbox: .confined(to: mapping, home: "/work"))
+        shell.shellKit.environment.workingDirectory = "/work"
+        let hostSpelling = Self.esc(workHost.appendingPathComponent("s.txt").path)
+
+        var caught: Error?
+        await shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            do {
+                _ = try await interp.eval("""
+                    import Foundation
+                    try String(contentsOfFile: "\(hostSpelling)", encoding: .utf8)
+                    """)
+            } catch {
+                caught = error
+            }
+        }
+        guard let signal = caught as? UserThrowSignal,
+              case .opaque(_, let payload) = signal.value,
+              payload is ShellKit.Sandbox.Denial
+        else {
+            Issue.record("expected Sandbox.Denial, got \(String(describing: caught))")
+            return
+        }
+        // The virtual spelling still works, proving the mount is live.
+        let ok = try await shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            return try await interp.eval(#"""
+                import Foundation
+                try String(contentsOfFile: "/work/s.txt", encoding: .utf8)
+                """#)
+        }
+        #expect(ok == .string("secret"))
     }
 
     @Test func fileManagerProbeOutsideMountsIsDenied() async throws {
