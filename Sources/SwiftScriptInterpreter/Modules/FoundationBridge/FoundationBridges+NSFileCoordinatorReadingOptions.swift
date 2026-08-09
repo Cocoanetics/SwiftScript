@@ -23,6 +23,12 @@ extension FoundationBridges {
     "static let NSFileCoordinator.ReadingOptions.resolvesSymbolicLink": .staticValue(boxOpaque(NSFileCoordinator.ReadingOptions.resolvesSymbolicLink, typeName: "NSFileCoordinator.ReadingOptions")),
     "static let NSFileCoordinator.ReadingOptions.immediatelyAvailableMetadataOnly": .staticValue(boxOpaque(NSFileCoordinator.ReadingOptions.immediatelyAvailableMetadataOnly, typeName: "NSFileCoordinator.ReadingOptions")),
     "static let NSFileCoordinator.ReadingOptions.forUploading": .staticValue(boxOpaque(NSFileCoordinator.ReadingOptions.forUploading, typeName: "NSFileCoordinator.ReadingOptions")),
+    "init NSFileCoordinator.ReadingOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSFileCoordinator.ReadingOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSFileCoordinator.ReadingOptions(rawValue: try toUInt(args[0])), typeName: "NSFileCoordinator.ReadingOptions")
+    },
         "init NSFileCoordinator.ReadingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSFileCoordinator.ReadingOptions(arrayLiteral:): expected array literal")

@@ -24,6 +24,12 @@ extension FoundationBridges {
     "static let NSFileCoordinator.WritingOptions.forMerging": .staticValue(boxOpaque(NSFileCoordinator.WritingOptions.forMerging, typeName: "NSFileCoordinator.WritingOptions")),
     "static let NSFileCoordinator.WritingOptions.forReplacing": .staticValue(boxOpaque(NSFileCoordinator.WritingOptions.forReplacing, typeName: "NSFileCoordinator.WritingOptions")),
     "static let NSFileCoordinator.WritingOptions.contentIndependentMetadataOnly": .staticValue(boxOpaque(NSFileCoordinator.WritingOptions.contentIndependentMetadataOnly, typeName: "NSFileCoordinator.WritingOptions")),
+    "init NSFileCoordinator.WritingOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSFileCoordinator.WritingOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSFileCoordinator.WritingOptions(rawValue: try toUInt(args[0])), typeName: "NSFileCoordinator.WritingOptions")
+    },
         "init NSFileCoordinator.WritingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSFileCoordinator.WritingOptions(arrayLiteral:): expected array literal")

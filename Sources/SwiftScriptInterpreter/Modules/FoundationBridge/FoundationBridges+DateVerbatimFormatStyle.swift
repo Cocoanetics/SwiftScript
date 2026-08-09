@@ -13,10 +13,20 @@ extension FoundationBridges {
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return boxOpaque(recv.timeZone, typeName: "TimeZone")
     },
+        "set var Date.VerbatimFormatStyle.timeZone: TimeZone": .structSetter { receiver, newValue in
+            var recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
+            recv.timeZone = try unboxOpaque(unwrapForSetter(newValue), as: TimeZone.self, typeName: "TimeZone")
+            return boxOpaque(recv, typeName: "Date.VerbatimFormatStyle")
+        },
     "var Date.VerbatimFormatStyle.calendar: Calendar": .computed { receiver in
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return boxOpaque(recv.calendar, typeName: "Calendar")
     },
+        "set var Date.VerbatimFormatStyle.calendar: Calendar": .structSetter { receiver, newValue in
+            var recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
+            recv.calendar = try unboxOpaque(unwrapForSetter(newValue), as: Calendar.self, typeName: "Calendar")
+            return boxOpaque(recv, typeName: "Date.VerbatimFormatStyle")
+        },
     "var Date.VerbatimFormatStyle.locale: Locale?": .computed { receiver in
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         if let _v = recv.locale {
@@ -24,6 +34,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Date.VerbatimFormatStyle.locale: Locale?": .structSetter { receiver, newValue in
+            var recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
+            recv.locale = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }
+            return boxOpaque(recv, typeName: "Date.VerbatimFormatStyle")
+        },
     "var Date.VerbatimFormatStyle.attributed: Date.AttributedStyle": .computed { receiver in
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return boxOpaque(recv.attributed, typeName: "Date.AttributedStyle")
@@ -32,12 +47,26 @@ extension FoundationBridges {
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return boxOpaque(recv.parseStrategy, typeName: "Date.ParseStrategy")
     },
+    "func Date.VerbatimFormatStyle.format(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.VerbatimFormatStyle.format: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
+        return .string(recv.format(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
+    },
     "func Date.VerbatimFormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.VerbatimFormatStyle.format: expected 1 argument(s), got \(args.count)")
         }
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return .string(recv.format(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
+    },
+    "func Date.VerbatimFormatStyle.locale(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.VerbatimFormatStyle.locale: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
+        return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Date.VerbatimFormatStyle")
     },
     "func Date.VerbatimFormatStyle.locale()": .method { receiver, args in
         guard args.count == 1 else {
@@ -46,11 +75,23 @@ extension FoundationBridges {
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Date.VerbatimFormatStyle")
     },
+    "init Date.VerbatimFormatStyle(format:locale:timeZone:calendar:)": .`init` { args in
+        guard args.count == 4 else {
+            throw RuntimeError.invalid("init Date.VerbatimFormatStyle(format:locale:timeZone:calendar:): expected 4 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Date.VerbatimFormatStyle(format: try unboxOpaque(args[0], as: Date.FormatString.self, typeName: "Date.FormatString"), locale: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }, timeZone: try unboxOpaque(args[2], as: TimeZone.self, typeName: "TimeZone"), calendar: try unboxOpaque(args[3], as: Calendar.self, typeName: "Calendar")), typeName: "Date.VerbatimFormatStyle")
+    },
         ]
         #if canImport(Darwin)
     d["var Date.VerbatimFormatStyle.hashValue: Int"] = .computed { receiver in
         let recv: Date.VerbatimFormatStyle = try unboxOpaque(receiver, as: Date.VerbatimFormatStyle.self, typeName: "Date.VerbatimFormatStyle")
         return .int(recv.hashValue)
+    }
+    d["static func Date.VerbatimFormatStyle.verbatim()"] = .staticMethod { args in
+        guard args.count == 4 else {
+            throw RuntimeError.invalid("Date.VerbatimFormatStyle.verbatim: expected 4 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Date.VerbatimFormatStyle.verbatim(try unboxOpaque(args[0], as: Date.FormatString.self, typeName: "Date.FormatString"), locale: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }, timeZone: try unboxOpaque(args[2], as: TimeZone.self, typeName: "TimeZone"), calendar: try unboxOpaque(args[3], as: Calendar.self, typeName: "Calendar")), typeName: "Date.VerbatimFormatStyle")
     }
         #endif
         return d

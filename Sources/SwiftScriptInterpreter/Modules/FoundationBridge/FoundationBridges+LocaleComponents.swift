@@ -16,6 +16,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Locale.Components.collation: Locale.Collation?": .structSetter { receiver, newValue in
+            var recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
+            recv.collation = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: Locale.Collation.self, typeName: "Locale.Collation") }
+            return boxOpaque(recv, typeName: "Locale.Components")
+        },
     "var Locale.Components.currency: Locale.Currency?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.currency {
@@ -23,6 +28,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Locale.Components.currency: Locale.Currency?": .structSetter { receiver, newValue in
+            var recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
+            recv.currency = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: Locale.Currency.self, typeName: "Locale.Currency") }
+            return boxOpaque(recv, typeName: "Locale.Components")
+        },
     "var Locale.Components.numberingSystem: Locale.NumberingSystem?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.numberingSystem {
@@ -30,6 +40,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Locale.Components.numberingSystem: Locale.NumberingSystem?": .structSetter { receiver, newValue in
+            var recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
+            recv.numberingSystem = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: Locale.NumberingSystem.self, typeName: "Locale.NumberingSystem") }
+            return boxOpaque(recv, typeName: "Locale.Components")
+        },
     "var Locale.Components.measurementSystem: Locale.MeasurementSystem?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.measurementSystem {
@@ -37,6 +52,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Locale.Components.measurementSystem: Locale.MeasurementSystem?": .structSetter { receiver, newValue in
+            var recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
+            recv.measurementSystem = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: Locale.MeasurementSystem.self, typeName: "Locale.MeasurementSystem") }
+            return boxOpaque(recv, typeName: "Locale.Components")
+        },
     "var Locale.Components.region: Locale.Region?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.region {
@@ -44,6 +64,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Locale.Components.region: Locale.Region?": .structSetter { receiver, newValue in
+            var recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
+            recv.region = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: Locale.Region.self, typeName: "Locale.Region") }
+            return boxOpaque(recv, typeName: "Locale.Components")
+        },
     "var Locale.Components.subdivision: Locale.Subdivision?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.subdivision {
@@ -51,6 +76,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Locale.Components.subdivision: Locale.Subdivision?": .structSetter { receiver, newValue in
+            var recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
+            recv.subdivision = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: Locale.Subdivision.self, typeName: "Locale.Subdivision") }
+            return boxOpaque(recv, typeName: "Locale.Components")
+        },
     "var Locale.Components.timeZone: TimeZone?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.timeZone {
@@ -58,6 +88,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Locale.Components.timeZone: TimeZone?": .structSetter { receiver, newValue in
+            var recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
+            recv.timeZone = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: TimeZone.self, typeName: "TimeZone") }
+            return boxOpaque(recv, typeName: "Locale.Components")
+        },
     "var Locale.Components.variant: Locale.Variant?": .computed { receiver in
         let recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
         if let _v = recv.variant {
@@ -65,6 +100,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Locale.Components.variant: Locale.Variant?": .structSetter { receiver, newValue in
+            var recv: Locale.Components = try unboxOpaque(receiver, as: Locale.Components.self, typeName: "Locale.Components")
+            recv.variant = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: Locale.Variant.self, typeName: "Locale.Variant") }
+            return boxOpaque(recv, typeName: "Locale.Components")
+        },
     "init Locale.Components(identifier:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Components(identifier:): expected 1 argument(s), got \(args.count)")
@@ -76,6 +116,30 @@ extension FoundationBridges {
             throw RuntimeError.invalid("init Locale.Components(locale:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.Components(locale: try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Locale.Components")
+    },
+    "init Locale.Components()": .`init` { args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("init Locale.Components(): expected 0 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Locale.Components(), typeName: "Locale.Components")
+    },
+    "init Locale.Components(languageCode:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init Locale.Components(languageCode:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Locale.Components(languageCode: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode") }), typeName: "Locale.Components")
+    },
+    "init Locale.Components(languageCode:script:)": .`init` { args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("init Locale.Components(languageCode:script:): expected 2 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Locale.Components(languageCode: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode") }, script: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: Locale.Script.self, typeName: "Locale.Script") }), typeName: "Locale.Components")
+    },
+    "init Locale.Components(languageCode:script:languageRegion:)": .`init` { args in
+        guard args.count == 3 else {
+            throw RuntimeError.invalid("init Locale.Components(languageCode:script:languageRegion:): expected 3 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Locale.Components(languageCode: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode") }, script: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: Locale.Script.self, typeName: "Locale.Script") }, languageRegion: try unboxOptionalValue(args[2]).map { try unboxOpaque($0, as: Locale.Region.self, typeName: "Locale.Region") }), typeName: "Locale.Components")
     },
         ]
         #if canImport(Darwin)

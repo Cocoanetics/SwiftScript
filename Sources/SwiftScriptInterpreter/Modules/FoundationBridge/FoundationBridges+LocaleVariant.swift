@@ -13,6 +13,11 @@ extension FoundationBridges {
         let recv: Locale.Variant = try unboxOpaque(receiver, as: Locale.Variant.self, typeName: "Locale.Variant")
         return .string(recv.identifier)
     },
+        "set var Locale.Variant.identifier: String": .structSetter { receiver, newValue in
+            var recv: Locale.Variant = try unboxOpaque(receiver, as: Locale.Variant.self, typeName: "Locale.Variant")
+            recv.identifier = try unboxString(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "Locale.Variant")
+        },
     "static let Locale.Variant.posix": .staticValue(boxOpaque(Locale.Variant.posix, typeName: "Locale.Variant")),
     "init Locale.Variant(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {

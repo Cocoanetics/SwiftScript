@@ -13,9 +13,15 @@ extension FoundationBridges {
         let recv: Locale.MeasurementSystem = try unboxOpaque(receiver, as: Locale.MeasurementSystem.self, typeName: "Locale.MeasurementSystem")
         return .string(recv.identifier)
     },
+        "set var Locale.MeasurementSystem.identifier: String": .structSetter { receiver, newValue in
+            var recv: Locale.MeasurementSystem = try unboxOpaque(receiver, as: Locale.MeasurementSystem.self, typeName: "Locale.MeasurementSystem")
+            recv.identifier = try unboxString(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "Locale.MeasurementSystem")
+        },
     "static let Locale.MeasurementSystem.metric": .staticValue(boxOpaque(Locale.MeasurementSystem.metric, typeName: "Locale.MeasurementSystem")),
     "static let Locale.MeasurementSystem.us": .staticValue(boxOpaque(Locale.MeasurementSystem.us, typeName: "Locale.MeasurementSystem")),
     "static let Locale.MeasurementSystem.uk": .staticValue(boxOpaque(Locale.MeasurementSystem.uk, typeName: "Locale.MeasurementSystem")),
+    "static let Locale.MeasurementSystem.measurementSystems": .staticValue(.array(Locale.MeasurementSystem.measurementSystems.map { boxOpaque($0, typeName: "Locale.MeasurementSystem") })),
     "init Locale.MeasurementSystem(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.MeasurementSystem(stringLiteral:): expected 1 argument(s), got \(args.count)")

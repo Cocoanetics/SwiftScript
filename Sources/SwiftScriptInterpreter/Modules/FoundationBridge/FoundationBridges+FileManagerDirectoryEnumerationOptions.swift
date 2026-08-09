@@ -20,6 +20,12 @@ extension FoundationBridges {
     "static let FileManager.DirectoryEnumerationOptions.skipsHiddenFiles": .staticValue(boxOpaque(FileManager.DirectoryEnumerationOptions.skipsHiddenFiles, typeName: "FileManager.DirectoryEnumerationOptions")),
     "static let FileManager.DirectoryEnumerationOptions.includesDirectoriesPostOrder": .staticValue(boxOpaque(FileManager.DirectoryEnumerationOptions.includesDirectoriesPostOrder, typeName: "FileManager.DirectoryEnumerationOptions")),
     "static let FileManager.DirectoryEnumerationOptions.producesRelativePathURLs": .staticValue(boxOpaque(FileManager.DirectoryEnumerationOptions.producesRelativePathURLs, typeName: "FileManager.DirectoryEnumerationOptions")),
+    "init FileManager.DirectoryEnumerationOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init FileManager.DirectoryEnumerationOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(FileManager.DirectoryEnumerationOptions(rawValue: try toUInt(args[0])), typeName: "FileManager.DirectoryEnumerationOptions")
+    },
         "init FileManager.DirectoryEnumerationOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("FileManager.DirectoryEnumerationOptions(arrayLiteral:): expected array literal")

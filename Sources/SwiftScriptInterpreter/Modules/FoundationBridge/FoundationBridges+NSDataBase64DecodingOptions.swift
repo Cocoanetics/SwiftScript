@@ -20,6 +20,12 @@ extension FoundationBridges {
         return .bool(recv.isEmpty)
     },
     "static let NSData.Base64DecodingOptions.ignoreUnknownCharacters": .staticValue(boxOpaque(NSData.Base64DecodingOptions.ignoreUnknownCharacters, typeName: "NSData.Base64DecodingOptions")),
+    "init NSData.Base64DecodingOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSData.Base64DecodingOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSData.Base64DecodingOptions(rawValue: try toUInt(args[0])), typeName: "NSData.Base64DecodingOptions")
+    },
         "init NSData.Base64DecodingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSData.Base64DecodingOptions(arrayLiteral:): expected array literal")

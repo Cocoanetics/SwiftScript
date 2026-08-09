@@ -22,12 +22,26 @@ extension FoundationBridges {
     "static let NSOrderedCollectionDifferenceCalculationOptions.omitInsertedObjects": .staticValue(boxOpaque(NSOrderedCollectionDifferenceCalculationOptions.omitInsertedObjects, typeName: "NSOrderedCollectionDifferenceCalculationOptions")),
     "static let NSOrderedCollectionDifferenceCalculationOptions.omitRemovedObjects": .staticValue(boxOpaque(NSOrderedCollectionDifferenceCalculationOptions.omitRemovedObjects, typeName: "NSOrderedCollectionDifferenceCalculationOptions")),
     "static let NSOrderedCollectionDifferenceCalculationOptions.inferMoves": .staticValue(boxOpaque(NSOrderedCollectionDifferenceCalculationOptions.inferMoves, typeName: "NSOrderedCollectionDifferenceCalculationOptions")),
+    "func NSOrderedCollectionDifferenceCalculationOptions.union(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.union: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+    },
     "func NSOrderedCollectionDifferenceCalculationOptions.union()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.union: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
         return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+    },
+    "func NSOrderedCollectionDifferenceCalculationOptions.intersection(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.intersection: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
     },
     "func NSOrderedCollectionDifferenceCalculationOptions.intersection()": .method { receiver, args in
         guard args.count == 1 else {
@@ -36,12 +50,26 @@ extension FoundationBridges {
         let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
         return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
     },
+    "func NSOrderedCollectionDifferenceCalculationOptions.symmetricDifference(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+    },
     "func NSOrderedCollectionDifferenceCalculationOptions.symmetricDifference()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
         return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+    },
+    "func NSOrderedCollectionDifferenceCalculationOptions.contains(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.contains: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        return .bool(recv.contains(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
     },
     "func NSOrderedCollectionDifferenceCalculationOptions.contains()": .method { receiver, args in
         guard args.count == 1 else {
@@ -50,12 +78,90 @@ extension FoundationBridges {
         let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
         return .bool(recv.contains(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
     },
+    "mutating func NSOrderedCollectionDifferenceCalculationOptions.formUnion(_:)": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.formUnion: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        recv.formUnion(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+    },
+    "mutating func NSOrderedCollectionDifferenceCalculationOptions.formUnion()": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.formUnion: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        recv.formUnion(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+    },
+    "mutating func NSOrderedCollectionDifferenceCalculationOptions.formIntersection(_:)": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.formIntersection: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        recv.formIntersection(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+    },
+    "mutating func NSOrderedCollectionDifferenceCalculationOptions.formIntersection()": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.formIntersection: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        recv.formIntersection(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+    },
+    "mutating func NSOrderedCollectionDifferenceCalculationOptions.formSymmetricDifference(_:)": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.formSymmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        recv.formSymmetricDifference(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+    },
+    "mutating func NSOrderedCollectionDifferenceCalculationOptions.formSymmetricDifference()": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.formSymmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        recv.formSymmetricDifference(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+    },
+    "mutating func NSOrderedCollectionDifferenceCalculationOptions.subtract(_:)": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.subtract: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        recv.subtract(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+    },
+    "mutating func NSOrderedCollectionDifferenceCalculationOptions.subtract()": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.subtract: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        recv.subtract(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSOrderedCollectionDifferenceCalculationOptions"))
+    },
+    "func NSOrderedCollectionDifferenceCalculationOptions.isSubset(of:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isSubset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
+    },
     "func NSOrderedCollectionDifferenceCalculationOptions.isSubset()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isSubset: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
         return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
+    },
+    "func NSOrderedCollectionDifferenceCalculationOptions.isSuperset(of:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isSuperset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
     },
     "func NSOrderedCollectionDifferenceCalculationOptions.isSuperset()": .method { receiver, args in
         guard args.count == 1 else {
@@ -64,12 +170,26 @@ extension FoundationBridges {
         let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
         return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
     },
+    "func NSOrderedCollectionDifferenceCalculationOptions.isDisjoint(with:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
+    },
     "func NSOrderedCollectionDifferenceCalculationOptions.isDisjoint()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
         return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
+    },
+    "func NSOrderedCollectionDifferenceCalculationOptions.subtracting(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.subtracting: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
     },
     "func NSOrderedCollectionDifferenceCalculationOptions.subtracting()": .method { receiver, args in
         guard args.count == 1 else {
@@ -78,6 +198,13 @@ extension FoundationBridges {
         let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
         return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
     },
+    "func NSOrderedCollectionDifferenceCalculationOptions.isStrictSuperset(of:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
+    },
     "func NSOrderedCollectionDifferenceCalculationOptions.isStrictSuperset()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
@@ -85,12 +212,25 @@ extension FoundationBridges {
         let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
         return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
     },
+    "func NSOrderedCollectionDifferenceCalculationOptions.isStrictSubset(of:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isStrictSubset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
+        return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
+    },
     "func NSOrderedCollectionDifferenceCalculationOptions.isStrictSubset()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions.isStrictSubset: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSOrderedCollectionDifferenceCalculationOptions = try unboxOpaque(receiver, as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")
         return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSOrderedCollectionDifferenceCalculationOptions.self, typeName: "NSOrderedCollectionDifferenceCalculationOptions")))
+    },
+    "init NSOrderedCollectionDifferenceCalculationOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSOrderedCollectionDifferenceCalculationOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSOrderedCollectionDifferenceCalculationOptions(rawValue: try toUInt(args[0])), typeName: "NSOrderedCollectionDifferenceCalculationOptions")
     },
         "init NSOrderedCollectionDifferenceCalculationOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {

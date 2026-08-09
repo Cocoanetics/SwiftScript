@@ -29,9 +29,19 @@ extension StdlibBridges {
     "static let Unicode.CanonicalCombiningClass.doubleBelow": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.doubleBelow, typeName: "Unicode.CanonicalCombiningClass")),
     "static let Unicode.CanonicalCombiningClass.doubleAbove": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.doubleAbove, typeName: "Unicode.CanonicalCombiningClass")),
     "static let Unicode.CanonicalCombiningClass.iotaSubscript": .staticValue(boxOpaque(Unicode.CanonicalCombiningClass.iotaSubscript, typeName: "Unicode.CanonicalCombiningClass")),
+    "var Unicode.CanonicalCombiningClass.rawValue: UInt8": .computed { receiver in
+        let recv: Unicode.CanonicalCombiningClass = try unboxOpaque(receiver, as: Unicode.CanonicalCombiningClass.self, typeName: "Unicode.CanonicalCombiningClass")
+        return .int(Int(recv.rawValue))
+    },
     "var Unicode.CanonicalCombiningClass.hashValue: Int": .computed { receiver in
         let recv: Unicode.CanonicalCombiningClass = try unboxOpaque(receiver, as: Unicode.CanonicalCombiningClass.self, typeName: "Unicode.CanonicalCombiningClass")
         return .int(recv.hashValue)
+    },
+    "init Unicode.CanonicalCombiningClass(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init Unicode.CanonicalCombiningClass(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Unicode.CanonicalCombiningClass(rawValue: try toUInt8(args[0])), typeName: "Unicode.CanonicalCombiningClass")
     },
     ]
 }

@@ -90,6 +90,10 @@ extension FoundationBridges {
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         return boxOpaque(recv.numberingSystem, typeName: "Locale.NumberingSystem")
     },
+    "var Locale.availableNumberingSystems: [Locale.NumberingSystem]": .computed { receiver in
+        let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
+        return .array(recv.availableNumberingSystems.map { boxOpaque($0, typeName: "Locale.NumberingSystem") })
+    },
     "var Locale.language: Locale.Language": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         return boxOpaque(recv.language, typeName: "Locale.Language")
@@ -126,6 +130,7 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+    "static let Locale.preferredLanguages": .staticValue(.array(Locale.preferredLanguages.map { .string($0) })),
     "var Locale.description: String": .computed { receiver in
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         return .string(recv.description)
@@ -134,6 +139,8 @@ extension FoundationBridges {
         let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
         return .string(recv.debugDescription)
     },
+    "static let Locale.availableIdentifiers": .staticValue(.array(Locale.availableIdentifiers.map { .string($0) })),
+    "static let Locale.commonISOCurrencyCodes": .staticValue(.array(Locale.commonISOCurrencyCodes.map { .string($0) })),
     "init Locale(identifier:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale(identifier:): expected 1 argument(s), got \(args.count)")
@@ -146,6 +153,16 @@ extension FoundationBridges {
         }
         return boxOpaque(Locale(components: try unboxOpaque(args[0], as: Locale.Components.self, typeName: "Locale.Components")), typeName: "Locale")
     },
+    "func Locale.localizedString(forIdentifier:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Locale.localizedString: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
+        if let _v = recv.localizedString(forIdentifier: try unboxString(args[0])) {
+            return .optional(.string(_v))
+        }
+        return .optional(nil)
+    },
     "func Locale.localizedString()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Locale.localizedString: expected 1 argument(s), got \(args.count)")
@@ -156,20 +173,87 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
-    "static func Locale.canonicalLanguageIdentifier()": .staticMethod { args in
+    "func Locale.localizedString(forLanguageCode:)": .method { receiver, args in
         guard args.count == 1 else {
-            throw RuntimeError.invalid("Locale.canonicalLanguageIdentifier: expected 1 argument(s), got \(args.count)")
+            throw RuntimeError.invalid("Locale.localizedString: expected 1 argument(s), got \(args.count)")
         }
-        return .string(Locale.canonicalLanguageIdentifier(from: try unboxString(args[0])))
+        let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
+        if let _v = recv.localizedString(forLanguageCode: try unboxString(args[0])) {
+            return .optional(.string(_v))
+        }
+        return .optional(nil)
+    },
+    "func Locale.localizedString(forRegionCode:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Locale.localizedString: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
+        if let _v = recv.localizedString(forRegionCode: try unboxString(args[0])) {
+            return .optional(.string(_v))
+        }
+        return .optional(nil)
+    },
+    "func Locale.localizedString(forScriptCode:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Locale.localizedString: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
+        if let _v = recv.localizedString(forScriptCode: try unboxString(args[0])) {
+            return .optional(.string(_v))
+        }
+        return .optional(nil)
+    },
+    "func Locale.localizedString(forVariantCode:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Locale.localizedString: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
+        if let _v = recv.localizedString(forVariantCode: try unboxString(args[0])) {
+            return .optional(.string(_v))
+        }
+        return .optional(nil)
+    },
+    "func Locale.localizedString(forCurrencyCode:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Locale.localizedString: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
+        if let _v = recv.localizedString(forCurrencyCode: try unboxString(args[0])) {
+            return .optional(.string(_v))
+        }
+        return .optional(nil)
+    },
+    "func Locale.localizedString(forCollationIdentifier:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Locale.localizedString: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
+        if let _v = recv.localizedString(forCollationIdentifier: try unboxString(args[0])) {
+            return .optional(.string(_v))
+        }
+        return .optional(nil)
+    },
+    "func Locale.localizedString(forCollatorIdentifier:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Locale.localizedString: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Locale = try unboxOpaque(receiver, as: Locale.self, typeName: "Locale")
+        if let _v = recv.localizedString(forCollatorIdentifier: try unboxString(args[0])) {
+            return .optional(.string(_v))
+        }
+        return .optional(nil)
     },
     "static func Locale.identifier()": .staticMethod { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Locale.identifier: expected 1 argument(s), got \(args.count)")
         }
-        if let _v = Locale.identifier(fromWindowsLocaleCode: try unboxInt(args[0])) {
-            return .optional(.string(_v))
+        return .string(Locale.identifier(fromComponents: Dictionary(uniqueKeysWithValues: try unboxDict(args[0]).map { (try unboxString($0.key), try unboxString($0.value)) })))
+    },
+    "static func Locale.canonicalLanguageIdentifier()": .staticMethod { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Locale.canonicalLanguageIdentifier: expected 1 argument(s), got \(args.count)")
         }
-        return .optional(nil)
+        return .string(Locale.canonicalLanguageIdentifier(from: try unboxString(args[0])))
     },
     "static func Locale.windowsLocaleCode()": .staticMethod { args in
         guard args.count == 1 else {
@@ -179,6 +263,30 @@ extension FoundationBridges {
             return .optional(.int(_v))
         }
         return .optional(nil)
+    },
+    "init Locale()": .`init` { args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("init Locale(): expected 0 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Locale(), typeName: "Locale")
+    },
+    "init Locale(languageCode:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init Locale(languageCode:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Locale(languageCode: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode") }), typeName: "Locale")
+    },
+    "init Locale(languageCode:script:)": .`init` { args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("init Locale(languageCode:script:): expected 2 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Locale(languageCode: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode") }, script: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: Locale.Script.self, typeName: "Locale.Script") }), typeName: "Locale")
+    },
+    "init Locale(languageCode:script:languageRegion:)": .`init` { args in
+        guard args.count == 3 else {
+            throw RuntimeError.invalid("init Locale(languageCode:script:languageRegion:): expected 3 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Locale(languageCode: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode") }, script: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: Locale.Script.self, typeName: "Locale.Script") }, languageRegion: try unboxOptionalValue(args[2]).map { try unboxOpaque($0, as: Locale.Region.self, typeName: "Locale.Region") }), typeName: "Locale")
     },
         ]
         #if canImport(Darwin)

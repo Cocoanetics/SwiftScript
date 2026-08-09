@@ -22,6 +22,12 @@ extension FoundationBridges {
     "static let NSURL.BookmarkCreationOptions.minimalBookmark": .staticValue(boxOpaque(NSURL.BookmarkCreationOptions.minimalBookmark, typeName: "NSURL.BookmarkCreationOptions")),
     "static let NSURL.BookmarkCreationOptions.suitableForBookmarkFile": .staticValue(boxOpaque(NSURL.BookmarkCreationOptions.suitableForBookmarkFile, typeName: "NSURL.BookmarkCreationOptions")),
     "static let NSURL.BookmarkCreationOptions.withoutImplicitSecurityScope": .staticValue(boxOpaque(NSURL.BookmarkCreationOptions.withoutImplicitSecurityScope, typeName: "NSURL.BookmarkCreationOptions")),
+    "init NSURL.BookmarkCreationOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSURL.BookmarkCreationOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSURL.BookmarkCreationOptions(rawValue: try toUInt(args[0])), typeName: "NSURL.BookmarkCreationOptions")
+    },
         "init NSURL.BookmarkCreationOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSURL.BookmarkCreationOptions(arrayLiteral:): expected array literal")

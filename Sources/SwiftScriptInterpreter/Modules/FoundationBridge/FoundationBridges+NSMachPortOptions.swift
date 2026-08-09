@@ -21,6 +21,12 @@ extension FoundationBridges {
     },
     "static let NSMachPort.Options.deallocateSendRight": .staticValue(boxOpaque(NSMachPort.Options.deallocateSendRight, typeName: "NSMachPort.Options")),
     "static let NSMachPort.Options.deallocateReceiveRight": .staticValue(boxOpaque(NSMachPort.Options.deallocateReceiveRight, typeName: "NSMachPort.Options")),
+    "init NSMachPort.Options(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSMachPort.Options(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSMachPort.Options(rawValue: try toUInt(args[0])), typeName: "NSMachPort.Options")
+    },
         "init NSMachPort.Options(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSMachPort.Options(arrayLiteral:): expected array literal")

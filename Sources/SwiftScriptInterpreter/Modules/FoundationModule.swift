@@ -33,6 +33,155 @@ public struct FoundationModule: BuiltinModule {
         // entries whose host-process answers would leak the embedder's
         // layout into a virtualised shell.
         registerShellVirtualizationOverrides(into: i)
+        // Also after registerGenerated: hand-written dual-type
+        // dispatchers that must outrank narrower generated overloads
+        // sharing the same labels.
+        i.bridges["func String.components()"] = Self.stringComponentsBridge
+        i.bridges["func String.components(separatedBy:)"] = Self.stringComponentsBridge
+        registerStringSearchIdioms(into: i)
+        registerProcessStandardStreams(into: i)
+    }
+
+    // MARK: - Process stdio wiring
+
+    /// `process.standardOutput = pipe` — the three stdio slots are
+    /// `Any`-typed in Foundation (accepting Pipe or FileHandle), so
+    /// the generator can't emit their setters. Same sandbox posture
+    /// as every generated Process entry: denied outright when a
+    /// sandbox is bound.
+    private func registerProcessStandardStreams(into i: Interpreter) {
+        #if !os(iOS) && !os(tvOS) && !os(watchOS) && !os(visionOS)
+        for slot in ["standardInput", "standardOutput", "standardError"] {
+            i.bridges["set var Process.\(slot): Any"] = .setter { receiver, newValue in
+                do {
+                    try denyProcessIfSandboxed()
+                } catch {
+                    throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+                }
+                let process: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
+                guard case .opaque(_, let any) = unwrapForSetter(newValue),
+                      any is Pipe || any is FileHandle
+                else {
+                    throw RuntimeError.invalid("Process.\(slot): expected a Pipe or FileHandle")
+                }
+                switch slot {
+                case "standardInput": process.standardInput = any
+                case "standardOutput": process.standardOutput = any
+                default: process.standardError = any
+                }
+            }
+            i.bridges["var Process.\(slot): Any"] = .computed { receiver in
+                do {
+                    try denyProcessIfSandboxed()
+                } catch {
+                    throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+                }
+                let process: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
+                let stored: Any? = {
+                    switch slot {
+                    case "standardInput": return process.standardInput
+                    case "standardOutput": return process.standardOutput
+                    default: return process.standardError
+                    }
+                }()
+                guard let stored else { return .optional(nil) }
+                if let pipe = stored as? Pipe {
+                    return boxOpaque(pipe, typeName: "Pipe")
+                }
+                if let handle = stored as? FileHandle {
+                    return boxOpaque(handle, typeName: "FileHandle")
+                }
+                return .optional(nil)
+            }
+        }
+        #endif
+    }
+
+    // MARK: - String search / regex idioms
+
+    /// `s.range(of: pattern, options: .regularExpression)` +
+    /// `String(s[range])` + `s.replacingOccurrences(of:with:options:)`
+    /// — the stock-Swift regex idiom (issue #7's #2-ranked gap;
+    /// regex literals and NSRegularExpression's NSRange surface stay
+    /// out of scope). The returned `Range<String.Index>` rides as an
+    /// opaque and `doSubscript` slices with it.
+    private func registerStringSearchIdioms(into i: Interpreter) {
+        // One arity-dispatching body under all three keys — the bare
+        // key doubles as the implicit-member context gate
+        // (`extensionMethod` consults it before `.regularExpression`
+        // resolves against NSString.CompareOptions).
+        let rangeBridge = Bridge.method { recv, args in
+            guard case .string(let s) = recv else {
+                throw RuntimeError.invalid("String.range(of:): receiver must be String")
+            }
+            guard case .string(let pattern) = args.first else {
+                throw RuntimeError.invalid("String.range(of:): pattern must be String")
+            }
+            var options: NSString.CompareOptions = []
+            switch args.count {
+            case 1:
+                break
+            case 2:
+                guard case .opaque(_, let any) = args[1],
+                      let opts = any as? NSString.CompareOptions
+                else {
+                    throw RuntimeError.invalid("String.range(of:options:): bad options")
+                }
+                options = opts
+            default:
+                throw RuntimeError.invalid("String.range: expected 1-2 arguments, got \(args.count)")
+            }
+            guard let range = s.range(of: pattern, options: options) else {
+                return .optional(nil)
+            }
+            return .optional(.opaque(typeName: "Range<String.Index>", value: range))
+        }
+        i.bridges["func String.range()"] = rangeBridge
+        i.bridges["func String.range(of:)"] = rangeBridge
+        i.bridges["func String.range(of:options:)"] = rangeBridge
+        i.bridges["func String.replacingOccurrences(of:with:options:)"] = .method { recv, args in
+            guard case .string(let s) = recv,
+                  args.count == 3,
+                  case .string(let target) = args[0],
+                  case .string(let replacement) = args[1],
+                  case .opaque(_, let any) = args[2],
+                  let options = any as? NSString.CompareOptions
+            else {
+                throw RuntimeError.invalid(
+                    "String.replacingOccurrences(of:with:options:): expected (String, String, CompareOptions)")
+            }
+            return .string(s.replacingOccurrences(
+                of: target, with: replacement, options: options))
+        }
+    }
+
+    /// `components(separatedBy:)` takes either a `String` or a
+    /// `CharacterSet` in stock Swift — same label, two types. The
+    /// generated entry only unboxes CharacterSet, so this runtime-
+    /// typed dispatcher owns both the labeled key and the bare
+    /// alias (re-registered after `registerGenerated`).
+    nonisolated(unsafe) static let stringComponentsBridge: Bridge = .method { recv, args in
+        guard case .string(let s) = recv else {
+            throw RuntimeError.invalid("String.components: receiver must be String")
+        }
+        guard args.count == 1 else {
+            throw RuntimeError.invalid(
+                "String.components(separatedBy:): expected 1 argument, got \(args.count)"
+            )
+        }
+        switch args[0] {
+        case .string(let sep):
+            return .array(s.components(separatedBy: sep).map(Value.string))
+        case .opaque(typeName: "CharacterSet", let any):
+            guard let cs = any as? CharacterSet else {
+                throw RuntimeError.invalid("String.components: malformed CharacterSet")
+            }
+            return .array(s.components(separatedBy: cs).map(Value.string))
+        default:
+            throw RuntimeError.invalid(
+                "String.components(separatedBy:): argument must be String or CharacterSet, got \(typeName(args[0]))"
+            )
+        }
     }
 
     // MARK: - Shell-virtualization overrides
@@ -316,31 +465,9 @@ public struct FoundationModule: BuiltinModule {
             }
             return .string(s.padding(toLength: n, withPad: p, startingAt: i))
         }
-        i.bridges["func String.components()"] = .method { recv, args in
-            guard case .string(let s) = recv else {
-                throw RuntimeError.invalid("String.components: receiver must be String")
-            }
-            guard args.count == 1 else {
-                throw RuntimeError.invalid(
-                    "String.components(separatedBy:): expected 1 argument, got \(args.count)"
-                )
-            }
-            // Real Swift has two overloads — one taking `String`, one taking
-            // `CharacterSet`. Dispatch on the runtime value type.
-            switch args[0] {
-            case .string(let sep):
-                return .array(s.components(separatedBy: sep).map(Value.string))
-            case .opaque(typeName: "CharacterSet", let any):
-                guard let cs = any as? CharacterSet else {
-                    throw RuntimeError.invalid("String.components: malformed CharacterSet")
-                }
-                return .array(s.components(separatedBy: cs).map(Value.string))
-            default:
-                throw RuntimeError.invalid(
-                    "String.components(separatedBy:): argument must be String or CharacterSet, got \(typeName(args[0]))"
-                )
-            }
-        }
+        // Shared with the post-`registerGenerated` re-registration —
+        // see `stringComponentsBridge`.
+        i.bridges["func String.components()"] = Self.stringComponentsBridge
     }
 }
 

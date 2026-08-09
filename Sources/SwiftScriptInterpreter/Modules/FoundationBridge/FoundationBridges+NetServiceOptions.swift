@@ -21,6 +21,12 @@ extension FoundationBridges {
     },
     "static let NetService.Options.noAutoRename": .staticValue(boxOpaque(NetService.Options.noAutoRename, typeName: "NetService.Options")),
     "static let NetService.Options.listenForConnections": .staticValue(boxOpaque(NetService.Options.listenForConnections, typeName: "NetService.Options")),
+    "init NetService.Options(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NetService.Options(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NetService.Options(rawValue: try toUInt(args[0])), typeName: "NetService.Options")
+    },
         "init NetService.Options(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NetService.Options(arrayLiteral:): expected array literal")

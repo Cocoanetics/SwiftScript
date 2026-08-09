@@ -13,17 +13,44 @@ extension FoundationBridges {
         let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
         return boxOpaque(recv.allowedUnits, typeName: "ByteCountFormatStyle.Units")
     },
+        "set var ByteCountFormatStyle.Attributed.allowedUnits: ByteCountFormatStyle.Units": .structSetter { receiver, newValue in
+            var recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
+            recv.allowedUnits = try unboxOpaque(unwrapForSetter(newValue), as: ByteCountFormatStyle.Units.self, typeName: "ByteCountFormatStyle.Units")
+            return boxOpaque(recv, typeName: "ByteCountFormatStyle.Attributed")
+        },
     "var ByteCountFormatStyle.Attributed.spellsOutZero: Bool": .computed { receiver in
         let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
         return .bool(recv.spellsOutZero)
     },
+        "set var ByteCountFormatStyle.Attributed.spellsOutZero: Bool": .structSetter { receiver, newValue in
+            var recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
+            recv.spellsOutZero = try unboxBool(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "ByteCountFormatStyle.Attributed")
+        },
     "var ByteCountFormatStyle.Attributed.includesActualByteCount: Bool": .computed { receiver in
         let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
         return .bool(recv.includesActualByteCount)
     },
+        "set var ByteCountFormatStyle.Attributed.includesActualByteCount: Bool": .structSetter { receiver, newValue in
+            var recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
+            recv.includesActualByteCount = try unboxBool(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "ByteCountFormatStyle.Attributed")
+        },
     "var ByteCountFormatStyle.Attributed.locale: Locale": .computed { receiver in
         let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
         return boxOpaque(recv.locale, typeName: "Locale")
+    },
+        "set var ByteCountFormatStyle.Attributed.locale: Locale": .structSetter { receiver, newValue in
+            var recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
+            recv.locale = try unboxOpaque(unwrapForSetter(newValue), as: Locale.self, typeName: "Locale")
+            return boxOpaque(recv, typeName: "ByteCountFormatStyle.Attributed")
+        },
+    "func ByteCountFormatStyle.Attributed.locale(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("ByteCountFormatStyle.Attributed.locale: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
+        return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "ByteCountFormatStyle.Attributed")
     },
     "func ByteCountFormatStyle.Attributed.locale()": .method { receiver, args in
         guard args.count == 1 else {
@@ -31,6 +58,20 @@ extension FoundationBridges {
         }
         let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
         return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "ByteCountFormatStyle.Attributed")
+    },
+    "func ByteCountFormatStyle.Attributed.format(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("ByteCountFormatStyle.Attributed.format: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
+        return boxOpaque(recv.format(try toInt64(args[0])), typeName: "AttributedString")
+    },
+    "func ByteCountFormatStyle.Attributed.format()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("ByteCountFormatStyle.Attributed.format: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: ByteCountFormatStyle.Attributed = try unboxOpaque(receiver, as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
+        return boxOpaque(recv.format(try toInt64(args[0])), typeName: "AttributedString")
     },
         ]
         #if canImport(Darwin)

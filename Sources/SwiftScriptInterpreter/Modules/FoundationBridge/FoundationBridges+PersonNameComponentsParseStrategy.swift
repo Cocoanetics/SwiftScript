@@ -20,6 +20,17 @@ extension FoundationBridges {
         let recv: PersonNameComponents.ParseStrategy = try unboxOpaque(receiver, as: PersonNameComponents.ParseStrategy.self, typeName: "PersonNameComponents.ParseStrategy")
         return .int(recv.hashValue)
     },
+    "func PersonNameComponents.ParseStrategy.parse(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("PersonNameComponents.ParseStrategy.parse: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: PersonNameComponents.ParseStrategy = try unboxOpaque(receiver, as: PersonNameComponents.ParseStrategy.self, typeName: "PersonNameComponents.ParseStrategy")
+        do {
+            return boxOpaque(try recv.parse(try unboxString(args[0])), typeName: "PersonNameComponents")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
     "func PersonNameComponents.ParseStrategy.parse()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("PersonNameComponents.ParseStrategy.parse: expected 1 argument(s), got \(args.count)")

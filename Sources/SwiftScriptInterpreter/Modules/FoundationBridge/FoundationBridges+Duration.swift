@@ -43,6 +43,12 @@ extension FoundationBridges {
         }
         return boxOpaque(Duration.microseconds(try toDouble(args[0])), typeName: "Duration")
     },
+    "init Duration(secondsComponent:attosecondsComponent:)": .`init` { args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("init Duration(secondsComponent:attosecondsComponent:): expected 2 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Duration(secondsComponent: try toInt64(args[0]), attosecondsComponent: try toInt64(args[1])), typeName: "Duration")
+    },
     ]
 }
 #else

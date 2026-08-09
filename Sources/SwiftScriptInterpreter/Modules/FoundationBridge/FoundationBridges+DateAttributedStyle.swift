@@ -9,12 +9,26 @@ import FoundationNetworking
 extension FoundationBridges {
     nonisolated(unsafe) static let dateAttributedStyle: [String: Bridge] = {
         var d: [String: Bridge] = [
+    "func Date.AttributedStyle.format(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.AttributedStyle.format: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date.AttributedStyle = try unboxOpaque(receiver, as: Date.AttributedStyle.self, typeName: "Date.AttributedStyle")
+        return boxOpaque(recv.format(try unboxOpaque(args[0], as: Date.self, typeName: "Date")), typeName: "AttributedString")
+    },
     "func Date.AttributedStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.AttributedStyle.format: expected 1 argument(s), got \(args.count)")
         }
         let recv: Date.AttributedStyle = try unboxOpaque(receiver, as: Date.AttributedStyle.self, typeName: "Date.AttributedStyle")
         return boxOpaque(recv.format(try unboxOpaque(args[0], as: Date.self, typeName: "Date")), typeName: "AttributedString")
+    },
+    "func Date.AttributedStyle.locale(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.AttributedStyle.locale: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date.AttributedStyle = try unboxOpaque(receiver, as: Date.AttributedStyle.self, typeName: "Date.AttributedStyle")
+        return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Date.AttributedStyle")
     },
     "func Date.AttributedStyle.locale()": .method { receiver, args in
         guard args.count == 1 else {

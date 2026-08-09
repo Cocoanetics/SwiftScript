@@ -14,12 +14,26 @@ extension StdlibBridges {
         let recv: ContinuousClock.Instant = try unboxOpaque(receiver, as: ContinuousClock.Instant.self, typeName: "ContinuousClock.Instant")
         return .int(recv.hashValue)
     },
+    "func ContinuousClock.Instant.advanced(by:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("ContinuousClock.Instant.advanced: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: ContinuousClock.Instant = try unboxOpaque(receiver, as: ContinuousClock.Instant.self, typeName: "ContinuousClock.Instant")
+        return boxOpaque(recv.advanced(by: try unboxOpaque(args[0], as: Duration.self, typeName: "Duration")), typeName: "ContinuousClock.Instant")
+    },
     "func ContinuousClock.Instant.advanced()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("ContinuousClock.Instant.advanced: expected 1 argument(s), got \(args.count)")
         }
         let recv: ContinuousClock.Instant = try unboxOpaque(receiver, as: ContinuousClock.Instant.self, typeName: "ContinuousClock.Instant")
         return boxOpaque(recv.advanced(by: try unboxOpaque(args[0], as: Duration.self, typeName: "Duration")), typeName: "ContinuousClock.Instant")
+    },
+    "func ContinuousClock.Instant.duration(to:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("ContinuousClock.Instant.duration: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: ContinuousClock.Instant = try unboxOpaque(receiver, as: ContinuousClock.Instant.self, typeName: "ContinuousClock.Instant")
+        return boxOpaque(recv.duration(to: try unboxOpaque(args[0], as: ContinuousClock.Instant.self, typeName: "ContinuousClock.Instant")), typeName: "Duration")
     },
     "func ContinuousClock.Instant.duration()": .method { receiver, args in
         guard args.count == 1 else {

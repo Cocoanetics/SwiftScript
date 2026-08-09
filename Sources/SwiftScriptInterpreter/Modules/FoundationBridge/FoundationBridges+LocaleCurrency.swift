@@ -13,11 +13,17 @@ extension FoundationBridges {
         let recv: Locale.Currency = try unboxOpaque(receiver, as: Locale.Currency.self, typeName: "Locale.Currency")
         return .string(recv.identifier)
     },
+        "set var Locale.Currency.identifier: String": .structSetter { receiver, newValue in
+            var recv: Locale.Currency = try unboxOpaque(receiver, as: Locale.Currency.self, typeName: "Locale.Currency")
+            recv.identifier = try unboxString(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "Locale.Currency")
+        },
     "var Locale.Currency.isISOCurrency: Bool": .computed { receiver in
         let recv: Locale.Currency = try unboxOpaque(receiver, as: Locale.Currency.self, typeName: "Locale.Currency")
         return .bool(recv.isISOCurrency)
     },
     "static let Locale.Currency.unknown": .staticValue(boxOpaque(Locale.Currency.unknown, typeName: "Locale.Currency")),
+    "static let Locale.Currency.isoCurrencies": .staticValue(.array(Locale.Currency.isoCurrencies.map { boxOpaque($0, typeName: "Locale.Currency") })),
     "init Locale.Currency(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Currency(stringLiteral:): expected 1 argument(s), got \(args.count)")

@@ -48,6 +48,13 @@ extension FoundationBridges {
         return .string(recv.description)
     },
     "func Date.ISO8601Format()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("Date.ISO8601Format: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
+        return .string(recv.ISO8601Format())
+    },
+    "func Date.ISO8601Format(_:)": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.ISO8601Format: expected 1 argument(s), got \(args.count)")
         }
@@ -72,12 +79,26 @@ extension FoundationBridges {
         }
         return boxOpaque(Date(timeIntervalSinceReferenceDate: try toDouble(args[0])), typeName: "Date")
     },
+    "func Date.timeIntervalSince(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.timeIntervalSince: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
+        return .double(recv.timeIntervalSince(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
+    },
     "func Date.timeIntervalSince()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.timeIntervalSince: expected 1 argument(s), got \(args.count)")
         }
         let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
         return .double(recv.timeIntervalSince(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
+    },
+    "func Date.addingTimeInterval(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.addingTimeInterval: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
+        return boxOpaque(recv.addingTimeInterval(try toDouble(args[0])), typeName: "Date")
     },
     "func Date.addingTimeInterval()": .method { receiver, args in
         guard args.count == 1 else {
@@ -86,6 +107,13 @@ extension FoundationBridges {
         let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
         return boxOpaque(recv.addingTimeInterval(try toDouble(args[0])), typeName: "Date")
     },
+    "func Date.distance(to:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.distance: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
+        return .double(recv.distance(to: try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
+    },
     "func Date.distance()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.distance: expected 1 argument(s), got \(args.count)")
@@ -93,12 +121,33 @@ extension FoundationBridges {
         let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
         return .double(recv.distance(to: try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
     },
+    "func Date.advanced(by:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.advanced: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
+        return boxOpaque(recv.advanced(by: try toDouble(args[0])), typeName: "Date")
+    },
     "func Date.advanced()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.advanced: expected 1 argument(s), got \(args.count)")
         }
         let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
         return boxOpaque(recv.advanced(by: try toDouble(args[0])), typeName: "Date")
+    },
+    "func Date.description(with:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.description: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
+        return .string(recv.description(with: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }))
+    },
+    "func Date.description()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.description: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
+        return .string(recv.description(with: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }))
     },
     "init Date(timeInterval:since:)": .`init` { args in
         guard args.count == 2 else {
@@ -111,6 +160,22 @@ extension FoundationBridges {
     d["var Date.hashValue: Int"] = .computed { receiver in
         let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
         return .int(recv.hashValue)
+    }
+    d["mutating func Date.addTimeInterval(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.addTimeInterval: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
+        recv.addTimeInterval(try toDouble(args[0]))
+        return (.void, boxOpaque(recv, typeName: "Date"))
+    }
+    d["mutating func Date.addTimeInterval()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.addTimeInterval: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
+        recv.addTimeInterval(try toDouble(args[0]))
+        return (.void, boxOpaque(recv, typeName: "Date"))
     }
         #endif
         return d

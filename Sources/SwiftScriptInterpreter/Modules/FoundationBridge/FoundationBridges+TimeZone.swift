@@ -9,6 +9,7 @@ import FoundationNetworking
 extension FoundationBridges {
     nonisolated(unsafe) static let timeZone: [String: Bridge] = {
         var d: [String: Bridge] = [
+    "static let TimeZone.knownTimeZoneIdentifiers": .staticValue(.array(TimeZone.knownTimeZoneIdentifiers.map { .string($0) })),
     "static let TimeZone.timeZoneDataVersion": .staticValue(.string(TimeZone.timeZoneDataVersion)),
     "static let TimeZone.current": .staticValue(boxOpaque(TimeZone.current, typeName: "TimeZone")),
     "static let TimeZone.autoupdatingCurrent": .staticValue(boxOpaque(TimeZone.autoupdatingCurrent, typeName: "TimeZone")),
@@ -16,6 +17,7 @@ extension FoundationBridges {
         let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
         return .string(recv.identifier)
     },
+    "static let TimeZone.abbreviationDictionary": .staticValue(.dict(TimeZone.abbreviationDictionary.map { DictEntry(key: .string($0.key), value: .string($0.value)) })),
     "var TimeZone.nextDaylightSavingTimeTransition: Date?": .computed { receiver in
         let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
         if let _v = recv.nextDaylightSavingTimeTransition {
@@ -60,6 +62,13 @@ extension FoundationBridges {
         return .optional(nil)
     },
     "func TimeZone.secondsFromGMT()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("TimeZone.secondsFromGMT: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
+        return .int(recv.secondsFromGMT())
+    },
+    "func TimeZone.secondsFromGMT(for:)": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("TimeZone.secondsFromGMT: expected 1 argument(s), got \(args.count)")
         }
@@ -67,6 +76,16 @@ extension FoundationBridges {
         return .int(recv.secondsFromGMT(for: try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
     },
     "func TimeZone.abbreviation()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("TimeZone.abbreviation: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
+        if let _v = recv.abbreviation() {
+            return .optional(.string(_v))
+        }
+        return .optional(nil)
+    },
+    "func TimeZone.abbreviation(for:)": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("TimeZone.abbreviation: expected 1 argument(s), got \(args.count)")
         }
@@ -77,6 +96,13 @@ extension FoundationBridges {
         return .optional(nil)
     },
     "func TimeZone.isDaylightSavingTime()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("TimeZone.isDaylightSavingTime: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
+        return .bool(recv.isDaylightSavingTime())
+    },
+    "func TimeZone.isDaylightSavingTime(for:)": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("TimeZone.isDaylightSavingTime: expected 1 argument(s), got \(args.count)")
         }
@@ -84,11 +110,28 @@ extension FoundationBridges {
         return .bool(recv.isDaylightSavingTime(for: try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
     },
     "func TimeZone.daylightSavingTimeOffset()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("TimeZone.daylightSavingTimeOffset: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
+        return .double(recv.daylightSavingTimeOffset())
+    },
+    "func TimeZone.daylightSavingTimeOffset(for:)": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("TimeZone.daylightSavingTimeOffset: expected 1 argument(s), got \(args.count)")
         }
         let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
         return .double(recv.daylightSavingTimeOffset(for: try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
+    },
+    "func TimeZone.nextDaylightSavingTimeTransition(after:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("TimeZone.nextDaylightSavingTimeTransition: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: TimeZone = try unboxOpaque(receiver, as: TimeZone.self, typeName: "TimeZone")
+        if let _v = recv.nextDaylightSavingTimeTransition(after: try unboxOpaque(args[0], as: Date.self, typeName: "Date")) {
+            return .optional(boxOpaque(_v, typeName: "Date"))
+        }
+        return .optional(nil)
     },
     "func TimeZone.nextDaylightSavingTimeTransition()": .method { receiver, args in
         guard args.count == 1 else {

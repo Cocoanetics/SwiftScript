@@ -15,9 +15,19 @@ extension FoundationBridges {
         }
         return boxOpaque(JSONEncoder.OutputFormatting(), typeName: "JSONEncoder.OutputFormatting")
     },
+    "var JSONEncoder.OutputFormatting.rawValue: UInt": .computed { receiver in
+        let recv: JSONEncoder.OutputFormatting = try unboxOpaque(receiver, as: JSONEncoder.OutputFormatting.self, typeName: "JSONEncoder.OutputFormatting")
+        return try boxUnsignedAsInt(recv.rawValue)
+    },
     "static let JSONEncoder.OutputFormatting.prettyPrinted": .staticValue(boxOpaque(JSONEncoder.OutputFormatting.prettyPrinted, typeName: "JSONEncoder.OutputFormatting")),
     "static let JSONEncoder.OutputFormatting.sortedKeys": .staticValue(boxOpaque(JSONEncoder.OutputFormatting.sortedKeys, typeName: "JSONEncoder.OutputFormatting")),
     "static let JSONEncoder.OutputFormatting.withoutEscapingSlashes": .staticValue(boxOpaque(JSONEncoder.OutputFormatting.withoutEscapingSlashes, typeName: "JSONEncoder.OutputFormatting")),
+    "init JSONEncoder.OutputFormatting(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init JSONEncoder.OutputFormatting(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(JSONEncoder.OutputFormatting(rawValue: try toUInt(args[0])), typeName: "JSONEncoder.OutputFormatting")
+    },
         "init JSONEncoder.OutputFormatting(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("JSONEncoder.OutputFormatting(arrayLiteral:): expected array literal")

@@ -20,6 +20,12 @@ extension FoundationBridges {
         return .bool(recv.isEmpty)
     },
     "static let NSXPCConnection.Options.privileged": .staticValue(boxOpaque(NSXPCConnection.Options.privileged, typeName: "NSXPCConnection.Options")),
+    "init NSXPCConnection.Options(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSXPCConnection.Options(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSXPCConnection.Options(rawValue: try toUInt(args[0])), typeName: "NSXPCConnection.Options")
+    },
         "init NSXPCConnection.Options(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSXPCConnection.Options(arrayLiteral:): expected array literal")

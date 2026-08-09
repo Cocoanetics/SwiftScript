@@ -34,6 +34,13 @@ extension FoundationBridges {
         let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
         return .string(recv.debugDescription)
     },
+    "func IndexPath.appending(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexPath.appending: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
+        return boxOpaque(recv.appending(try unboxOpaque(args[0], as: IndexPath.self, typeName: "IndexPath")), typeName: "IndexPath")
+    },
     "func IndexPath.appending()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("IndexPath.appending: expected 1 argument(s), got \(args.count)")
@@ -43,6 +50,30 @@ extension FoundationBridges {
     },
         ]
         #if canImport(Darwin)
+    d["mutating func IndexPath.shuffle()"] = .mutatingMethod { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("IndexPath.shuffle: expected 0 argument(s), got \(args.count)")
+        }
+        var recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
+        recv.shuffle()
+        return (.void, boxOpaque(recv, typeName: "IndexPath"))
+    }
+    d["mutating func IndexPath.sort()"] = .mutatingMethod { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("IndexPath.sort: expected 0 argument(s), got \(args.count)")
+        }
+        var recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
+        recv.sort()
+        return (.void, boxOpaque(recv, typeName: "IndexPath"))
+    }
+    d["mutating func IndexPath.reverse()"] = .mutatingMethod { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("IndexPath.reverse: expected 0 argument(s), got \(args.count)")
+        }
+        var recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
+        recv.reverse()
+        return (.void, boxOpaque(recv, typeName: "IndexPath"))
+    }
     d["var IndexPath.isEmpty: Bool"] = .computed { receiver in
         let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
         return .bool(recv.isEmpty)
@@ -54,6 +85,54 @@ extension FoundationBridges {
     d["var IndexPath.hashValue: Int"] = .computed { receiver in
         let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
         return .int(recv.hashValue)
+    }
+    d["mutating func IndexPath.removeLast(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexPath.removeLast: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
+        recv.removeLast(try unboxInt(args[0]))
+        return (.void, boxOpaque(recv, typeName: "IndexPath"))
+    }
+    d["mutating func IndexPath.removeLast()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexPath.removeLast: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
+        recv.removeLast(try unboxInt(args[0]))
+        return (.void, boxOpaque(recv, typeName: "IndexPath"))
+    }
+    d["mutating func IndexPath.removeFirst(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexPath.removeFirst: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
+        recv.removeFirst(try unboxInt(args[0]))
+        return (.void, boxOpaque(recv, typeName: "IndexPath"))
+    }
+    d["mutating func IndexPath.removeFirst()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexPath.removeFirst: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
+        recv.removeFirst(try unboxInt(args[0]))
+        return (.void, boxOpaque(recv, typeName: "IndexPath"))
+    }
+    d["mutating func IndexPath.append(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexPath.append: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
+        recv.append(try unboxOpaque(args[0], as: IndexPath.self, typeName: "IndexPath"))
+        return (.void, boxOpaque(recv, typeName: "IndexPath"))
+    }
+    d["mutating func IndexPath.append()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexPath.append: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
+        recv.append(try unboxOpaque(args[0], as: IndexPath.self, typeName: "IndexPath"))
+        return (.void, boxOpaque(recv, typeName: "IndexPath"))
     }
         #endif
         return d

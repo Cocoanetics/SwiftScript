@@ -19,7 +19,17 @@ extension FoundationBridges {
         let recv: AttributedString.FormattingOptions = try unboxOpaque(receiver, as: AttributedString.FormattingOptions.self, typeName: "AttributedString.FormattingOptions")
         return .bool(recv.isEmpty)
     },
+    "var AttributedString.FormattingOptions.rawValue: UInt": .computed { receiver in
+        let recv: AttributedString.FormattingOptions = try unboxOpaque(receiver, as: AttributedString.FormattingOptions.self, typeName: "AttributedString.FormattingOptions")
+        return try boxUnsignedAsInt(recv.rawValue)
+    },
     "static let AttributedString.FormattingOptions.applyReplacementIndexAttribute": .staticValue(boxOpaque(AttributedString.FormattingOptions.applyReplacementIndexAttribute, typeName: "AttributedString.FormattingOptions")),
+    "init AttributedString.FormattingOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init AttributedString.FormattingOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(AttributedString.FormattingOptions(rawValue: try toUInt(args[0])), typeName: "AttributedString.FormattingOptions")
+    },
         "init AttributedString.FormattingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("AttributedString.FormattingOptions(arrayLiteral:): expected array literal")

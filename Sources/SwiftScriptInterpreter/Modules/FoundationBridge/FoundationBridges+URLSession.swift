@@ -16,7 +16,79 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLSession.sessionDescription: String?": .setter { receiver, newValue in
+            let recv: URLSession = try unboxOpaque(receiver, as: URLSession.self, typeName: "URLSession")
+            recv.sessionDescription = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+        },
+    "func URLSession.finishTasksAndInvalidate()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("URLSession.finishTasksAndInvalidate: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: URLSession = try unboxOpaque(receiver, as: URLSession.self, typeName: "URLSession")
+        recv.finishTasksAndInvalidate()
+            return .void
+    },
+    "func URLSession.invalidateAndCancel()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("URLSession.invalidateAndCancel: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: URLSession = try unboxOpaque(receiver, as: URLSession.self, typeName: "URLSession")
+        recv.invalidateAndCancel()
+            return .void
+    },
+    "func URLSession.reset()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("URLSession.reset: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: URLSession = try unboxOpaque(receiver, as: URLSession.self, typeName: "URLSession")
+        await recv.reset()
+            return .void
+    },
+    "func URLSession.flush()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("URLSession.flush: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: URLSession = try unboxOpaque(receiver, as: URLSession.self, typeName: "URLSession")
+        await recv.flush()
+            return .void
+    },
+    "func URLSession.data(for:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("URLSession.data: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: URLSession = try unboxOpaque(receiver, as: URLSession.self, typeName: "URLSession")
+        let arg0 = try unboxOpaque(args[0], as: URLRequest.self, typeName: "URLRequest")
+        do {
+            try await authorizeURL(arg0.url ?? URL(fileURLWithPath: ""), method: arg0.httpMethod ?? "GET")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
+            let _t = try await recv.data(for: arg0)
+        return .tuple([boxOpaque(_t.0, typeName: "Data"), boxOpaque(_t.1, typeName: "URLResponse")])
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
     "func URLSession.data()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("URLSession.data: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: URLSession = try unboxOpaque(receiver, as: URLSession.self, typeName: "URLSession")
+        let arg0 = try unboxOpaque(args[0], as: URLRequest.self, typeName: "URLRequest")
+        do {
+            try await authorizeURL(arg0.url ?? URL(fileURLWithPath: ""), method: arg0.httpMethod ?? "GET")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
+            let _t = try await recv.data(for: arg0)
+        return .tuple([boxOpaque(_t.0, typeName: "Data"), boxOpaque(_t.1, typeName: "URLResponse")])
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
+    "func URLSession.data(from:)": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("URLSession.data: expected 1 argument(s), got \(args.count)")
         }
@@ -29,6 +101,96 @@ extension FoundationBridges {
         }
         do {
             let _t = try await recv.data(from: arg0)
+        return .tuple([boxOpaque(_t.0, typeName: "Data"), boxOpaque(_t.1, typeName: "URLResponse")])
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
+    "func URLSession.download(for:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("URLSession.download: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: URLSession = try unboxOpaque(receiver, as: URLSession.self, typeName: "URLSession")
+        let arg0 = try unboxOpaque(args[0], as: URLRequest.self, typeName: "URLRequest")
+        do {
+            try await authorizeURL(arg0.url ?? URL(fileURLWithPath: ""), method: arg0.httpMethod ?? "GET")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
+            let _t = try await recv.download(for: arg0)
+        return .tuple([boxOpaque(_t.0, typeName: "URL"), boxOpaque(_t.1, typeName: "URLResponse")])
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
+    "func URLSession.download()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("URLSession.download: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: URLSession = try unboxOpaque(receiver, as: URLSession.self, typeName: "URLSession")
+        let arg0 = try unboxOpaque(args[0], as: URLRequest.self, typeName: "URLRequest")
+        do {
+            try await authorizeURL(arg0.url ?? URL(fileURLWithPath: ""), method: arg0.httpMethod ?? "GET")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
+            let _t = try await recv.download(for: arg0)
+        return .tuple([boxOpaque(_t.0, typeName: "URL"), boxOpaque(_t.1, typeName: "URLResponse")])
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
+    "func URLSession.download(from:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("URLSession.download: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: URLSession = try unboxOpaque(receiver, as: URLSession.self, typeName: "URLSession")
+        let arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        do {
+            try await authorizeURL(arg0)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
+            let _t = try await recv.download(from: arg0)
+        return .tuple([boxOpaque(_t.0, typeName: "URL"), boxOpaque(_t.1, typeName: "URLResponse")])
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
+    "func URLSession.download(resumeFrom:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("URLSession.download: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: URLSession = try unboxOpaque(receiver, as: URLSession.self, typeName: "URLSession")
+        do {
+            let _t = try await recv.download(resumeFrom: try unboxOpaque(args[0], as: Data.self, typeName: "Data"))
+        return .tuple([boxOpaque(_t.0, typeName: "URL"), boxOpaque(_t.1, typeName: "URLResponse")])
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
+    "func URLSession.upload(for:fromFile:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("URLSession.upload: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: URLSession = try unboxOpaque(receiver, as: URLSession.self, typeName: "URLSession")
+        let arg0 = try unboxOpaque(args[0], as: URLRequest.self, typeName: "URLRequest")
+        do {
+            try await authorizeURL(arg0.url ?? URL(fileURLWithPath: ""), method: arg0.httpMethod ?? "GET")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        var arg1 = try unboxOpaque(args[1], as: URL.self, typeName: "URL")
+        do {
+            arg1 = try await authorizePath(arg1, for: .read)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
+            let _t = try await recv.upload(for: arg0, fromFile: arg1)
         return .tuple([boxOpaque(_t.0, typeName: "Data"), boxOpaque(_t.1, typeName: "URLResponse")])
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
@@ -53,6 +215,24 @@ extension FoundationBridges {
         }
         do {
             let _t = try await recv.upload(for: arg0, fromFile: arg1)
+        return .tuple([boxOpaque(_t.0, typeName: "Data"), boxOpaque(_t.1, typeName: "URLResponse")])
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
+    "func URLSession.upload(for:from:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("URLSession.upload: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: URLSession = try unboxOpaque(receiver, as: URLSession.self, typeName: "URLSession")
+        let arg0 = try unboxOpaque(args[0], as: URLRequest.self, typeName: "URLRequest")
+        do {
+            try await authorizeURL(arg0.url ?? URL(fileURLWithPath: ""), method: arg0.httpMethod ?? "GET")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
+            let _t = try await recv.upload(for: arg0, from: try unboxOpaque(args[1], as: Data.self, typeName: "Data"))
         return .tuple([boxOpaque(_t.0, typeName: "Data"), boxOpaque(_t.1, typeName: "URLResponse")])
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))

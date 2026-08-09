@@ -13,14 +13,29 @@ extension FoundationBridges {
         let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
         return boxOpaque(recv.start, typeName: "Date")
     },
+        "set var DateInterval.start: Date": .structSetter { receiver, newValue in
+            var recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
+            recv.start = try unboxOpaque(unwrapForSetter(newValue), as: Date.self, typeName: "Date")
+            return boxOpaque(recv, typeName: "DateInterval")
+        },
     "var DateInterval.end: Date": .computed { receiver in
         let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
         return boxOpaque(recv.end, typeName: "Date")
     },
+        "set var DateInterval.end: Date": .structSetter { receiver, newValue in
+            var recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
+            recv.end = try unboxOpaque(unwrapForSetter(newValue), as: Date.self, typeName: "Date")
+            return boxOpaque(recv, typeName: "DateInterval")
+        },
     "var DateInterval.duration: Double": .computed { receiver in
         let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
         return .double(recv.duration)
     },
+        "set var DateInterval.duration: Double": .structSetter { receiver, newValue in
+            var recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
+            recv.duration = try toDouble(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "DateInterval")
+        },
     "init DateInterval()": .`init` { args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("init DateInterval(): expected 0 argument(s), got \(args.count)")
@@ -35,12 +50,29 @@ extension FoundationBridges {
         let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
         return .string(recv.debugDescription)
     },
+    "func DateInterval.intersects(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("DateInterval.intersects: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
+        return .bool(recv.intersects(try unboxOpaque(args[0], as: DateInterval.self, typeName: "DateInterval")))
+    },
     "func DateInterval.intersects()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("DateInterval.intersects: expected 1 argument(s), got \(args.count)")
         }
         let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
         return .bool(recv.intersects(try unboxOpaque(args[0], as: DateInterval.self, typeName: "DateInterval")))
+    },
+    "func DateInterval.intersection(with:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("DateInterval.intersection: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
+        if let _v = recv.intersection(with: try unboxOpaque(args[0], as: DateInterval.self, typeName: "DateInterval")) {
+            return .optional(boxOpaque(_v, typeName: "DateInterval"))
+        }
+        return .optional(nil)
     },
     "func DateInterval.intersection()": .method { receiver, args in
         guard args.count == 1 else {
@@ -51,6 +83,13 @@ extension FoundationBridges {
             return .optional(boxOpaque(_v, typeName: "DateInterval"))
         }
         return .optional(nil)
+    },
+    "func DateInterval.contains(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("DateInterval.contains: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: DateInterval = try unboxOpaque(receiver, as: DateInterval.self, typeName: "DateInterval")
+        return .bool(recv.contains(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
     },
     "func DateInterval.contains()": .method { receiver, args in
         guard args.count == 1 else {

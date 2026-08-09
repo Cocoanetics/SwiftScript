@@ -79,12 +79,40 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+    "func CharacterSet.hasMember(inPlane:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.hasMember: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        return .bool(recv.hasMember(inPlane: try toUInt8(args[0])))
+    },
+    "func CharacterSet.hasMember()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.hasMember: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        return .bool(recv.hasMember(inPlane: try toUInt8(args[0])))
+    },
+    "func CharacterSet.union(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.union: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        return boxOpaque(recv.union(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")), typeName: "CharacterSet")
+    },
     "func CharacterSet.union()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("CharacterSet.union: expected 1 argument(s), got \(args.count)")
         }
         let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
         return boxOpaque(recv.union(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")), typeName: "CharacterSet")
+    },
+    "func CharacterSet.intersection(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.intersection: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")), typeName: "CharacterSet")
     },
     "func CharacterSet.intersection()": .method { receiver, args in
         guard args.count == 1 else {
@@ -93,6 +121,13 @@ extension FoundationBridges {
         let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
         return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")), typeName: "CharacterSet")
     },
+    "func CharacterSet.subtracting(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.subtracting: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")), typeName: "CharacterSet")
+    },
     "func CharacterSet.subtracting()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("CharacterSet.subtracting: expected 1 argument(s), got \(args.count)")
@@ -100,12 +135,26 @@ extension FoundationBridges {
         let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
         return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")), typeName: "CharacterSet")
     },
+    "func CharacterSet.symmetricDifference(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.symmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")), typeName: "CharacterSet")
+    },
     "func CharacterSet.symmetricDifference()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("CharacterSet.symmetricDifference: expected 1 argument(s), got \(args.count)")
         }
         let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
         return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")), typeName: "CharacterSet")
+    },
+    "func CharacterSet.isSuperset(of:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.isSuperset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")))
     },
     "func CharacterSet.isSuperset()": .method { receiver, args in
         guard args.count == 1 else {
@@ -120,9 +169,40 @@ extension FoundationBridges {
         let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
         return .bool(recv.isEmpty)
     }
+    d["mutating func CharacterSet.invert()"] = .mutatingMethod { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("CharacterSet.invert: expected 0 argument(s), got \(args.count)")
+        }
+        var recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        recv.invert()
+        return (.void, boxOpaque(recv, typeName: "CharacterSet"))
+    }
     d["var CharacterSet.hashValue: Int"] = .computed { receiver in
         let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
         return .int(recv.hashValue)
+    }
+    d["mutating func CharacterSet.subtract(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.subtract: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        recv.subtract(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet"))
+        return (.void, boxOpaque(recv, typeName: "CharacterSet"))
+    }
+    d["mutating func CharacterSet.subtract()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.subtract: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        recv.subtract(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet"))
+        return (.void, boxOpaque(recv, typeName: "CharacterSet"))
+    }
+    d["func CharacterSet.isSubset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.isSubset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")))
     }
     d["func CharacterSet.isSubset()"] = .method { receiver, args in
         guard args.count == 1 else {
@@ -131,12 +211,26 @@ extension FoundationBridges {
         let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
         return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")))
     }
+    d["func CharacterSet.isDisjoint(with:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.isDisjoint: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")))
+    }
     d["func CharacterSet.isDisjoint()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("CharacterSet.isDisjoint: expected 1 argument(s), got \(args.count)")
         }
         let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
         return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")))
+    }
+    d["func CharacterSet.isStrictSuperset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.isStrictSuperset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")))
     }
     d["func CharacterSet.isStrictSuperset()"] = .method { receiver, args in
         guard args.count == 1 else {
@@ -145,12 +239,99 @@ extension FoundationBridges {
         let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
         return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")))
     }
+    d["func CharacterSet.isStrictSubset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.isStrictSubset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")))
+    }
     d["func CharacterSet.isStrictSubset()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("CharacterSet.isStrictSubset: expected 1 argument(s), got \(args.count)")
         }
         let recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
         return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")))
+    }
+    d["mutating func CharacterSet.insert(charactersIn:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.insert: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        recv.insert(charactersIn: try unboxString(args[0]))
+        return (.void, boxOpaque(recv, typeName: "CharacterSet"))
+    }
+    d["mutating func CharacterSet.insert()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.insert: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        recv.insert(charactersIn: try unboxString(args[0]))
+        return (.void, boxOpaque(recv, typeName: "CharacterSet"))
+    }
+    d["mutating func CharacterSet.remove(charactersIn:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.remove: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        recv.remove(charactersIn: try unboxString(args[0]))
+        return (.void, boxOpaque(recv, typeName: "CharacterSet"))
+    }
+    d["mutating func CharacterSet.remove()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.remove: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        recv.remove(charactersIn: try unboxString(args[0]))
+        return (.void, boxOpaque(recv, typeName: "CharacterSet"))
+    }
+    d["mutating func CharacterSet.formUnion(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.formUnion: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        recv.formUnion(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet"))
+        return (.void, boxOpaque(recv, typeName: "CharacterSet"))
+    }
+    d["mutating func CharacterSet.formUnion()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.formUnion: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        recv.formUnion(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet"))
+        return (.void, boxOpaque(recv, typeName: "CharacterSet"))
+    }
+    d["mutating func CharacterSet.formIntersection(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.formIntersection: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        recv.formIntersection(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet"))
+        return (.void, boxOpaque(recv, typeName: "CharacterSet"))
+    }
+    d["mutating func CharacterSet.formIntersection()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.formIntersection: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        recv.formIntersection(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet"))
+        return (.void, boxOpaque(recv, typeName: "CharacterSet"))
+    }
+    d["mutating func CharacterSet.formSymmetricDifference(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.formSymmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        recv.formSymmetricDifference(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet"))
+        return (.void, boxOpaque(recv, typeName: "CharacterSet"))
+    }
+    d["mutating func CharacterSet.formSymmetricDifference()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("CharacterSet.formSymmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: CharacterSet = try unboxOpaque(receiver, as: CharacterSet.self, typeName: "CharacterSet")
+        recv.formSymmetricDifference(try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet"))
+        return (.void, boxOpaque(recv, typeName: "CharacterSet"))
     }
         #endif
         return d

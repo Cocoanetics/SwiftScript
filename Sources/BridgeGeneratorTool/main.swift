@@ -325,7 +325,96 @@ let primitiveBridges: [String: BridgedType] = [
         unboxTemplate: "try toDouble(%@)",
         boxTemplate: ".double(%@)"
     ),
+    // Fixed-width integers and Float cross the boundary as script
+    // `.int` / `.double` with range-checked narrowing on the way in
+    // (`toInt32` throws on overflow instead of truncating). Unsigned
+    // 64-bit results wider than Int.max throw on the way out.
+    "s:s4Int8V": BridgedType(
+        swiftSpelling: "Int8",
+        unboxTemplate: "try toInt8(%@)", boxTemplate: ".int(Int(%@))"),
+    "s:s5Int16V": BridgedType(
+        swiftSpelling: "Int16",
+        unboxTemplate: "try toInt16(%@)", boxTemplate: ".int(Int(%@))"),
+    "s:s5Int32V": BridgedType(
+        swiftSpelling: "Int32",
+        unboxTemplate: "try toInt32(%@)", boxTemplate: ".int(Int(%@))"),
+    "s:s5Int64V": BridgedType(
+        swiftSpelling: "Int64",
+        unboxTemplate: "try toInt64(%@)", boxTemplate: ".int(Int(%@))"),
+    "s:s5UInt8V": BridgedType(
+        swiftSpelling: "UInt8",
+        unboxTemplate: "try toUInt8(%@)", boxTemplate: ".int(Int(%@))"),
+    "s:s6UInt16V": BridgedType(
+        swiftSpelling: "UInt16",
+        unboxTemplate: "try toUInt16(%@)", boxTemplate: ".int(Int(%@))"),
+    "s:s6UInt32V": BridgedType(
+        swiftSpelling: "UInt32",
+        unboxTemplate: "try toUInt32(%@)", boxTemplate: ".int(Int(%@))"),
+    "s:s6UInt64V": BridgedType(
+        swiftSpelling: "UInt64",
+        unboxTemplate: "try toUInt64(%@)", boxTemplate: "try boxUnsignedAsInt(%@)"),
+    "s:Su": BridgedType(
+        swiftSpelling: "UInt",
+        unboxTemplate: "try toUInt(%@)", boxTemplate: "try boxUnsignedAsInt(%@)"),
+    "s:Sf": BridgedType(
+        swiftSpelling: "Float",
+        unboxTemplate: "try toFloat(%@)", boxTemplate: ".double(Double(%@))"),
 ]
+
+// MARK: - Composite (collection / optional) bridges
+//
+// Collections and optionals compose element bridges into new
+// unbox/box templates, so `[String]`, `[String: String]`, `Set<Int>`
+// and `T?` parameters ride the same machinery as bare nominals.
+// This is the single change that unlocks the widest slice of
+// Foundation (issue #7 root cause 1).
+
+/// Element bridges whose *box* template itself throws (`UInt64` /
+/// `UInt` overflow checks) can't nest inside a collection box — the
+/// emitted `.map` would rethrow without a `try` in scope when the
+/// underlying call is non-throwing. Composite builders reject them.
+func isComposableElement(_ b: BridgedType) -> Bool {
+    !b.boxTemplate.contains("try ")
+}
+
+func arrayBridge(of element: BridgedType) -> BridgedType? {
+    guard isComposableElement(element) else { return nil }
+    return BridgedType(
+        swiftSpelling: "[\(element.swiftSpelling)]",
+        unboxTemplate: "try unboxArray(%@).map { \(render(element.unboxTemplate, "$0")) }",
+        boxTemplate: ".array(%@.map { \(render(element.boxTemplate, "$0")) })"
+    )
+}
+
+func dictBridge(key: BridgedType, value: BridgedType) -> BridgedType? {
+    guard isComposableElement(key), isComposableElement(value) else { return nil }
+    return BridgedType(
+        swiftSpelling: "[\(key.swiftSpelling): \(value.swiftSpelling)]",
+        unboxTemplate: "Dictionary(uniqueKeysWithValues: try unboxDict(%@).map { (\(render(key.unboxTemplate, "$0.key")), \(render(value.unboxTemplate, "$0.value"))) })",
+        boxTemplate: ".dict(%@.map { DictEntry(key: \(render(key.boxTemplate, "$0.key")), value: \(render(value.boxTemplate, "$0.value"))) })"
+    )
+}
+
+func setBridge(of element: BridgedType) -> BridgedType? {
+    guard isComposableElement(element) else { return nil }
+    return BridgedType(
+        swiftSpelling: "Set<\(element.swiftSpelling)>",
+        unboxTemplate: "Set(try unboxSet(%@).map { \(render(element.unboxTemplate, "$0")) })",
+        boxTemplate: ".set(%@.map { \(render(element.boxTemplate, "$0")) })"
+    )
+}
+
+/// Optional *parameter* wrapper: unboxes `.optional(x)` / bare values
+/// to `T?`. (Optional returns keep the `isOptional` flag + `if let`
+/// path in `buildReturnExpr` — this wrapper is for input slots, so
+/// its box template is never emitted.)
+func optionalParamBridge(of inner: BridgedType) -> BridgedType {
+    BridgedType(
+        swiftSpelling: "\(inner.swiftSpelling)?",
+        unboxTemplate: "try unboxOptionalValue(%@).map { \(render(inner.unboxTemplate, "$0")) }",
+        boxTemplate: ".optional(%@.map { \(render(inner.boxTemplate, "$0")) })"
+    )
+}
 
 /// Auto-discovered + hand-coded opaque overrides. The auto-discovery
 /// pass below runs after the symbol graphs load and populates this with
@@ -380,6 +469,19 @@ let bridgeableTypeAllowlist: Set<String> = [
     // every host gate; the bridge throws `ProcessSandboxDenied` when
     // a sandbox is configured.
     "Process",
+    // Date parsing/formatting — the everyday scripting idiom
+    // (`DateFormatter().dateFormat = …; .date(from:)`) is entirely
+    // value-shaped: String properties and Date?/String returns.
+    "DateFormatter",
+    "ISO8601DateFormatter",
+    // Pipe wires Process stdio for standalone pipelines; its
+    // fileHandleForReading/Writing return the already-bridged
+    // FileHandle. No path args to gate — Process itself is the
+    // sandbox-denied door. (Thread deliberately stays unbridged:
+    // `Thread.sleep` is `noasync` and every bridge closure is async
+    // — the wait primitive is `Task.sleep`, hand-bridged in
+    // ConcurrencyModule.)
+    "Pipe",
     // OptionSet-style nested types under bridged classes
     "JSONEncoder.OutputFormatting",
 ]
@@ -441,18 +543,19 @@ func extractType(
     from fragments: [SymbolGraph.Fragment],
     selfType: BridgedType? = nil
 ) -> ExtractedType? {
-    // Reject array (`[T]`), dict (`[K: V]`), set (`Set<T>`), tuple,
-    // generic, and existential types. These all show up as text
-    // fragments wrapping a single typeIdentifier — bridging them needs
-    // generator infra we don't have. The bare-nominal case has nothing
-    // before the typeIdentifier except the parameter name and `: `.
+    // Array (`[T]`), dict (`[K: V]`) and `Set<T>` spellings hand off
+    // to the collection extractor, which composes the element bridges
+    // into list/dict/set templates. Tuples, closures, existentials
+    // and other generics stay rejected. The bare-nominal case has
+    // nothing before the typeIdentifier except the parameter name
+    // and `: `.
     let textFrags = fragments.filter { $0.kind == "text" }
     let combinedText = textFrags.map(\.spelling).joined()
     if combinedText.contains("[") || combinedText.contains("<") ||
        combinedText.contains("(") || combinedText.contains("&") ||
        combinedText.contains("any ") || combinedText.contains("some ")
     {
-        return nil
+        return extractCollectionType(from: fragments, selfType: selfType)
     }
 
     // Dotted-namespace types like `String.Encoding` produce TWO
@@ -488,6 +591,116 @@ func extractType(
     return ExtractedType(bridge: bridge, isOptional: isOptional)
 }
 
+/// Parse `[T]`, `[K: V]` and `Set<T>` spellings out of a fragment
+/// list, composing element bridges via `arrayBridge`/`dictBridge`/
+/// `setBridge`. A trailing `?` yields `isOptional` (the *collection*
+/// optional). Nested collections, tuples, closures and unbridgeable
+/// elements return nil.
+func extractCollectionType(
+    from fragments: [SymbolGraph.Fragment],
+    selfType: BridgedType?
+) -> ExtractedType? {
+    // Tokenize: text fragments contribute punctuation; typeIdentifier
+    // fragments become element references. Parsing starts at the
+    // first `[` or at a `Set` identifier so parameter-name prefixes
+    // ("paths: [") don't confuse the grammar.
+    enum Token: Equatable {
+        case lbracket, rbracket, colon, lt, gt, dot, question
+        case tid(Int)   // index into `fragments`
+    }
+    var tokens: [Token] = []
+    var started = false
+    scan: for (i, f) in fragments.enumerated() {
+        if f.kind == "typeIdentifier" {
+            if !started && f.spelling == "Set" { started = true }
+            if started { tokens.append(.tid(i)) }
+            continue
+        }
+        guard f.kind == "text" else {
+            if started { return nil }
+            continue
+        }
+        for ch in f.spelling {
+            if !started {
+                if ch == "[" { started = true } else { continue }
+            }
+            switch ch {
+            case "[": tokens.append(.lbracket)
+            case "]": tokens.append(.rbracket)
+            case ":": tokens.append(.colon)
+            case "<": tokens.append(.lt)
+            case ">": tokens.append(.gt)
+            case ".": tokens.append(.dot)
+            case "?": tokens.append(.question)
+            case " ", "\t", "\n": break
+            case "{", "=":
+                // Accessor block (`{ get set }`) or default value —
+                // the type spelling is over.
+                break scan
+            default:
+                // Any other character (tuple parens, `->`, variadic
+                // dots handled via `.dot` runs below, generic angle
+                // contents…) means this isn't a plain collection.
+                return nil
+            }
+        }
+    }
+    guard started, !tokens.isEmpty else { return nil }
+
+    // Trailing `?` marks the optional collection.
+    var isOptional = false
+    if tokens.last == .question {
+        isOptional = true
+        tokens.removeLast()
+    }
+    // Any remaining `?` (optional elements) is out of scope.
+    if tokens.contains(.question) { return nil }
+
+    /// Resolve a dotted element — one or more `tid` tokens separated
+    /// by `.dot` — to the leaf identifier's bridge, mirroring
+    /// `extractType`'s use of the last (leaf) USR.
+    func parseElement(_ slice: ArraySlice<Token>) -> BridgedType? {
+        var expectTid = true
+        var leaf: Int?
+        for t in slice {
+            switch (t, expectTid) {
+            case (.tid(let i), true): leaf = i; expectTid = false
+            case (.dot, false): expectTid = true
+            default: return nil
+            }
+        }
+        guard !expectTid, let leaf else { return nil }
+        let frag = fragments[leaf]
+        if frag.spelling == "Self", let selfType { return selfType }
+        guard let usr = frag.preciseIdentifier else { return nil }
+        return bridgedTypes[usr]
+    }
+
+    // `Set<Element>`
+    if case .tid(let i)? = tokens.first, fragments[i].spelling == "Set" {
+        guard tokens.count >= 4, tokens[1] == .lt, tokens.last == .gt,
+              let element = parseElement(tokens[2..<(tokens.count - 1)]),
+              let composed = setBridge(of: element)
+        else { return nil }
+        return ExtractedType(bridge: composed, isOptional: isOptional)
+    }
+    // `[Element]` / `[Key: Value]`
+    guard tokens.first == .lbracket, tokens.last == .rbracket else { return nil }
+    let inner = tokens[1..<(tokens.count - 1)]
+    if inner.contains(.lbracket) || inner.contains(.lt) { return nil }  // no nesting
+    if let colonAt = inner.firstIndex(of: .colon) {
+        guard let key = parseElement(inner[inner.startIndex..<colonAt]),
+              let value = parseElement(inner[(colonAt + 1)...]),
+              let composed = dictBridge(key: key, value: value)
+        else { return nil }
+        return ExtractedType(bridge: composed, isOptional: isOptional)
+    }
+    guard let element = parseElement(inner),
+          let composed = arrayBridge(of: element)
+    else { return nil }
+    return ExtractedType(bridge: composed, isOptional: isOptional)
+}
+
 // MARK: - Filter + emit
 
 struct ResolvedSignature {
@@ -505,6 +718,33 @@ struct ResolvedSignature {
     /// the elements live here in declaration order. `returnType` is nil
     /// in that case — the bridge wraps the call in `.tuple([…])`.
     let returnTupleElements: [BridgedType]
+    /// Per-kept-parameter "has a default value" flags, parallel to
+    /// `parameters`. Drives `signatureVariants(_:)` — a defaulted
+    /// suffix can be omitted at the Swift call site, so each
+    /// omission gets its own label-keyed bridge entry
+    /// (`URLRequest(url:)` alongside `URLRequest(url:timeoutInterval:)`).
+    var parameterHasDefault: [Bool] = []
+}
+
+/// The signature itself plus one variant per omittable defaulted
+/// suffix, shortest first (so the bare-key alias binds the simplest
+/// call shape). Claims dedupe collisions with genuine overloads.
+func signatureVariants(_ sig: ResolvedSignature) -> [ResolvedSignature] {
+    var variants: [ResolvedSignature] = []
+    var params = sig.parameters
+    var flags = sig.parameterHasDefault
+    while let last = flags.last, last {
+        params.removeLast()
+        flags.removeLast()
+        variants.append(ResolvedSignature(
+            parameters: params,
+            returnType: sig.returnType,
+            returnIsOptional: sig.returnIsOptional,
+            returnTupleElements: sig.returnTupleElements,
+            parameterHasDefault: flags
+        ))
+    }
+    return variants.reversed() + [sig]
 }
 
 /// Try to extract a tuple return type from a Swift signature's `returns`
@@ -585,7 +825,21 @@ func argLabels(fromTitle title: String) -> [String] {
 }
 
 func resolveSignature(_ sym: SymbolGraph.Symbol) -> ResolvedSignature? {
-    guard let sig = sym.functionSignature else { return nil }
+    guard let sig = sym.functionSignature else {
+        // Some ObjC-imported zero-arg methods (`Process.waitUntilExit`)
+        // carry no functionSignature at all. When the declaration
+        // shows a bare `name()` with no return arrow, that IS the
+        // signature: no params, Void.
+        let frags = sym.declarationFragments ?? []
+        let spelling = frags.map(\.spelling).joined()
+        if sym.names.title.hasSuffix("()"), !spelling.contains("->") {
+            return ResolvedSignature(
+                parameters: [], returnType: nil,
+                returnIsOptional: false, returnTupleElements: [],
+                parameterHasDefault: [])
+        }
+        return nil
+    }
     let labels = argLabels(fromTitle: sym.names.title)
     let paramSyntaxes = sig.parameters ?? []
     guard labels.count == paramSyntaxes.count else { return nil }
@@ -609,10 +863,13 @@ func resolveSignature(_ sym: SymbolGraph.Symbol) -> ResolvedSignature? {
     // `options: ReadingOptions = []` is the only blocker.
     let defaults = parameterDefaults(in: sym, count: paramSyntaxes.count)
     var params: [(String, BridgedType)] = []
+    var paramHasDefault: [Bool] = []
     for (i, (label, p)) in zip(labels, paramSyntaxes).enumerated() {
         if let t = extractType(from: p.declarationFragments, selfType: selfBridge) {
-            if t.isOptional { return nil }  // Optional inputs not bridged.
-            params.append((label, t.bridge))
+            // Optional inputs wrap the element bridge so `.optional`
+            // boxes (and bare values) unbox to `T?` at the call.
+            params.append((label, t.isOptional ? optionalParamBridge(of: t.bridge) : t.bridge))
+            paramHasDefault.append(i < defaults.count && defaults[i])
             continue
         }
         // Unbridgeable type — only acceptable if the param has a default
@@ -630,7 +887,10 @@ func resolveSignature(_ sym: SymbolGraph.Symbol) -> ResolvedSignature? {
         // Swift returns are a single fragment list. Void shows up as no
         // typeIdentifier fragments at all (or `Void` USR).
         let typeFrags = returns.filter { $0.kind == "typeIdentifier" }
-        if !typeFrags.isEmpty {
+        if typeFrags.count == 1, typeFrags[0].spelling == "Void" {
+            // Explicit `-> Void` (ObjC-imported methods spell it as a
+            // typeIdentifier) — same as no return.
+        } else if !typeFrags.isEmpty {
             // Try a single-typed return first; if extractType rejects it
             // because of the `(` text guard (a tuple), fall back to
             // tuple-element extraction.
@@ -659,7 +919,8 @@ func resolveSignature(_ sym: SymbolGraph.Symbol) -> ResolvedSignature? {
         parameters: params,
         returnType: ret,
         returnIsOptional: retOptional,
-        returnTupleElements: retTupleElements
+        returnTupleElements: retTupleElements,
+        parameterHasDefault: paramHasDefault
     )
 }
 
@@ -1017,6 +1278,47 @@ func gates(
     return directives
 }
 
+/// Receivers (and init owners) whose path/URL args are sandbox-gated.
+/// Optional `String?`/`URL?` params slide past `gatePathish`'s
+/// spelling check, so a path-labelled optional arg on one of these
+/// receivers can't be gated — and an ungated path is a sandbox hole.
+/// Such symbols are skipped outright rather than half-gated.
+let gatedIOReceivers: Set<String> = [
+    "FileManager", "FileHandle", "InputStream", "OutputStream",
+    "FileWrapper", "Bundle", "URLSession",
+    "String", "Data", "NSString", "NSData", "CharacterSet",
+]
+
+/// True when a symbol on a gated IO receiver carries an optional
+/// path-shaped arg that `gates(...)` cannot rewrite — the symbol
+/// must be skipped, not emitted ungated.
+func hasUngatablePathParam(
+    receiver: String?,
+    initFor: String?,
+    argLabels: [String],
+    signature sig: ResolvedSignature
+) -> Bool {
+    let owner = receiver ?? initFor
+    guard let owner, gatedIOReceivers.contains(owner) else { return false }
+    func optionalPathish(_ i: Int) -> Bool {
+        guard i < sig.parameters.count else { return false }
+        let spelling = sig.parameters[i].type.swiftSpelling
+        return spelling == "String?" || spelling == "URL?"
+    }
+    // Positional rules gate index 0 unconditionally on these owners.
+    if (owner == "FileManager" || owner == "URLSession"), optionalPathish(0) {
+        return true
+    }
+    for (i, label) in argLabels.enumerated() where optionalPathish(i) {
+        if pathStringLabelsRead.contains(label) || pathStringLabelsWrite.contains(label)
+            || urlLabelsRead.contains(label) || urlLabelsWrite.contains(label)
+        {
+            return true
+        }
+    }
+    return false
+}
+
 extension GateKind {
     /// True if this kind expresses a write-side operation. Used by
     /// the label scan to decide whether a `to:`-shaped URL arg
@@ -1240,8 +1542,10 @@ struct EmitConfig {
     /// Lead-in for a dict entry — `"<key>": .<case>`. The renderer
     /// appends ` { <closureParams> in <body> },` for the closure-bearing
     /// cases. Static-value entries don't go through `renderEmit`; they
-    /// are emitted directly as a one-line dict entry.
-    let registerLine: String
+    /// are emitted directly as a one-line dict entry. `var` so the
+    /// overload emitter can re-render the same body under its
+    /// bare-key alias.
+    var registerLine: String
     /// The closure's parameter list — `args`, `receiver, args`, or `receiver`.
     let closureParams: String
     /// Whether to emit an `args.count == N` guard. `nil` means no guard
@@ -2072,51 +2376,175 @@ for annotated in prioritizedSymbols {
         guard let recvType = bridgeableReceivers[receiverTypeName] else {
             skippedReasons[path] = "unbridged receiver '\(rawReceiver)'"; continue
         }
-        guard let sig = resolveSignature(sym) else {
+        guard let fullSig = resolveSignature(sym) else {
             skippedReasons[path] = "non-value parameter or return"; continue
         }
         let methodName = sym.names.title.split(separator: "(").first.map(String.init) ?? sym.names.title
-        let key = "method:\(receiverTypeName).\(methodName)"
-        if !claim(key, clashLabel: "\(receiverTypeName).\(methodName)") { continue }
-        let recvUnbox = render(recvType.unboxTemplate, "receiver")
-        let methodLabels = sig.parameters.map(\.label)
-        let methodGates = gates(
-            forReceiver: receiverTypeName,
-            methodName: methodName,
-            argLabels: methodLabels,
-            signature: sig)
-        var methodGated = renderGates(methodGates, sig: sig, indent: "        ")
-        // Process: every method is denied when a sandbox is bound.
-        // Inject the deny check in front of any other gate prologue
-        // so even a sandbox-passing arg never reaches the
-        // subprocess-spawning Foundation API.
-        if denyWhenSandboxedReceivers.contains(receiverTypeName) {
-            methodGated.prologue.insert(contentsOf: denyPrologueLines(indent: "        "), at: 0)
+        // One entry per omittable defaulted suffix, shortest first,
+        // so `session.data(from: url)` works even though the symbol
+        // spells `data(from:delegate:)`.
+        for sig in signatureVariants(fullSig) {
+            let methodLabels = sig.parameters.map(\.label)
+            // Optional path-shaped args can't be rewritten by the gate —
+            // skipping beats shipping an ungated IO door.
+            if hasUngatablePathParam(
+                receiver: receiverTypeName, initFor: nil,
+                argLabels: methodLabels, signature: sig)
+            {
+                skippedReasons[path] = "optional path-shaped arg cannot be gated"
+                continue
+            }
+            // Overloads are keyed by their argument labels (after
+            // default-arg drops), so `URLSession.data(from:)` and
+            // `URLSession.data(for:)` coexist. The runtime tries the
+            // label-keyed entry first and falls back to the bare-key
+            // alias registered for the first (fewest-args) overload.
+            let labelKeyText = methodLabels.map { "\($0):" }.joined()
+            let key = "method:\(receiverTypeName).\(methodName)(\(labelKeyText))"
+            if !claim(key, clashLabel: "\(receiverTypeName).\(methodName)(\(labelKeyText))") { continue }
+            let recvUnbox = render(recvType.unboxTemplate, "receiver")
+            let methodGates = gates(
+                forReceiver: receiverTypeName,
+                methodName: methodName,
+                argLabels: methodLabels,
+                signature: sig)
+            var methodGated = renderGates(methodGates, sig: sig, indent: "        ")
+            // Process: every method is denied when a sandbox is bound.
+            // Inject the deny check in front of any other gate prologue
+            // so even a sandbox-passing arg never reaches the
+            // subprocess-spawning Foundation API.
+            if denyWhenSandboxedReceivers.contains(receiverTypeName) {
+                methodGated.prologue.insert(contentsOf: denyPrologueLines(indent: "        "), at: 0)
+            }
+            // Path-echoing returns fold to the script-visible spelling.
+            var methodReturn = sig.returnType
+            if displayFoldReceivers.contains(receiverTypeName),
+               let ret = methodReturn, let folded = displayFoldedReturn(ret)
+            {
+                methodReturn = folded
+            }
+            var methodConfig = EmitConfig(
+                registerLine: "\"func \(receiverTypeName).\(methodName)(\(labelKeyText))\": .method",
+                closureParams: "receiver, args",
+                arity: sig.parameters.count,
+                recvUnboxLine: "let recv: \(recvType.swiftSpelling) = \(recvUnbox)",
+                callExpr: "recv.\(methodName)(\(methodGated.callArgs))",
+                errorPrefix: "\(receiverTypeName).\(methodName)",
+                returnType: methodReturn,
+                isOptional: sig.returnIsOptional,
+                isThrowing: isThrowing(sym),
+                // Sandbox/network gates use `await` on the bound shell's
+                // `Sandbox.authorize(_:)`, so any gated bridge becomes
+                // async even if the underlying Swift call is sync.
+                isAsync: isAsync(sym) || methodGated.anyAsync,
+                tupleElements: sig.returnTupleElements,
+                prologue: methodGated.prologue
+            )
+            record(key, bucket: .type(receiverTypeName), code: renderEmit(methodConfig))
+            // Bare-key alias for the first overload of each name: dispatch
+            // sites that carry no labels (trailing-closure calls, the
+            // FileManager sentinel fallback) resolve here. A zero-arg
+            // overload's label key IS the bare key (its claim below
+            // matches), so fewest-args-first symbol ordering hands the
+            // alias to the simplest overload.
+            let bareClaim = "method:\(receiverTypeName).\(methodName)()"
+            if !labelKeyText.isEmpty, !registeredKeys.contains(bareClaim) {
+                methodConfig.registerLine = "\"func \(receiverTypeName).\(methodName)()\": .method"
+                record(bareClaim, bucket: .type(receiverTypeName), code: renderEmit(methodConfig))
+            }
         }
-        // Path-echoing returns fold to the script-visible spelling.
-        var methodReturn = sig.returnType
-        if displayFoldReceivers.contains(receiverTypeName),
-           let ret = methodReturn, let folded = displayFoldedReturn(ret)
-        {
-            methodReturn = folded
+
+    case "swift.method" where (2...3).contains(sym.pathComponents.count) &&
+                              isMutating(sym) &&
+                              !isDeprecated(sym) &&
+                              !isGeneric(sym) &&
+                              !isAsync(sym):
+        // Mutating methods on value-typed opaque carriers
+        // (`Data.append`, `URLRequest.setValue`) — the closure gets a
+        // copy, mutates it, and hands back the fresh box for the
+        // dispatcher to store into the receiver variable.
+        let rawReceiver = sym.pathComponents.dropLast().joined(separator: ".")
+        let receiverTypeName = receiverAliases[rawReceiver] ?? rawReceiver
+        guard let recvType = bridgeableReceivers[receiverTypeName],
+              recvType.unboxTemplate.contains("unboxOpaque")
+        else {
+            skippedReasons[path] = "mutating on non-opaque receiver"; continue
         }
-        record(key, bucket: .type(receiverTypeName), code: renderEmit(EmitConfig(
-            registerLine: "\"func \(receiverTypeName).\(methodName)()\": .method",
-            closureParams: "receiver, args",
-            arity: sig.parameters.count,
-            recvUnboxLine: "let recv: \(recvType.swiftSpelling) = \(recvUnbox)",
-            callExpr: "recv.\(methodName)(\(methodGated.callArgs))",
-            errorPrefix: "\(receiverTypeName).\(methodName)",
-            returnType: methodReturn,
-            isOptional: sig.returnIsOptional,
-            isThrowing: isThrowing(sym),
-            // Sandbox/network gates use `await` on the bound shell's
-            // `Sandbox.authorize(_:)`, so any gated bridge becomes
-            // async even if the underlying Swift call is sync.
-            isAsync: isAsync(sym) || methodGated.anyAsync,
-            tupleElements: sig.returnTupleElements,
-            prologue: methodGated.prologue
-        )))
+        guard let fullSig = resolveSignature(sym) else {
+            skippedReasons[path] = "non-value parameter or return"; continue
+        }
+        let mutMethodName = sym.names.title.split(separator: "(").first.map(String.init) ?? sym.names.title
+        for sig in signatureVariants(fullSig) {
+            let mutLabels = sig.parameters.map(\.label)
+            if hasUngatablePathParam(
+                receiver: receiverTypeName, initFor: nil,
+                argLabels: mutLabels, signature: sig)
+            {
+                skippedReasons[path] = "optional path-shaped arg cannot be gated"
+                continue
+            }
+            // Result shapes: Void, plain T, and T? with a non-throwing
+            // box. Tuples and throwing boxes stay out of scope.
+            if !sig.returnTupleElements.isEmpty { continue }
+            if let ret = sig.returnType, sig.returnIsOptional,
+               ret.boxTemplate.contains("try ") { continue }
+            let labelText = mutLabels.map { "\($0):" }.joined()
+            let key = "mutating-method:\(receiverTypeName).\(mutMethodName)(\(labelText))"
+            if !claim(key, clashLabel: "\(receiverTypeName).\(mutMethodName)(\(labelText))") { continue }
+            let mutGates = gates(
+                forReceiver: receiverTypeName,
+                methodName: mutMethodName,
+                argLabels: mutLabels,
+                signature: sig)
+            let mutGated = renderGates(mutGates, sig: sig, indent: "        ")
+            let prefix = (isThrowing(sym) ? "try " : "")
+            let callLine: String
+            let resultExpr: String
+            if let ret = sig.returnType {
+                callLine = "let _r = \(prefix)recv.\(mutMethodName)(\(mutGated.callArgs))"
+                resultExpr = sig.returnIsOptional
+                    ? ".optional(_r.map { \(render(ret.boxTemplate, "$0")) })"
+                    : render(ret.boxTemplate, "_r")
+            } else {
+                callLine = "\(prefix)recv.\(mutMethodName)(\(mutGated.callArgs))"
+                resultExpr = ".void"
+            }
+            let bodyCore = """
+                    \(callLine)
+                    return (\(resultExpr), boxOpaque(recv, typeName: "\(receiverTypeName)"))
+            """
+            let wrappedCore: String
+            if isThrowing(sym) {
+                wrappedCore = """
+                        do {
+                    \(bodyCore)
+                        } catch {
+                            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+                        }
+                """
+            } else {
+                wrappedCore = bodyCore
+            }
+            func mutatingEntry(keyed dictKey: String) -> String {
+                var lines: [String] = []
+                lines.append("    \"\(dictKey)\": .mutatingMethod { receiver, args in")
+                lines.append("        guard args.count == \(sig.parameters.count) else {")
+                lines.append("            throw RuntimeError.invalid(\"\(receiverTypeName).\(mutMethodName): expected \(sig.parameters.count) argument(s), got \\(args.count)\")")
+                lines.append("        }")
+                lines.append("        var recv: \(recvType.swiftSpelling) = \(render(recvType.unboxTemplate, "receiver"))")
+                lines.append(contentsOf: mutGated.prologue)
+                lines.append(wrappedCore)
+                lines.append("    },")
+                return lines.joined(separator: "\n")
+            }
+            record(key, bucket: .type(receiverTypeName),
+                   code: mutatingEntry(keyed: "mutating func \(receiverTypeName).\(mutMethodName)(\(labelText))"))
+            let bareClaim = "mutating-method:\(receiverTypeName).\(mutMethodName)()"
+            if !labelText.isEmpty, !registeredKeys.contains(bareClaim) {
+                record(bareClaim, bucket: .type(receiverTypeName),
+                       code: mutatingEntry(keyed: "mutating func \(receiverTypeName).\(mutMethodName)()"))
+            }
+        }
 
     case "swift.init" where (2...3).contains(sym.pathComponents.count) && !isDeprecated(sym) && !isGeneric(sym) && !isAsync(sym):
         let rawReceiver = sym.pathComponents.dropLast().joined(separator: ".")
@@ -2124,13 +2552,9 @@ for annotated in prioritizedSymbols {
         guard let recvType = bridgeableReceivers[receiverTypeName] else {
             skippedReasons[path] = "unbridged init owner '\(rawReceiver)'"; continue
         }
-        guard let sig = resolveSignature(sym) else {
+        guard let fullSig = resolveSignature(sym) else {
             skippedReasons[path] = "non-value parameter or return"; continue
         }
-        let labels = sig.parameters.map(\.label)
-        let labelKey = labels.joined(separator: ":")
-        let key = "init:\(receiverTypeName)(\(labelKey))"
-        if !claim(key, clashLabel: "\(receiverTypeName)(\(labelKey))") { continue }
         // `init?(…)` failability: in the fragment list, the `init`
         // keyword is followed by `?(…)` for failable variants.
         let df = sym.declarationFragments ?? []
@@ -2139,38 +2563,54 @@ for annotated in prioritizedSymbols {
             if i + 1 < df.count, df[i + 1].spelling.hasPrefix("?") { failable = true }
             break
         }
-        let labelDoc = labels.isEmpty ? "" : labels.map { "\($0):" }.joined()
-        let initKey = "init \(receiverTypeName)(\(labelDoc))"
-        // Inits like `String(contentsOfFile:)` and `Data(contentsOf:)`
-        // hit disk; route them through `authorizePath` exactly like
-        // a method on the same type.
-        let initMethodName = labels.first
-        let initGates = gates(
-            forReceiver: nil,
-            methodName: initMethodName,
-            initFor: receiverTypeName,
-            argLabels: labels,
-            signature: sig)
-        var initGated = renderGates(initGates, sig: sig, indent: "        ")
-        // Process: even constructing a Process is denied under sandbox,
-        // so a script can't capture an instance and pass it around.
-        if denyWhenSandboxedReceivers.contains(receiverTypeName) {
-            initGated.prologue.insert(contentsOf: denyPrologueLines(indent: "        "), at: 0)
+        // One entry per omittable defaulted suffix — inits dispatch
+        // by exact label list, so `URLRequest(url:)` needs its own
+        // key next to `URLRequest(url:timeoutInterval:)`.
+        for sig in signatureVariants(fullSig) {
+            let labels = sig.parameters.map(\.label)
+            if hasUngatablePathParam(
+                receiver: nil, initFor: receiverTypeName,
+                argLabels: labels, signature: sig)
+            {
+                skippedReasons[path] = "optional path-shaped arg cannot be gated"
+                continue
+            }
+            let labelKey = labels.joined(separator: ":")
+            let key = "init:\(receiverTypeName)(\(labelKey))"
+            if !claim(key, clashLabel: "\(receiverTypeName)(\(labelKey))") { continue }
+            let labelDoc = labels.isEmpty ? "" : labels.map { "\($0):" }.joined()
+            let initKey = "init \(receiverTypeName)(\(labelDoc))"
+            // Inits like `String(contentsOfFile:)` and `Data(contentsOf:)`
+            // hit disk; route them through `authorizePath` exactly like
+            // a method on the same type.
+            let initMethodName = labels.first
+            let initGates = gates(
+                forReceiver: nil,
+                methodName: initMethodName,
+                initFor: receiverTypeName,
+                argLabels: labels,
+                signature: sig)
+            var initGated = renderGates(initGates, sig: sig, indent: "        ")
+            // Process: even constructing a Process is denied under sandbox,
+            // so a script can't capture an instance and pass it around.
+            if denyWhenSandboxedReceivers.contains(receiverTypeName) {
+                initGated.prologue.insert(contentsOf: denyPrologueLines(indent: "        "), at: 0)
+            }
+            record(key, bucket: .type(receiverTypeName), code: renderEmit(EmitConfig(
+                registerLine: "\"\(initKey)\": .`init`",
+                closureParams: "args",
+                arity: sig.parameters.count,
+                recvUnboxLine: nil,
+                callExpr: "\(receiverTypeName)(\(initGated.callArgs))",
+                errorPrefix: initKey,
+                returnType: recvType,
+                isOptional: failable,
+                isThrowing: isThrowing(sym),
+                isAsync: isAsync(sym) || initGated.anyAsync,
+                tupleElements: [],
+                prologue: initGated.prologue
+            )))
         }
-        record(key, bucket: .type(receiverTypeName), code: renderEmit(EmitConfig(
-            registerLine: "\"\(initKey)\": .`init`",
-            closureParams: "args",
-            arity: sig.parameters.count,
-            recvUnboxLine: nil,
-            callExpr: "\(receiverTypeName)(\(initGated.callArgs))",
-            errorPrefix: initKey,
-            returnType: recvType,
-            isOptional: failable,
-            isThrowing: isThrowing(sym),
-            isAsync: isAsync(sym) || initGated.anyAsync,
-            tupleElements: [],
-            prologue: initGated.prologue
-        )))
 
     case "swift.property" where (2...3).contains(sym.pathComponents.count) && !isDeprecated(sym) && !isAsync(sym):
         let rawReceiver = sym.pathComponents.dropLast().joined(separator: ".")
@@ -2231,27 +2671,47 @@ for annotated in prioritizedSymbols {
             tupleElements: [],
             prologue: propPrologue
         )))
-        // For `var` properties on bridged classes, emit a setter
-        // alongside the getter. The reference can be mutated in place
-        // — the runtime's `setThroughChain` looks up
-        // `bridges["set var Type.member: ...."]` and calls the setter
-        // body. Skipped for structs (we'd need writeback through the
-        // opaque Value, not modeled), for read-only computed
-        // properties, and for non-bridgeable property types.
-        if bridgedClassTypeNames.contains(receiverTypeName),
-           !propType.isOptional,
+        // For `var` properties on bridged types, emit a setter
+        // alongside the getter. Class receivers mutate the reference
+        // in place (`.setter`); struct receivers return a fresh box
+        // for the l-value machinery to write back (`.structSetter`)
+        // — that's what makes `request.httpMethod = "POST"` work.
+        let isClassReceiver = bridgedClassTypeNames.contains(receiverTypeName)
+        let isOpaqueStructReceiver = !isClassReceiver
+            && recvType.unboxTemplate.contains("unboxOpaque")
+        if isClassReceiver || isOpaqueStructReceiver,
            isVarMutable(sym)
         {
-            let unboxNew = render(propType.bridge.unboxTemplate, "newValue")
+            // Optional properties (`Process.executableURL: URL?`)
+            // unbox through the optional wrapper so scripts can
+            // assign both a value and nil. `unwrapForSetter` peels a
+            // wrapped Optional first — Foundation's IUO members
+            // (`DateFormatter.timeZone`) take failable-init results
+            // without an unwrap in stock Swift.
+            let newValueBridge = propType.isOptional
+                ? optionalParamBridge(of: propType.bridge)
+                : propType.bridge
+            let unboxNew = render(newValueBridge.unboxTemplate, "unwrapForSetter(newValue)")
             let setterDeny = denyWhenSandboxedReceivers.contains(receiverTypeName)
                 ? denyPrologueLines(indent: "            ").joined(separator: "\n") + "\n"
                 : ""
-            let setterCode = """
-                    \"set var \(receiverTypeName).\(memberName): \(propTypeSpelling)\": .setter { receiver, newValue in
-            \(setterDeny)            let recv: \(recvType.swiftSpelling) = \(recvUnbox)
-                        recv.\(memberName) = \(unboxNew)
-                    },
-            """
+            let setterCode: String
+            if isClassReceiver {
+                setterCode = """
+                        \"set var \(receiverTypeName).\(memberName): \(propTypeSpelling)\": .setter { receiver, newValue in
+                \(setterDeny)            let recv: \(recvType.swiftSpelling) = \(recvUnbox)
+                            recv.\(memberName) = \(unboxNew)
+                        },
+                """
+            } else {
+                setterCode = """
+                        \"set var \(receiverTypeName).\(memberName): \(propTypeSpelling)\": .structSetter { receiver, newValue in
+                \(setterDeny)            var recv: \(recvType.swiftSpelling) = \(recvUnbox)
+                            recv.\(memberName) = \(unboxNew)
+                            return boxOpaque(recv, typeName: "\(receiverTypeName)")
+                        },
+                """
+            }
             let setterClaim = "setter:\(receiverTypeName).\(memberName)"
             if !registeredKeys.contains(setterClaim) {
                 emitted.append(EmitEntry(
@@ -2279,6 +2739,12 @@ for annotated in prioritizedSymbols {
             selfType: recvType
         ), !propType.isOptional else {
             skippedReasons[path] = "non-value or optional static property"; continue
+        }
+        // Throwing box templates (`UInt64.max` exceeds Int.max) can't
+        // run inside the static dict initializer — and would throw at
+        // registration anyway. Skip them.
+        guard !propType.bridge.boxTemplate.contains("try ") else {
+            skippedReasons[path] = "static value needs a throwing box"; continue
         }
         let valueExpr = render(propType.bridge.boxTemplate, "\(receiverTypeName).\(memberName)")
         record(key, bucket: .type(receiverTypeName), code: """
@@ -2492,6 +2958,37 @@ for (usr, bridge) in bridgedTypes {
         symbolPath: "\(typeName)(arrayLiteral:)",
         group: group, bucket: .type(typeName), code: code,
         platform: platform(forBridgeKey: "init \(typeName)(arrayLiteral:)")
+    ))
+    registeredKeys.insert(claimKey)
+}
+
+// MARK: - Inherited no-arg init pass
+//
+// Allowlisted classes that inherit `init()` from NSObject
+// (DateFormatter, ISO8601DateFormatter, Pipe) have no `init` symbol
+// of their own in the graph, so the main pass never emits one and
+// `DateFormatter()` fails with "cannot find in scope". Synthesise
+// the no-arg init for the classes verified to have a public
+// parameterless initializer.
+let synthesizedNoArgInits: [String] = [
+    "DateFormatter", "ISO8601DateFormatter", "Pipe",
+]
+for typeName in synthesizedNoArgInits {
+    let claimKey = "init:\(typeName)()"
+    if registeredKeys.contains(claimKey) { continue }
+    guard bridgedClassTypeNames.contains(typeName) else { continue }
+    let code = """
+            \"init \(typeName)()\": .`init` { args in
+                guard args.isEmpty else {
+                    throw RuntimeError.invalid("init \(typeName)(): expected 0 argument(s), got \\(args.count)")
+                }
+                return boxOpaque(\(typeName)(), typeName: "\(typeName)")
+            },
+    """
+    emitted.append(EmitEntry(
+        symbolPath: "\(typeName).init()",
+        group: .foundation, bucket: .type(typeName), code: code,
+        platform: platform(forBridgeKey: "init \(typeName)()")
     ))
     registeredKeys.insert(claimKey)
 }

@@ -29,6 +29,12 @@ extension FoundationBridges {
     "static let ISO8601DateFormatter.Options.withFullDate": .staticValue(boxOpaque(ISO8601DateFormatter.Options.withFullDate, typeName: "ISO8601DateFormatter.Options")),
     "static let ISO8601DateFormatter.Options.withFullTime": .staticValue(boxOpaque(ISO8601DateFormatter.Options.withFullTime, typeName: "ISO8601DateFormatter.Options")),
     "static let ISO8601DateFormatter.Options.withInternetDateTime": .staticValue(boxOpaque(ISO8601DateFormatter.Options.withInternetDateTime, typeName: "ISO8601DateFormatter.Options")),
+    "init ISO8601DateFormatter.Options(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init ISO8601DateFormatter.Options(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(ISO8601DateFormatter.Options(rawValue: try toUInt(args[0])), typeName: "ISO8601DateFormatter.Options")
+    },
         "init ISO8601DateFormatter.Options(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("ISO8601DateFormatter.Options(arrayLiteral:): expected array literal")

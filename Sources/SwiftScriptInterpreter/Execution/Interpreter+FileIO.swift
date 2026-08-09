@@ -55,7 +55,11 @@ extension Interpreter {
     /// path — under a path-mapped sandbox the script-visible virtual
     /// spelling and the directory that backs it differ, and check and
     /// I/O must agree on the host form.
-    func invokeFileManagerMethod(_ name: String, args: [Value]) async throws -> Value {
+    func invokeFileManagerMethod(
+        _ name: String,
+        args: [Value],
+        labels: [String?]? = nil
+    ) async throws -> Value {
         switch name {
         case "fileExists":
             try expectStringArg(args, methodName: "FileManager.fileExists(atPath:)")
@@ -132,6 +136,27 @@ extension Interpreter {
                 return .bool(true)
             }
         default: break
+        }
+        // Everything else falls through to the auto-generated
+        // FileManager bridges (copyItem, moveItem, contents,
+        // isReadableFile, …). They unbox an `.opaque` receiver, so
+        // hand them a real box — the sentinel is a `.structValue`
+        // used only for dispatch identity. The hardcoded cases above
+        // stay first because their semantics are virtualised (logical
+        // cwd, [String] listings) rather than raw Foundation.
+        // Label-keyed overload first, then the bare-key alias.
+        if let labels, !labels.isEmpty,
+           case .method(let body)? =
+            bridges[bridgeKey(forMethod: name, on: "FileManager", labels: labels)]
+        {
+            return try await body(
+                boxOpaque(FileManager.default, typeName: "FileManager"), args)
+        }
+        if case .method(let body)? =
+            bridges[bridgeKey(forMethod: name, on: "FileManager", labels: [])]
+        {
+            return try await body(
+                boxOpaque(FileManager.default, typeName: "FileManager"), args)
         }
         throw RuntimeError.invalid("'FileManager' has no method '\(name)'")
     }

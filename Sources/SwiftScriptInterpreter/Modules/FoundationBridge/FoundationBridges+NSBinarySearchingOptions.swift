@@ -18,6 +18,12 @@ extension FoundationBridges {
     "static let NSBinarySearchingOptions.firstEqual": .staticValue(boxOpaque(NSBinarySearchingOptions.firstEqual, typeName: "NSBinarySearchingOptions")),
     "static let NSBinarySearchingOptions.lastEqual": .staticValue(boxOpaque(NSBinarySearchingOptions.lastEqual, typeName: "NSBinarySearchingOptions")),
     "static let NSBinarySearchingOptions.insertionIndex": .staticValue(boxOpaque(NSBinarySearchingOptions.insertionIndex, typeName: "NSBinarySearchingOptions")),
+    "init NSBinarySearchingOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSBinarySearchingOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSBinarySearchingOptions(rawValue: try toUInt(args[0])), typeName: "NSBinarySearchingOptions")
+    },
         "init NSBinarySearchingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSBinarySearchingOptions(arrayLiteral:): expected array literal")
@@ -37,12 +43,26 @@ extension FoundationBridges {
         let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
         return .bool(recv.isEmpty)
     }
+    d["func NSBinarySearchingOptions.union(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSBinarySearchingOptions.union: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+        return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")), typeName: "NSBinarySearchingOptions")
+    }
     d["func NSBinarySearchingOptions.union()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSBinarySearchingOptions.union: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
         return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")), typeName: "NSBinarySearchingOptions")
+    }
+    d["func NSBinarySearchingOptions.intersection(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSBinarySearchingOptions.intersection: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+        return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")), typeName: "NSBinarySearchingOptions")
     }
     d["func NSBinarySearchingOptions.intersection()"] = .method { receiver, args in
         guard args.count == 1 else {
@@ -51,12 +71,26 @@ extension FoundationBridges {
         let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
         return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")), typeName: "NSBinarySearchingOptions")
     }
+    d["func NSBinarySearchingOptions.symmetricDifference(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSBinarySearchingOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+        return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")), typeName: "NSBinarySearchingOptions")
+    }
     d["func NSBinarySearchingOptions.symmetricDifference()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSBinarySearchingOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
         return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")), typeName: "NSBinarySearchingOptions")
+    }
+    d["func NSBinarySearchingOptions.contains(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSBinarySearchingOptions.contains: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+        return .bool(recv.contains(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
     }
     d["func NSBinarySearchingOptions.contains()"] = .method { receiver, args in
         guard args.count == 1 else {
@@ -65,12 +99,90 @@ extension FoundationBridges {
         let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
         return .bool(recv.contains(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
     }
+    d["mutating func NSBinarySearchingOptions.formUnion(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSBinarySearchingOptions.formUnion: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+        recv.formUnion(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSBinarySearchingOptions"))
+    }
+    d["mutating func NSBinarySearchingOptions.formUnion()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSBinarySearchingOptions.formUnion: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+        recv.formUnion(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSBinarySearchingOptions"))
+    }
+    d["mutating func NSBinarySearchingOptions.formIntersection(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSBinarySearchingOptions.formIntersection: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+        recv.formIntersection(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSBinarySearchingOptions"))
+    }
+    d["mutating func NSBinarySearchingOptions.formIntersection()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSBinarySearchingOptions.formIntersection: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+        recv.formIntersection(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSBinarySearchingOptions"))
+    }
+    d["mutating func NSBinarySearchingOptions.formSymmetricDifference(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSBinarySearchingOptions.formSymmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+        recv.formSymmetricDifference(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSBinarySearchingOptions"))
+    }
+    d["mutating func NSBinarySearchingOptions.formSymmetricDifference()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSBinarySearchingOptions.formSymmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+        recv.formSymmetricDifference(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSBinarySearchingOptions"))
+    }
+    d["mutating func NSBinarySearchingOptions.subtract(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSBinarySearchingOptions.subtract: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+        recv.subtract(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSBinarySearchingOptions"))
+    }
+    d["mutating func NSBinarySearchingOptions.subtract()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSBinarySearchingOptions.subtract: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+        recv.subtract(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSBinarySearchingOptions"))
+    }
+    d["func NSBinarySearchingOptions.isSubset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSBinarySearchingOptions.isSubset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+        return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
+    }
     d["func NSBinarySearchingOptions.isSubset()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSBinarySearchingOptions.isSubset: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
         return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
+    }
+    d["func NSBinarySearchingOptions.isSuperset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSBinarySearchingOptions.isSuperset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+        return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
     }
     d["func NSBinarySearchingOptions.isSuperset()"] = .method { receiver, args in
         guard args.count == 1 else {
@@ -79,12 +191,26 @@ extension FoundationBridges {
         let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
         return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
     }
+    d["func NSBinarySearchingOptions.isDisjoint(with:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSBinarySearchingOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+        return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
+    }
     d["func NSBinarySearchingOptions.isDisjoint()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSBinarySearchingOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
         return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
+    }
+    d["func NSBinarySearchingOptions.subtracting(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSBinarySearchingOptions.subtracting: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+        return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")), typeName: "NSBinarySearchingOptions")
     }
     d["func NSBinarySearchingOptions.subtracting()"] = .method { receiver, args in
         guard args.count == 1 else {
@@ -93,12 +219,26 @@ extension FoundationBridges {
         let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
         return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")), typeName: "NSBinarySearchingOptions")
     }
+    d["func NSBinarySearchingOptions.isStrictSuperset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSBinarySearchingOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+        return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
+    }
     d["func NSBinarySearchingOptions.isStrictSuperset()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSBinarySearchingOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
         return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
+    }
+    d["func NSBinarySearchingOptions.isStrictSubset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSBinarySearchingOptions.isStrictSubset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSBinarySearchingOptions = try unboxOpaque(receiver, as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")
+        return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSBinarySearchingOptions.self, typeName: "NSBinarySearchingOptions")))
     }
     d["func NSBinarySearchingOptions.isStrictSubset()"] = .method { receiver, args in
         guard args.count == 1 else {

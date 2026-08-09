@@ -43,12 +43,26 @@ extension FoundationBridges {
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return .string(recv.debugDescription)
     },
+    "func IndexSet.contains(integersIn:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.contains: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        return .bool(recv.contains(integersIn: try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")))
+    },
     "func IndexSet.contains()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("IndexSet.contains: expected 1 argument(s), got \(args.count)")
         }
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return .bool(recv.contains(integersIn: try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")))
+    },
+    "func IndexSet.index(after:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.index: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        return boxOpaque(recv.index(after: try unboxOpaque(args[0], as: IndexSet.Index.self, typeName: "IndexSet.Index")), typeName: "IndexSet.Index")
     },
     "func IndexSet.index()": .method { receiver, args in
         guard args.count == 1 else {
@@ -57,6 +71,20 @@ extension FoundationBridges {
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return boxOpaque(recv.index(after: try unboxOpaque(args[0], as: IndexSet.Index.self, typeName: "IndexSet.Index")), typeName: "IndexSet.Index")
     },
+    "func IndexSet.index(before:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.index: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        return boxOpaque(recv.index(before: try unboxOpaque(args[0], as: IndexSet.Index.self, typeName: "IndexSet.Index")), typeName: "IndexSet.Index")
+    },
+    "func IndexSet.union(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.union: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        return boxOpaque(recv.union(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")), typeName: "IndexSet")
+    },
     "func IndexSet.union()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("IndexSet.union: expected 1 argument(s), got \(args.count)")
@@ -64,12 +92,26 @@ extension FoundationBridges {
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return boxOpaque(recv.union(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")), typeName: "IndexSet")
     },
+    "func IndexSet.symmetricDifference(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.symmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")), typeName: "IndexSet")
+    },
     "func IndexSet.symmetricDifference()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("IndexSet.symmetricDifference: expected 1 argument(s), got \(args.count)")
         }
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")), typeName: "IndexSet")
+    },
+    "func IndexSet.intersection(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.intersection: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")), typeName: "IndexSet")
     },
     "func IndexSet.intersection()": .method { receiver, args in
         guard args.count == 1 else {
@@ -84,9 +126,40 @@ extension FoundationBridges {
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return .int(recv.underestimatedCount)
     }
+    d["mutating func IndexSet.removeAll()"] = .mutatingMethod { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("IndexSet.removeAll: expected 0 argument(s), got \(args.count)")
+        }
+        var recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        recv.removeAll()
+        return (.void, boxOpaque(recv, typeName: "IndexSet"))
+    }
     d["var IndexSet.hashValue: Int"] = .computed { receiver in
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return .int(recv.hashValue)
+    }
+    d["mutating func IndexSet.subtract(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.subtract: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        recv.subtract(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet"))
+        return (.void, boxOpaque(recv, typeName: "IndexSet"))
+    }
+    d["mutating func IndexSet.subtract()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.subtract: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        recv.subtract(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet"))
+        return (.void, boxOpaque(recv, typeName: "IndexSet"))
+    }
+    d["func IndexSet.isSubset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.isSubset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")))
     }
     d["func IndexSet.isSubset()"] = .method { receiver, args in
         guard args.count == 1 else {
@@ -95,12 +168,26 @@ extension FoundationBridges {
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")))
     }
+    d["func IndexSet.isSuperset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.isSuperset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")))
+    }
     d["func IndexSet.isSuperset()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("IndexSet.isSuperset: expected 1 argument(s), got \(args.count)")
         }
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")))
+    }
+    d["func IndexSet.isDisjoint(with:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.isDisjoint: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")))
     }
     d["func IndexSet.isDisjoint()"] = .method { receiver, args in
         guard args.count == 1 else {
@@ -109,12 +196,26 @@ extension FoundationBridges {
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")))
     }
+    d["func IndexSet.subtracting(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.subtracting: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")), typeName: "IndexSet")
+    }
     d["func IndexSet.subtracting()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("IndexSet.subtracting: expected 1 argument(s), got \(args.count)")
         }
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")), typeName: "IndexSet")
+    }
+    d["func IndexSet.isStrictSuperset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.isStrictSuperset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")))
     }
     d["func IndexSet.isStrictSuperset()"] = .method { receiver, args in
         guard args.count == 1 else {
@@ -123,12 +224,67 @@ extension FoundationBridges {
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")))
     }
+    d["func IndexSet.isStrictSubset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.isStrictSubset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")))
+    }
     d["func IndexSet.isStrictSubset()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("IndexSet.isStrictSubset: expected 1 argument(s), got \(args.count)")
         }
         let recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
         return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet")))
+    }
+    d["mutating func IndexSet.formUnion(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.formUnion: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        recv.formUnion(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet"))
+        return (.void, boxOpaque(recv, typeName: "IndexSet"))
+    }
+    d["mutating func IndexSet.formUnion()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.formUnion: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        recv.formUnion(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet"))
+        return (.void, boxOpaque(recv, typeName: "IndexSet"))
+    }
+    d["mutating func IndexSet.formSymmetricDifference(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.formSymmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        recv.formSymmetricDifference(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet"))
+        return (.void, boxOpaque(recv, typeName: "IndexSet"))
+    }
+    d["mutating func IndexSet.formSymmetricDifference()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.formSymmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        recv.formSymmetricDifference(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet"))
+        return (.void, boxOpaque(recv, typeName: "IndexSet"))
+    }
+    d["mutating func IndexSet.formIntersection(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.formIntersection: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        recv.formIntersection(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet"))
+        return (.void, boxOpaque(recv, typeName: "IndexSet"))
+    }
+    d["mutating func IndexSet.formIntersection()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexSet.formIntersection: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: IndexSet = try unboxOpaque(receiver, as: IndexSet.self, typeName: "IndexSet")
+        recv.formIntersection(try unboxOpaque(args[0], as: IndexSet.self, typeName: "IndexSet"))
+        return (.void, boxOpaque(recv, typeName: "IndexSet"))
     }
         #endif
         return d

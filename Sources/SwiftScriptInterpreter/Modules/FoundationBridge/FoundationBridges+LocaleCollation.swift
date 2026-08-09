@@ -13,8 +13,14 @@ extension FoundationBridges {
         let recv: Locale.Collation = try unboxOpaque(receiver, as: Locale.Collation.self, typeName: "Locale.Collation")
         return .string(recv.identifier)
     },
+        "set var Locale.Collation.identifier: String": .structSetter { receiver, newValue in
+            var recv: Locale.Collation = try unboxOpaque(receiver, as: Locale.Collation.self, typeName: "Locale.Collation")
+            recv.identifier = try unboxString(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "Locale.Collation")
+        },
     "static let Locale.Collation.searchRules": .staticValue(boxOpaque(Locale.Collation.searchRules, typeName: "Locale.Collation")),
     "static let Locale.Collation.standard": .staticValue(boxOpaque(Locale.Collation.standard, typeName: "Locale.Collation")),
+    "static let Locale.Collation.availableCollations": .staticValue(.array(Locale.Collation.availableCollations.map { boxOpaque($0, typeName: "Locale.Collation") })),
     "init Locale.Collation(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Collation(stringLiteral:): expected 1 argument(s), got \(args.count)")
@@ -26,6 +32,12 @@ extension FoundationBridges {
             throw RuntimeError.invalid("init Locale.Collation(_:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.Collation(try unboxString(args[0])), typeName: "Locale.Collation")
+    },
+    "static func Locale.Collation.availableCollations()": .staticMethod { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Locale.Collation.availableCollations: expected 1 argument(s), got \(args.count)")
+        }
+        return .array(Locale.Collation.availableCollations(for: try unboxOpaque(args[0], as: Locale.Language.self, typeName: "Locale.Language")).map { boxOpaque($0, typeName: "Locale.Collation") })
     },
         ]
         #if canImport(Darwin)

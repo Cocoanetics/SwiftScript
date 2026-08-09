@@ -13,9 +13,21 @@ extension FoundationBridges {
         let recv: PersonNameComponents.AttributedStyle = try unboxOpaque(receiver, as: PersonNameComponents.AttributedStyle.self, typeName: "PersonNameComponents.AttributedStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
+        "set var PersonNameComponents.AttributedStyle.locale: Locale": .structSetter { receiver, newValue in
+            var recv: PersonNameComponents.AttributedStyle = try unboxOpaque(receiver, as: PersonNameComponents.AttributedStyle.self, typeName: "PersonNameComponents.AttributedStyle")
+            recv.locale = try unboxOpaque(unwrapForSetter(newValue), as: Locale.self, typeName: "Locale")
+            return boxOpaque(recv, typeName: "PersonNameComponents.AttributedStyle")
+        },
     "var PersonNameComponents.AttributedStyle.hashValue: Int": .computed { receiver in
         let recv: PersonNameComponents.AttributedStyle = try unboxOpaque(receiver, as: PersonNameComponents.AttributedStyle.self, typeName: "PersonNameComponents.AttributedStyle")
         return .int(recv.hashValue)
+    },
+    "func PersonNameComponents.AttributedStyle.format(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("PersonNameComponents.AttributedStyle.format: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: PersonNameComponents.AttributedStyle = try unboxOpaque(receiver, as: PersonNameComponents.AttributedStyle.self, typeName: "PersonNameComponents.AttributedStyle")
+        return boxOpaque(recv.format(try unboxOpaque(args[0], as: PersonNameComponents.self, typeName: "PersonNameComponents")), typeName: "AttributedString")
     },
     "func PersonNameComponents.AttributedStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
@@ -24,12 +36,25 @@ extension FoundationBridges {
         let recv: PersonNameComponents.AttributedStyle = try unboxOpaque(receiver, as: PersonNameComponents.AttributedStyle.self, typeName: "PersonNameComponents.AttributedStyle")
         return boxOpaque(recv.format(try unboxOpaque(args[0], as: PersonNameComponents.self, typeName: "PersonNameComponents")), typeName: "AttributedString")
     },
+    "func PersonNameComponents.AttributedStyle.locale(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("PersonNameComponents.AttributedStyle.locale: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: PersonNameComponents.AttributedStyle = try unboxOpaque(receiver, as: PersonNameComponents.AttributedStyle.self, typeName: "PersonNameComponents.AttributedStyle")
+        return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "PersonNameComponents.AttributedStyle")
+    },
     "func PersonNameComponents.AttributedStyle.locale()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("PersonNameComponents.AttributedStyle.locale: expected 1 argument(s), got \(args.count)")
         }
         let recv: PersonNameComponents.AttributedStyle = try unboxOpaque(receiver, as: PersonNameComponents.AttributedStyle.self, typeName: "PersonNameComponents.AttributedStyle")
         return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "PersonNameComponents.AttributedStyle")
+    },
+    "init PersonNameComponents.AttributedStyle()": .`init` { args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("init PersonNameComponents.AttributedStyle(): expected 0 argument(s), got \(args.count)")
+        }
+        return boxOpaque(PersonNameComponents.AttributedStyle(), typeName: "PersonNameComponents.AttributedStyle")
     },
     "init PersonNameComponents.AttributedStyle(locale:)": .`init` { args in
         guard args.count == 1 else {

@@ -22,6 +22,12 @@ extension FoundationBridges {
     "static let NSRegularExpression.Options.anchorsMatchLines": .staticValue(boxOpaque(NSRegularExpression.Options.anchorsMatchLines, typeName: "NSRegularExpression.Options")),
     "static let NSRegularExpression.Options.useUnixLineSeparators": .staticValue(boxOpaque(NSRegularExpression.Options.useUnixLineSeparators, typeName: "NSRegularExpression.Options")),
     "static let NSRegularExpression.Options.useUnicodeWordBoundaries": .staticValue(boxOpaque(NSRegularExpression.Options.useUnicodeWordBoundaries, typeName: "NSRegularExpression.Options")),
+    "init NSRegularExpression.Options(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSRegularExpression.Options(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSRegularExpression.Options(rawValue: try toUInt(args[0])), typeName: "NSRegularExpression.Options")
+    },
         "init NSRegularExpression.Options(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSRegularExpression.Options(arrayLiteral:): expected array literal")

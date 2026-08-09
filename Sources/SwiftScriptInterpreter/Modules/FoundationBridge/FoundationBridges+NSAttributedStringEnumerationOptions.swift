@@ -17,6 +17,12 @@ extension FoundationBridges {
     },
     "static let NSAttributedString.EnumerationOptions.reverse": .staticValue(boxOpaque(NSAttributedString.EnumerationOptions.reverse, typeName: "NSAttributedString.EnumerationOptions")),
     "static let NSAttributedString.EnumerationOptions.longestEffectiveRangeNotRequired": .staticValue(boxOpaque(NSAttributedString.EnumerationOptions.longestEffectiveRangeNotRequired, typeName: "NSAttributedString.EnumerationOptions")),
+    "init NSAttributedString.EnumerationOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSAttributedString.EnumerationOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSAttributedString.EnumerationOptions(rawValue: try toUInt(args[0])), typeName: "NSAttributedString.EnumerationOptions")
+    },
         "init NSAttributedString.EnumerationOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSAttributedString.EnumerationOptions(arrayLiteral:): expected array literal")

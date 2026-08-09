@@ -14,7 +14,7 @@ extension FoundationBridges {
     },
         "set var JSONEncoder.outputFormatting: JSONEncoder.OutputFormatting": .setter { receiver, newValue in
             let recv: JSONEncoder = try unboxOpaque(receiver, as: JSONEncoder.self, typeName: "JSONEncoder")
-            recv.outputFormatting = try unboxOpaque(newValue, as: JSONEncoder.OutputFormatting.self, typeName: "JSONEncoder.OutputFormatting")
+            recv.outputFormatting = try unboxOpaque(unwrapForSetter(newValue), as: JSONEncoder.OutputFormatting.self, typeName: "JSONEncoder.OutputFormatting")
         },
     "init JSONEncoder()": .`init` { args in
         guard args.count == 0 else {

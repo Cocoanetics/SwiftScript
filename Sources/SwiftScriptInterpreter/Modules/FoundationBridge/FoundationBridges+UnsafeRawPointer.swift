@@ -53,12 +53,26 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+    "func UnsafeRawPointer.distance(to:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("UnsafeRawPointer.distance: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: UnsafeRawPointer = try unboxOpaque(receiver, as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer")
+        return .int(recv.distance(to: try unboxOpaque(args[0], as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer")))
+    },
     "func UnsafeRawPointer.distance()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("UnsafeRawPointer.distance: expected 1 argument(s), got \(args.count)")
         }
         let recv: UnsafeRawPointer = try unboxOpaque(receiver, as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer")
         return .int(recv.distance(to: try unboxOpaque(args[0], as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer")))
+    },
+    "func UnsafeRawPointer.advanced(by:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("UnsafeRawPointer.advanced: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: UnsafeRawPointer = try unboxOpaque(receiver, as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer")
+        return boxOpaque(recv.advanced(by: try unboxInt(args[0])), typeName: "UnsafeRawPointer")
     },
     "func UnsafeRawPointer.advanced()": .method { receiver, args in
         guard args.count == 1 else {
@@ -67,12 +81,26 @@ extension FoundationBridges {
         let recv: UnsafeRawPointer = try unboxOpaque(receiver, as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer")
         return boxOpaque(recv.advanced(by: try unboxInt(args[0])), typeName: "UnsafeRawPointer")
     },
+    "func UnsafeRawPointer.alignedUp(toMultipleOf:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("UnsafeRawPointer.alignedUp: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: UnsafeRawPointer = try unboxOpaque(receiver, as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer")
+        return boxOpaque(recv.alignedUp(toMultipleOf: try unboxInt(args[0])), typeName: "UnsafeRawPointer")
+    },
     "func UnsafeRawPointer.alignedUp()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("UnsafeRawPointer.alignedUp: expected 1 argument(s), got \(args.count)")
         }
         let recv: UnsafeRawPointer = try unboxOpaque(receiver, as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer")
         return boxOpaque(recv.alignedUp(toMultipleOf: try unboxInt(args[0])), typeName: "UnsafeRawPointer")
+    },
+    "func UnsafeRawPointer.alignedDown(toMultipleOf:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("UnsafeRawPointer.alignedDown: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: UnsafeRawPointer = try unboxOpaque(receiver, as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer")
+        return boxOpaque(recv.alignedDown(toMultipleOf: try unboxInt(args[0])), typeName: "UnsafeRawPointer")
     },
     "func UnsafeRawPointer.alignedDown()": .method { receiver, args in
         guard args.count == 1 else {

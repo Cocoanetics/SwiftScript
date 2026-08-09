@@ -39,12 +39,26 @@ extension FoundationBridges {
         let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
         return .int(recv.hashValue)
     },
+    "func AttributedSubstring.settingAttributes(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedSubstring.settingAttributes: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
+        return boxOpaque(recv.settingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
+    },
     "func AttributedSubstring.settingAttributes()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("AttributedSubstring.settingAttributes: expected 1 argument(s), got \(args.count)")
         }
         let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
         return boxOpaque(recv.settingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
+    },
+    "func AttributedSubstring.index(afterCharacter:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedSubstring.index: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
+        return boxOpaque(recv.index(afterCharacter: try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index")), typeName: "AttributedString.Index")
     },
     "func AttributedSubstring.index()": .method { receiver, args in
         guard args.count == 1 else {
@@ -53,6 +67,64 @@ extension FoundationBridges {
         let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
         return boxOpaque(recv.index(afterCharacter: try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index")), typeName: "AttributedString.Index")
     },
+    "func AttributedSubstring.index(beforeCharacter:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedSubstring.index: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
+        return boxOpaque(recv.index(beforeCharacter: try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index")), typeName: "AttributedString.Index")
+    },
+    "func AttributedSubstring.index(afterUnicodeScalar:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedSubstring.index: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
+        return boxOpaque(recv.index(afterUnicodeScalar: try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index")), typeName: "AttributedString.Index")
+    },
+    "func AttributedSubstring.index(beforeUnicodeScalar:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedSubstring.index: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
+        return boxOpaque(recv.index(beforeUnicodeScalar: try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index")), typeName: "AttributedString.Index")
+    },
+    "func AttributedSubstring.index(afterRun:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedSubstring.index: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
+        return boxOpaque(recv.index(afterRun: try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index")), typeName: "AttributedString.Index")
+    },
+    "func AttributedSubstring.index(beforeRun:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedSubstring.index: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
+        return boxOpaque(recv.index(beforeRun: try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index")), typeName: "AttributedString.Index")
+    },
+    "mutating func AttributedSubstring.setAttributes(_:)": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedSubstring.setAttributes: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
+        recv.setAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"))
+        return (.void, boxOpaque(recv, typeName: "AttributedSubstring"))
+    },
+    "mutating func AttributedSubstring.setAttributes()": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedSubstring.setAttributes: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
+        recv.setAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"))
+        return (.void, boxOpaque(recv, typeName: "AttributedSubstring"))
+    },
+    "func AttributedSubstring.mergingAttributes(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedSubstring.mergingAttributes: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
+        return boxOpaque(recv.mergingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
+    },
     "func AttributedSubstring.mergingAttributes()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("AttributedSubstring.mergingAttributes: expected 1 argument(s), got \(args.count)")
@@ -60,12 +132,72 @@ extension FoundationBridges {
         let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
         return boxOpaque(recv.mergingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
     },
+    "func AttributedSubstring.replacingAttributes(_:with:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("AttributedSubstring.replacingAttributes: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
+        return boxOpaque(recv.replacingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"), with: try unboxOpaque(args[1], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
+    },
     "func AttributedSubstring.replacingAttributes()": .method { receiver, args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("AttributedSubstring.replacingAttributes: expected 2 argument(s), got \(args.count)")
         }
         let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
         return boxOpaque(recv.replacingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"), with: try unboxOpaque(args[1], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
+    },
+    "func AttributedSubstring.index(_:offsetByCharacters:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("AttributedSubstring.index: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
+        return boxOpaque(recv.index(try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index"), offsetByCharacters: try unboxInt(args[1])), typeName: "AttributedString.Index")
+    },
+    "func AttributedSubstring.index(_:offsetByUnicodeScalars:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("AttributedSubstring.index: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
+        return boxOpaque(recv.index(try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index"), offsetByUnicodeScalars: try unboxInt(args[1])), typeName: "AttributedString.Index")
+    },
+    "func AttributedSubstring.index(_:offsetByRuns:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("AttributedSubstring.index: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
+        return boxOpaque(recv.index(try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index"), offsetByRuns: try unboxInt(args[1])), typeName: "AttributedString.Index")
+    },
+    "mutating func AttributedSubstring.mergeAttributes(_:)": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedSubstring.mergeAttributes: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
+        recv.mergeAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"))
+        return (.void, boxOpaque(recv, typeName: "AttributedSubstring"))
+    },
+    "mutating func AttributedSubstring.mergeAttributes()": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedSubstring.mergeAttributes: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
+        recv.mergeAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"))
+        return (.void, boxOpaque(recv, typeName: "AttributedSubstring"))
+    },
+    "mutating func AttributedSubstring.replaceAttributes(_:with:)": .mutatingMethod { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("AttributedSubstring.replaceAttributes: expected 2 argument(s), got \(args.count)")
+        }
+        var recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
+        recv.replaceAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"), with: try unboxOpaque(args[1], as: AttributeContainer.self, typeName: "AttributeContainer"))
+        return (.void, boxOpaque(recv, typeName: "AttributedSubstring"))
+    },
+    "mutating func AttributedSubstring.replaceAttributes()": .mutatingMethod { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("AttributedSubstring.replaceAttributes: expected 2 argument(s), got \(args.count)")
+        }
+        var recv: AttributedSubstring = try unboxOpaque(receiver, as: AttributedSubstring.self, typeName: "AttributedSubstring")
+        recv.replaceAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"), with: try unboxOpaque(args[1], as: AttributeContainer.self, typeName: "AttributeContainer"))
+        return (.void, boxOpaque(recv, typeName: "AttributedSubstring"))
     },
     ]
 }

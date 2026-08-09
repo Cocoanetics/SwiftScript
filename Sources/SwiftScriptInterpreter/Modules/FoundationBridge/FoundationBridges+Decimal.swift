@@ -102,7 +102,14 @@ extension FoundationBridges {
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Decimal(_:): expected 1 argument(s), got \(args.count)")
         }
-        return boxOpaque(Decimal(try unboxInt(args[0])), typeName: "Decimal")
+        return boxOpaque(Decimal(try toUInt8(args[0])), typeName: "Decimal")
+    },
+    "func Decimal.isEqual(to:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Decimal.isEqual: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
+        return .bool(recv.isEqual(to: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")))
     },
     "func Decimal.isEqual()": .method { receiver, args in
         guard args.count == 1 else {
@@ -111,6 +118,13 @@ extension FoundationBridges {
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isEqual(to: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")))
     },
+    "func Decimal.isLess(than:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Decimal.isLess: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
+        return .bool(recv.isLess(than: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")))
+    },
     "func Decimal.isLess()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Decimal.isLess: expected 1 argument(s), got \(args.count)")
@@ -118,12 +132,26 @@ extension FoundationBridges {
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isLess(than: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")))
     },
+    "func Decimal.isLessThanOrEqualTo(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Decimal.isLessThanOrEqualTo: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
+        return .bool(recv.isLessThanOrEqualTo(try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")))
+    },
     "func Decimal.isLessThanOrEqualTo()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Decimal.isLessThanOrEqualTo: expected 1 argument(s), got \(args.count)")
         }
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .bool(recv.isLessThanOrEqualTo(try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")))
+    },
+    "func Decimal.isTotallyOrdered(belowOrEqualTo:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Decimal.isTotallyOrdered: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
+        return .bool(recv.isTotallyOrdered(belowOrEqualTo: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")))
     },
     "func Decimal.isTotallyOrdered()": .method { receiver, args in
         guard args.count == 1 else {
@@ -144,12 +172,26 @@ extension FoundationBridges {
         }
         return boxOpaque(Decimal(integerLiteral: try unboxInt(args[0])), typeName: "Decimal")
     },
+    "func Decimal.distance(to:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Decimal.distance: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
+        return boxOpaque(recv.distance(to: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")), typeName: "Decimal")
+    },
     "func Decimal.distance()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Decimal.distance: expected 1 argument(s), got \(args.count)")
         }
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return boxOpaque(recv.distance(to: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")), typeName: "Decimal")
+    },
+    "func Decimal.advanced(by:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Decimal.advanced: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
+        return boxOpaque(recv.advanced(by: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")), typeName: "Decimal")
     },
     "func Decimal.advanced()": .method { receiver, args in
         guard args.count == 1 else {
@@ -158,11 +200,39 @@ extension FoundationBridges {
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return boxOpaque(recv.advanced(by: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal")), typeName: "Decimal")
     },
+    "init Decimal(string:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init Decimal(string:): expected 1 argument(s), got \(args.count)")
+        }
+        if let _v = Decimal(string: try unboxString(args[0])) {
+            return .optional(boxOpaque(_v, typeName: "Decimal"))
+        }
+        return .optional(nil)
+    },
+    "init Decimal(string:locale:)": .`init` { args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("init Decimal(string:locale:): expected 2 argument(s), got \(args.count)")
+        }
+        if let _v = Decimal(string: try unboxString(args[0]), locale: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }) {
+            return .optional(boxOpaque(_v, typeName: "Decimal"))
+        }
+        return .optional(nil)
+    },
     "init Decimal(signOf:magnitudeOf:)": .`init` { args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("init Decimal(signOf:magnitudeOf:): expected 2 argument(s), got \(args.count)")
         }
         return boxOpaque(Decimal(signOf: try unboxOpaque(args[0], as: Decimal.self, typeName: "Decimal"), magnitudeOf: try unboxOpaque(args[1], as: Decimal.self, typeName: "Decimal")), typeName: "Decimal")
+    },
+    "init Decimal(_:format:)": .`init` { args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("init Decimal(_:format:): expected 2 argument(s), got \(args.count)")
+        }
+        do {
+            return boxOpaque(try Decimal(try unboxString(args[0]), format: try unboxOpaque(args[1], as: Decimal.FormatStyle.self, typeName: "Decimal.FormatStyle")), typeName: "Decimal")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
     },
     "init Decimal(_:format:lenient:)": .`init` { args in
         guard args.count == 3 else {
@@ -179,6 +249,14 @@ extension FoundationBridges {
     d["var Decimal.hashValue: Int"] = .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .int(recv.hashValue)
+    }
+    d["mutating func Decimal.negate()"] = .mutatingMethod { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("Decimal.negate: expected 0 argument(s), got \(args.count)")
+        }
+        var recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
+        recv.negate()
+        return (.void, boxOpaque(recv, typeName: "Decimal"))
     }
     d["static let Decimal.zero"] = .staticValue(boxOpaque(Decimal.zero, typeName: "Decimal"))
         #endif

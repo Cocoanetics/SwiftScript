@@ -25,9 +25,20 @@ public enum Bridge {
     /// the same `Type.member` suffix but is keyed `set var Type.member`.
     /// Receives the receiver value and the new value; mutates the
     /// underlying reference in place. Emitted for `var` properties on
-    /// auto-bridged classes; struct-typed mutable properties are out
-    /// of scope (they'd need writeback through the opaque payload).
+    /// auto-bridged classes.
     case setter((Value, Value) async throws -> Void)
+    /// Property setter for value-typed (struct) bridged receivers —
+    /// same `set var Type.member` key space as ``setter``, but the
+    /// receiver can't be mutated through the opaque box, so the body
+    /// returns a fresh box and the assignment machinery writes it
+    /// back through the l-value chain (`request.httpMethod = "POST"`).
+    case structSetter((Value, Value) async throws -> Value)
+    /// `mutating` instance method on a value-typed bridged receiver
+    /// (`data.append(...)`, `request.setValue(_:forHTTPHeaderField:)`)
+    /// — keyed `mutating func Type.name(label:)`. Returns the call's
+    /// result plus the updated receiver to store back; dispatch only
+    /// fires when the receiver is a mutable variable.
+    case mutatingMethod((Value, [Value]) async throws -> (result: Value, receiver: Value))
     /// Initializer reachable via `Type(label1:label2:)`.
     case `init`(([Value]) async throws -> Value)
     /// Static value (`static let`). The value is fixed at registration
@@ -206,7 +217,7 @@ extension Interpreter {
     /// Drop the leading kind keyword from a bridge key, returning the
     /// remainder (`Type.member` / `Type(labels)` shape).
     private func stripKindKeyword(_ key: String) -> Substring {
-        for prefix in ["set var ", "static let ", "static func ", "func ", "var ", "init ", "subscript "] {
+        for prefix in ["set var ", "static let ", "static func ", "mutating func ", "func ", "var ", "init ", "subscript "] {
             if key.hasPrefix(prefix) {
                 return key.dropFirst(prefix.count)
             }
@@ -225,7 +236,12 @@ extension Interpreter {
     func isAutoBridgedClass(_ typeName: String) -> Bool {
         let prefix = "\(typeName)."
         for entry in propertyIndex {
-            guard entry.key.hasPrefix(prefix), entry.value.setter != nil else { continue }
+            // Only `.setter` marks a class-shaped receiver. Struct
+            // receivers carry `.structSetter` entries — their `let`
+            // bindings must stay immutable, same as script structs.
+            guard entry.key.hasPrefix(prefix),
+                  case .setter? = entry.value.setter
+            else { continue }
             return true
         }
         return false
@@ -267,6 +283,12 @@ extension Interpreter {
     func bridgeKey(forStaticMethod methodName: String, on typeName: String, labels: [String?]) -> String {
         let labelText = labels.map { ($0 ?? "_") + ":" }.joined()
         return "static func \(typeName).\(methodName)(\(labelText))"
+    }
+
+    /// `mutating func Type.method(label1:label2:)`
+    func bridgeKey(forMutatingMethod methodName: String, on typeName: String, labels: [String?]) -> String {
+        let labelText = labels.map { ($0 ?? "_") + ":" }.joined()
+        return "mutating func \(typeName).\(methodName)(\(labelText))"
     }
 
     /// `subscript Type.get` — read access on a bridged type.

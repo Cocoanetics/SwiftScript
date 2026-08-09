@@ -18,6 +18,12 @@ extension FoundationBridges {
     "static let MeasurementFormatter.UnitOptions.providedUnit": .staticValue(boxOpaque(MeasurementFormatter.UnitOptions.providedUnit, typeName: "MeasurementFormatter.UnitOptions")),
     "static let MeasurementFormatter.UnitOptions.naturalScale": .staticValue(boxOpaque(MeasurementFormatter.UnitOptions.naturalScale, typeName: "MeasurementFormatter.UnitOptions")),
     "static let MeasurementFormatter.UnitOptions.temperatureWithoutUnit": .staticValue(boxOpaque(MeasurementFormatter.UnitOptions.temperatureWithoutUnit, typeName: "MeasurementFormatter.UnitOptions")),
+    "init MeasurementFormatter.UnitOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init MeasurementFormatter.UnitOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(MeasurementFormatter.UnitOptions(rawValue: try toUInt(args[0])), typeName: "MeasurementFormatter.UnitOptions")
+    },
         "init MeasurementFormatter.UnitOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("MeasurementFormatter.UnitOptions(arrayLiteral:): expected array literal")

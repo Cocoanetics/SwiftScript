@@ -12,6 +12,16 @@ extension StdlibBridges {
         let recv: String.Index = try unboxOpaque(receiver, as: String.Index.self, typeName: "String.Index")
         return .int(recv.hashValue)
     },
+    "func String.Index.samePosition(in:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.Index.samePosition: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String.Index = try unboxOpaque(receiver, as: String.Index.self, typeName: "String.Index")
+        if let _v = recv.samePosition(in: try unboxString(args[0])) {
+            return .optional(boxOpaque(_v, typeName: "String.Index"))
+        }
+        return .optional(nil)
+    },
     "func String.Index.samePosition()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("String.Index.samePosition: expected 1 argument(s), got \(args.count)")

@@ -15,13 +15,30 @@ extension FoundationBridges {
         let recv: Date.ComponentsFormatStyle = try unboxOpaque(receiver, as: Date.ComponentsFormatStyle.self, typeName: "Date.ComponentsFormatStyle")
         return boxOpaque(recv.calendar, typeName: "Calendar")
     }
+        d["set var Date.ComponentsFormatStyle.calendar: Calendar"] = .structSetter { receiver, newValue in
+            var recv: Date.ComponentsFormatStyle = try unboxOpaque(receiver, as: Date.ComponentsFormatStyle.self, typeName: "Date.ComponentsFormatStyle")
+            recv.calendar = try unboxOpaque(unwrapForSetter(newValue), as: Calendar.self, typeName: "Calendar")
+            return boxOpaque(recv, typeName: "Date.ComponentsFormatStyle")
+        }
     d["var Date.ComponentsFormatStyle.locale: Locale"] = .computed { receiver in
         let recv: Date.ComponentsFormatStyle = try unboxOpaque(receiver, as: Date.ComponentsFormatStyle.self, typeName: "Date.ComponentsFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
     }
+        d["set var Date.ComponentsFormatStyle.locale: Locale"] = .structSetter { receiver, newValue in
+            var recv: Date.ComponentsFormatStyle = try unboxOpaque(receiver, as: Date.ComponentsFormatStyle.self, typeName: "Date.ComponentsFormatStyle")
+            recv.locale = try unboxOpaque(unwrapForSetter(newValue), as: Locale.self, typeName: "Locale")
+            return boxOpaque(recv, typeName: "Date.ComponentsFormatStyle")
+        }
     d["var Date.ComponentsFormatStyle.hashValue: Int"] = .computed { receiver in
         let recv: Date.ComponentsFormatStyle = try unboxOpaque(receiver, as: Date.ComponentsFormatStyle.self, typeName: "Date.ComponentsFormatStyle")
         return .int(recv.hashValue)
+    }
+    d["func Date.ComponentsFormatStyle.calendar(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.ComponentsFormatStyle.calendar: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date.ComponentsFormatStyle = try unboxOpaque(receiver, as: Date.ComponentsFormatStyle.self, typeName: "Date.ComponentsFormatStyle")
+        return boxOpaque(recv.calendar(try unboxOpaque(args[0], as: Calendar.self, typeName: "Calendar")), typeName: "Date.ComponentsFormatStyle")
     }
     d["func Date.ComponentsFormatStyle.calendar()"] = .method { receiver, args in
         guard args.count == 1 else {
@@ -29,6 +46,13 @@ extension FoundationBridges {
         }
         let recv: Date.ComponentsFormatStyle = try unboxOpaque(receiver, as: Date.ComponentsFormatStyle.self, typeName: "Date.ComponentsFormatStyle")
         return boxOpaque(recv.calendar(try unboxOpaque(args[0], as: Calendar.self, typeName: "Calendar")), typeName: "Date.ComponentsFormatStyle")
+    }
+    d["func Date.ComponentsFormatStyle.locale(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.ComponentsFormatStyle.locale: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date.ComponentsFormatStyle = try unboxOpaque(receiver, as: Date.ComponentsFormatStyle.self, typeName: "Date.ComponentsFormatStyle")
+        return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Date.ComponentsFormatStyle")
     }
     d["func Date.ComponentsFormatStyle.locale()"] = .method { receiver, args in
         guard args.count == 1 else {

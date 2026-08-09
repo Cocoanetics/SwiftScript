@@ -20,6 +20,12 @@ extension FoundationBridges {
     "static let Stream.Event.hasSpaceAvailable": .staticValue(boxOpaque(Stream.Event.hasSpaceAvailable, typeName: "Stream.Event")),
     "static let Stream.Event.errorOccurred": .staticValue(boxOpaque(Stream.Event.errorOccurred, typeName: "Stream.Event")),
     "static let Stream.Event.endEncountered": .staticValue(boxOpaque(Stream.Event.endEncountered, typeName: "Stream.Event")),
+    "init Stream.Event(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init Stream.Event(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Stream.Event(rawValue: try toUInt(args[0])), typeName: "Stream.Event")
+    },
         "init Stream.Event(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("Stream.Event(arrayLiteral:): expected array literal")

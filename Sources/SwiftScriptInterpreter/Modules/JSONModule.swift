@@ -148,6 +148,215 @@ struct JSONModule: BuiltinModule {
             i.bridges["static let String.Encoding.\(name)"] =
                 .staticValue(.opaque(typeName: "String.Encoding", value: enc))
         }
+
+        registerJSONSerialization(into: i)
+        registerCoderStrategies(into: i)
+    }
+
+    // MARK: - JSONSerialization (untyped JSON)
+
+    /// `JSONSerialization.jsonObject(with:)` / `.data(withJSONObject:)`
+    /// — the untyped-JSON door (issue #7: previously "no bridge file
+    /// at all"). The Any-shaped tree maps onto interpreter values:
+    /// objects → `.dict`, arrays → `.array`, strings/numbers/bools →
+    /// their primitives, `null` → `.optional(nil)`.
+    private func registerJSONSerialization(into i: Interpreter) {
+        i.bridges["static func JSONSerialization.jsonObject()"] = .staticMethod { args in
+            guard (1...2).contains(args.count) else {
+                throw RuntimeError.invalid("JSONSerialization.jsonObject(with:): expected 1-2 arguments, got \(args.count)")
+            }
+            let data: Data = try unboxOpaque(args[0], as: Data.self, typeName: "Data")
+            // options (arg 2) accepted and ignored — `.fragmentsAllowed`
+            // is implied by allowing any top-level value below.
+            let any: Any
+            do {
+                any = try JSONSerialization.jsonObject(with: data, options: [.fragmentsAllowed])
+            } catch {
+                throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+            }
+            return try Self.value(fromJSONAny: any)
+        }
+        i.bridges["static func JSONSerialization.data()"] = .staticMethod { args in
+            guard (1...2).contains(args.count) else {
+                throw RuntimeError.invalid("JSONSerialization.data(withJSONObject:): expected 1-2 arguments, got \(args.count)")
+            }
+            var options: JSONSerialization.WritingOptions = []
+            if args.count == 2,
+               case .opaque(_, let any) = args[1],
+               let opts = any as? JSONSerialization.WritingOptions
+            {
+                options = opts
+            }
+            let object = try Self.jsonAny(from: args[0])
+            do {
+                let data = try JSONSerialization.data(withJSONObject: object, options: options)
+                return boxOpaque(data, typeName: "Data")
+            } catch {
+                throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+            }
+        }
+        i.bridges["static func JSONSerialization.isValidJSONObject()"] = .staticMethod { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("JSONSerialization.isValidJSONObject(_:): expected 1 argument, got \(args.count)")
+            }
+            guard let object = try? Self.jsonAny(from: args[0]) else { return .bool(false) }
+            return .bool(JSONSerialization.isValidJSONObject(object))
+        }
+    }
+
+    /// Foundation's untyped JSON tree → interpreter `Value`.
+    private static func value(fromJSONAny any: Any) throws -> Value {
+        switch any {
+        case let dict as [String: Any]:
+            return .dict(try dict.map {
+                DictEntry(key: .string($0.key), value: try value(fromJSONAny: $0.value))
+            })
+        case let array as [Any]:
+            return .array(try array.map { try value(fromJSONAny: $0) })
+        case let string as String:
+            return .string(string)
+        case let number as NSNumber:
+            // NSNumber collapses bools and numerics; the stored ObjC
+            // type code is the reliable discriminator ("c" == Bool on
+            // both Darwin and corelibs).
+            if String(cString: number.objCType) == "c" {
+                return .bool(number.boolValue)
+            }
+            let double = number.doubleValue
+            if double.rounded() == double, let int = Int(exactly: number.int64Value),
+               !String(cString: number.objCType).contains("d"),
+               !String(cString: number.objCType).contains("f")
+            {
+                return .int(int)
+            }
+            return .double(double)
+        case is NSNull:
+            return .optional(nil)
+        default:
+            throw RuntimeError.invalid(
+                "JSONSerialization: unsupported JSON value of type \(type(of: any))")
+        }
+    }
+
+    /// Interpreter `Value` → the Any tree JSONSerialization writes.
+    private static func jsonAny(from value: Value) throws -> Any {
+        switch value {
+        case .dict(let entries):
+            var out: [String: Any] = [:]
+            for entry in entries {
+                guard case .string(let key) = entry.key else {
+                    throw RuntimeError.invalid(
+                        "JSONSerialization.data: dictionary keys must be String, got \(typeName(entry.key))")
+                }
+                out[key] = try jsonAny(from: entry.value)
+            }
+            return out
+        case .array(let xs):
+            return try xs.map { try jsonAny(from: $0) }
+        case .string(let s): return s
+        case .int(let n): return n
+        case .double(let d): return d
+        case .bool(let b): return b
+        case .optional(nil): return NSNull()
+        case .optional(let inner?): return try jsonAny(from: inner)
+        default:
+            throw RuntimeError.invalid(
+                "JSONSerialization.data: unsupported value of type \(typeName(value))")
+        }
+    }
+
+    // MARK: - Encoder / decoder strategies
+
+    /// `JSONEncoder.dateEncodingStrategy = .iso8601` and friends —
+    /// the strategy enums aren't Equatable structs, so auto-promotion
+    /// skips them; the common cases are hand-registered (issue #7:
+    /// "has no settable member 'dateEncodingStrategy'").
+    private func registerCoderStrategies(into i: Interpreter) {
+        let dateEncoding: [(String, JSONEncoder.DateEncodingStrategy)] = [
+            ("deferredToDate", .deferredToDate),
+            ("iso8601", .iso8601),
+            ("secondsSince1970", .secondsSince1970),
+            ("millisecondsSince1970", .millisecondsSince1970),
+        ]
+        for (name, strategy) in dateEncoding {
+            i.bridges["static let JSONEncoder.DateEncodingStrategy.\(name)"] =
+                .staticValue(.opaque(typeName: "JSONEncoder.DateEncodingStrategy", value: strategy))
+        }
+        let dateDecoding: [(String, JSONDecoder.DateDecodingStrategy)] = [
+            ("deferredToDate", .deferredToDate),
+            ("iso8601", .iso8601),
+            ("secondsSince1970", .secondsSince1970),
+            ("millisecondsSince1970", .millisecondsSince1970),
+        ]
+        for (name, strategy) in dateDecoding {
+            i.bridges["static let JSONDecoder.DateDecodingStrategy.\(name)"] =
+                .staticValue(.opaque(typeName: "JSONDecoder.DateDecodingStrategy", value: strategy))
+        }
+        i.bridges["static let JSONEncoder.KeyEncodingStrategy.useDefaultKeys"] =
+            .staticValue(.opaque(typeName: "JSONEncoder.KeyEncodingStrategy",
+                                 value: JSONEncoder.KeyEncodingStrategy.useDefaultKeys))
+        i.bridges["static let JSONEncoder.KeyEncodingStrategy.convertToSnakeCase"] =
+            .staticValue(.opaque(typeName: "JSONEncoder.KeyEncodingStrategy",
+                                 value: JSONEncoder.KeyEncodingStrategy.convertToSnakeCase))
+        i.bridges["static let JSONDecoder.KeyDecodingStrategy.useDefaultKeys"] =
+            .staticValue(.opaque(typeName: "JSONDecoder.KeyDecodingStrategy",
+                                 value: JSONDecoder.KeyDecodingStrategy.useDefaultKeys))
+        i.bridges["static let JSONDecoder.KeyDecodingStrategy.convertFromSnakeCase"] =
+            .staticValue(.opaque(typeName: "JSONDecoder.KeyDecodingStrategy",
+                                 value: JSONDecoder.KeyDecodingStrategy.convertFromSnakeCase))
+
+        i.bridges["var JSONEncoder.dateEncodingStrategy: JSONEncoder.DateEncodingStrategy"] = .computed { recv in
+            let encoder: JSONEncoder = try unboxOpaque(recv, as: JSONEncoder.self, typeName: "JSONEncoder")
+            return .opaque(typeName: "JSONEncoder.DateEncodingStrategy", value: encoder.dateEncodingStrategy)
+        }
+        i.bridges["set var JSONEncoder.dateEncodingStrategy: JSONEncoder.DateEncodingStrategy"] = .setter { recv, newValue in
+            let encoder: JSONEncoder = try unboxOpaque(recv, as: JSONEncoder.self, typeName: "JSONEncoder")
+            guard case .opaque(_, let any) = newValue,
+                  let strategy = any as? JSONEncoder.DateEncodingStrategy
+            else {
+                throw RuntimeError.invalid("JSONEncoder.dateEncodingStrategy: expected a DateEncodingStrategy")
+            }
+            encoder.dateEncodingStrategy = strategy
+        }
+        i.bridges["var JSONEncoder.keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy"] = .computed { recv in
+            let encoder: JSONEncoder = try unboxOpaque(recv, as: JSONEncoder.self, typeName: "JSONEncoder")
+            return .opaque(typeName: "JSONEncoder.KeyEncodingStrategy", value: encoder.keyEncodingStrategy)
+        }
+        i.bridges["set var JSONEncoder.keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy"] = .setter { recv, newValue in
+            let encoder: JSONEncoder = try unboxOpaque(recv, as: JSONEncoder.self, typeName: "JSONEncoder")
+            guard case .opaque(_, let any) = newValue,
+                  let strategy = any as? JSONEncoder.KeyEncodingStrategy
+            else {
+                throw RuntimeError.invalid("JSONEncoder.keyEncodingStrategy: expected a KeyEncodingStrategy")
+            }
+            encoder.keyEncodingStrategy = strategy
+        }
+        i.bridges["var JSONDecoder.dateDecodingStrategy: JSONDecoder.DateDecodingStrategy"] = .computed { recv in
+            let decoder: JSONDecoder = try unboxOpaque(recv, as: JSONDecoder.self, typeName: "JSONDecoder")
+            return .opaque(typeName: "JSONDecoder.DateDecodingStrategy", value: decoder.dateDecodingStrategy)
+        }
+        i.bridges["set var JSONDecoder.dateDecodingStrategy: JSONDecoder.DateDecodingStrategy"] = .setter { recv, newValue in
+            let decoder: JSONDecoder = try unboxOpaque(recv, as: JSONDecoder.self, typeName: "JSONDecoder")
+            guard case .opaque(_, let any) = newValue,
+                  let strategy = any as? JSONDecoder.DateDecodingStrategy
+            else {
+                throw RuntimeError.invalid("JSONDecoder.dateDecodingStrategy: expected a DateDecodingStrategy")
+            }
+            decoder.dateDecodingStrategy = strategy
+        }
+        i.bridges["var JSONDecoder.keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy"] = .computed { recv in
+            let decoder: JSONDecoder = try unboxOpaque(recv, as: JSONDecoder.self, typeName: "JSONDecoder")
+            return .opaque(typeName: "JSONDecoder.KeyDecodingStrategy", value: decoder.keyDecodingStrategy)
+        }
+        i.bridges["set var JSONDecoder.keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy"] = .setter { recv, newValue in
+            let decoder: JSONDecoder = try unboxOpaque(recv, as: JSONDecoder.self, typeName: "JSONDecoder")
+            guard case .opaque(_, let any) = newValue,
+                  let strategy = any as? JSONDecoder.KeyDecodingStrategy
+            else {
+                throw RuntimeError.invalid("JSONDecoder.keyDecodingStrategy: expected a KeyDecodingStrategy")
+            }
+            decoder.keyDecodingStrategy = strategy
+        }
     }
 }
 

@@ -13,12 +13,31 @@ extension FoundationBridges {
         let recv: Duration.TimeFormatStyle = try unboxOpaque(receiver, as: Duration.TimeFormatStyle.self, typeName: "Duration.TimeFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
+        "set var Duration.TimeFormatStyle.locale: Locale": .structSetter { receiver, newValue in
+            var recv: Duration.TimeFormatStyle = try unboxOpaque(receiver, as: Duration.TimeFormatStyle.self, typeName: "Duration.TimeFormatStyle")
+            recv.locale = try unboxOpaque(unwrapForSetter(newValue), as: Locale.self, typeName: "Locale")
+            return boxOpaque(recv, typeName: "Duration.TimeFormatStyle")
+        },
+    "func Duration.TimeFormatStyle.format(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Duration.TimeFormatStyle.format: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Duration.TimeFormatStyle = try unboxOpaque(receiver, as: Duration.TimeFormatStyle.self, typeName: "Duration.TimeFormatStyle")
+        return .string(recv.format(try unboxOpaque(args[0], as: Duration.self, typeName: "Duration")))
+    },
     "func Duration.TimeFormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Duration.TimeFormatStyle.format: expected 1 argument(s), got \(args.count)")
         }
         let recv: Duration.TimeFormatStyle = try unboxOpaque(receiver, as: Duration.TimeFormatStyle.self, typeName: "Duration.TimeFormatStyle")
         return .string(recv.format(try unboxOpaque(args[0], as: Duration.self, typeName: "Duration")))
+    },
+    "func Duration.TimeFormatStyle.locale(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Duration.TimeFormatStyle.locale: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Duration.TimeFormatStyle = try unboxOpaque(receiver, as: Duration.TimeFormatStyle.self, typeName: "Duration.TimeFormatStyle")
+        return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Duration.TimeFormatStyle")
     },
     "func Duration.TimeFormatStyle.locale()": .method { receiver, args in
         guard args.count == 1 else {

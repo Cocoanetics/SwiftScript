@@ -13,6 +13,11 @@ extension FoundationBridges {
         let recv: OperationQueue.SchedulerTimeType = try unboxOpaque(receiver, as: OperationQueue.SchedulerTimeType.self, typeName: "OperationQueue.SchedulerTimeType")
         return boxOpaque(recv.date, typeName: "Date")
     },
+        "set var OperationQueue.SchedulerTimeType.date: Date": .structSetter { receiver, newValue in
+            var recv: OperationQueue.SchedulerTimeType = try unboxOpaque(receiver, as: OperationQueue.SchedulerTimeType.self, typeName: "OperationQueue.SchedulerTimeType")
+            recv.date = try unboxOpaque(unwrapForSetter(newValue), as: Date.self, typeName: "Date")
+            return boxOpaque(recv, typeName: "OperationQueue.SchedulerTimeType")
+        },
     "var OperationQueue.SchedulerTimeType.hashValue: Int": .computed { receiver in
         let recv: OperationQueue.SchedulerTimeType = try unboxOpaque(receiver, as: OperationQueue.SchedulerTimeType.self, typeName: "OperationQueue.SchedulerTimeType")
         return .int(recv.hashValue)

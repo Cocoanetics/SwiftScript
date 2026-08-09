@@ -18,18 +18,38 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Calendar.locale: Locale?": .structSetter { receiver, newValue in
+            var recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+            recv.locale = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }
+            return boxOpaque(recv, typeName: "Calendar")
+        },
     "var Calendar.timeZone: TimeZone": .computed { receiver in
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return boxOpaque(recv.timeZone, typeName: "TimeZone")
     },
+        "set var Calendar.timeZone: TimeZone": .structSetter { receiver, newValue in
+            var recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+            recv.timeZone = try unboxOpaque(unwrapForSetter(newValue), as: TimeZone.self, typeName: "TimeZone")
+            return boxOpaque(recv, typeName: "Calendar")
+        },
     "var Calendar.firstWeekday: Int": .computed { receiver in
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .int(recv.firstWeekday)
     },
+        "set var Calendar.firstWeekday: Int": .structSetter { receiver, newValue in
+            var recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+            recv.firstWeekday = try unboxInt(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "Calendar")
+        },
     "var Calendar.minimumDaysInFirstWeek: Int": .computed { receiver in
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .int(recv.minimumDaysInFirstWeek)
     },
+        "set var Calendar.minimumDaysInFirstWeek: Int": .structSetter { receiver, newValue in
+            var recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+            recv.minimumDaysInFirstWeek = try unboxInt(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "Calendar")
+        },
     "var Calendar.description: String": .computed { receiver in
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .string(recv.description)
@@ -38,6 +58,78 @@ extension FoundationBridges {
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .string(recv.debugDescription)
     },
+    "var Calendar.eraSymbols: [String]": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .array(recv.eraSymbols.map { .string($0) })
+    },
+    "var Calendar.longEraSymbols: [String]": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .array(recv.longEraSymbols.map { .string($0) })
+    },
+    "var Calendar.monthSymbols: [String]": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .array(recv.monthSymbols.map { .string($0) })
+    },
+    "var Calendar.shortMonthSymbols: [String]": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .array(recv.shortMonthSymbols.map { .string($0) })
+    },
+    "var Calendar.veryShortMonthSymbols: [String]": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .array(recv.veryShortMonthSymbols.map { .string($0) })
+    },
+    "var Calendar.standaloneMonthSymbols: [String]": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .array(recv.standaloneMonthSymbols.map { .string($0) })
+    },
+    "var Calendar.shortStandaloneMonthSymbols: [String]": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .array(recv.shortStandaloneMonthSymbols.map { .string($0) })
+    },
+    "var Calendar.veryShortStandaloneMonthSymbols: [String]": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .array(recv.veryShortStandaloneMonthSymbols.map { .string($0) })
+    },
+    "var Calendar.weekdaySymbols: [String]": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .array(recv.weekdaySymbols.map { .string($0) })
+    },
+    "var Calendar.shortWeekdaySymbols: [String]": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .array(recv.shortWeekdaySymbols.map { .string($0) })
+    },
+    "var Calendar.veryShortWeekdaySymbols: [String]": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .array(recv.veryShortWeekdaySymbols.map { .string($0) })
+    },
+    "var Calendar.standaloneWeekdaySymbols: [String]": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .array(recv.standaloneWeekdaySymbols.map { .string($0) })
+    },
+    "var Calendar.shortStandaloneWeekdaySymbols: [String]": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .array(recv.shortStandaloneWeekdaySymbols.map { .string($0) })
+    },
+    "var Calendar.veryShortStandaloneWeekdaySymbols: [String]": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .array(recv.veryShortStandaloneWeekdaySymbols.map { .string($0) })
+    },
+    "var Calendar.quarterSymbols: [String]": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .array(recv.quarterSymbols.map { .string($0) })
+    },
+    "var Calendar.shortQuarterSymbols: [String]": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .array(recv.shortQuarterSymbols.map { .string($0) })
+    },
+    "var Calendar.standaloneQuarterSymbols: [String]": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .array(recv.standaloneQuarterSymbols.map { .string($0) })
+    },
+    "var Calendar.shortStandaloneQuarterSymbols: [String]": .computed { receiver in
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .array(recv.shortStandaloneQuarterSymbols.map { .string($0) })
+    },
     "var Calendar.amSymbol: String": .computed { receiver in
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .string(recv.amSymbol)
@@ -45,6 +137,16 @@ extension FoundationBridges {
     "var Calendar.pmSymbol: String": .computed { receiver in
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .string(recv.pmSymbol)
+    },
+    "func Calendar.date(from:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Calendar.date: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        if let _v = recv.date(from: try unboxOpaque(args[0], as: DateComponents.self, typeName: "DateComponents")) {
+            return .optional(boxOpaque(_v, typeName: "Date"))
+        }
+        return .optional(nil)
     },
     "func Calendar.date()": .method { receiver, args in
         guard args.count == 1 else {
@@ -56,12 +158,26 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+    "func Calendar.startOfDay(for:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Calendar.startOfDay: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return boxOpaque(recv.startOfDay(for: try unboxOpaque(args[0], as: Date.self, typeName: "Date")), typeName: "Date")
+    },
     "func Calendar.startOfDay()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Calendar.startOfDay: expected 1 argument(s), got \(args.count)")
         }
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return boxOpaque(recv.startOfDay(for: try unboxOpaque(args[0], as: Date.self, typeName: "Date")), typeName: "Date")
+    },
+    "func Calendar.isDateInToday(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Calendar.isDateInToday: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .bool(recv.isDateInToday(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
     },
     "func Calendar.isDateInToday()": .method { receiver, args in
         guard args.count == 1 else {
@@ -70,12 +186,26 @@ extension FoundationBridges {
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .bool(recv.isDateInToday(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
     },
+    "func Calendar.isDateInYesterday(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Calendar.isDateInYesterday: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .bool(recv.isDateInYesterday(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
+    },
     "func Calendar.isDateInYesterday()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Calendar.isDateInYesterday: expected 1 argument(s), got \(args.count)")
         }
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .bool(recv.isDateInYesterday(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
+    },
+    "func Calendar.isDateInTomorrow(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Calendar.isDateInTomorrow: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .bool(recv.isDateInTomorrow(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
     },
     "func Calendar.isDateInTomorrow()": .method { receiver, args in
         guard args.count == 1 else {
@@ -84,12 +214,29 @@ extension FoundationBridges {
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .bool(recv.isDateInTomorrow(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
     },
+    "func Calendar.isDateInWeekend(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Calendar.isDateInWeekend: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .bool(recv.isDateInWeekend(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
+    },
     "func Calendar.isDateInWeekend()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Calendar.isDateInWeekend: expected 1 argument(s), got \(args.count)")
         }
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .bool(recv.isDateInWeekend(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
+    },
+    "func Calendar.dateIntervalOfWeekend(containing:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Calendar.dateIntervalOfWeekend: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        if let _v = recv.dateIntervalOfWeekend(containing: try unboxOpaque(args[0], as: Date.self, typeName: "Date")) {
+            return .optional(boxOpaque(_v, typeName: "DateInterval"))
+        }
+        return .optional(nil)
     },
     "func Calendar.dateIntervalOfWeekend()": .method { receiver, args in
         guard args.count == 1 else {
@@ -101,12 +248,26 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+    "func Calendar.dateComponents(in:from:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("Calendar.dateComponents: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return boxOpaque(recv.dateComponents(in: try unboxOpaque(args[0], as: TimeZone.self, typeName: "TimeZone"), from: try unboxOpaque(args[1], as: Date.self, typeName: "Date")), typeName: "DateComponents")
+    },
     "func Calendar.dateComponents()": .method { receiver, args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("Calendar.dateComponents: expected 2 argument(s), got \(args.count)")
         }
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return boxOpaque(recv.dateComponents(in: try unboxOpaque(args[0], as: TimeZone.self, typeName: "TimeZone"), from: try unboxOpaque(args[1], as: Date.self, typeName: "Date")), typeName: "DateComponents")
+    },
+    "func Calendar.isDate(_:inSameDayAs:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("Calendar.isDate: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .bool(recv.isDate(try unboxOpaque(args[0], as: Date.self, typeName: "Date"), inSameDayAs: try unboxOpaque(args[1], as: Date.self, typeName: "Date")))
     },
     "func Calendar.isDate()": .method { receiver, args in
         guard args.count == 2 else {
@@ -115,6 +276,16 @@ extension FoundationBridges {
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         return .bool(recv.isDate(try unboxOpaque(args[0], as: Date.self, typeName: "Date"), inSameDayAs: try unboxOpaque(args[1], as: Date.self, typeName: "Date")))
     },
+    "func Calendar.nextWeekend(startingAfter:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Calendar.nextWeekend: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        if let _v = recv.nextWeekend(startingAfter: try unboxOpaque(args[0], as: Date.self, typeName: "Date")) {
+            return .optional(boxOpaque(_v, typeName: "DateInterval"))
+        }
+        return .optional(nil)
+    },
     "func Calendar.nextWeekend()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Calendar.nextWeekend: expected 1 argument(s), got \(args.count)")
@@ -122,6 +293,43 @@ extension FoundationBridges {
         let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
         if let _v = recv.nextWeekend(startingAfter: try unboxOpaque(args[0], as: Date.self, typeName: "Date")) {
             return .optional(boxOpaque(_v, typeName: "DateInterval"))
+        }
+        return .optional(nil)
+    },
+    "func Calendar.date(_:matchesComponents:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("Calendar.date: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        return .bool(recv.date(try unboxOpaque(args[0], as: Date.self, typeName: "Date"), matchesComponents: try unboxOpaque(args[1], as: DateComponents.self, typeName: "DateComponents")))
+    },
+    "func Calendar.date(byAdding:to:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("Calendar.date: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        if let _v = recv.date(byAdding: try unboxOpaque(args[0], as: DateComponents.self, typeName: "DateComponents"), to: try unboxOpaque(args[1], as: Date.self, typeName: "Date")) {
+            return .optional(boxOpaque(_v, typeName: "Date"))
+        }
+        return .optional(nil)
+    },
+    "func Calendar.date(byAdding:to:wrappingComponents:)": .method { receiver, args in
+        guard args.count == 3 else {
+            throw RuntimeError.invalid("Calendar.date: expected 3 argument(s), got \(args.count)")
+        }
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        if let _v = recv.date(byAdding: try unboxOpaque(args[0], as: DateComponents.self, typeName: "DateComponents"), to: try unboxOpaque(args[1], as: Date.self, typeName: "Date"), wrappingComponents: try unboxBool(args[2])) {
+            return .optional(boxOpaque(_v, typeName: "Date"))
+        }
+        return .optional(nil)
+    },
+    "func Calendar.date(bySettingHour:minute:second:of:)": .method { receiver, args in
+        guard args.count == 4 else {
+            throw RuntimeError.invalid("Calendar.date: expected 4 argument(s), got \(args.count)")
+        }
+        let recv: Calendar = try unboxOpaque(receiver, as: Calendar.self, typeName: "Calendar")
+        if let _v = recv.date(bySettingHour: try unboxInt(args[0]), minute: try unboxInt(args[1]), second: try unboxInt(args[2]), of: try unboxOpaque(args[3], as: Date.self, typeName: "Date")) {
+            return .optional(boxOpaque(_v, typeName: "Date"))
         }
         return .optional(nil)
     },

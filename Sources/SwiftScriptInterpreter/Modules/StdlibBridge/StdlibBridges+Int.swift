@@ -47,6 +47,14 @@ extension StdlibBridges {
         }
         return .int(Int(integerLiteral: try unboxInt(args[0])))
     },
+    "func Int.quotientAndRemainder(dividingBy:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Int.quotientAndRemainder: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Int = try unboxInt(receiver)
+        let _t = recv.quotientAndRemainder(dividingBy: try unboxInt(args[0]))
+        return .tuple([.int(_t.0), .int(_t.1)])
+    },
     "func Int.quotientAndRemainder()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Int.quotientAndRemainder: expected 1 argument(s), got \(args.count)")
@@ -66,6 +74,13 @@ extension StdlibBridges {
             throw RuntimeError.invalid("init Int(bigEndian:): expected 1 argument(s), got \(args.count)")
         }
         return .int(Int(bigEndian: try unboxInt(args[0])))
+    },
+    "func Int.isMultiple(of:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Int.isMultiple: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Int = try unboxInt(receiver)
+        return .bool(recv.isMultiple(of: try unboxInt(args[0])))
     },
     "func Int.isMultiple()": .method { receiver, args in
         guard args.count == 1 else {
@@ -87,6 +102,10 @@ extension StdlibBridges {
         let recv: Int = try unboxInt(receiver)
         return .int(recv.nonzeroBitCount)
     },
+    "var Int.magnitude: UInt": .computed { receiver in
+        let recv: Int = try unboxInt(receiver)
+        return try boxUnsignedAsInt(recv.magnitude)
+    },
     "var Int.byteSwapped: Int": .computed { receiver in
         let recv: Int = try unboxInt(receiver)
         return .int(recv.byteSwapped)
@@ -106,16 +125,24 @@ extension StdlibBridges {
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Int(bitPattern:): expected 1 argument(s), got \(args.count)")
         }
-        return .int(Int(bitPattern: try unboxOpaque(args[0], as: ObjectIdentifier.self, typeName: "ObjectIdentifier")))
+        return .int(Int(bitPattern: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: OpaquePointer.self, typeName: "OpaquePointer") }))
     },
     "init Int(exactly:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Int(exactly:): expected 1 argument(s), got \(args.count)")
         }
-        if let _v = Int(exactly: try toDouble(args[0])) {
+        if let _v = Int(exactly: try toFloat(args[0])) {
             return .optional(.int(_v))
         }
         return .optional(nil)
+    },
+    "func Int.addingReportingOverflow(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Int.addingReportingOverflow: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Int = try unboxInt(receiver)
+        let _t = recv.addingReportingOverflow(try unboxInt(args[0]))
+        return .tuple([.int(_t.0), .bool(_t.1)])
     },
     "func Int.addingReportingOverflow()": .method { receiver, args in
         guard args.count == 1 else {
@@ -123,6 +150,14 @@ extension StdlibBridges {
         }
         let recv: Int = try unboxInt(receiver)
         let _t = recv.addingReportingOverflow(try unboxInt(args[0]))
+        return .tuple([.int(_t.0), .bool(_t.1)])
+    },
+    "func Int.subtractingReportingOverflow(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Int.subtractingReportingOverflow: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Int = try unboxInt(receiver)
+        let _t = recv.subtractingReportingOverflow(try unboxInt(args[0]))
         return .tuple([.int(_t.0), .bool(_t.1)])
     },
     "func Int.subtractingReportingOverflow()": .method { receiver, args in
@@ -133,12 +168,28 @@ extension StdlibBridges {
         let _t = recv.subtractingReportingOverflow(try unboxInt(args[0]))
         return .tuple([.int(_t.0), .bool(_t.1)])
     },
+    "func Int.multipliedReportingOverflow(by:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Int.multipliedReportingOverflow: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Int = try unboxInt(receiver)
+        let _t = recv.multipliedReportingOverflow(by: try unboxInt(args[0]))
+        return .tuple([.int(_t.0), .bool(_t.1)])
+    },
     "func Int.multipliedReportingOverflow()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Int.multipliedReportingOverflow: expected 1 argument(s), got \(args.count)")
         }
         let recv: Int = try unboxInt(receiver)
         let _t = recv.multipliedReportingOverflow(by: try unboxInt(args[0]))
+        return .tuple([.int(_t.0), .bool(_t.1)])
+    },
+    "func Int.dividedReportingOverflow(by:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Int.dividedReportingOverflow: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Int = try unboxInt(receiver)
+        let _t = recv.dividedReportingOverflow(by: try unboxInt(args[0]))
         return .tuple([.int(_t.0), .bool(_t.1)])
     },
     "func Int.dividedReportingOverflow()": .method { receiver, args in
@@ -149,6 +200,14 @@ extension StdlibBridges {
         let _t = recv.dividedReportingOverflow(by: try unboxInt(args[0]))
         return .tuple([.int(_t.0), .bool(_t.1)])
     },
+    "func Int.remainderReportingOverflow(dividingBy:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Int.remainderReportingOverflow: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Int = try unboxInt(receiver)
+        let _t = recv.remainderReportingOverflow(dividingBy: try unboxInt(args[0]))
+        return .tuple([.int(_t.0), .bool(_t.1)])
+    },
     "func Int.remainderReportingOverflow()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Int.remainderReportingOverflow: expected 1 argument(s), got \(args.count)")
@@ -157,12 +216,26 @@ extension StdlibBridges {
         let _t = recv.remainderReportingOverflow(dividingBy: try unboxInt(args[0]))
         return .tuple([.int(_t.0), .bool(_t.1)])
     },
+    "func Int.distance(to:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Int.distance: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Int = try unboxInt(receiver)
+        return .int(recv.distance(to: try unboxInt(args[0])))
+    },
     "func Int.distance()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Int.distance: expected 1 argument(s), got \(args.count)")
         }
         let recv: Int = try unboxInt(receiver)
         return .int(recv.distance(to: try unboxInt(args[0])))
+    },
+    "func Int.advanced(by:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Int.advanced: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Int = try unboxInt(receiver)
+        return .int(recv.advanced(by: try unboxInt(args[0])))
     },
     "func Int.advanced()": .method { receiver, args in
         guard args.count == 1 else {

@@ -19,6 +19,12 @@ extension FoundationBridges {
     "static let JSONSerialization.ReadingOptions.mutableLeaves": .staticValue(boxOpaque(JSONSerialization.ReadingOptions.mutableLeaves, typeName: "JSONSerialization.ReadingOptions")),
     "static let JSONSerialization.ReadingOptions.fragmentsAllowed": .staticValue(boxOpaque(JSONSerialization.ReadingOptions.fragmentsAllowed, typeName: "JSONSerialization.ReadingOptions")),
     "static let JSONSerialization.ReadingOptions.allowFragments": .staticValue(boxOpaque(JSONSerialization.ReadingOptions.allowFragments, typeName: "JSONSerialization.ReadingOptions")),
+    "init JSONSerialization.ReadingOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init JSONSerialization.ReadingOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(JSONSerialization.ReadingOptions(rawValue: try toUInt(args[0])), typeName: "JSONSerialization.ReadingOptions")
+    },
         "init JSONSerialization.ReadingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("JSONSerialization.ReadingOptions(arrayLiteral:): expected array literal")

@@ -19,7 +19,17 @@ extension FoundationBridges {
         let recv: AttributedString.InterpolationOptions = try unboxOpaque(receiver, as: AttributedString.InterpolationOptions.self, typeName: "AttributedString.InterpolationOptions")
         return .bool(recv.isEmpty)
     },
+    "var AttributedString.InterpolationOptions.rawValue: UInt": .computed { receiver in
+        let recv: AttributedString.InterpolationOptions = try unboxOpaque(receiver, as: AttributedString.InterpolationOptions.self, typeName: "AttributedString.InterpolationOptions")
+        return try boxUnsignedAsInt(recv.rawValue)
+    },
     "static let AttributedString.InterpolationOptions.insertAttributesWithoutMerging": .staticValue(boxOpaque(AttributedString.InterpolationOptions.insertAttributesWithoutMerging, typeName: "AttributedString.InterpolationOptions")),
+    "init AttributedString.InterpolationOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init AttributedString.InterpolationOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(AttributedString.InterpolationOptions(rawValue: try toUInt(args[0])), typeName: "AttributedString.InterpolationOptions")
+    },
         "init AttributedString.InterpolationOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("AttributedString.InterpolationOptions(arrayLiteral:): expected array literal")

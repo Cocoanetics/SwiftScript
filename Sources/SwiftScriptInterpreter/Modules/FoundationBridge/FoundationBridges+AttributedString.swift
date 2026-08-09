@@ -31,6 +31,76 @@ extension FoundationBridges {
         }
         return boxOpaque(AttributedString(stringLiteral: try unboxString(args[0])), typeName: "AttributedString")
     },
+    "init AttributedString(markdown:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init AttributedString(markdown:): expected 1 argument(s), got \(args.count)")
+        }
+        do {
+            return boxOpaque(try AttributedString(markdown: try unboxString(args[0])), typeName: "AttributedString")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
+    "init AttributedString(markdown:baseURL:)": .`init` { args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("init AttributedString(markdown:baseURL:): expected 2 argument(s), got \(args.count)")
+        }
+        do {
+            return boxOpaque(try AttributedString(markdown: try unboxString(args[0]), baseURL: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: URL.self, typeName: "URL") }), typeName: "AttributedString")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
+    "init AttributedString(contentsOf:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init AttributedString(contentsOf:): expected 1 argument(s), got \(args.count)")
+        }
+        do {
+            return boxOpaque(try AttributedString(contentsOf: try unboxOpaque(args[0], as: URL.self, typeName: "URL")), typeName: "AttributedString")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
+    "init AttributedString(contentsOf:baseURL:)": .`init` { args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("init AttributedString(contentsOf:baseURL:): expected 2 argument(s), got \(args.count)")
+        }
+        do {
+            return boxOpaque(try AttributedString(contentsOf: try unboxOpaque(args[0], as: URL.self, typeName: "URL"), baseURL: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: URL.self, typeName: "URL") }), typeName: "AttributedString")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
+    "init AttributedString(localized:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init AttributedString(localized:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(AttributedString(localized: try unboxOpaque(args[0], as: String.LocalizationValue.self, typeName: "String.LocalizationValue")), typeName: "AttributedString")
+    },
+    "init AttributedString(localized:options:)": .`init` { args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("init AttributedString(localized:options:): expected 2 argument(s), got \(args.count)")
+        }
+        return boxOpaque(AttributedString(localized: try unboxOpaque(args[0], as: String.LocalizationValue.self, typeName: "String.LocalizationValue"), options: try unboxOpaque(args[1], as: AttributedString.FormattingOptions.self, typeName: "AttributedString.FormattingOptions")), typeName: "AttributedString")
+    },
+    "init AttributedString(localized:options:table:)": .`init` { args in
+        guard args.count == 3 else {
+            throw RuntimeError.invalid("init AttributedString(localized:options:table:): expected 3 argument(s), got \(args.count)")
+        }
+        return boxOpaque(AttributedString(localized: try unboxOpaque(args[0], as: String.LocalizationValue.self, typeName: "String.LocalizationValue"), options: try unboxOpaque(args[1], as: AttributedString.FormattingOptions.self, typeName: "AttributedString.FormattingOptions"), table: try unboxOptionalValue(args[2]).map { try unboxString($0) }), typeName: "AttributedString")
+    },
+    "init AttributedString(localized:options:table:bundle:)": .`init` { args in
+        guard args.count == 4 else {
+            throw RuntimeError.invalid("init AttributedString(localized:options:table:bundle:): expected 4 argument(s), got \(args.count)")
+        }
+        return boxOpaque(AttributedString(localized: try unboxOpaque(args[0], as: String.LocalizationValue.self, typeName: "String.LocalizationValue"), options: try unboxOpaque(args[1], as: AttributedString.FormattingOptions.self, typeName: "AttributedString.FormattingOptions"), table: try unboxOptionalValue(args[2]).map { try unboxString($0) }, bundle: try unboxOptionalValue(args[3]).map { try unboxOpaque($0, as: Bundle.self, typeName: "Bundle") }), typeName: "AttributedString")
+    },
+    "init AttributedString(localized:options:table:bundle:locale:)": .`init` { args in
+        guard args.count == 5 else {
+            throw RuntimeError.invalid("init AttributedString(localized:options:table:bundle:locale:): expected 5 argument(s), got \(args.count)")
+        }
+        return boxOpaque(AttributedString(localized: try unboxOpaque(args[0], as: String.LocalizationValue.self, typeName: "String.LocalizationValue"), options: try unboxOpaque(args[1], as: AttributedString.FormattingOptions.self, typeName: "AttributedString.FormattingOptions"), table: try unboxOptionalValue(args[2]).map { try unboxString($0) }, bundle: try unboxOptionalValue(args[3]).map { try unboxOpaque($0, as: Bundle.self, typeName: "Bundle") }, locale: try unboxOptionalValue(args[4]).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }), typeName: "AttributedString")
+    },
     "var AttributedString.startIndex: AttributedString.Index": .computed { receiver in
         let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
         return boxOpaque(recv.startIndex, typeName: "AttributedString.Index")
@@ -54,12 +124,26 @@ extension FoundationBridges {
         let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
         return boxOpaque(recv.inflected(), typeName: "AttributedString")
     },
+    "func AttributedString.settingAttributes(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedString.settingAttributes: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        return boxOpaque(recv.settingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
+    },
     "func AttributedString.settingAttributes()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("AttributedString.settingAttributes: expected 1 argument(s), got \(args.count)")
         }
         let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
         return boxOpaque(recv.settingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
+    },
+    "func AttributedString.index(afterCharacter:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedString.index: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        return boxOpaque(recv.index(afterCharacter: try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index")), typeName: "AttributedString.Index")
     },
     "func AttributedString.index()": .method { receiver, args in
         guard args.count == 1 else {
@@ -68,6 +152,64 @@ extension FoundationBridges {
         let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
         return boxOpaque(recv.index(afterCharacter: try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index")), typeName: "AttributedString.Index")
     },
+    "func AttributedString.index(beforeCharacter:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedString.index: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        return boxOpaque(recv.index(beforeCharacter: try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index")), typeName: "AttributedString.Index")
+    },
+    "func AttributedString.index(afterUnicodeScalar:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedString.index: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        return boxOpaque(recv.index(afterUnicodeScalar: try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index")), typeName: "AttributedString.Index")
+    },
+    "func AttributedString.index(beforeUnicodeScalar:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedString.index: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        return boxOpaque(recv.index(beforeUnicodeScalar: try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index")), typeName: "AttributedString.Index")
+    },
+    "func AttributedString.index(afterRun:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedString.index: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        return boxOpaque(recv.index(afterRun: try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index")), typeName: "AttributedString.Index")
+    },
+    "func AttributedString.index(beforeRun:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedString.index: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        return boxOpaque(recv.index(beforeRun: try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index")), typeName: "AttributedString.Index")
+    },
+    "mutating func AttributedString.setAttributes(_:)": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedString.setAttributes: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        recv.setAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"))
+        return (.void, boxOpaque(recv, typeName: "AttributedString"))
+    },
+    "mutating func AttributedString.setAttributes()": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedString.setAttributes: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        recv.setAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"))
+        return (.void, boxOpaque(recv, typeName: "AttributedString"))
+    },
+    "func AttributedString.mergingAttributes(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedString.mergingAttributes: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        return boxOpaque(recv.mergingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
+    },
     "func AttributedString.mergingAttributes()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("AttributedString.mergingAttributes: expected 1 argument(s), got \(args.count)")
@@ -75,12 +217,72 @@ extension FoundationBridges {
         let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
         return boxOpaque(recv.mergingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
     },
+    "func AttributedString.replacingAttributes(_:with:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("AttributedString.replacingAttributes: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        return boxOpaque(recv.replacingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"), with: try unboxOpaque(args[1], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
+    },
     "func AttributedString.replacingAttributes()": .method { receiver, args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("AttributedString.replacingAttributes: expected 2 argument(s), got \(args.count)")
         }
         let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
         return boxOpaque(recv.replacingAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"), with: try unboxOpaque(args[1], as: AttributeContainer.self, typeName: "AttributeContainer")), typeName: "AttributedString")
+    },
+    "func AttributedString.index(_:offsetByCharacters:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("AttributedString.index: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        return boxOpaque(recv.index(try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index"), offsetByCharacters: try unboxInt(args[1])), typeName: "AttributedString.Index")
+    },
+    "func AttributedString.index(_:offsetByUnicodeScalars:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("AttributedString.index: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        return boxOpaque(recv.index(try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index"), offsetByUnicodeScalars: try unboxInt(args[1])), typeName: "AttributedString.Index")
+    },
+    "func AttributedString.index(_:offsetByRuns:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("AttributedString.index: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        return boxOpaque(recv.index(try unboxOpaque(args[0], as: AttributedString.Index.self, typeName: "AttributedString.Index"), offsetByRuns: try unboxInt(args[1])), typeName: "AttributedString.Index")
+    },
+    "mutating func AttributedString.mergeAttributes(_:)": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedString.mergeAttributes: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        recv.mergeAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"))
+        return (.void, boxOpaque(recv, typeName: "AttributedString"))
+    },
+    "mutating func AttributedString.mergeAttributes()": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributedString.mergeAttributes: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        recv.mergeAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"))
+        return (.void, boxOpaque(recv, typeName: "AttributedString"))
+    },
+    "mutating func AttributedString.replaceAttributes(_:with:)": .mutatingMethod { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("AttributedString.replaceAttributes: expected 2 argument(s), got \(args.count)")
+        }
+        var recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        recv.replaceAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"), with: try unboxOpaque(args[1], as: AttributeContainer.self, typeName: "AttributeContainer"))
+        return (.void, boxOpaque(recv, typeName: "AttributedString"))
+    },
+    "mutating func AttributedString.replaceAttributes()": .mutatingMethod { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("AttributedString.replaceAttributes: expected 2 argument(s), got \(args.count)")
+        }
+        var recv: AttributedString = try unboxOpaque(receiver, as: AttributedString.self, typeName: "AttributedString")
+        recv.replaceAttributes(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"), with: try unboxOpaque(args[1], as: AttributeContainer.self, typeName: "AttributeContainer"))
+        return (.void, boxOpaque(recv, typeName: "AttributedString"))
     },
     ]
 }

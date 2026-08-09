@@ -18,6 +18,12 @@ extension FoundationBridges {
     "static let NSComparisonPredicate.Options.caseInsensitive": .staticValue(boxOpaque(NSComparisonPredicate.Options.caseInsensitive, typeName: "NSComparisonPredicate.Options")),
     "static let NSComparisonPredicate.Options.diacriticInsensitive": .staticValue(boxOpaque(NSComparisonPredicate.Options.diacriticInsensitive, typeName: "NSComparisonPredicate.Options")),
     "static let NSComparisonPredicate.Options.normalized": .staticValue(boxOpaque(NSComparisonPredicate.Options.normalized, typeName: "NSComparisonPredicate.Options")),
+    "init NSComparisonPredicate.Options(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSComparisonPredicate.Options(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSComparisonPredicate.Options(rawValue: try toUInt(args[0])), typeName: "NSComparisonPredicate.Options")
+    },
         "init NSComparisonPredicate.Options(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSComparisonPredicate.Options(arrayLiteral:): expected array literal")

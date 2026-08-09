@@ -8,11 +8,26 @@ import FoundationNetworking
 
 extension FoundationBridges {
     nonisolated(unsafe) static let taskPriority: [String: Bridge] = [
+    "var TaskPriority.rawValue: UInt8": .computed { receiver in
+        let recv: TaskPriority = try unboxOpaque(receiver, as: TaskPriority.self, typeName: "TaskPriority")
+        return .int(Int(recv.rawValue))
+    },
+        "set var TaskPriority.rawValue: UInt8": .structSetter { receiver, newValue in
+            var recv: TaskPriority = try unboxOpaque(receiver, as: TaskPriority.self, typeName: "TaskPriority")
+            recv.rawValue = try toUInt8(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "TaskPriority")
+        },
     "static let TaskPriority.high": .staticValue(boxOpaque(TaskPriority.high, typeName: "TaskPriority")),
     "static let TaskPriority.medium": .staticValue(boxOpaque(TaskPriority.medium, typeName: "TaskPriority")),
     "static let TaskPriority.low": .staticValue(boxOpaque(TaskPriority.low, typeName: "TaskPriority")),
     "static let TaskPriority.userInitiated": .staticValue(boxOpaque(TaskPriority.userInitiated, typeName: "TaskPriority")),
     "static let TaskPriority.utility": .staticValue(boxOpaque(TaskPriority.utility, typeName: "TaskPriority")),
     "static let TaskPriority.background": .staticValue(boxOpaque(TaskPriority.background, typeName: "TaskPriority")),
+    "init TaskPriority(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init TaskPriority(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(TaskPriority(rawValue: try toUInt8(args[0])), typeName: "TaskPriority")
+    },
     ]
 }

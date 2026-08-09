@@ -8,6 +8,15 @@ import FoundationNetworking
 
 extension FoundationBridges {
     nonisolated(unsafe) static let stringEncoding: [String: Bridge] = [
+    "var String.Encoding.rawValue: UInt": .computed { receiver in
+        let recv: String.Encoding = try unboxOpaque(receiver, as: String.Encoding.self, typeName: "String.Encoding")
+        return try boxUnsignedAsInt(recv.rawValue)
+    },
+        "set var String.Encoding.rawValue: UInt": .structSetter { receiver, newValue in
+            var recv: String.Encoding = try unboxOpaque(receiver, as: String.Encoding.self, typeName: "String.Encoding")
+            recv.rawValue = try toUInt(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "String.Encoding")
+        },
     "static let String.Encoding.ascii": .staticValue(boxOpaque(String.Encoding.ascii, typeName: "String.Encoding")),
     "static let String.Encoding.nextstep": .staticValue(boxOpaque(String.Encoding.nextstep, typeName: "String.Encoding")),
     "static let String.Encoding.japaneseEUC": .staticValue(boxOpaque(String.Encoding.japaneseEUC, typeName: "String.Encoding")),
@@ -38,6 +47,12 @@ extension FoundationBridges {
     "var String.Encoding.description: String": .computed { receiver in
         let recv: String.Encoding = try unboxOpaque(receiver, as: String.Encoding.self, typeName: "String.Encoding")
         return .string(recv.description)
+    },
+    "init String.Encoding(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init String.Encoding(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(String.Encoding(rawValue: try toUInt(args[0])), typeName: "String.Encoding")
     },
     ]
 }

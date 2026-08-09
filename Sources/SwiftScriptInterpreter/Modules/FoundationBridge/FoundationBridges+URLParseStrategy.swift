@@ -70,6 +70,17 @@ extension FoundationBridges {
         let recv: URL.ParseStrategy = try unboxOpaque(receiver, as: URL.ParseStrategy.self, typeName: "URL.ParseStrategy")
         return boxOpaque(recv.fragment(), typeName: "URL.ParseStrategy")
     },
+    "func URL.ParseStrategy.parse(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("URL.ParseStrategy.parse: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: URL.ParseStrategy = try unboxOpaque(receiver, as: URL.ParseStrategy.self, typeName: "URL.ParseStrategy")
+        do {
+            return boxOpaque(try recv.parse(try unboxString(args[0])), typeName: "URL")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
     "func URL.ParseStrategy.parse()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("URL.ParseStrategy.parse: expected 1 argument(s), got \(args.count)")

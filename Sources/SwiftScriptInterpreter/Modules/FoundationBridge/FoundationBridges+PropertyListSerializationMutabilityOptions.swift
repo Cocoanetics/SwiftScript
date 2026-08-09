@@ -17,6 +17,12 @@ extension FoundationBridges {
     },
     "static let PropertyListSerialization.MutabilityOptions.mutableContainers": .staticValue(boxOpaque(PropertyListSerialization.MutabilityOptions.mutableContainers, typeName: "PropertyListSerialization.MutabilityOptions")),
     "static let PropertyListSerialization.MutabilityOptions.mutableContainersAndLeaves": .staticValue(boxOpaque(PropertyListSerialization.MutabilityOptions.mutableContainersAndLeaves, typeName: "PropertyListSerialization.MutabilityOptions")),
+    "init PropertyListSerialization.MutabilityOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init PropertyListSerialization.MutabilityOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(PropertyListSerialization.MutabilityOptions(rawValue: try toUInt(args[0])), typeName: "PropertyListSerialization.MutabilityOptions")
+    },
         "init PropertyListSerialization.MutabilityOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("PropertyListSerialization.MutabilityOptions(arrayLiteral:): expected array literal")

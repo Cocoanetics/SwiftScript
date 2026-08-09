@@ -24,6 +24,12 @@ extension FoundationBridges {
     "static let NSLinguisticTagger.Options.omitWhitespace": .staticValue(boxOpaque(NSLinguisticTagger.Options.omitWhitespace, typeName: "NSLinguisticTagger.Options")),
     "static let NSLinguisticTagger.Options.omitOther": .staticValue(boxOpaque(NSLinguisticTagger.Options.omitOther, typeName: "NSLinguisticTagger.Options")),
     "static let NSLinguisticTagger.Options.joinNames": .staticValue(boxOpaque(NSLinguisticTagger.Options.joinNames, typeName: "NSLinguisticTagger.Options")),
+    "init NSLinguisticTagger.Options(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSLinguisticTagger.Options(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSLinguisticTagger.Options(rawValue: try toUInt(args[0])), typeName: "NSLinguisticTagger.Options")
+    },
         "init NSLinguisticTagger.Options(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSLinguisticTagger.Options(arrayLiteral:): expected array literal")

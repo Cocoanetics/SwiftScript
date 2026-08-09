@@ -17,6 +17,11 @@ extension FoundationBridges {
         let recv: Date.ISO8601FormatStyle = try unboxOpaque(receiver, as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")
         return boxOpaque(recv.timeZone, typeName: "TimeZone")
     },
+        "set var Date.ISO8601FormatStyle.timeZone: TimeZone": .structSetter { receiver, newValue in
+            var recv: Date.ISO8601FormatStyle = try unboxOpaque(receiver, as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")
+            recv.timeZone = try unboxOpaque(unwrapForSetter(newValue), as: TimeZone.self, typeName: "TimeZone")
+            return boxOpaque(recv, typeName: "Date.ISO8601FormatStyle")
+        },
     "func Date.ISO8601FormatStyle.year()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("Date.ISO8601FormatStyle.year: expected 0 argument(s), got \(args.count)")
@@ -49,6 +54,13 @@ extension FoundationBridges {
         let recv: Date.ISO8601FormatStyle = try unboxOpaque(receiver, as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")
         return boxOpaque(recv.parseStrategy, typeName: "Date.ISO8601FormatStyle")
     },
+    "func Date.ISO8601FormatStyle.time(includingFractionalSeconds:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.ISO8601FormatStyle.time: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date.ISO8601FormatStyle = try unboxOpaque(receiver, as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")
+        return boxOpaque(recv.time(includingFractionalSeconds: try unboxBool(args[0])), typeName: "Date.ISO8601FormatStyle")
+    },
     "func Date.ISO8601FormatStyle.time()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.ISO8601FormatStyle.time: expected 1 argument(s), got \(args.count)")
@@ -56,12 +68,30 @@ extension FoundationBridges {
         let recv: Date.ISO8601FormatStyle = try unboxOpaque(receiver, as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")
         return boxOpaque(recv.time(includingFractionalSeconds: try unboxBool(args[0])), typeName: "Date.ISO8601FormatStyle")
     },
+    "func Date.ISO8601FormatStyle.format(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.ISO8601FormatStyle.format: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date.ISO8601FormatStyle = try unboxOpaque(receiver, as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")
+        return .string(recv.format(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
+    },
     "func Date.ISO8601FormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.ISO8601FormatStyle.format: expected 1 argument(s), got \(args.count)")
         }
         let recv: Date.ISO8601FormatStyle = try unboxOpaque(receiver, as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")
         return .string(recv.format(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
+    },
+    "func Date.ISO8601FormatStyle.parse(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.ISO8601FormatStyle.parse: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date.ISO8601FormatStyle = try unboxOpaque(receiver, as: Date.ISO8601FormatStyle.self, typeName: "Date.ISO8601FormatStyle")
+        do {
+            return boxOpaque(try recv.parse(try unboxString(args[0])), typeName: "Date")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
     },
     "func Date.ISO8601FormatStyle.parse()": .method { receiver, args in
         guard args.count == 1 else {
@@ -74,11 +104,23 @@ extension FoundationBridges {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
     },
+    "init Date.ISO8601FormatStyle()": .`init` { args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("init Date.ISO8601FormatStyle(): expected 0 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Date.ISO8601FormatStyle(), typeName: "Date.ISO8601FormatStyle")
+    },
     "init Date.ISO8601FormatStyle(timeZone:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Date.ISO8601FormatStyle(timeZone:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Date.ISO8601FormatStyle(timeZone: try unboxOpaque(args[0], as: TimeZone.self, typeName: "TimeZone")), typeName: "Date.ISO8601FormatStyle")
+    },
+    "init Date.ISO8601FormatStyle(includingFractionalSeconds:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init Date.ISO8601FormatStyle(includingFractionalSeconds:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Date.ISO8601FormatStyle(includingFractionalSeconds: try unboxBool(args[0])), typeName: "Date.ISO8601FormatStyle")
     },
     "init Date.ISO8601FormatStyle(includingFractionalSeconds:timeZone:)": .`init` { args in
         guard args.count == 2 else {

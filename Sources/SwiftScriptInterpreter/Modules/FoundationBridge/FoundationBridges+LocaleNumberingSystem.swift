@@ -13,6 +13,12 @@ extension FoundationBridges {
         let recv: Locale.NumberingSystem = try unboxOpaque(receiver, as: Locale.NumberingSystem.self, typeName: "Locale.NumberingSystem")
         return .string(recv.identifier)
     },
+        "set var Locale.NumberingSystem.identifier: String": .structSetter { receiver, newValue in
+            var recv: Locale.NumberingSystem = try unboxOpaque(receiver, as: Locale.NumberingSystem.self, typeName: "Locale.NumberingSystem")
+            recv.identifier = try unboxString(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "Locale.NumberingSystem")
+        },
+    "static let Locale.NumberingSystem.availableNumberingSystems": .staticValue(.array(Locale.NumberingSystem.availableNumberingSystems.map { boxOpaque($0, typeName: "Locale.NumberingSystem") })),
     "init Locale.NumberingSystem(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.NumberingSystem(stringLiteral:): expected 1 argument(s), got \(args.count)")

@@ -9,6 +9,7 @@ import FoundationNetworking
 extension FoundationBridges {
     nonisolated(unsafe) static let localeLanguage: [String: Bridge] = {
         var d: [String: Bridge] = [
+    "static let Locale.Language.systemLanguages": .staticValue(.array(Locale.Language.systemLanguages.map { boxOpaque($0, typeName: "Locale.Language") })),
     "var Locale.Language.parent: Locale.Language?": .computed { receiver in
         let recv: Locale.Language = try unboxOpaque(receiver, as: Locale.Language.self, typeName: "Locale.Language")
         if let _v = recv.parent {
@@ -45,12 +46,26 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+    "func Locale.Language.hasCommonParent(with:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Locale.Language.hasCommonParent: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Locale.Language = try unboxOpaque(receiver, as: Locale.Language.self, typeName: "Locale.Language")
+        return .bool(recv.hasCommonParent(with: try unboxOpaque(args[0], as: Locale.Language.self, typeName: "Locale.Language")))
+    },
     "func Locale.Language.hasCommonParent()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Locale.Language.hasCommonParent: expected 1 argument(s), got \(args.count)")
         }
         let recv: Locale.Language = try unboxOpaque(receiver, as: Locale.Language.self, typeName: "Locale.Language")
         return .bool(recv.hasCommonParent(with: try unboxOpaque(args[0], as: Locale.Language.self, typeName: "Locale.Language")))
+    },
+    "func Locale.Language.isEquivalent(to:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Locale.Language.isEquivalent: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Locale.Language = try unboxOpaque(receiver, as: Locale.Language.self, typeName: "Locale.Language")
+        return .bool(recv.isEquivalent(to: try unboxOpaque(args[0], as: Locale.Language.self, typeName: "Locale.Language")))
     },
     "func Locale.Language.isEquivalent()": .method { receiver, args in
         guard args.count == 1 else {
@@ -64,6 +79,30 @@ extension FoundationBridges {
             throw RuntimeError.invalid("init Locale.Language(identifier:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Locale.Language(identifier: try unboxString(args[0])), typeName: "Locale.Language")
+    },
+    "init Locale.Language()": .`init` { args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("init Locale.Language(): expected 0 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Locale.Language(), typeName: "Locale.Language")
+    },
+    "init Locale.Language(languageCode:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init Locale.Language(languageCode:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Locale.Language(languageCode: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode") }), typeName: "Locale.Language")
+    },
+    "init Locale.Language(languageCode:script:)": .`init` { args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("init Locale.Language(languageCode:script:): expected 2 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Locale.Language(languageCode: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode") }, script: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: Locale.Script.self, typeName: "Locale.Script") }), typeName: "Locale.Language")
+    },
+    "init Locale.Language(languageCode:script:region:)": .`init` { args in
+        guard args.count == 3 else {
+            throw RuntimeError.invalid("init Locale.Language(languageCode:script:region:): expected 3 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Locale.Language(languageCode: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode") }, script: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: Locale.Script.self, typeName: "Locale.Script") }, region: try unboxOptionalValue(args[2]).map { try unboxOpaque($0, as: Locale.Region.self, typeName: "Locale.Region") }), typeName: "Locale.Language")
     },
         ]
         #if canImport(Darwin)

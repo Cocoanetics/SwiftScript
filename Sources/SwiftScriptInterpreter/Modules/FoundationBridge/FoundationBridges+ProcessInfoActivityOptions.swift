@@ -30,6 +30,12 @@ extension FoundationBridges {
     "static let ProcessInfo.ActivityOptions.background": .staticValue(boxOpaque(ProcessInfo.ActivityOptions.background, typeName: "ProcessInfo.ActivityOptions")),
     "static let ProcessInfo.ActivityOptions.latencyCritical": .staticValue(boxOpaque(ProcessInfo.ActivityOptions.latencyCritical, typeName: "ProcessInfo.ActivityOptions")),
     "static let ProcessInfo.ActivityOptions.userInteractive": .staticValue(boxOpaque(ProcessInfo.ActivityOptions.userInteractive, typeName: "ProcessInfo.ActivityOptions")),
+    "init ProcessInfo.ActivityOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init ProcessInfo.ActivityOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(ProcessInfo.ActivityOptions(rawValue: try toUInt64(args[0])), typeName: "ProcessInfo.ActivityOptions")
+    },
         "init ProcessInfo.ActivityOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("ProcessInfo.ActivityOptions(arrayLiteral:): expected array literal")

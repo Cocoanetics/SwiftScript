@@ -429,6 +429,85 @@ func boxOpaque<T>(_ value: T, typeName: String) -> Value {
     return .opaque(typeName: typeName, value: value)
 }
 
+// MARK: Fixed-width integer / Float unboxers
+//
+// Scripts model every integer as `.int` and every floating value as
+// `.double`; the narrow-width Foundation parameter types (`Int32`
+// seek offsets, `UInt8` bytes, `Float` fractions) convert here with
+// range checks so an out-of-range script value fails loudly instead
+// of truncating.
+
+func toFixedWidth<T: FixedWidthInteger>(_ value: Value, as _: T.Type) throws -> T {
+    let i = try unboxInt(value)
+    guard let narrowed = T(exactly: i) else {
+        throw RuntimeError.invalid("value \(i) out of range for \(T.self)")
+    }
+    return narrowed
+}
+
+func toInt8(_ v: Value) throws -> Int8 { try toFixedWidth(v, as: Int8.self) }
+func toInt16(_ v: Value) throws -> Int16 { try toFixedWidth(v, as: Int16.self) }
+func toInt32(_ v: Value) throws -> Int32 { try toFixedWidth(v, as: Int32.self) }
+func toInt64(_ v: Value) throws -> Int64 { try toFixedWidth(v, as: Int64.self) }
+func toUInt8(_ v: Value) throws -> UInt8 { try toFixedWidth(v, as: UInt8.self) }
+func toUInt16(_ v: Value) throws -> UInt16 { try toFixedWidth(v, as: UInt16.self) }
+func toUInt32(_ v: Value) throws -> UInt32 { try toFixedWidth(v, as: UInt32.self) }
+func toUInt64(_ v: Value) throws -> UInt64 { try toFixedWidth(v, as: UInt64.self) }
+func toUInt(_ v: Value) throws -> UInt { try toFixedWidth(v, as: UInt.self) }
+func toFloat(_ v: Value) throws -> Float { Float(try toDouble(v)) }
+
+/// Box an unsigned host value that may exceed `Int.max` — throws
+/// instead of silently wrapping.
+func boxUnsignedAsInt<T: FixedWidthInteger>(_ value: T) throws -> Value {
+    guard let i = Int(exactly: value) else {
+        throw RuntimeError.invalid("value \(value) exceeds Int.max")
+    }
+    return .int(i)
+}
+
+// MARK: Collection / Optional unboxers (bridge ABI)
+
+/// Elements of a script `.array`, for element-wise unboxing in
+/// generated collection-parameter bridges.
+func unboxArray(_ value: Value) throws -> [Value] {
+    if case .array(let xs) = value { return xs }
+    throw RuntimeError.invalid("expected Array, got \(typeName(value))")
+}
+
+/// Entries of a script `.dict` as `(key, value)` pairs.
+func unboxDict(_ value: Value) throws -> [(key: Value, value: Value)] {
+    if case .dict(let entries) = value {
+        return entries.map { ($0.key, $0.value) }
+    }
+    throw RuntimeError.invalid("expected Dictionary, got \(typeName(value))")
+}
+
+/// Elements of a script `.set`.
+func unboxSet(_ value: Value) throws -> [Value] {
+    if case .set(let xs) = value { return xs }
+    throw RuntimeError.invalid("expected Set, got \(typeName(value))")
+}
+
+/// Unwrap one `Optional` layer for an optional-typed parameter:
+/// `.optional(x)` yields `x`, `.optional(nil)` yields `nil`, and a
+/// bare value passes through as `.some` (scripts hand non-optional
+/// values to `T?` slots all the time).
+func unboxOptionalValue(_ value: Value) throws -> Value? {
+    if case .optional(let inner) = value { return inner }
+    return value
+}
+
+/// Property-setter tolerance for Foundation's implicitly-unwrapped
+/// members: `formatter.timeZone = TimeZone(identifier: "UTC")`
+/// assigns a failable-init Optional to an IUO slot in stock Swift.
+/// Wrapped values unwrap; `.optional(nil)` passes through so an
+/// optional-typed setter still receives nil (and a non-optional one
+/// still throws in its unboxer).
+func unwrapForSetter(_ value: Value) -> Value {
+    if case .optional(let inner?) = value { return unwrapForSetter(inner) }
+    return value
+}
+
 /// Recover a host-Swift value from a `Value.opaque`. Verifies the boxed
 /// `typeName` matches the requested type — a type-name mismatch throws
 /// a runtime error rather than risking a bad downcast.

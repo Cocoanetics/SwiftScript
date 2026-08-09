@@ -20,6 +20,12 @@ extension FoundationBridges {
         return .bool(recv.isEmpty)
     },
     "static let NSFileVersion.ReplacingOptions.byMoving": .staticValue(boxOpaque(NSFileVersion.ReplacingOptions.byMoving, typeName: "NSFileVersion.ReplacingOptions")),
+    "init NSFileVersion.ReplacingOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSFileVersion.ReplacingOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSFileVersion.ReplacingOptions(rawValue: try toUInt(args[0])), typeName: "NSFileVersion.ReplacingOptions")
+    },
         "init NSFileVersion.ReplacingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSFileVersion.ReplacingOptions(arrayLiteral:): expected array literal")

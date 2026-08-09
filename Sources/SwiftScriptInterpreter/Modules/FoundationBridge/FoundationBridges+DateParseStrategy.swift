@@ -13,10 +13,20 @@ extension FoundationBridges {
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return .bool(recv.isLenient)
     },
+        "set var Date.ParseStrategy.isLenient: Bool": .structSetter { receiver, newValue in
+            var recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
+            recv.isLenient = try unboxBool(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "Date.ParseStrategy")
+        },
     "var Date.ParseStrategy.twoDigitStartDate: Date": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return boxOpaque(recv.twoDigitStartDate, typeName: "Date")
     },
+        "set var Date.ParseStrategy.twoDigitStartDate: Date": .structSetter { receiver, newValue in
+            var recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
+            recv.twoDigitStartDate = try unboxOpaque(unwrapForSetter(newValue), as: Date.self, typeName: "Date")
+            return boxOpaque(recv, typeName: "Date.ParseStrategy")
+        },
     "var Date.ParseStrategy.locale: Locale?": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         if let _v = recv.locale {
@@ -24,17 +34,43 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Date.ParseStrategy.locale: Locale?": .structSetter { receiver, newValue in
+            var recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
+            recv.locale = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }
+            return boxOpaque(recv, typeName: "Date.ParseStrategy")
+        },
     "var Date.ParseStrategy.timeZone: TimeZone": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return boxOpaque(recv.timeZone, typeName: "TimeZone")
     },
+        "set var Date.ParseStrategy.timeZone: TimeZone": .structSetter { receiver, newValue in
+            var recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
+            recv.timeZone = try unboxOpaque(unwrapForSetter(newValue), as: TimeZone.self, typeName: "TimeZone")
+            return boxOpaque(recv, typeName: "Date.ParseStrategy")
+        },
     "var Date.ParseStrategy.calendar: Calendar": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return boxOpaque(recv.calendar, typeName: "Calendar")
     },
+        "set var Date.ParseStrategy.calendar: Calendar": .structSetter { receiver, newValue in
+            var recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
+            recv.calendar = try unboxOpaque(unwrapForSetter(newValue), as: Calendar.self, typeName: "Calendar")
+            return boxOpaque(recv, typeName: "Date.ParseStrategy")
+        },
     "var Date.ParseStrategy.format: String": .computed { receiver in
         let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
         return .string(recv.format)
+    },
+    "func Date.ParseStrategy.parse(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.ParseStrategy.parse: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date.ParseStrategy = try unboxOpaque(receiver, as: Date.ParseStrategy.self, typeName: "Date.ParseStrategy")
+        do {
+            return boxOpaque(try recv.parse(try unboxString(args[0])), typeName: "Date")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
     },
     "func Date.ParseStrategy.parse()": .method { receiver, args in
         guard args.count == 1 else {
@@ -46,6 +82,30 @@ extension FoundationBridges {
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
+    },
+    "init Date.ParseStrategy(format:locale:timeZone:)": .`init` { args in
+        guard args.count == 3 else {
+            throw RuntimeError.invalid("init Date.ParseStrategy(format:locale:timeZone:): expected 3 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Date.ParseStrategy(format: try unboxOpaque(args[0], as: Date.FormatString.self, typeName: "Date.FormatString"), locale: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }, timeZone: try unboxOpaque(args[2], as: TimeZone.self, typeName: "TimeZone")), typeName: "Date.ParseStrategy")
+    },
+    "init Date.ParseStrategy(format:locale:timeZone:calendar:)": .`init` { args in
+        guard args.count == 4 else {
+            throw RuntimeError.invalid("init Date.ParseStrategy(format:locale:timeZone:calendar:): expected 4 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Date.ParseStrategy(format: try unboxOpaque(args[0], as: Date.FormatString.self, typeName: "Date.FormatString"), locale: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }, timeZone: try unboxOpaque(args[2], as: TimeZone.self, typeName: "TimeZone"), calendar: try unboxOpaque(args[3], as: Calendar.self, typeName: "Calendar")), typeName: "Date.ParseStrategy")
+    },
+    "init Date.ParseStrategy(format:locale:timeZone:calendar:isLenient:)": .`init` { args in
+        guard args.count == 5 else {
+            throw RuntimeError.invalid("init Date.ParseStrategy(format:locale:timeZone:calendar:isLenient:): expected 5 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Date.ParseStrategy(format: try unboxOpaque(args[0], as: Date.FormatString.self, typeName: "Date.FormatString"), locale: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }, timeZone: try unboxOpaque(args[2], as: TimeZone.self, typeName: "TimeZone"), calendar: try unboxOpaque(args[3], as: Calendar.self, typeName: "Calendar"), isLenient: try unboxBool(args[4])), typeName: "Date.ParseStrategy")
+    },
+    "init Date.ParseStrategy(format:locale:timeZone:calendar:isLenient:twoDigitStartDate:)": .`init` { args in
+        guard args.count == 6 else {
+            throw RuntimeError.invalid("init Date.ParseStrategy(format:locale:timeZone:calendar:isLenient:twoDigitStartDate:): expected 6 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Date.ParseStrategy(format: try unboxOpaque(args[0], as: Date.FormatString.self, typeName: "Date.FormatString"), locale: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }, timeZone: try unboxOpaque(args[2], as: TimeZone.self, typeName: "TimeZone"), calendar: try unboxOpaque(args[3], as: Calendar.self, typeName: "Calendar"), isLenient: try unboxBool(args[4]), twoDigitStartDate: try unboxOpaque(args[5], as: Date.self, typeName: "Date")), typeName: "Date.ParseStrategy")
     },
         ]
         #if canImport(Darwin)

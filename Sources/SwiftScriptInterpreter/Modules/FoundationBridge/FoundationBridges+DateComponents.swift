@@ -16,6 +16,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var DateComponents.calendar: Calendar?": .structSetter { receiver, newValue in
+            var recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+            recv.calendar = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: Calendar.self, typeName: "Calendar") }
+            return boxOpaque(recv, typeName: "DateComponents")
+        },
     "var DateComponents.timeZone: TimeZone?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.timeZone {
@@ -23,6 +28,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var DateComponents.timeZone: TimeZone?": .structSetter { receiver, newValue in
+            var recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+            recv.timeZone = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: TimeZone.self, typeName: "TimeZone") }
+            return boxOpaque(recv, typeName: "DateComponents")
+        },
     "var DateComponents.era: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.era {
@@ -30,6 +40,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var DateComponents.era: Int?": .structSetter { receiver, newValue in
+            var recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+            recv.era = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxInt($0) }
+            return boxOpaque(recv, typeName: "DateComponents")
+        },
     "var DateComponents.year: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.year {
@@ -37,6 +52,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var DateComponents.year: Int?": .structSetter { receiver, newValue in
+            var recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+            recv.year = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxInt($0) }
+            return boxOpaque(recv, typeName: "DateComponents")
+        },
     "var DateComponents.month: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.month {
@@ -44,6 +64,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var DateComponents.month: Int?": .structSetter { receiver, newValue in
+            var recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+            recv.month = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxInt($0) }
+            return boxOpaque(recv, typeName: "DateComponents")
+        },
     "var DateComponents.day: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.day {
@@ -51,6 +76,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var DateComponents.day: Int?": .structSetter { receiver, newValue in
+            var recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+            recv.day = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxInt($0) }
+            return boxOpaque(recv, typeName: "DateComponents")
+        },
     "var DateComponents.hour: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.hour {
@@ -58,6 +88,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var DateComponents.hour: Int?": .structSetter { receiver, newValue in
+            var recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+            recv.hour = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxInt($0) }
+            return boxOpaque(recv, typeName: "DateComponents")
+        },
     "var DateComponents.minute: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.minute {
@@ -65,6 +100,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var DateComponents.minute: Int?": .structSetter { receiver, newValue in
+            var recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+            recv.minute = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxInt($0) }
+            return boxOpaque(recv, typeName: "DateComponents")
+        },
     "var DateComponents.second: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.second {
@@ -72,6 +112,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var DateComponents.second: Int?": .structSetter { receiver, newValue in
+            var recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+            recv.second = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxInt($0) }
+            return boxOpaque(recv, typeName: "DateComponents")
+        },
     "var DateComponents.nanosecond: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.nanosecond {
@@ -79,6 +124,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var DateComponents.nanosecond: Int?": .structSetter { receiver, newValue in
+            var recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+            recv.nanosecond = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxInt($0) }
+            return boxOpaque(recv, typeName: "DateComponents")
+        },
     "var DateComponents.weekday: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.weekday {
@@ -86,6 +136,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var DateComponents.weekday: Int?": .structSetter { receiver, newValue in
+            var recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+            recv.weekday = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxInt($0) }
+            return boxOpaque(recv, typeName: "DateComponents")
+        },
     "var DateComponents.weekdayOrdinal: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.weekdayOrdinal {
@@ -93,6 +148,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var DateComponents.weekdayOrdinal: Int?": .structSetter { receiver, newValue in
+            var recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+            recv.weekdayOrdinal = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxInt($0) }
+            return boxOpaque(recv, typeName: "DateComponents")
+        },
     "var DateComponents.quarter: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.quarter {
@@ -100,6 +160,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var DateComponents.quarter: Int?": .structSetter { receiver, newValue in
+            var recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+            recv.quarter = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxInt($0) }
+            return boxOpaque(recv, typeName: "DateComponents")
+        },
     "var DateComponents.weekOfMonth: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.weekOfMonth {
@@ -107,6 +172,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var DateComponents.weekOfMonth: Int?": .structSetter { receiver, newValue in
+            var recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+            recv.weekOfMonth = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxInt($0) }
+            return boxOpaque(recv, typeName: "DateComponents")
+        },
     "var DateComponents.weekOfYear: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.weekOfYear {
@@ -114,6 +184,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var DateComponents.weekOfYear: Int?": .structSetter { receiver, newValue in
+            var recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+            recv.weekOfYear = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxInt($0) }
+            return boxOpaque(recv, typeName: "DateComponents")
+        },
     "var DateComponents.yearForWeekOfYear: Int?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.yearForWeekOfYear {
@@ -121,6 +196,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var DateComponents.yearForWeekOfYear: Int?": .structSetter { receiver, newValue in
+            var recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+            recv.yearForWeekOfYear = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxInt($0) }
+            return boxOpaque(recv, typeName: "DateComponents")
+        },
     "var DateComponents.isLeapMonth: Bool?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.isLeapMonth {
@@ -128,6 +208,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var DateComponents.isLeapMonth: Bool?": .structSetter { receiver, newValue in
+            var recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+            recv.isLeapMonth = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxBool($0) }
+            return boxOpaque(recv, typeName: "DateComponents")
+        },
     "var DateComponents.date: Date?": .computed { receiver in
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         if let _v = recv.date {
@@ -147,12 +232,121 @@ extension FoundationBridges {
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         return .string(recv.debugDescription)
     },
+    "func DateComponents.isValidDate(in:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("DateComponents.isValidDate: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
+        return .bool(recv.isValidDate(in: try unboxOpaque(args[0], as: Calendar.self, typeName: "Calendar")))
+    },
     "func DateComponents.isValidDate()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("DateComponents.isValidDate: expected 1 argument(s), got \(args.count)")
         }
         let recv: DateComponents = try unboxOpaque(receiver, as: DateComponents.self, typeName: "DateComponents")
         return .bool(recv.isValidDate(in: try unboxOpaque(args[0], as: Calendar.self, typeName: "Calendar")))
+    },
+    "init DateComponents()": .`init` { args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("init DateComponents(): expected 0 argument(s), got \(args.count)")
+        }
+        return boxOpaque(DateComponents(), typeName: "DateComponents")
+    },
+    "init DateComponents(calendar:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init DateComponents(calendar:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(DateComponents(calendar: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Calendar.self, typeName: "Calendar") }), typeName: "DateComponents")
+    },
+    "init DateComponents(calendar:timeZone:)": .`init` { args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("init DateComponents(calendar:timeZone:): expected 2 argument(s), got \(args.count)")
+        }
+        return boxOpaque(DateComponents(calendar: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Calendar.self, typeName: "Calendar") }, timeZone: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: TimeZone.self, typeName: "TimeZone") }), typeName: "DateComponents")
+    },
+    "init DateComponents(calendar:timeZone:era:)": .`init` { args in
+        guard args.count == 3 else {
+            throw RuntimeError.invalid("init DateComponents(calendar:timeZone:era:): expected 3 argument(s), got \(args.count)")
+        }
+        return boxOpaque(DateComponents(calendar: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Calendar.self, typeName: "Calendar") }, timeZone: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: TimeZone.self, typeName: "TimeZone") }, era: try unboxOptionalValue(args[2]).map { try unboxInt($0) }), typeName: "DateComponents")
+    },
+    "init DateComponents(calendar:timeZone:era:year:)": .`init` { args in
+        guard args.count == 4 else {
+            throw RuntimeError.invalid("init DateComponents(calendar:timeZone:era:year:): expected 4 argument(s), got \(args.count)")
+        }
+        return boxOpaque(DateComponents(calendar: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Calendar.self, typeName: "Calendar") }, timeZone: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: TimeZone.self, typeName: "TimeZone") }, era: try unboxOptionalValue(args[2]).map { try unboxInt($0) }, year: try unboxOptionalValue(args[3]).map { try unboxInt($0) }), typeName: "DateComponents")
+    },
+    "init DateComponents(calendar:timeZone:era:year:month:)": .`init` { args in
+        guard args.count == 5 else {
+            throw RuntimeError.invalid("init DateComponents(calendar:timeZone:era:year:month:): expected 5 argument(s), got \(args.count)")
+        }
+        return boxOpaque(DateComponents(calendar: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Calendar.self, typeName: "Calendar") }, timeZone: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: TimeZone.self, typeName: "TimeZone") }, era: try unboxOptionalValue(args[2]).map { try unboxInt($0) }, year: try unboxOptionalValue(args[3]).map { try unboxInt($0) }, month: try unboxOptionalValue(args[4]).map { try unboxInt($0) }), typeName: "DateComponents")
+    },
+    "init DateComponents(calendar:timeZone:era:year:month:day:)": .`init` { args in
+        guard args.count == 6 else {
+            throw RuntimeError.invalid("init DateComponents(calendar:timeZone:era:year:month:day:): expected 6 argument(s), got \(args.count)")
+        }
+        return boxOpaque(DateComponents(calendar: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Calendar.self, typeName: "Calendar") }, timeZone: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: TimeZone.self, typeName: "TimeZone") }, era: try unboxOptionalValue(args[2]).map { try unboxInt($0) }, year: try unboxOptionalValue(args[3]).map { try unboxInt($0) }, month: try unboxOptionalValue(args[4]).map { try unboxInt($0) }, day: try unboxOptionalValue(args[5]).map { try unboxInt($0) }), typeName: "DateComponents")
+    },
+    "init DateComponents(calendar:timeZone:era:year:month:day:hour:)": .`init` { args in
+        guard args.count == 7 else {
+            throw RuntimeError.invalid("init DateComponents(calendar:timeZone:era:year:month:day:hour:): expected 7 argument(s), got \(args.count)")
+        }
+        return boxOpaque(DateComponents(calendar: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Calendar.self, typeName: "Calendar") }, timeZone: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: TimeZone.self, typeName: "TimeZone") }, era: try unboxOptionalValue(args[2]).map { try unboxInt($0) }, year: try unboxOptionalValue(args[3]).map { try unboxInt($0) }, month: try unboxOptionalValue(args[4]).map { try unboxInt($0) }, day: try unboxOptionalValue(args[5]).map { try unboxInt($0) }, hour: try unboxOptionalValue(args[6]).map { try unboxInt($0) }), typeName: "DateComponents")
+    },
+    "init DateComponents(calendar:timeZone:era:year:month:day:hour:minute:)": .`init` { args in
+        guard args.count == 8 else {
+            throw RuntimeError.invalid("init DateComponents(calendar:timeZone:era:year:month:day:hour:minute:): expected 8 argument(s), got \(args.count)")
+        }
+        return boxOpaque(DateComponents(calendar: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Calendar.self, typeName: "Calendar") }, timeZone: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: TimeZone.self, typeName: "TimeZone") }, era: try unboxOptionalValue(args[2]).map { try unboxInt($0) }, year: try unboxOptionalValue(args[3]).map { try unboxInt($0) }, month: try unboxOptionalValue(args[4]).map { try unboxInt($0) }, day: try unboxOptionalValue(args[5]).map { try unboxInt($0) }, hour: try unboxOptionalValue(args[6]).map { try unboxInt($0) }, minute: try unboxOptionalValue(args[7]).map { try unboxInt($0) }), typeName: "DateComponents")
+    },
+    "init DateComponents(calendar:timeZone:era:year:month:day:hour:minute:second:)": .`init` { args in
+        guard args.count == 9 else {
+            throw RuntimeError.invalid("init DateComponents(calendar:timeZone:era:year:month:day:hour:minute:second:): expected 9 argument(s), got \(args.count)")
+        }
+        return boxOpaque(DateComponents(calendar: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Calendar.self, typeName: "Calendar") }, timeZone: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: TimeZone.self, typeName: "TimeZone") }, era: try unboxOptionalValue(args[2]).map { try unboxInt($0) }, year: try unboxOptionalValue(args[3]).map { try unboxInt($0) }, month: try unboxOptionalValue(args[4]).map { try unboxInt($0) }, day: try unboxOptionalValue(args[5]).map { try unboxInt($0) }, hour: try unboxOptionalValue(args[6]).map { try unboxInt($0) }, minute: try unboxOptionalValue(args[7]).map { try unboxInt($0) }, second: try unboxOptionalValue(args[8]).map { try unboxInt($0) }), typeName: "DateComponents")
+    },
+    "init DateComponents(calendar:timeZone:era:year:month:day:hour:minute:second:nanosecond:)": .`init` { args in
+        guard args.count == 10 else {
+            throw RuntimeError.invalid("init DateComponents(calendar:timeZone:era:year:month:day:hour:minute:second:nanosecond:): expected 10 argument(s), got \(args.count)")
+        }
+        return boxOpaque(DateComponents(calendar: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Calendar.self, typeName: "Calendar") }, timeZone: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: TimeZone.self, typeName: "TimeZone") }, era: try unboxOptionalValue(args[2]).map { try unboxInt($0) }, year: try unboxOptionalValue(args[3]).map { try unboxInt($0) }, month: try unboxOptionalValue(args[4]).map { try unboxInt($0) }, day: try unboxOptionalValue(args[5]).map { try unboxInt($0) }, hour: try unboxOptionalValue(args[6]).map { try unboxInt($0) }, minute: try unboxOptionalValue(args[7]).map { try unboxInt($0) }, second: try unboxOptionalValue(args[8]).map { try unboxInt($0) }, nanosecond: try unboxOptionalValue(args[9]).map { try unboxInt($0) }), typeName: "DateComponents")
+    },
+    "init DateComponents(calendar:timeZone:era:year:month:day:hour:minute:second:nanosecond:weekday:)": .`init` { args in
+        guard args.count == 11 else {
+            throw RuntimeError.invalid("init DateComponents(calendar:timeZone:era:year:month:day:hour:minute:second:nanosecond:weekday:): expected 11 argument(s), got \(args.count)")
+        }
+        return boxOpaque(DateComponents(calendar: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Calendar.self, typeName: "Calendar") }, timeZone: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: TimeZone.self, typeName: "TimeZone") }, era: try unboxOptionalValue(args[2]).map { try unboxInt($0) }, year: try unboxOptionalValue(args[3]).map { try unboxInt($0) }, month: try unboxOptionalValue(args[4]).map { try unboxInt($0) }, day: try unboxOptionalValue(args[5]).map { try unboxInt($0) }, hour: try unboxOptionalValue(args[6]).map { try unboxInt($0) }, minute: try unboxOptionalValue(args[7]).map { try unboxInt($0) }, second: try unboxOptionalValue(args[8]).map { try unboxInt($0) }, nanosecond: try unboxOptionalValue(args[9]).map { try unboxInt($0) }, weekday: try unboxOptionalValue(args[10]).map { try unboxInt($0) }), typeName: "DateComponents")
+    },
+    "init DateComponents(calendar:timeZone:era:year:month:day:hour:minute:second:nanosecond:weekday:weekdayOrdinal:)": .`init` { args in
+        guard args.count == 12 else {
+            throw RuntimeError.invalid("init DateComponents(calendar:timeZone:era:year:month:day:hour:minute:second:nanosecond:weekday:weekdayOrdinal:): expected 12 argument(s), got \(args.count)")
+        }
+        return boxOpaque(DateComponents(calendar: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Calendar.self, typeName: "Calendar") }, timeZone: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: TimeZone.self, typeName: "TimeZone") }, era: try unboxOptionalValue(args[2]).map { try unboxInt($0) }, year: try unboxOptionalValue(args[3]).map { try unboxInt($0) }, month: try unboxOptionalValue(args[4]).map { try unboxInt($0) }, day: try unboxOptionalValue(args[5]).map { try unboxInt($0) }, hour: try unboxOptionalValue(args[6]).map { try unboxInt($0) }, minute: try unboxOptionalValue(args[7]).map { try unboxInt($0) }, second: try unboxOptionalValue(args[8]).map { try unboxInt($0) }, nanosecond: try unboxOptionalValue(args[9]).map { try unboxInt($0) }, weekday: try unboxOptionalValue(args[10]).map { try unboxInt($0) }, weekdayOrdinal: try unboxOptionalValue(args[11]).map { try unboxInt($0) }), typeName: "DateComponents")
+    },
+    "init DateComponents(calendar:timeZone:era:year:month:day:hour:minute:second:nanosecond:weekday:weekdayOrdinal:quarter:)": .`init` { args in
+        guard args.count == 13 else {
+            throw RuntimeError.invalid("init DateComponents(calendar:timeZone:era:year:month:day:hour:minute:second:nanosecond:weekday:weekdayOrdinal:quarter:): expected 13 argument(s), got \(args.count)")
+        }
+        return boxOpaque(DateComponents(calendar: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Calendar.self, typeName: "Calendar") }, timeZone: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: TimeZone.self, typeName: "TimeZone") }, era: try unboxOptionalValue(args[2]).map { try unboxInt($0) }, year: try unboxOptionalValue(args[3]).map { try unboxInt($0) }, month: try unboxOptionalValue(args[4]).map { try unboxInt($0) }, day: try unboxOptionalValue(args[5]).map { try unboxInt($0) }, hour: try unboxOptionalValue(args[6]).map { try unboxInt($0) }, minute: try unboxOptionalValue(args[7]).map { try unboxInt($0) }, second: try unboxOptionalValue(args[8]).map { try unboxInt($0) }, nanosecond: try unboxOptionalValue(args[9]).map { try unboxInt($0) }, weekday: try unboxOptionalValue(args[10]).map { try unboxInt($0) }, weekdayOrdinal: try unboxOptionalValue(args[11]).map { try unboxInt($0) }, quarter: try unboxOptionalValue(args[12]).map { try unboxInt($0) }), typeName: "DateComponents")
+    },
+    "init DateComponents(calendar:timeZone:era:year:month:day:hour:minute:second:nanosecond:weekday:weekdayOrdinal:quarter:weekOfMonth:)": .`init` { args in
+        guard args.count == 14 else {
+            throw RuntimeError.invalid("init DateComponents(calendar:timeZone:era:year:month:day:hour:minute:second:nanosecond:weekday:weekdayOrdinal:quarter:weekOfMonth:): expected 14 argument(s), got \(args.count)")
+        }
+        return boxOpaque(DateComponents(calendar: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Calendar.self, typeName: "Calendar") }, timeZone: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: TimeZone.self, typeName: "TimeZone") }, era: try unboxOptionalValue(args[2]).map { try unboxInt($0) }, year: try unboxOptionalValue(args[3]).map { try unboxInt($0) }, month: try unboxOptionalValue(args[4]).map { try unboxInt($0) }, day: try unboxOptionalValue(args[5]).map { try unboxInt($0) }, hour: try unboxOptionalValue(args[6]).map { try unboxInt($0) }, minute: try unboxOptionalValue(args[7]).map { try unboxInt($0) }, second: try unboxOptionalValue(args[8]).map { try unboxInt($0) }, nanosecond: try unboxOptionalValue(args[9]).map { try unboxInt($0) }, weekday: try unboxOptionalValue(args[10]).map { try unboxInt($0) }, weekdayOrdinal: try unboxOptionalValue(args[11]).map { try unboxInt($0) }, quarter: try unboxOptionalValue(args[12]).map { try unboxInt($0) }, weekOfMonth: try unboxOptionalValue(args[13]).map { try unboxInt($0) }), typeName: "DateComponents")
+    },
+    "init DateComponents(calendar:timeZone:era:year:month:day:hour:minute:second:nanosecond:weekday:weekdayOrdinal:quarter:weekOfMonth:weekOfYear:)": .`init` { args in
+        guard args.count == 15 else {
+            throw RuntimeError.invalid("init DateComponents(calendar:timeZone:era:year:month:day:hour:minute:second:nanosecond:weekday:weekdayOrdinal:quarter:weekOfMonth:weekOfYear:): expected 15 argument(s), got \(args.count)")
+        }
+        return boxOpaque(DateComponents(calendar: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Calendar.self, typeName: "Calendar") }, timeZone: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: TimeZone.self, typeName: "TimeZone") }, era: try unboxOptionalValue(args[2]).map { try unboxInt($0) }, year: try unboxOptionalValue(args[3]).map { try unboxInt($0) }, month: try unboxOptionalValue(args[4]).map { try unboxInt($0) }, day: try unboxOptionalValue(args[5]).map { try unboxInt($0) }, hour: try unboxOptionalValue(args[6]).map { try unboxInt($0) }, minute: try unboxOptionalValue(args[7]).map { try unboxInt($0) }, second: try unboxOptionalValue(args[8]).map { try unboxInt($0) }, nanosecond: try unboxOptionalValue(args[9]).map { try unboxInt($0) }, weekday: try unboxOptionalValue(args[10]).map { try unboxInt($0) }, weekdayOrdinal: try unboxOptionalValue(args[11]).map { try unboxInt($0) }, quarter: try unboxOptionalValue(args[12]).map { try unboxInt($0) }, weekOfMonth: try unboxOptionalValue(args[13]).map { try unboxInt($0) }, weekOfYear: try unboxOptionalValue(args[14]).map { try unboxInt($0) }), typeName: "DateComponents")
+    },
+    "init DateComponents(calendar:timeZone:era:year:month:day:hour:minute:second:nanosecond:weekday:weekdayOrdinal:quarter:weekOfMonth:weekOfYear:yearForWeekOfYear:)": .`init` { args in
+        guard args.count == 16 else {
+            throw RuntimeError.invalid("init DateComponents(calendar:timeZone:era:year:month:day:hour:minute:second:nanosecond:weekday:weekdayOrdinal:quarter:weekOfMonth:weekOfYear:yearForWeekOfYear:): expected 16 argument(s), got \(args.count)")
+        }
+        return boxOpaque(DateComponents(calendar: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Calendar.self, typeName: "Calendar") }, timeZone: try unboxOptionalValue(args[1]).map { try unboxOpaque($0, as: TimeZone.self, typeName: "TimeZone") }, era: try unboxOptionalValue(args[2]).map { try unboxInt($0) }, year: try unboxOptionalValue(args[3]).map { try unboxInt($0) }, month: try unboxOptionalValue(args[4]).map { try unboxInt($0) }, day: try unboxOptionalValue(args[5]).map { try unboxInt($0) }, hour: try unboxOptionalValue(args[6]).map { try unboxInt($0) }, minute: try unboxOptionalValue(args[7]).map { try unboxInt($0) }, second: try unboxOptionalValue(args[8]).map { try unboxInt($0) }, nanosecond: try unboxOptionalValue(args[9]).map { try unboxInt($0) }, weekday: try unboxOptionalValue(args[10]).map { try unboxInt($0) }, weekdayOrdinal: try unboxOptionalValue(args[11]).map { try unboxInt($0) }, quarter: try unboxOptionalValue(args[12]).map { try unboxInt($0) }, weekOfMonth: try unboxOptionalValue(args[13]).map { try unboxInt($0) }, weekOfYear: try unboxOptionalValue(args[14]).map { try unboxInt($0) }, yearForWeekOfYear: try unboxOptionalValue(args[15]).map { try unboxInt($0) }), typeName: "DateComponents")
     },
         ]
         #if canImport(Darwin)

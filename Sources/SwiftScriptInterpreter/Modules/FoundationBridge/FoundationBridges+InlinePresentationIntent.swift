@@ -31,12 +31,26 @@ extension FoundationBridges {
     "static let InlinePresentationIntent.lineBreak": .staticValue(boxOpaque(InlinePresentationIntent.lineBreak, typeName: "InlinePresentationIntent")),
     "static let InlinePresentationIntent.inlineHTML": .staticValue(boxOpaque(InlinePresentationIntent.inlineHTML, typeName: "InlinePresentationIntent")),
     "static let InlinePresentationIntent.blockHTML": .staticValue(boxOpaque(InlinePresentationIntent.blockHTML, typeName: "InlinePresentationIntent")),
+    "func InlinePresentationIntent.union(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("InlinePresentationIntent.union: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
+        return boxOpaque(recv.union(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")), typeName: "InlinePresentationIntent")
+    },
     "func InlinePresentationIntent.union()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("InlinePresentationIntent.union: expected 1 argument(s), got \(args.count)")
         }
         let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
         return boxOpaque(recv.union(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")), typeName: "InlinePresentationIntent")
+    },
+    "func InlinePresentationIntent.intersection(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("InlinePresentationIntent.intersection: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
+        return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")), typeName: "InlinePresentationIntent")
     },
     "func InlinePresentationIntent.intersection()": .method { receiver, args in
         guard args.count == 1 else {
@@ -45,12 +59,26 @@ extension FoundationBridges {
         let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
         return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")), typeName: "InlinePresentationIntent")
     },
+    "func InlinePresentationIntent.symmetricDifference(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("InlinePresentationIntent.symmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
+        return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")), typeName: "InlinePresentationIntent")
+    },
     "func InlinePresentationIntent.symmetricDifference()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("InlinePresentationIntent.symmetricDifference: expected 1 argument(s), got \(args.count)")
         }
         let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
         return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")), typeName: "InlinePresentationIntent")
+    },
+    "func InlinePresentationIntent.contains(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("InlinePresentationIntent.contains: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
+        return .bool(recv.contains(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
     },
     "func InlinePresentationIntent.contains()": .method { receiver, args in
         guard args.count == 1 else {
@@ -59,12 +87,90 @@ extension FoundationBridges {
         let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
         return .bool(recv.contains(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
     },
+    "mutating func InlinePresentationIntent.formUnion(_:)": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("InlinePresentationIntent.formUnion: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
+        recv.formUnion(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent"))
+        return (.void, boxOpaque(recv, typeName: "InlinePresentationIntent"))
+    },
+    "mutating func InlinePresentationIntent.formUnion()": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("InlinePresentationIntent.formUnion: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
+        recv.formUnion(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent"))
+        return (.void, boxOpaque(recv, typeName: "InlinePresentationIntent"))
+    },
+    "mutating func InlinePresentationIntent.formIntersection(_:)": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("InlinePresentationIntent.formIntersection: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
+        recv.formIntersection(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent"))
+        return (.void, boxOpaque(recv, typeName: "InlinePresentationIntent"))
+    },
+    "mutating func InlinePresentationIntent.formIntersection()": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("InlinePresentationIntent.formIntersection: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
+        recv.formIntersection(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent"))
+        return (.void, boxOpaque(recv, typeName: "InlinePresentationIntent"))
+    },
+    "mutating func InlinePresentationIntent.formSymmetricDifference(_:)": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("InlinePresentationIntent.formSymmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
+        recv.formSymmetricDifference(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent"))
+        return (.void, boxOpaque(recv, typeName: "InlinePresentationIntent"))
+    },
+    "mutating func InlinePresentationIntent.formSymmetricDifference()": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("InlinePresentationIntent.formSymmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
+        recv.formSymmetricDifference(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent"))
+        return (.void, boxOpaque(recv, typeName: "InlinePresentationIntent"))
+    },
+    "mutating func InlinePresentationIntent.subtract(_:)": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("InlinePresentationIntent.subtract: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
+        recv.subtract(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent"))
+        return (.void, boxOpaque(recv, typeName: "InlinePresentationIntent"))
+    },
+    "mutating func InlinePresentationIntent.subtract()": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("InlinePresentationIntent.subtract: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
+        recv.subtract(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent"))
+        return (.void, boxOpaque(recv, typeName: "InlinePresentationIntent"))
+    },
+    "func InlinePresentationIntent.isSubset(of:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("InlinePresentationIntent.isSubset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
+        return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
+    },
     "func InlinePresentationIntent.isSubset()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("InlinePresentationIntent.isSubset: expected 1 argument(s), got \(args.count)")
         }
         let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
         return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
+    },
+    "func InlinePresentationIntent.isSuperset(of:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("InlinePresentationIntent.isSuperset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
+        return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
     },
     "func InlinePresentationIntent.isSuperset()": .method { receiver, args in
         guard args.count == 1 else {
@@ -73,12 +179,26 @@ extension FoundationBridges {
         let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
         return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
     },
+    "func InlinePresentationIntent.isDisjoint(with:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("InlinePresentationIntent.isDisjoint: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
+        return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
+    },
     "func InlinePresentationIntent.isDisjoint()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("InlinePresentationIntent.isDisjoint: expected 1 argument(s), got \(args.count)")
         }
         let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
         return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
+    },
+    "func InlinePresentationIntent.subtracting(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("InlinePresentationIntent.subtracting: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
+        return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")), typeName: "InlinePresentationIntent")
     },
     "func InlinePresentationIntent.subtracting()": .method { receiver, args in
         guard args.count == 1 else {
@@ -87,6 +207,13 @@ extension FoundationBridges {
         let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
         return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")), typeName: "InlinePresentationIntent")
     },
+    "func InlinePresentationIntent.isStrictSuperset(of:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("InlinePresentationIntent.isStrictSuperset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
+        return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
+    },
     "func InlinePresentationIntent.isStrictSuperset()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("InlinePresentationIntent.isStrictSuperset: expected 1 argument(s), got \(args.count)")
@@ -94,12 +221,25 @@ extension FoundationBridges {
         let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
         return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
     },
+    "func InlinePresentationIntent.isStrictSubset(of:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("InlinePresentationIntent.isStrictSubset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
+        return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
+    },
     "func InlinePresentationIntent.isStrictSubset()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("InlinePresentationIntent.isStrictSubset: expected 1 argument(s), got \(args.count)")
         }
         let recv: InlinePresentationIntent = try unboxOpaque(receiver, as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")
         return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: InlinePresentationIntent.self, typeName: "InlinePresentationIntent")))
+    },
+    "init InlinePresentationIntent(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init InlinePresentationIntent(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(InlinePresentationIntent(rawValue: try toUInt(args[0])), typeName: "InlinePresentationIntent")
     },
         "init InlinePresentationIntent(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {

@@ -28,6 +28,10 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var FileWrapper.preferredFilename: String?": .setter { receiver, newValue in
+            let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
+            recv.preferredFilename = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+        },
     "var FileWrapper.filename: String?": .computed { receiver in
         let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
         if let _v = recv.filename {
@@ -35,10 +39,21 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var FileWrapper.filename: String?": .setter { receiver, newValue in
+            let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
+            recv.filename = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+        },
     "var FileWrapper.serializedRepresentation: Data?": .computed { receiver in
         let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
         if let _v = recv.serializedRepresentation {
             return .optional(boxOpaque(_v, typeName: "Data"))
+        }
+        return .optional(nil)
+    },
+    "var FileWrapper.fileWrappers: [String: FileWrapper]?": .computed { receiver in
+        let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
+        if let _v = recv.fileWrappers {
+            return .optional(.dict(_v.map { DictEntry(key: .string($0.key), value: boxOpaque($0.value, typeName: "FileWrapper")) }))
         }
         return .optional(nil)
     },
@@ -55,6 +70,12 @@ extension FoundationBridges {
             return .optional(boxOpaque(_v, typeName: "URL"))
         }
         return .optional(nil)
+    },
+    "init FileWrapper(directoryWithFileWrappers:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init FileWrapper(directoryWithFileWrappers:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(FileWrapper(directoryWithFileWrappers: Dictionary(uniqueKeysWithValues: try unboxDict(args[0]).map { (try unboxString($0.key), try unboxOpaque($0.value, as: FileWrapper.self, typeName: "FileWrapper")) })), typeName: "FileWrapper")
     },
     "init FileWrapper(regularFileWithContents:)": .`init` { args in
         guard args.count == 1 else {
@@ -77,6 +98,19 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+    "func FileWrapper.matchesContents(of:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("FileWrapper.matchesContents: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        do {
+            arg0 = try await authorizePath(arg0, for: .read)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        return .bool(await recv.matchesContents(of: arg0))
+    },
     "func FileWrapper.matchesContents()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("FileWrapper.matchesContents: expected 1 argument(s), got \(args.count)")
@@ -90,12 +124,45 @@ extension FoundationBridges {
         }
         return .bool(await recv.matchesContents(of: arg0))
     },
+    "func FileWrapper.addFileWrapper(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("FileWrapper.addFileWrapper: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
+        return .string(recv.addFileWrapper(try unboxOpaque(args[0], as: FileWrapper.self, typeName: "FileWrapper")))
+    },
     "func FileWrapper.addFileWrapper()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("FileWrapper.addFileWrapper: expected 1 argument(s), got \(args.count)")
         }
         let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
         return .string(recv.addFileWrapper(try unboxOpaque(args[0], as: FileWrapper.self, typeName: "FileWrapper")))
+    },
+    "func FileWrapper.removeFileWrapper(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("FileWrapper.removeFileWrapper: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
+        recv.removeFileWrapper(try unboxOpaque(args[0], as: FileWrapper.self, typeName: "FileWrapper"))
+            return .void
+    },
+    "func FileWrapper.removeFileWrapper()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("FileWrapper.removeFileWrapper: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
+        recv.removeFileWrapper(try unboxOpaque(args[0], as: FileWrapper.self, typeName: "FileWrapper"))
+            return .void
+    },
+    "func FileWrapper.keyForChildFileWrapper(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("FileWrapper.keyForChildFileWrapper: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
+        if let _v = recv.keyForChildFileWrapper(try unboxOpaque(args[0], as: FileWrapper.self, typeName: "FileWrapper")) {
+            return .optional(.string(_v))
+        }
+        return .optional(nil)
     },
     "func FileWrapper.keyForChildFileWrapper()": .method { receiver, args in
         guard args.count == 1 else {
@@ -106,6 +173,22 @@ extension FoundationBridges {
             return .optional(.string(_v))
         }
         return .optional(nil)
+    },
+    "init FileWrapper(url:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init FileWrapper(url:): expected 1 argument(s), got \(args.count)")
+        }
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        do {
+            arg0 = try await authorizePath(arg0, for: .read)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
+            return boxOpaque(try await FileWrapper(url: arg0), typeName: "FileWrapper")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
     },
     "init FileWrapper(url:options:)": .`init` { args in
         guard args.count == 2 else {
@@ -123,7 +206,43 @@ extension FoundationBridges {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
     },
+    "func FileWrapper.read(from:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("FileWrapper.read: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        do {
+            arg0 = try await authorizePath(arg0, for: .read)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
+            try await recv.read(from: arg0)
+            return .void
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
     "func FileWrapper.read()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("FileWrapper.read: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        do {
+            arg0 = try await authorizePath(arg0, for: .read)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
+            try await recv.read(from: arg0)
+            return .void
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
+    "func FileWrapper.read(from:options:)": .method { receiver, args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("FileWrapper.read: expected 2 argument(s), got \(args.count)")
         }
@@ -141,12 +260,55 @@ extension FoundationBridges {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
     },
+    "func FileWrapper.addRegularFile(withContents:preferredFilename:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("FileWrapper.addRegularFile: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
+        return .string(recv.addRegularFile(withContents: try unboxOpaque(args[0], as: Data.self, typeName: "Data"), preferredFilename: try unboxString(args[1])))
+    },
     "func FileWrapper.addRegularFile()": .method { receiver, args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("FileWrapper.addRegularFile: expected 2 argument(s), got \(args.count)")
         }
         let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
         return .string(recv.addRegularFile(withContents: try unboxOpaque(args[0], as: Data.self, typeName: "Data"), preferredFilename: try unboxString(args[1])))
+    },
+    "func FileWrapper.write(to:options:originalContentsURL:)": .method { receiver, args in
+        guard args.count == 3 else {
+            throw RuntimeError.invalid("FileWrapper.write: expected 3 argument(s), got \(args.count)")
+        }
+        let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        do {
+            arg0 = try await authorizePath(arg0, for: .write)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
+            try await recv.write(to: arg0, options: try unboxOpaque(args[1], as: FileWrapper.WritingOptions.self, typeName: "FileWrapper.WritingOptions"), originalContentsURL: try unboxOptionalValue(args[2]).map { try unboxOpaque($0, as: URL.self, typeName: "URL") })
+            return .void
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
+    "func FileWrapper.write()": .method { receiver, args in
+        guard args.count == 3 else {
+            throw RuntimeError.invalid("FileWrapper.write: expected 3 argument(s), got \(args.count)")
+        }
+        let recv: FileWrapper = try unboxOpaque(receiver, as: FileWrapper.self, typeName: "FileWrapper")
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        do {
+            arg0 = try await authorizePath(arg0, for: .write)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
+            try await recv.write(to: arg0, options: try unboxOpaque(args[1], as: FileWrapper.WritingOptions.self, typeName: "FileWrapper.WritingOptions"), originalContentsURL: try unboxOptionalValue(args[2]).map { try unboxOpaque($0, as: URL.self, typeName: "URL") })
+            return .void
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
     },
     ]
 }

@@ -23,6 +23,12 @@ extension FoundationBridges {
     "static let NSData.Base64EncodingOptions.lineLength76Characters": .staticValue(boxOpaque(NSData.Base64EncodingOptions.lineLength76Characters, typeName: "NSData.Base64EncodingOptions")),
     "static let NSData.Base64EncodingOptions.endLineWithCarriageReturn": .staticValue(boxOpaque(NSData.Base64EncodingOptions.endLineWithCarriageReturn, typeName: "NSData.Base64EncodingOptions")),
     "static let NSData.Base64EncodingOptions.endLineWithLineFeed": .staticValue(boxOpaque(NSData.Base64EncodingOptions.endLineWithLineFeed, typeName: "NSData.Base64EncodingOptions")),
+    "init NSData.Base64EncodingOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSData.Base64EncodingOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSData.Base64EncodingOptions(rawValue: try toUInt(args[0])), typeName: "NSData.Base64EncodingOptions")
+    },
         "init NSData.Base64EncodingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSData.Base64EncodingOptions(arrayLiteral:): expected array literal")

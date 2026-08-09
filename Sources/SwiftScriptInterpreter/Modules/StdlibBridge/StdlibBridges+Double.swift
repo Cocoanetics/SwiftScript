@@ -31,6 +31,18 @@ extension StdlibBridges {
     },
     "static let Double.exponentBitCount": .staticValue(.int(Double.exponentBitCount)),
     "static let Double.significandBitCount": .staticValue(.int(Double.significandBitCount)),
+    "var Double.bitPattern: UInt64": .computed { receiver in
+        let recv: Double = try toDouble(receiver)
+        return try boxUnsignedAsInt(recv.bitPattern)
+    },
+    "var Double.exponentBitPattern: UInt": .computed { receiver in
+        let recv: Double = try toDouble(receiver)
+        return try boxUnsignedAsInt(recv.exponentBitPattern)
+    },
+    "var Double.significandBitPattern: UInt64": .computed { receiver in
+        let recv: Double = try toDouble(receiver)
+        return try boxUnsignedAsInt(recv.significandBitPattern)
+    },
     "var Double.isCanonical: Bool": .computed { receiver in
         let recv: Double = try toDouble(receiver)
         return .bool(recv.isCanonical)
@@ -102,6 +114,13 @@ extension StdlibBridges {
         let recv: Double = try toDouble(receiver)
         return .double(recv.magnitude)
     },
+    "func Double.truncatingRemainder(dividingBy:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Double.truncatingRemainder: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Double = try toDouble(receiver)
+        return .double(recv.truncatingRemainder(dividingBy: try toDouble(args[0])))
+    },
     "func Double.truncatingRemainder()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Double.truncatingRemainder: expected 1 argument(s), got \(args.count)")
@@ -109,12 +128,26 @@ extension StdlibBridges {
         let recv: Double = try toDouble(receiver)
         return .double(recv.truncatingRemainder(dividingBy: try toDouble(args[0])))
     },
+    "func Double.remainder(dividingBy:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Double.remainder: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Double = try toDouble(receiver)
+        return .double(recv.remainder(dividingBy: try toDouble(args[0])))
+    },
     "func Double.remainder()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Double.remainder: expected 1 argument(s), got \(args.count)")
         }
         let recv: Double = try toDouble(receiver)
         return .double(recv.remainder(dividingBy: try toDouble(args[0])))
+    },
+    "func Double.isTotallyOrdered(belowOrEqualTo:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Double.isTotallyOrdered: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Double = try toDouble(receiver)
+        return .bool(recv.isTotallyOrdered(belowOrEqualTo: try toDouble(args[0])))
     },
     "func Double.isTotallyOrdered()": .method { receiver, args in
         guard args.count == 1 else {
@@ -129,6 +162,19 @@ extension StdlibBridges {
         }
         return .double(Double(integerLiteral: try toDouble(args[0])))
     },
+    "init Double(bitPattern:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init Double(bitPattern:): expected 1 argument(s), got \(args.count)")
+        }
+        return .double(Double(bitPattern: try toUInt64(args[0])))
+    },
+    "func Double.isEqual(to:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Double.isEqual: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Double = try toDouble(receiver)
+        return .bool(recv.isEqual(to: try toDouble(args[0])))
+    },
     "func Double.isEqual()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Double.isEqual: expected 1 argument(s), got \(args.count)")
@@ -136,12 +182,26 @@ extension StdlibBridges {
         let recv: Double = try toDouble(receiver)
         return .bool(recv.isEqual(to: try toDouble(args[0])))
     },
+    "func Double.isLess(than:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Double.isLess: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Double = try toDouble(receiver)
+        return .bool(recv.isLess(than: try toDouble(args[0])))
+    },
     "func Double.isLess()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Double.isLess: expected 1 argument(s), got \(args.count)")
         }
         let recv: Double = try toDouble(receiver)
         return .bool(recv.isLess(than: try toDouble(args[0])))
+    },
+    "func Double.isLessThanOrEqualTo(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Double.isLessThanOrEqualTo: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Double = try toDouble(receiver)
+        return .bool(recv.isLessThanOrEqualTo(try toDouble(args[0])))
     },
     "func Double.isLessThanOrEqualTo()": .method { receiver, args in
         guard args.count == 1 else {
@@ -160,10 +220,17 @@ extension StdlibBridges {
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Double(exactly:): expected 1 argument(s), got \(args.count)")
         }
-        if let _v = Double(exactly: try toDouble(args[0])) {
+        if let _v = Double(exactly: try toFloat(args[0])) {
             return .optional(.double(_v))
         }
         return .optional(nil)
+    },
+    "func Double.distance(to:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Double.distance: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Double = try toDouble(receiver)
+        return .double(recv.distance(to: try toDouble(args[0])))
     },
     "func Double.distance()": .method { receiver, args in
         guard args.count == 1 else {
@@ -172,12 +239,26 @@ extension StdlibBridges {
         let recv: Double = try toDouble(receiver)
         return .double(recv.distance(to: try toDouble(args[0])))
     },
+    "func Double.advanced(by:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Double.advanced: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Double = try toDouble(receiver)
+        return .double(recv.advanced(by: try toDouble(args[0])))
+    },
     "func Double.advanced()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Double.advanced: expected 1 argument(s), got \(args.count)")
         }
         let recv: Double = try toDouble(receiver)
         return .double(recv.advanced(by: try toDouble(args[0])))
+    },
+    "func Double.addingProduct(_:_:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("Double.addingProduct: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: Double = try toDouble(receiver)
+        return .double(recv.addingProduct(try toDouble(args[0]), try toDouble(args[1])))
     },
     "func Double.addingProduct()": .method { receiver, args in
         guard args.count == 2 else {

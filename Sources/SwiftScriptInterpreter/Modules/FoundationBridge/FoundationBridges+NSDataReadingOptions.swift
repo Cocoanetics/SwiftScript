@@ -25,6 +25,12 @@ extension FoundationBridges {
     "static let NSData.ReadingOptions.dataReadingMapped": .staticValue(boxOpaque(NSData.ReadingOptions.dataReadingMapped, typeName: "NSData.ReadingOptions")),
     "static let NSData.ReadingOptions.mappedRead": .staticValue(boxOpaque(NSData.ReadingOptions.mappedRead, typeName: "NSData.ReadingOptions")),
     "static let NSData.ReadingOptions.uncachedRead": .staticValue(boxOpaque(NSData.ReadingOptions.uncachedRead, typeName: "NSData.ReadingOptions")),
+    "init NSData.ReadingOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSData.ReadingOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSData.ReadingOptions(rawValue: try toUInt(args[0])), typeName: "NSData.ReadingOptions")
+    },
         "init NSData.ReadingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSData.ReadingOptions(arrayLiteral:): expected array literal")

@@ -74,6 +74,13 @@ extension FoundationBridges {
         let recv: URL.FormatStyle = try unboxOpaque(receiver, as: URL.FormatStyle.self, typeName: "URL.FormatStyle")
         return boxOpaque(recv.fragment(), typeName: "URL.FormatStyle")
     },
+    "func URL.FormatStyle.format(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("URL.FormatStyle.format: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: URL.FormatStyle = try unboxOpaque(receiver, as: URL.FormatStyle.self, typeName: "URL.FormatStyle")
+        return .string(recv.format(try unboxOpaque(args[0], as: URL.self, typeName: "URL")))
+    },
     "func URL.FormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("URL.FormatStyle.format: expected 1 argument(s), got \(args.count)")

@@ -16,6 +16,12 @@ extension FoundationBridges {
         return boxOpaque(PersonNameComponentsFormatter.Options(), typeName: "PersonNameComponentsFormatter.Options")
     },
     "static let PersonNameComponentsFormatter.Options.phonetic": .staticValue(boxOpaque(PersonNameComponentsFormatter.Options.phonetic, typeName: "PersonNameComponentsFormatter.Options")),
+    "init PersonNameComponentsFormatter.Options(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init PersonNameComponentsFormatter.Options(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(PersonNameComponentsFormatter.Options(rawValue: try toUInt(args[0])), typeName: "PersonNameComponentsFormatter.Options")
+    },
         "init PersonNameComponentsFormatter.Options(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("PersonNameComponentsFormatter.Options(arrayLiteral:): expected array literal")

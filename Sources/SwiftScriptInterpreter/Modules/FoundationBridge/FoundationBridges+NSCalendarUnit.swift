@@ -31,6 +31,12 @@ extension FoundationBridges {
     "static let NSCalendar.Unit.nanosecond": .staticValue(boxOpaque(NSCalendar.Unit.nanosecond, typeName: "NSCalendar.Unit")),
     "static let NSCalendar.Unit.calendar": .staticValue(boxOpaque(NSCalendar.Unit.calendar, typeName: "NSCalendar.Unit")),
     "static let NSCalendar.Unit.timeZone": .staticValue(boxOpaque(NSCalendar.Unit.timeZone, typeName: "NSCalendar.Unit")),
+    "init NSCalendar.Unit(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSCalendar.Unit(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSCalendar.Unit(rawValue: try toUInt(args[0])), typeName: "NSCalendar.Unit")
+    },
         "init NSCalendar.Unit(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSCalendar.Unit(arrayLiteral:): expected array literal")

@@ -13,6 +13,11 @@ extension FoundationBridges {
         let recv: Locale.Script = try unboxOpaque(receiver, as: Locale.Script.self, typeName: "Locale.Script")
         return .string(recv.identifier)
     },
+        "set var Locale.Script.identifier: String": .structSetter { receiver, newValue in
+            var recv: Locale.Script = try unboxOpaque(receiver, as: Locale.Script.self, typeName: "Locale.Script")
+            recv.identifier = try unboxString(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "Locale.Script")
+        },
     "static let Locale.Script.unknown": .staticValue(boxOpaque(Locale.Script.unknown, typeName: "Locale.Script")),
     "static let Locale.Script.adlam": .staticValue(boxOpaque(Locale.Script.adlam, typeName: "Locale.Script")),
     "static let Locale.Script.arabic": .staticValue(boxOpaque(Locale.Script.arabic, typeName: "Locale.Script")),

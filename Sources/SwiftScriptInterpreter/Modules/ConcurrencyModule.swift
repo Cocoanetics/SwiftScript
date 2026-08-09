@@ -25,6 +25,35 @@ struct ConcurrencyModule: BuiltinModule {
             _ = try await i.invoke(fn, args: [])
             return .void
         }
+        // `Task.sleep(nanoseconds:)` / `Task.sleep(for:)` — the wait
+        // primitive polling and retry loops are built on (issue #7's
+        // top-ranked gap: without it a script cannot wait at all).
+        // Bridge closures are async, so this genuinely suspends.
+        // Registering the key also makes `Task` a resolvable type
+        // name, which member access checks before scope bindings —
+        // the `Task { … }` builtin above keeps working.
+        i.bridges["static func Task.sleep()"] = .staticMethod { args in
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("Task.sleep: expected 1 argument, got \(args.count)")
+            }
+            switch args[0] {
+            case .int(let ns):
+                guard ns >= 0 else {
+                    throw RuntimeError.invalid("Task.sleep(nanoseconds:): negative duration")
+                }
+                try await Task.sleep(nanoseconds: UInt64(ns))
+            case .opaque(typeName: "Duration", let any):
+                guard let duration = any as? Duration else {
+                    throw RuntimeError.invalid("Task.sleep(for:): malformed Duration")
+                }
+                try await Task.sleep(for: duration)
+            default:
+                throw RuntimeError.invalid(
+                    "Task.sleep: expected nanoseconds Int or a Duration, got \(typeName(args[0]))"
+                )
+            }
+            return .void
+        }
 
         // `sleep(seconds: Double)` — genuinely suspends the calling task
         // via `Task.sleep`. Demonstrates that `await` on a script-side

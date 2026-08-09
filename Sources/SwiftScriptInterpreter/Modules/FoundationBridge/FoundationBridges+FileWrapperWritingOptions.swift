@@ -21,6 +21,12 @@ extension FoundationBridges {
     },
     "static let FileWrapper.WritingOptions.atomic": .staticValue(boxOpaque(FileWrapper.WritingOptions.atomic, typeName: "FileWrapper.WritingOptions")),
     "static let FileWrapper.WritingOptions.withNameUpdating": .staticValue(boxOpaque(FileWrapper.WritingOptions.withNameUpdating, typeName: "FileWrapper.WritingOptions")),
+    "init FileWrapper.WritingOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init FileWrapper.WritingOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(FileWrapper.WritingOptions(rawValue: try toUInt(args[0])), typeName: "FileWrapper.WritingOptions")
+    },
         "init FileWrapper.WritingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("FileWrapper.WritingOptions(arrayLiteral:): expected array literal")

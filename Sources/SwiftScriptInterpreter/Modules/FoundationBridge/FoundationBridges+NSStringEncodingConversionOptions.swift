@@ -17,6 +17,12 @@ extension FoundationBridges {
     },
     "static let NSString.EncodingConversionOptions.allowLossy": .staticValue(boxOpaque(NSString.EncodingConversionOptions.allowLossy, typeName: "NSString.EncodingConversionOptions")),
     "static let NSString.EncodingConversionOptions.externalRepresentation": .staticValue(boxOpaque(NSString.EncodingConversionOptions.externalRepresentation, typeName: "NSString.EncodingConversionOptions")),
+    "init NSString.EncodingConversionOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSString.EncodingConversionOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSString.EncodingConversionOptions(rawValue: try toUInt(args[0])), typeName: "NSString.EncodingConversionOptions")
+    },
         "init NSString.EncodingConversionOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSString.EncodingConversionOptions(arrayLiteral:): expected array literal")

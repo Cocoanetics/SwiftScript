@@ -13,18 +13,38 @@ extension FoundationBridges {
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
+        "set var Date.FormatStyle.locale: Locale": .structSetter { receiver, newValue in
+            var recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
+            recv.locale = try unboxOpaque(unwrapForSetter(newValue), as: Locale.self, typeName: "Locale")
+            return boxOpaque(recv, typeName: "Date.FormatStyle")
+        },
     "var Date.FormatStyle.timeZone: TimeZone": .computed { receiver in
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
         return boxOpaque(recv.timeZone, typeName: "TimeZone")
     },
+        "set var Date.FormatStyle.timeZone: TimeZone": .structSetter { receiver, newValue in
+            var recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
+            recv.timeZone = try unboxOpaque(unwrapForSetter(newValue), as: TimeZone.self, typeName: "TimeZone")
+            return boxOpaque(recv, typeName: "Date.FormatStyle")
+        },
     "var Date.FormatStyle.calendar: Calendar": .computed { receiver in
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
         return boxOpaque(recv.calendar, typeName: "Calendar")
     },
+        "set var Date.FormatStyle.calendar: Calendar": .structSetter { receiver, newValue in
+            var recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
+            recv.calendar = try unboxOpaque(unwrapForSetter(newValue), as: Calendar.self, typeName: "Calendar")
+            return boxOpaque(recv, typeName: "Date.FormatStyle")
+        },
     "var Date.FormatStyle.capitalizationContext: FormatStyleCapitalizationContext": .computed { receiver in
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
         return boxOpaque(recv.capitalizationContext, typeName: "FormatStyleCapitalizationContext")
     },
+        "set var Date.FormatStyle.capitalizationContext: FormatStyleCapitalizationContext": .structSetter { receiver, newValue in
+            var recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
+            recv.capitalizationContext = try unboxOpaque(unwrapForSetter(newValue), as: FormatStyleCapitalizationContext.self, typeName: "FormatStyleCapitalizationContext")
+            return boxOpaque(recv, typeName: "Date.FormatStyle")
+        },
     "var Date.FormatStyle.attributed: Date.AttributedStyle": .computed { receiver in
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
         return boxOpaque(recv.attributed, typeName: "Date.AttributedStyle")
@@ -117,6 +137,13 @@ extension FoundationBridges {
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
         return boxOpaque(recv.timeZone(), typeName: "Date.FormatStyle")
     },
+    "func Date.FormatStyle.format(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.FormatStyle.format: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
+        return .string(recv.format(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
+    },
     "func Date.FormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.FormatStyle.format: expected 1 argument(s), got \(args.count)")
@@ -124,12 +151,30 @@ extension FoundationBridges {
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
         return .string(recv.format(try unboxOpaque(args[0], as: Date.self, typeName: "Date")))
     },
+    "func Date.FormatStyle.locale(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.FormatStyle.locale: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
+        return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Date.FormatStyle")
+    },
     "func Date.FormatStyle.locale()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.FormatStyle.locale: expected 1 argument(s), got \(args.count)")
         }
         let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
         return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Date.FormatStyle")
+    },
+    "func Date.FormatStyle.parse(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.FormatStyle.parse: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Date.FormatStyle = try unboxOpaque(receiver, as: Date.FormatStyle.self, typeName: "Date.FormatStyle")
+        do {
+            return boxOpaque(try recv.parse(try unboxString(args[0])), typeName: "Date")
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
     },
     "func Date.FormatStyle.parse()": .method { receiver, args in
         guard args.count == 1 else {
@@ -141,6 +186,30 @@ extension FoundationBridges {
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
+    },
+    "init Date.FormatStyle()": .`init` { args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("init Date.FormatStyle(): expected 0 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Date.FormatStyle(), typeName: "Date.FormatStyle")
+    },
+    "init Date.FormatStyle(locale:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init Date.FormatStyle(locale:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Date.FormatStyle(locale: try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Date.FormatStyle")
+    },
+    "init Date.FormatStyle(locale:calendar:)": .`init` { args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("init Date.FormatStyle(locale:calendar:): expected 2 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Date.FormatStyle(locale: try unboxOpaque(args[0], as: Locale.self, typeName: "Locale"), calendar: try unboxOpaque(args[1], as: Calendar.self, typeName: "Calendar")), typeName: "Date.FormatStyle")
+    },
+    "init Date.FormatStyle(locale:calendar:timeZone:)": .`init` { args in
+        guard args.count == 3 else {
+            throw RuntimeError.invalid("init Date.FormatStyle(locale:calendar:timeZone:): expected 3 argument(s), got \(args.count)")
+        }
+        return boxOpaque(Date.FormatStyle(locale: try unboxOpaque(args[0], as: Locale.self, typeName: "Locale"), calendar: try unboxOpaque(args[1], as: Calendar.self, typeName: "Calendar"), timeZone: try unboxOpaque(args[2], as: TimeZone.self, typeName: "TimeZone")), typeName: "Date.FormatStyle")
     },
     "init Date.FormatStyle(locale:calendar:timeZone:capitalizationContext:)": .`init` { args in
         guard args.count == 4 else {

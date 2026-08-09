@@ -28,9 +28,38 @@ extension FoundationBridges {
         let recv: URLResource = try unboxOpaque(receiver, as: URLResource.self, typeName: "URLResource")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
+        "set var URLResource.locale: Locale": .structSetter { receiver, newValue in
+            var recv: URLResource = try unboxOpaque(receiver, as: URLResource.self, typeName: "URLResource")
+            recv.locale = try unboxOpaque(unwrapForSetter(newValue), as: Locale.self, typeName: "Locale")
+            return boxOpaque(recv, typeName: "URLResource")
+        },
     "var URLResource.hashValue: Int": .computed { receiver in
         let recv: URLResource = try unboxOpaque(receiver, as: URLResource.self, typeName: "URLResource")
         return .int(recv.hashValue)
+    },
+    "init URLResource(name:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init URLResource(name:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(URLResource(name: try unboxString(args[0])), typeName: "URLResource")
+    },
+    "init URLResource(name:subdirectory:)": .`init` { args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("init URLResource(name:subdirectory:): expected 2 argument(s), got \(args.count)")
+        }
+        return boxOpaque(URLResource(name: try unboxString(args[0]), subdirectory: try unboxOptionalValue(args[1]).map { try unboxString($0) }), typeName: "URLResource")
+    },
+    "init URLResource(name:subdirectory:locale:)": .`init` { args in
+        guard args.count == 3 else {
+            throw RuntimeError.invalid("init URLResource(name:subdirectory:locale:): expected 3 argument(s), got \(args.count)")
+        }
+        return boxOpaque(URLResource(name: try unboxString(args[0]), subdirectory: try unboxOptionalValue(args[1]).map { try unboxString($0) }, locale: try unboxOpaque(args[2], as: Locale.self, typeName: "Locale")), typeName: "URLResource")
+    },
+    "init URLResource(name:subdirectory:locale:bundle:)": .`init` { args in
+        guard args.count == 4 else {
+            throw RuntimeError.invalid("init URLResource(name:subdirectory:locale:bundle:): expected 4 argument(s), got \(args.count)")
+        }
+        return boxOpaque(URLResource(name: try unboxString(args[0]), subdirectory: try unboxOptionalValue(args[1]).map { try unboxString($0) }, locale: try unboxOpaque(args[2], as: Locale.self, typeName: "Locale"), bundle: try unboxOpaque(args[3], as: Bundle.self, typeName: "Bundle")), typeName: "URLResource")
     },
     ]
 }

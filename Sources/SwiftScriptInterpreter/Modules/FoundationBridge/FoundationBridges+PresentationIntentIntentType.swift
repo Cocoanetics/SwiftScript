@@ -13,6 +13,11 @@ extension FoundationBridges {
         let recv: PresentationIntent.IntentType = try unboxOpaque(receiver, as: PresentationIntent.IntentType.self, typeName: "PresentationIntent.IntentType")
         return .int(recv.identity)
     },
+        "set var PresentationIntent.IntentType.identity: Int": .structSetter { receiver, newValue in
+            var recv: PresentationIntent.IntentType = try unboxOpaque(receiver, as: PresentationIntent.IntentType.self, typeName: "PresentationIntent.IntentType")
+            recv.identity = try unboxInt(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "PresentationIntent.IntentType")
+        },
     "var PresentationIntent.IntentType.debugDescription: String": .computed { receiver in
         let recv: PresentationIntent.IntentType = try unboxOpaque(receiver, as: PresentationIntent.IntentType.self, typeName: "PresentationIntent.IntentType")
         return .string(recv.debugDescription)

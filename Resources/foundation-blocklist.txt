@@ -70,23 +70,15 @@ NSHFSTypeOfFile(_:)
 # sentinel wins the lookup.
 FileManager.default
 
-# Among the URLSession async overloads, prefer the simpler URL-based
-# variants. Blocking the URLRequest-based ones lets the (from: URL)
-# overload win the deduper.
-URLSession.data(for:)
-URLSession.data(for:delegate:)
-URLSession.data(from:delegate:)
+# URLSession overloads are label-keyed now, so the URLRequest-based
+# variants coexist with the URL-based ones (POST + headers via
+# `data(for: request)`). The `delegate:`-bearing spellings collapse
+# onto the same keys after the defaulted-arg drop and dedupe
+# naturally. Only `bytes` stays blocked: its AsyncBytes return isn't
+# bridgeable, and blocking beats a confusing skip diagnostic.
 URLSession.bytes(for:)
 URLSession.bytes(for:delegate:)
 URLSession.bytes(from:delegate:)
-URLSession.download(for:)
-URLSession.download(for:delegate:)
-URLSession.download(from:delegate:)
-URLSession.download(resumeFrom:)
-URLSession.download(resumeFrom:delegate:)
-URLSession.upload(for:from:)
-URLSession.upload(for:from:delegate:)
-URLSession.upload(for:fromFile:delegate:)
 
 # More macOS-only entries surfaced by class promotion.
 FileManager.homeDirectoryForCurrentUser

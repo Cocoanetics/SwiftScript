@@ -21,6 +21,12 @@ extension FoundationBridges {
     },
     "static let NSData.SearchOptions.backwards": .staticValue(boxOpaque(NSData.SearchOptions.backwards, typeName: "NSData.SearchOptions")),
     "static let NSData.SearchOptions.anchored": .staticValue(boxOpaque(NSData.SearchOptions.anchored, typeName: "NSData.SearchOptions")),
+    "init NSData.SearchOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSData.SearchOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSData.SearchOptions(rawValue: try toUInt(args[0])), typeName: "NSData.SearchOptions")
+    },
         "init NSData.SearchOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSData.SearchOptions(arrayLiteral:): expected array literal")

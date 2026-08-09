@@ -20,6 +20,12 @@ extension FoundationBridges {
     "static let NSRegularExpression.MatchingFlags.hitEnd": .staticValue(boxOpaque(NSRegularExpression.MatchingFlags.hitEnd, typeName: "NSRegularExpression.MatchingFlags")),
     "static let NSRegularExpression.MatchingFlags.requiredEnd": .staticValue(boxOpaque(NSRegularExpression.MatchingFlags.requiredEnd, typeName: "NSRegularExpression.MatchingFlags")),
     "static let NSRegularExpression.MatchingFlags.internalError": .staticValue(boxOpaque(NSRegularExpression.MatchingFlags.internalError, typeName: "NSRegularExpression.MatchingFlags")),
+    "init NSRegularExpression.MatchingFlags(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSRegularExpression.MatchingFlags(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSRegularExpression.MatchingFlags(rawValue: try toUInt(args[0])), typeName: "NSRegularExpression.MatchingFlags")
+    },
         "init NSRegularExpression.MatchingFlags(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSRegularExpression.MatchingFlags(arrayLiteral:): expected array literal")

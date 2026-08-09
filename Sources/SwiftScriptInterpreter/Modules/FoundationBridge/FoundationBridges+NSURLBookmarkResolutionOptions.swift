@@ -22,6 +22,12 @@ extension FoundationBridges {
     "static let NSURL.BookmarkResolutionOptions.withoutUI": .staticValue(boxOpaque(NSURL.BookmarkResolutionOptions.withoutUI, typeName: "NSURL.BookmarkResolutionOptions")),
     "static let NSURL.BookmarkResolutionOptions.withoutMounting": .staticValue(boxOpaque(NSURL.BookmarkResolutionOptions.withoutMounting, typeName: "NSURL.BookmarkResolutionOptions")),
     "static let NSURL.BookmarkResolutionOptions.withoutImplicitStartAccessing": .staticValue(boxOpaque(NSURL.BookmarkResolutionOptions.withoutImplicitStartAccessing, typeName: "NSURL.BookmarkResolutionOptions")),
+    "init NSURL.BookmarkResolutionOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSURL.BookmarkResolutionOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSURL.BookmarkResolutionOptions(rawValue: try toUInt(args[0])), typeName: "NSURL.BookmarkResolutionOptions")
+    },
         "init NSURL.BookmarkResolutionOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSURL.BookmarkResolutionOptions(arrayLiteral:): expected array literal")

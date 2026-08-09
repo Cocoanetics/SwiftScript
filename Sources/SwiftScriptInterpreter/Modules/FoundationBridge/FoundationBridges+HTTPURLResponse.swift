@@ -12,6 +12,16 @@ extension FoundationBridges {
         let recv: HTTPURLResponse = try unboxOpaque(receiver, as: HTTPURLResponse.self, typeName: "HTTPURLResponse")
         return .int(recv.statusCode)
     },
+    "func HTTPURLResponse.value(forHTTPHeaderField:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("HTTPURLResponse.value: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: HTTPURLResponse = try unboxOpaque(receiver, as: HTTPURLResponse.self, typeName: "HTTPURLResponse")
+        if let _v = recv.value(forHTTPHeaderField: try unboxString(args[0])) {
+            return .optional(.string(_v))
+        }
+        return .optional(nil)
+    },
     "func HTTPURLResponse.value()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("HTTPURLResponse.value: expected 1 argument(s), got \(args.count)")
@@ -27,6 +37,15 @@ extension FoundationBridges {
             throw RuntimeError.invalid("HTTPURLResponse.localizedString: expected 1 argument(s), got \(args.count)")
         }
         return .string(HTTPURLResponse.localizedString(forStatusCode: try unboxInt(args[0])))
+    },
+    "init HTTPURLResponse(url:statusCode:httpVersion:headerFields:)": .`init` { args in
+        guard args.count == 4 else {
+            throw RuntimeError.invalid("init HTTPURLResponse(url:statusCode:httpVersion:headerFields:): expected 4 argument(s), got \(args.count)")
+        }
+        if let _v = HTTPURLResponse(url: try unboxOpaque(args[0], as: URL.self, typeName: "URL"), statusCode: try unboxInt(args[1]), httpVersion: try unboxOptionalValue(args[2]).map { try unboxString($0) }, headerFields: try unboxOptionalValue(args[3]).map { Dictionary(uniqueKeysWithValues: try unboxDict($0).map { (try unboxString($0.key), try unboxString($0.value)) }) }) {
+            return .optional(boxOpaque(_v, typeName: "HTTPURLResponse"))
+        }
+        return .optional(nil)
     },
     ]
 }

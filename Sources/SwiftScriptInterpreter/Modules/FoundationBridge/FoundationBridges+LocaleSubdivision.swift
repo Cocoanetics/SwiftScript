@@ -13,6 +13,11 @@ extension FoundationBridges {
         let recv: Locale.Subdivision = try unboxOpaque(receiver, as: Locale.Subdivision.self, typeName: "Locale.Subdivision")
         return .string(recv.identifier)
     },
+        "set var Locale.Subdivision.identifier: String": .structSetter { receiver, newValue in
+            var recv: Locale.Subdivision = try unboxOpaque(receiver, as: Locale.Subdivision.self, typeName: "Locale.Subdivision")
+            recv.identifier = try unboxString(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "Locale.Subdivision")
+        },
     "init Locale.Subdivision(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Subdivision(stringLiteral:): expected 1 argument(s), got \(args.count)")

@@ -17,6 +17,11 @@ extension FoundationBridges {
         let recv: ErrorUserInfoKey = try unboxOpaque(receiver, as: ErrorUserInfoKey.self, typeName: "ErrorUserInfoKey")
         return .string(recv.rawValue)
     },
+        "set var ErrorUserInfoKey.rawValue: String": .structSetter { receiver, newValue in
+            var recv: ErrorUserInfoKey = try unboxOpaque(receiver, as: ErrorUserInfoKey.self, typeName: "ErrorUserInfoKey")
+            recv.rawValue = try unboxString(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "ErrorUserInfoKey")
+        },
     "init ErrorUserInfoKey(rawValue:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init ErrorUserInfoKey(rawValue:): expected 1 argument(s), got \(args.count)")

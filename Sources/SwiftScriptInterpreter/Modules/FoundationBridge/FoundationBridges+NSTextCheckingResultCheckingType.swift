@@ -16,6 +16,12 @@ extension FoundationBridges {
         return boxOpaque(NSTextCheckingResult.CheckingType(), typeName: "NSTextCheckingResult.CheckingType")
     },
     "static let NSTextCheckingResult.CheckingType.regularExpression": .staticValue(boxOpaque(NSTextCheckingResult.CheckingType.regularExpression, typeName: "NSTextCheckingResult.CheckingType")),
+    "init NSTextCheckingResult.CheckingType(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSTextCheckingResult.CheckingType(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSTextCheckingResult.CheckingType(rawValue: try toUInt64(args[0])), typeName: "NSTextCheckingResult.CheckingType")
+    },
         "init NSTextCheckingResult.CheckingType(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSTextCheckingResult.CheckingType(arrayLiteral:): expected array literal")

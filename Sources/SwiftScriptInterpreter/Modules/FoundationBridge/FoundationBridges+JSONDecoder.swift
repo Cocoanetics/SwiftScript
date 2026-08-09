@@ -14,7 +14,7 @@ extension FoundationBridges {
     },
         "set var JSONDecoder.allowsJSON5: Bool": .setter { receiver, newValue in
             let recv: JSONDecoder = try unboxOpaque(receiver, as: JSONDecoder.self, typeName: "JSONDecoder")
-            recv.allowsJSON5 = try unboxBool(newValue)
+            recv.allowsJSON5 = try unboxBool(unwrapForSetter(newValue))
         },
     "var JSONDecoder.assumesTopLevelDictionary: Bool": .computed { receiver in
         let recv: JSONDecoder = try unboxOpaque(receiver, as: JSONDecoder.self, typeName: "JSONDecoder")
@@ -22,7 +22,7 @@ extension FoundationBridges {
     },
         "set var JSONDecoder.assumesTopLevelDictionary: Bool": .setter { receiver, newValue in
             let recv: JSONDecoder = try unboxOpaque(receiver, as: JSONDecoder.self, typeName: "JSONDecoder")
-            recv.assumesTopLevelDictionary = try unboxBool(newValue)
+            recv.assumesTopLevelDictionary = try unboxBool(unwrapForSetter(newValue))
         },
     "init JSONDecoder()": .`init` { args in
         guard args.count == 0 else {

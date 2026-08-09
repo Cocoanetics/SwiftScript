@@ -13,21 +13,67 @@ extension FoundationBridges {
         let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
         return boxOpaque(recv.allowedUnits, typeName: "ByteCountFormatStyle.Units")
     },
+        "set var ByteCountFormatStyle.allowedUnits: ByteCountFormatStyle.Units": .structSetter { receiver, newValue in
+            var recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
+            recv.allowedUnits = try unboxOpaque(unwrapForSetter(newValue), as: ByteCountFormatStyle.Units.self, typeName: "ByteCountFormatStyle.Units")
+            return boxOpaque(recv, typeName: "ByteCountFormatStyle")
+        },
     "var ByteCountFormatStyle.spellsOutZero: Bool": .computed { receiver in
         let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
         return .bool(recv.spellsOutZero)
     },
+        "set var ByteCountFormatStyle.spellsOutZero: Bool": .structSetter { receiver, newValue in
+            var recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
+            recv.spellsOutZero = try unboxBool(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "ByteCountFormatStyle")
+        },
     "var ByteCountFormatStyle.includesActualByteCount: Bool": .computed { receiver in
         let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
         return .bool(recv.includesActualByteCount)
     },
+        "set var ByteCountFormatStyle.includesActualByteCount: Bool": .structSetter { receiver, newValue in
+            var recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
+            recv.includesActualByteCount = try unboxBool(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "ByteCountFormatStyle")
+        },
     "var ByteCountFormatStyle.locale: Locale": .computed { receiver in
         let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
+        "set var ByteCountFormatStyle.locale: Locale": .structSetter { receiver, newValue in
+            var recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
+            recv.locale = try unboxOpaque(unwrapForSetter(newValue), as: Locale.self, typeName: "Locale")
+            return boxOpaque(recv, typeName: "ByteCountFormatStyle")
+        },
     "var ByteCountFormatStyle.attributed: ByteCountFormatStyle.Attributed": .computed { receiver in
         let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
         return boxOpaque(recv.attributed, typeName: "ByteCountFormatStyle.Attributed")
+    },
+        "set var ByteCountFormatStyle.attributed: ByteCountFormatStyle.Attributed": .structSetter { receiver, newValue in
+            var recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
+            recv.attributed = try unboxOpaque(unwrapForSetter(newValue), as: ByteCountFormatStyle.Attributed.self, typeName: "ByteCountFormatStyle.Attributed")
+            return boxOpaque(recv, typeName: "ByteCountFormatStyle")
+        },
+    "func ByteCountFormatStyle.format(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("ByteCountFormatStyle.format: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
+        return .string(recv.format(try toInt64(args[0])))
+    },
+    "func ByteCountFormatStyle.format()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("ByteCountFormatStyle.format: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
+        return .string(recv.format(try toInt64(args[0])))
+    },
+    "func ByteCountFormatStyle.locale(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("ByteCountFormatStyle.locale: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
+        return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "ByteCountFormatStyle")
     },
     "func ByteCountFormatStyle.locale()": .method { receiver, args in
         guard args.count == 1 else {
@@ -35,6 +81,30 @@ extension FoundationBridges {
         }
         let recv: ByteCountFormatStyle = try unboxOpaque(receiver, as: ByteCountFormatStyle.self, typeName: "ByteCountFormatStyle")
         return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "ByteCountFormatStyle")
+    },
+    "init ByteCountFormatStyle()": .`init` { args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("init ByteCountFormatStyle(): expected 0 argument(s), got \(args.count)")
+        }
+        return boxOpaque(ByteCountFormatStyle(), typeName: "ByteCountFormatStyle")
+    },
+    "init ByteCountFormatStyle(allowedUnits:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init ByteCountFormatStyle(allowedUnits:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(ByteCountFormatStyle(allowedUnits: try unboxOpaque(args[0], as: ByteCountFormatStyle.Units.self, typeName: "ByteCountFormatStyle.Units")), typeName: "ByteCountFormatStyle")
+    },
+    "init ByteCountFormatStyle(allowedUnits:spellsOutZero:)": .`init` { args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("init ByteCountFormatStyle(allowedUnits:spellsOutZero:): expected 2 argument(s), got \(args.count)")
+        }
+        return boxOpaque(ByteCountFormatStyle(allowedUnits: try unboxOpaque(args[0], as: ByteCountFormatStyle.Units.self, typeName: "ByteCountFormatStyle.Units"), spellsOutZero: try unboxBool(args[1])), typeName: "ByteCountFormatStyle")
+    },
+    "init ByteCountFormatStyle(allowedUnits:spellsOutZero:includesActualByteCount:)": .`init` { args in
+        guard args.count == 3 else {
+            throw RuntimeError.invalid("init ByteCountFormatStyle(allowedUnits:spellsOutZero:includesActualByteCount:): expected 3 argument(s), got \(args.count)")
+        }
+        return boxOpaque(ByteCountFormatStyle(allowedUnits: try unboxOpaque(args[0], as: ByteCountFormatStyle.Units.self, typeName: "ByteCountFormatStyle.Units"), spellsOutZero: try unboxBool(args[1]), includesActualByteCount: try unboxBool(args[2])), typeName: "ByteCountFormatStyle")
     },
     "init ByteCountFormatStyle(allowedUnits:spellsOutZero:includesActualByteCount:locale:)": .`init` { args in
         guard args.count == 4 else {

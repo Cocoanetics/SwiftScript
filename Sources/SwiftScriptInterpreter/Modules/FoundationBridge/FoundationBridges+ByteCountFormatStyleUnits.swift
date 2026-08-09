@@ -15,6 +15,15 @@ extension FoundationBridges {
         }
         return boxOpaque(ByteCountFormatStyle.Units(), typeName: "ByteCountFormatStyle.Units")
     },
+    "var ByteCountFormatStyle.Units.rawValue: UInt": .computed { receiver in
+        let recv: ByteCountFormatStyle.Units = try unboxOpaque(receiver, as: ByteCountFormatStyle.Units.self, typeName: "ByteCountFormatStyle.Units")
+        return try boxUnsignedAsInt(recv.rawValue)
+    },
+        "set var ByteCountFormatStyle.Units.rawValue: UInt": .structSetter { receiver, newValue in
+            var recv: ByteCountFormatStyle.Units = try unboxOpaque(receiver, as: ByteCountFormatStyle.Units.self, typeName: "ByteCountFormatStyle.Units")
+            recv.rawValue = try toUInt(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "ByteCountFormatStyle.Units")
+        },
     "static let ByteCountFormatStyle.Units.bytes": .staticValue(boxOpaque(ByteCountFormatStyle.Units.bytes, typeName: "ByteCountFormatStyle.Units")),
     "static let ByteCountFormatStyle.Units.kb": .staticValue(boxOpaque(ByteCountFormatStyle.Units.kb, typeName: "ByteCountFormatStyle.Units")),
     "static let ByteCountFormatStyle.Units.mb": .staticValue(boxOpaque(ByteCountFormatStyle.Units.mb, typeName: "ByteCountFormatStyle.Units")),
@@ -25,6 +34,12 @@ extension FoundationBridges {
     "static let ByteCountFormatStyle.Units.zb": .staticValue(boxOpaque(ByteCountFormatStyle.Units.zb, typeName: "ByteCountFormatStyle.Units")),
     "static let ByteCountFormatStyle.Units.ybOrHigher": .staticValue(boxOpaque(ByteCountFormatStyle.Units.ybOrHigher, typeName: "ByteCountFormatStyle.Units")),
     "static let ByteCountFormatStyle.Units.all": .staticValue(boxOpaque(ByteCountFormatStyle.Units.all, typeName: "ByteCountFormatStyle.Units")),
+    "init ByteCountFormatStyle.Units(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init ByteCountFormatStyle.Units(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(ByteCountFormatStyle.Units(rawValue: try toUInt(args[0])), typeName: "ByteCountFormatStyle.Units")
+    },
         "init ByteCountFormatStyle.Units(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("ByteCountFormatStyle.Units(arrayLiteral:): expected array literal")

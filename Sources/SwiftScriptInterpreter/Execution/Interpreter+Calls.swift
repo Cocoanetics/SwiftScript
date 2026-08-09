@@ -352,7 +352,8 @@ extension Interpreter {
                 methodName,
                 on: receiver,
                 args: args,
-                at: call.positionAfterSkippingLeadingTrivia.utf8Offset
+                at: call.positionAfterSkippingLeadingTrivia.utf8Offset,
+                labels: argLabels
             )
         }
 
@@ -699,6 +700,9 @@ extension Interpreter {
                 // These take a `String.Encoding` arg (`using:` /
                 // `encoding:`). Resolve `.utf8` / `.ascii` / etc.
                 return "String.Encoding"
+            case "range", "replacingOccurrences", "compare":
+                // `options: .regularExpression` and friends.
+                return "NSString.CompareOptions"
             default: return nil
             }
         }
@@ -792,6 +796,30 @@ extension Interpreter {
 
         let value = storage.current
         switch (value, methodName) {
+        case (.opaque(let opaqueType, _), let m):
+            // Bridged mutating method on a value-typed carrier —
+            // `data.append(...)`, `request.setValue(_:forHTTPHeaderField:)`.
+            // The bridge returns (result, updated receiver); the
+            // storage writes the fresh box back. No matching bridge →
+            // nil, so the caller falls through to normal (non-
+            // mutating) dispatch.
+            guard call.trailingClosure == nil else { return nil }
+            let argSyntaxes = Array(call.arguments)
+            let callLabels: [String?] = argSyntaxes.map { $0.label?.text }
+            var found: Bridge? = bridges[
+                bridgeKey(forMutatingMethod: m, on: opaqueType, labels: callLabels)]
+            if found == nil {
+                found = bridges[bridgeKey(forMutatingMethod: m, on: opaqueType, labels: [])]
+            }
+            guard case .mutatingMethod(let body)? = found else { return nil }
+            try storage.requireMutable(varName: varName)
+            let args = try await argSyntaxes.asyncMap {
+                try await evaluate($0.expression, in: scope)
+            }
+            let (result, updated) = try await body(value, args)
+            try storage.write(updated)
+            return result
+
         case (.bool(let b), "toggle"):
             guard call.arguments.isEmpty, call.trailingClosure == nil else { return nil }
             try storage.requireMutable(varName: varName)

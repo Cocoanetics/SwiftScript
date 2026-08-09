@@ -1,4 +1,7 @@
 import SwiftSyntax
+#if canImport(ObjectiveC)
+import ObjectiveC
+#endif
 
 extension Interpreter {
     func evaluate(_ expr: ExprSyntax, in scope: Scope) async throws -> Value {
@@ -325,7 +328,45 @@ extension Interpreter {
             guard let inner else { return nil }
             return castValue(inner, to: type)
         }
+        // Opaque downcast: a box labelled with a superclass spelling
+        // may carry a subclass instance — `response as?
+        // HTTPURLResponse` on a URLSession answer. Re-box under the
+        // target spelling so member dispatch uses the subclass's
+        // bridges (statusCode, allHeaderFields…).
+        if case .opaque(let boxedName, let any) = value,
+           boxedName != raw,
+           opaqueDynamicTypeMatches(any, spelling: raw)
+        {
+            return .opaque(typeName: raw, value: any)
+        }
         return valueMatchesTypeSpelling(value, raw) ? value : nil
+    }
+
+    /// True when the *runtime* type of an opaque payload matches a
+    /// spelling the box label doesn't — the dynamic half of opaque
+    /// casts. Darwin class clusters answer through the ObjC runtime
+    /// (`HTTPURLResponse` instances report `NSHTTPURLResponse`, so
+    /// NS-prefix spellings are treated as equivalent); everywhere
+    /// else the mirrored type name must match directly.
+    func opaqueDynamicTypeMatches(_ any: Any, spelling: String) -> Bool {
+        func namesEqual(_ a: String, _ b: String) -> Bool {
+            a == b || a == "NS" + b || "NS" + a == b
+        }
+        if namesEqual(String(describing: type(of: any)), spelling) {
+            return true
+        }
+        #if canImport(ObjectiveC)
+        // Walk the superclass chain so `resp is URLResponse` holds
+        // for a subclass instance boxed under another spelling.
+        var cls: AnyClass? = object_getClass(any as AnyObject)
+        while let current = cls {
+            if namesEqual(String(describing: current), spelling) {
+                return true
+            }
+            cls = class_getSuperclass(current)
+        }
+        #endif
+        return false
     }
 
     /// True if `value`'s runtime type satisfies the target type spelling.

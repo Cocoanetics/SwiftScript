@@ -22,6 +22,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var PersonNameComponents.namePrefix: String?": .structSetter { receiver, newValue in
+            var recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
+            recv.namePrefix = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "PersonNameComponents")
+        },
     "var PersonNameComponents.givenName: String?": .computed { receiver in
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         if let _v = recv.givenName {
@@ -29,6 +34,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var PersonNameComponents.givenName: String?": .structSetter { receiver, newValue in
+            var recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
+            recv.givenName = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "PersonNameComponents")
+        },
     "var PersonNameComponents.middleName: String?": .computed { receiver in
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         if let _v = recv.middleName {
@@ -36,6 +46,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var PersonNameComponents.middleName: String?": .structSetter { receiver, newValue in
+            var recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
+            recv.middleName = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "PersonNameComponents")
+        },
     "var PersonNameComponents.familyName: String?": .computed { receiver in
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         if let _v = recv.familyName {
@@ -43,6 +58,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var PersonNameComponents.familyName: String?": .structSetter { receiver, newValue in
+            var recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
+            recv.familyName = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "PersonNameComponents")
+        },
     "var PersonNameComponents.nameSuffix: String?": .computed { receiver in
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         if let _v = recv.nameSuffix {
@@ -50,6 +70,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var PersonNameComponents.nameSuffix: String?": .structSetter { receiver, newValue in
+            var recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
+            recv.nameSuffix = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "PersonNameComponents")
+        },
     "var PersonNameComponents.nickname: String?": .computed { receiver in
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         if let _v = recv.nickname {
@@ -57,6 +82,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var PersonNameComponents.nickname: String?": .structSetter { receiver, newValue in
+            var recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
+            recv.nickname = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "PersonNameComponents")
+        },
     "var PersonNameComponents.phoneticRepresentation: PersonNameComponents?": .computed { receiver in
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         if let _v = recv.phoneticRepresentation {
@@ -64,6 +94,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var PersonNameComponents.phoneticRepresentation: PersonNameComponents?": .structSetter { receiver, newValue in
+            var recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
+            recv.phoneticRepresentation = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: PersonNameComponents.self, typeName: "PersonNameComponents") }
+            return boxOpaque(recv, typeName: "PersonNameComponents")
+        },
     "var PersonNameComponents.description: String": .computed { receiver in
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         return .string(recv.description)
@@ -71,6 +106,48 @@ extension FoundationBridges {
     "var PersonNameComponents.debugDescription: String": .computed { receiver in
         let recv: PersonNameComponents = try unboxOpaque(receiver, as: PersonNameComponents.self, typeName: "PersonNameComponents")
         return .string(recv.debugDescription)
+    },
+    "init PersonNameComponents(namePrefix:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init PersonNameComponents(namePrefix:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(PersonNameComponents(namePrefix: try unboxOptionalValue(args[0]).map { try unboxString($0) }), typeName: "PersonNameComponents")
+    },
+    "init PersonNameComponents(namePrefix:givenName:)": .`init` { args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("init PersonNameComponents(namePrefix:givenName:): expected 2 argument(s), got \(args.count)")
+        }
+        return boxOpaque(PersonNameComponents(namePrefix: try unboxOptionalValue(args[0]).map { try unboxString($0) }, givenName: try unboxOptionalValue(args[1]).map { try unboxString($0) }), typeName: "PersonNameComponents")
+    },
+    "init PersonNameComponents(namePrefix:givenName:middleName:)": .`init` { args in
+        guard args.count == 3 else {
+            throw RuntimeError.invalid("init PersonNameComponents(namePrefix:givenName:middleName:): expected 3 argument(s), got \(args.count)")
+        }
+        return boxOpaque(PersonNameComponents(namePrefix: try unboxOptionalValue(args[0]).map { try unboxString($0) }, givenName: try unboxOptionalValue(args[1]).map { try unboxString($0) }, middleName: try unboxOptionalValue(args[2]).map { try unboxString($0) }), typeName: "PersonNameComponents")
+    },
+    "init PersonNameComponents(namePrefix:givenName:middleName:familyName:)": .`init` { args in
+        guard args.count == 4 else {
+            throw RuntimeError.invalid("init PersonNameComponents(namePrefix:givenName:middleName:familyName:): expected 4 argument(s), got \(args.count)")
+        }
+        return boxOpaque(PersonNameComponents(namePrefix: try unboxOptionalValue(args[0]).map { try unboxString($0) }, givenName: try unboxOptionalValue(args[1]).map { try unboxString($0) }, middleName: try unboxOptionalValue(args[2]).map { try unboxString($0) }, familyName: try unboxOptionalValue(args[3]).map { try unboxString($0) }), typeName: "PersonNameComponents")
+    },
+    "init PersonNameComponents(namePrefix:givenName:middleName:familyName:nameSuffix:)": .`init` { args in
+        guard args.count == 5 else {
+            throw RuntimeError.invalid("init PersonNameComponents(namePrefix:givenName:middleName:familyName:nameSuffix:): expected 5 argument(s), got \(args.count)")
+        }
+        return boxOpaque(PersonNameComponents(namePrefix: try unboxOptionalValue(args[0]).map { try unboxString($0) }, givenName: try unboxOptionalValue(args[1]).map { try unboxString($0) }, middleName: try unboxOptionalValue(args[2]).map { try unboxString($0) }, familyName: try unboxOptionalValue(args[3]).map { try unboxString($0) }, nameSuffix: try unboxOptionalValue(args[4]).map { try unboxString($0) }), typeName: "PersonNameComponents")
+    },
+    "init PersonNameComponents(namePrefix:givenName:middleName:familyName:nameSuffix:nickname:)": .`init` { args in
+        guard args.count == 6 else {
+            throw RuntimeError.invalid("init PersonNameComponents(namePrefix:givenName:middleName:familyName:nameSuffix:nickname:): expected 6 argument(s), got \(args.count)")
+        }
+        return boxOpaque(PersonNameComponents(namePrefix: try unboxOptionalValue(args[0]).map { try unboxString($0) }, givenName: try unboxOptionalValue(args[1]).map { try unboxString($0) }, middleName: try unboxOptionalValue(args[2]).map { try unboxString($0) }, familyName: try unboxOptionalValue(args[3]).map { try unboxString($0) }, nameSuffix: try unboxOptionalValue(args[4]).map { try unboxString($0) }, nickname: try unboxOptionalValue(args[5]).map { try unboxString($0) }), typeName: "PersonNameComponents")
+    },
+    "init PersonNameComponents(namePrefix:givenName:middleName:familyName:nameSuffix:nickname:phoneticRepresentation:)": .`init` { args in
+        guard args.count == 7 else {
+            throw RuntimeError.invalid("init PersonNameComponents(namePrefix:givenName:middleName:familyName:nameSuffix:nickname:phoneticRepresentation:): expected 7 argument(s), got \(args.count)")
+        }
+        return boxOpaque(PersonNameComponents(namePrefix: try unboxOptionalValue(args[0]).map { try unboxString($0) }, givenName: try unboxOptionalValue(args[1]).map { try unboxString($0) }, middleName: try unboxOptionalValue(args[2]).map { try unboxString($0) }, familyName: try unboxOptionalValue(args[3]).map { try unboxString($0) }, nameSuffix: try unboxOptionalValue(args[4]).map { try unboxString($0) }, nickname: try unboxOptionalValue(args[5]).map { try unboxString($0) }, phoneticRepresentation: try unboxOptionalValue(args[6]).map { try unboxOpaque($0, as: PersonNameComponents.self, typeName: "PersonNameComponents") }), typeName: "PersonNameComponents")
     },
         ]
         #if canImport(Darwin)

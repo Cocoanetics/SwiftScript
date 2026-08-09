@@ -24,6 +24,7 @@ extension StdlibBridges {
         let recv: String = try unboxString(receiver)
         return .string(recv.capitalized)
     },
+    "static let String.availableStringEncodings": .staticValue(.array(String.availableStringEncodings.map { boxOpaque($0, typeName: "String.Encoding") })),
     "static let String.defaultCStringEncoding": .staticValue(boxOpaque(String.defaultCStringEncoding, typeName: "String.Encoding")),
     "var String.decomposedStringWithCanonicalMapping: String": .computed { receiver in
         let recv: String = try unboxString(receiver)
@@ -49,6 +50,13 @@ extension StdlibBridges {
         let recv: String = try unboxString(receiver)
         return .string(recv.precomposedStringWithCompatibilityMapping)
     },
+    "func String.propertyListFromStringsFileFormat()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("String.propertyListFromStringsFileFormat: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .dict(recv.propertyListFromStringsFileFormat().map { DictEntry(key: .string($0.key), value: .string($0.value)) })
+    },
     "var String.smallestEncoding: String.Encoding": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return boxOpaque(recv.smallestEncoding, typeName: "String.Encoding")
@@ -59,6 +67,48 @@ extension StdlibBridges {
             return .optional(.string(_v))
         }
         return .optional(nil)
+    },
+    "func String.capitalized(with:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.capitalized: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .string(recv.capitalized(with: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }))
+    },
+    "func String.capitalized()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.capitalized: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .string(recv.capitalized(with: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }))
+    },
+    "func String.lowercased(with:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.lowercased: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .string(recv.lowercased(with: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }))
+    },
+    "func String.lowercased()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.lowercased: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .string(recv.lowercased(with: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }))
+    },
+    "func String.uppercased(with:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.uppercased: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .string(recv.uppercased(with: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }))
+    },
+    "func String.uppercased()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.uppercased: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .string(recv.uppercased(with: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }))
     },
     "static func String.localizedName()": .staticMethod { args in
         guard args.count == 1 else {
@@ -98,12 +148,40 @@ extension StdlibBridges {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
     },
+    "func String.canBeConverted(to:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.canBeConverted: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .bool(recv.canBeConverted(to: try unboxOpaque(args[0], as: String.Encoding.self, typeName: "String.Encoding")))
+    },
     "func String.canBeConverted()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("String.canBeConverted: expected 1 argument(s), got \(args.count)")
         }
         let recv: String = try unboxString(receiver)
         return .bool(recv.canBeConverted(to: try unboxOpaque(args[0], as: String.Encoding.self, typeName: "String.Encoding")))
+    },
+    "func String.components(separatedBy:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.components: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .array(recv.components(separatedBy: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")).map { .string($0) })
+    },
+    "func String.components()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.components: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .array(recv.components(separatedBy: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")).map { .string($0) })
+    },
+    "func String.lengthOfBytes(using:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.lengthOfBytes: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .int(recv.lengthOfBytes(using: try unboxOpaque(args[0], as: String.Encoding.self, typeName: "String.Encoding")))
     },
     "func String.lengthOfBytes()": .method { receiver, args in
         guard args.count == 1 else {
@@ -112,12 +190,29 @@ extension StdlibBridges {
         let recv: String = try unboxString(receiver)
         return .int(recv.lengthOfBytes(using: try unboxOpaque(args[0], as: String.Encoding.self, typeName: "String.Encoding")))
     },
+    "func String.maximumLengthOfBytes(using:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.maximumLengthOfBytes: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .int(recv.maximumLengthOfBytes(using: try unboxOpaque(args[0], as: String.Encoding.self, typeName: "String.Encoding")))
+    },
     "func String.maximumLengthOfBytes()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("String.maximumLengthOfBytes: expected 1 argument(s), got \(args.count)")
         }
         let recv: String = try unboxString(receiver)
         return .int(recv.maximumLengthOfBytes(using: try unboxOpaque(args[0], as: String.Encoding.self, typeName: "String.Encoding")))
+    },
+    "func String.addingPercentEncoding(withAllowedCharacters:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.addingPercentEncoding: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        if let _v = recv.addingPercentEncoding(withAllowedCharacters: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")) {
+            return .optional(.string(_v))
+        }
+        return .optional(nil)
     },
     "func String.addingPercentEncoding()": .method { receiver, args in
         guard args.count == 1 else {
@@ -128,6 +223,13 @@ extension StdlibBridges {
             return .optional(.string(_v))
         }
         return .optional(nil)
+    },
+    "func String.trimmingCharacters(in:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.trimmingCharacters: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .string(recv.trimmingCharacters(in: try unboxOpaque(args[0], as: CharacterSet.self, typeName: "CharacterSet")))
     },
     "func String.trimmingCharacters()": .method { receiver, args in
         guard args.count == 1 else {
@@ -177,13 +279,57 @@ extension StdlibBridges {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
     },
+    "func String.data(using:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.data: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        if let _v = recv.data(using: try unboxOpaque(args[0], as: String.Encoding.self, typeName: "String.Encoding")) {
+            return .optional(boxOpaque(_v, typeName: "Data"))
+        }
+        return .optional(nil)
+    },
     "func String.data()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.data: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        if let _v = recv.data(using: try unboxOpaque(args[0], as: String.Encoding.self, typeName: "String.Encoding")) {
+            return .optional(boxOpaque(_v, typeName: "Data"))
+        }
+        return .optional(nil)
+    },
+    "func String.data(using:allowLossyConversion:)": .method { receiver, args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("String.data: expected 2 argument(s), got \(args.count)")
         }
         let recv: String = try unboxString(receiver)
         if let _v = recv.data(using: try unboxOpaque(args[0], as: String.Encoding.self, typeName: "String.Encoding"), allowLossyConversion: try unboxBool(args[1])) {
             return .optional(boxOpaque(_v, typeName: "Data"))
+        }
+        return .optional(nil)
+    },
+    "func String.folding(locale:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.folding: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .string(recv.folding(locale: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }))
+    },
+    "func String.folding()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.folding: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .string(recv.folding(locale: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Locale.self, typeName: "Locale") }))
+    },
+    "func String.applyingTransform(_:reverse:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("String.applyingTransform: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        if let _v = recv.applyingTransform(try unboxOpaque(args[0], as: StringTransform.self, typeName: "StringTransform"), reverse: try unboxBool(args[1])) {
+            return .optional(.string(_v))
         }
         return .optional(nil)
     },
@@ -196,6 +342,24 @@ extension StdlibBridges {
             return .optional(.string(_v))
         }
         return .optional(nil)
+    },
+    "func String.write(to:atomically:encoding:)": .method { receiver, args in
+        guard args.count == 3 else {
+            throw RuntimeError.invalid("String.write: expected 3 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        var arg0 = try unboxOpaque(args[0], as: URL.self, typeName: "URL")
+        do {
+            arg0 = try await authorizePath(arg0, for: .write)
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        do {
+            try await recv.write(to: arg0, atomically: try unboxBool(args[1]), encoding: try unboxOpaque(args[2], as: String.Encoding.self, typeName: "String.Encoding"))
+            return .void
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
     },
     "func String.write()": .method { receiver, args in
         guard args.count == 3 else {
@@ -215,12 +379,26 @@ extension StdlibBridges {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
     },
+    "func String.completePath(caseSensitive:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.completePath: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .int(recv.completePath(caseSensitive: try unboxBool(args[0])))
+    },
     "func String.completePath()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("String.completePath: expected 1 argument(s), got \(args.count)")
         }
         let recv: String = try unboxString(receiver)
         return .int(recv.completePath(caseSensitive: try unboxBool(args[0])))
+    },
+    "func String.completePath(caseSensitive:filterTypes:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("String.completePath: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .int(recv.completePath(caseSensitive: try unboxBool(args[0]), filterTypes: try unboxOptionalValue(args[1]).map { try unboxArray($0).map { try unboxString($0) } }))
     },
     "var String.hashValue: Int": .computed { receiver in
         let recv: String = try unboxString(receiver)
@@ -256,20 +434,6 @@ extension StdlibBridges {
         let recv: String = try unboxString(receiver)
         return .int(recv.count)
     },
-    "func String.lowercased()": .method { receiver, args in
-        guard args.count == 0 else {
-            throw RuntimeError.invalid("String.lowercased: expected 0 argument(s), got \(args.count)")
-        }
-        let recv: String = try unboxString(receiver)
-        return .string(recv.lowercased())
-    },
-    "func String.uppercased()": .method { receiver, args in
-        guard args.count == 0 else {
-            throw RuntimeError.invalid("String.uppercased: expected 0 argument(s), got \(args.count)")
-        }
-        let recv: String = try unboxString(receiver)
-        return .string(recv.uppercased())
-    },
     "var String.isContiguousUTF8: Bool": .computed { receiver in
         let recv: String = try unboxString(receiver)
         return .bool(recv.isContiguousUTF8)
@@ -284,12 +448,33 @@ extension StdlibBridges {
         }
         return .string(String(stringLiteral: try unboxString(args[0])))
     },
+    "func String.index(after:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.index: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return boxOpaque(recv.index(after: try unboxOpaque(args[0], as: String.Index.self, typeName: "String.Index")), typeName: "String.Index")
+    },
     "func String.index()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("String.index: expected 1 argument(s), got \(args.count)")
         }
         let recv: String = try unboxString(receiver)
         return boxOpaque(recv.index(after: try unboxOpaque(args[0], as: String.Index.self, typeName: "String.Index")), typeName: "String.Index")
+    },
+    "func String.index(before:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.index: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return boxOpaque(recv.index(before: try unboxOpaque(args[0], as: String.Index.self, typeName: "String.Index")), typeName: "String.Index")
+    },
+    "func String.hasPrefix(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.hasPrefix: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .bool(recv.hasPrefix(try unboxString(args[0])))
     },
     "func String.hasPrefix()": .method { receiver, args in
         guard args.count == 1 else {
@@ -298,12 +483,33 @@ extension StdlibBridges {
         let recv: String = try unboxString(receiver)
         return .bool(recv.hasPrefix(try unboxString(args[0])))
     },
+    "func String.hasSuffix(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("String.hasSuffix: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .bool(recv.hasSuffix(try unboxString(args[0])))
+    },
     "func String.hasSuffix()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("String.hasSuffix: expected 1 argument(s), got \(args.count)")
         }
         let recv: String = try unboxString(receiver)
         return .bool(recv.hasSuffix(try unboxString(args[0])))
+    },
+    "func String.index(_:offsetBy:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("String.index: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return boxOpaque(recv.index(try unboxOpaque(args[0], as: String.Index.self, typeName: "String.Index"), offsetBy: try unboxInt(args[1])), typeName: "String.Index")
+    },
+    "func String.distance(from:to:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("String.distance: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        return .int(recv.distance(from: try unboxOpaque(args[0], as: String.Index.self, typeName: "String.Index"), to: try unboxOpaque(args[1], as: String.Index.self, typeName: "String.Index")))
     },
     "func String.distance()": .method { receiver, args in
         guard args.count == 2 else {
@@ -317,6 +523,16 @@ extension StdlibBridges {
             throw RuntimeError.invalid("init String(repeating:count:): expected 2 argument(s), got \(args.count)")
         }
         return .string(String(repeating: try unboxString(args[0]), count: try unboxInt(args[1])))
+    },
+    "func String.index(_:offsetBy:limitedBy:)": .method { receiver, args in
+        guard args.count == 3 else {
+            throw RuntimeError.invalid("String.index: expected 3 argument(s), got \(args.count)")
+        }
+        let recv: String = try unboxString(receiver)
+        if let _v = recv.index(try unboxOpaque(args[0], as: String.Index.self, typeName: "String.Index"), offsetBy: try unboxInt(args[1]), limitedBy: try unboxOpaque(args[2], as: String.Index.self, typeName: "String.Index")) {
+            return .optional(boxOpaque(_v, typeName: "String.Index"))
+        }
+        return .optional(nil)
     },
     ]
 }

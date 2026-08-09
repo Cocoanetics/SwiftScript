@@ -13,6 +13,11 @@ extension FoundationBridges {
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         return .string(recv.identifier)
     },
+        "set var Locale.Region.identifier: String": .structSetter { receiver, newValue in
+            var recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
+            recv.identifier = try unboxString(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "Locale.Region")
+        },
     "static let Locale.Region.unknown": .staticValue(boxOpaque(Locale.Region.unknown, typeName: "Locale.Region")),
     "static let Locale.Region.afghanistan": .staticValue(boxOpaque(Locale.Region.afghanistan, typeName: "Locale.Region")),
     "static let Locale.Region.ålandIslands": .staticValue(boxOpaque(Locale.Region.ålandIslands, typeName: "Locale.Region")),
@@ -273,6 +278,10 @@ extension FoundationBridges {
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         return .bool(recv.isISORegion)
     },
+    "var Locale.Region.subRegions: [Locale.Region]": .computed { receiver in
+        let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
+        return .array(recv.subRegions.map { boxOpaque($0, typeName: "Locale.Region") })
+    },
     "var Locale.Region.containingRegion: Locale.Region?": .computed { receiver in
         let recv: Locale.Region = try unboxOpaque(receiver, as: Locale.Region.self, typeName: "Locale.Region")
         if let _v = recv.containingRegion {
@@ -287,6 +296,7 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+    "static let Locale.Region.isoRegions": .staticValue(.array(Locale.Region.isoRegions.map { boxOpaque($0, typeName: "Locale.Region") })),
     "init Locale.Region(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.Region(stringLiteral:): expected 1 argument(s), got \(args.count)")

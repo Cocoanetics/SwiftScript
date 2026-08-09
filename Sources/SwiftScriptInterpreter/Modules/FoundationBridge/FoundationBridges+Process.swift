@@ -32,6 +32,57 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Process.executableURL: URL?": .setter { receiver, newValue in
+            do {
+                try denyProcessIfSandboxed()
+            } catch {
+                throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+            }
+            let recv: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
+            recv.executableURL = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: URL.self, typeName: "URL") }
+        },
+    "var Process.arguments: [String]?": .computed { receiver in
+        let recv: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
+        do {
+            try denyProcessIfSandboxed()
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        if let _v = recv.arguments {
+            return .optional(.array(_v.map { .string($0) }))
+        }
+        return .optional(nil)
+    },
+        "set var Process.arguments: [String]?": .setter { receiver, newValue in
+            do {
+                try denyProcessIfSandboxed()
+            } catch {
+                throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+            }
+            let recv: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
+            recv.arguments = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxArray($0).map { try unboxString($0) } }
+        },
+    "var Process.environment: [String: String]?": .computed { receiver in
+        let recv: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
+        do {
+            try denyProcessIfSandboxed()
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        if let _v = recv.environment {
+            return .optional(.dict(_v.map { DictEntry(key: .string($0.key), value: .string($0.value)) }))
+        }
+        return .optional(nil)
+    },
+        "set var Process.environment: [String: String]?": .setter { receiver, newValue in
+            do {
+                try denyProcessIfSandboxed()
+            } catch {
+                throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+            }
+            let recv: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
+            recv.environment = try unboxOptionalValue(unwrapForSetter(newValue)).map { Dictionary(uniqueKeysWithValues: try unboxDict($0).map { (try unboxString($0.key), try unboxString($0.value)) }) }
+        },
     "var Process.currentDirectoryURL: URL?": .computed { receiver in
         let recv: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
         do {
@@ -44,6 +95,15 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Process.currentDirectoryURL: URL?": .setter { receiver, newValue in
+            do {
+                try denyProcessIfSandboxed()
+            } catch {
+                throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+            }
+            let recv: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
+            recv.currentDirectoryURL = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: URL.self, typeName: "URL") }
+        },
     "func Process.run()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("Process.run: expected 0 argument(s), got \(args.count)")
@@ -60,6 +120,32 @@ extension FoundationBridges {
         } catch {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
+    },
+    "func Process.interrupt()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("Process.interrupt: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
+        do {
+            try denyProcessIfSandboxed()
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        recv.interrupt()
+            return .void
+    },
+    "func Process.terminate()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("Process.terminate: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
+        do {
+            try denyProcessIfSandboxed()
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        recv.terminate()
+            return .void
     },
     "func Process.suspend()": .method { receiver, args in
         guard args.count == 0 else {
@@ -85,6 +171,15 @@ extension FoundationBridges {
         }
         return .bool(recv.resume())
     },
+    "var Process.processIdentifier: Int32": .computed { receiver in
+        let recv: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
+        do {
+            try denyProcessIfSandboxed()
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        return .int(Int(recv.processIdentifier))
+    },
     "var Process.isRunning: Bool": .computed { receiver in
         let recv: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
         do {
@@ -93,6 +188,28 @@ extension FoundationBridges {
             throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
         }
         return .bool(recv.isRunning)
+    },
+    "var Process.terminationStatus: Int32": .computed { receiver in
+        let recv: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
+        do {
+            try denyProcessIfSandboxed()
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        return .int(Int(recv.terminationStatus))
+    },
+    "func Process.waitUntilExit()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("Process.waitUntilExit: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
+        do {
+            try denyProcessIfSandboxed()
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        recv.waitUntilExit()
+            return .void
     },
     "var Process.launchPath: String?": .computed { receiver in
         let recv: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
@@ -106,6 +223,15 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Process.launchPath: String?": .setter { receiver, newValue in
+            do {
+                try denyProcessIfSandboxed()
+            } catch {
+                throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+            }
+            let recv: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
+            recv.launchPath = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+        },
     "var Process.currentDirectoryPath: String": .computed { receiver in
         let recv: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
         do {
@@ -122,9 +248,33 @@ extension FoundationBridges {
                 throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
             }
             let recv: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
-            recv.currentDirectoryPath = try unboxString(newValue)
+            recv.currentDirectoryPath = try unboxString(unwrapForSetter(newValue))
         },
+    "func Process.launch()": .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("Process.launch: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: Process = try unboxOpaque(receiver, as: Process.self, typeName: "Process")
+        do {
+            try denyProcessIfSandboxed()
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        recv.launch()
+            return .void
+    },
     "static let Process.didTerminateNotification": .staticValue(boxOpaque(Process.didTerminateNotification, typeName: "NSNotification.Name")),
+    "static func Process.launchedProcess()": .staticMethod { args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("Process.launchedProcess: expected 2 argument(s), got \(args.count)")
+        }
+        do {
+            try denyProcessIfSandboxed()
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+        return boxOpaque(Process.launchedProcess(launchPath: try unboxString(args[0]), arguments: try unboxArray(args[1]).map { try unboxString($0) }), typeName: "Process")
+    },
     ]
 }
 #else

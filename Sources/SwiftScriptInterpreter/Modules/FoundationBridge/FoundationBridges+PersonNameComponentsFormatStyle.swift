@@ -13,6 +13,11 @@ extension FoundationBridges {
         let recv: PersonNameComponents.FormatStyle = try unboxOpaque(receiver, as: PersonNameComponents.FormatStyle.self, typeName: "PersonNameComponents.FormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
+        "set var PersonNameComponents.FormatStyle.locale: Locale": .structSetter { receiver, newValue in
+            var recv: PersonNameComponents.FormatStyle = try unboxOpaque(receiver, as: PersonNameComponents.FormatStyle.self, typeName: "PersonNameComponents.FormatStyle")
+            recv.locale = try unboxOpaque(unwrapForSetter(newValue), as: Locale.self, typeName: "Locale")
+            return boxOpaque(recv, typeName: "PersonNameComponents.FormatStyle")
+        },
     "var PersonNameComponents.FormatStyle.attributed: PersonNameComponents.AttributedStyle": .computed { receiver in
         let recv: PersonNameComponents.FormatStyle = try unboxOpaque(receiver, as: PersonNameComponents.FormatStyle.self, typeName: "PersonNameComponents.FormatStyle")
         return boxOpaque(recv.attributed, typeName: "PersonNameComponents.AttributedStyle")
@@ -25,6 +30,13 @@ extension FoundationBridges {
         let recv: PersonNameComponents.FormatStyle = try unboxOpaque(receiver, as: PersonNameComponents.FormatStyle.self, typeName: "PersonNameComponents.FormatStyle")
         return boxOpaque(recv.parseStrategy, typeName: "PersonNameComponents.ParseStrategy")
     },
+    "func PersonNameComponents.FormatStyle.locale(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("PersonNameComponents.FormatStyle.locale: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: PersonNameComponents.FormatStyle = try unboxOpaque(receiver, as: PersonNameComponents.FormatStyle.self, typeName: "PersonNameComponents.FormatStyle")
+        return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "PersonNameComponents.FormatStyle")
+    },
     "func PersonNameComponents.FormatStyle.locale()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("PersonNameComponents.FormatStyle.locale: expected 1 argument(s), got \(args.count)")
@@ -32,12 +44,25 @@ extension FoundationBridges {
         let recv: PersonNameComponents.FormatStyle = try unboxOpaque(receiver, as: PersonNameComponents.FormatStyle.self, typeName: "PersonNameComponents.FormatStyle")
         return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "PersonNameComponents.FormatStyle")
     },
+    "func PersonNameComponents.FormatStyle.format(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("PersonNameComponents.FormatStyle.format: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: PersonNameComponents.FormatStyle = try unboxOpaque(receiver, as: PersonNameComponents.FormatStyle.self, typeName: "PersonNameComponents.FormatStyle")
+        return .string(recv.format(try unboxOpaque(args[0], as: PersonNameComponents.self, typeName: "PersonNameComponents")))
+    },
     "func PersonNameComponents.FormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("PersonNameComponents.FormatStyle.format: expected 1 argument(s), got \(args.count)")
         }
         let recv: PersonNameComponents.FormatStyle = try unboxOpaque(receiver, as: PersonNameComponents.FormatStyle.self, typeName: "PersonNameComponents.FormatStyle")
         return .string(recv.format(try unboxOpaque(args[0], as: PersonNameComponents.self, typeName: "PersonNameComponents")))
+    },
+    "init PersonNameComponents.FormatStyle()": .`init` { args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("init PersonNameComponents.FormatStyle(): expected 0 argument(s), got \(args.count)")
+        }
+        return boxOpaque(PersonNameComponents.FormatStyle(), typeName: "PersonNameComponents.FormatStyle")
     },
     "init PersonNameComponents.FormatStyle(locale:)": .`init` { args in
         guard args.count == 1 else {

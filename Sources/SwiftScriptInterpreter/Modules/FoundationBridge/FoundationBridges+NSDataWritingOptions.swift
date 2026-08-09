@@ -27,6 +27,12 @@ extension FoundationBridges {
     "static let NSData.WritingOptions.completeFileProtectionUntilFirstUserAuthentication": .staticValue(boxOpaque(NSData.WritingOptions.completeFileProtectionUntilFirstUserAuthentication, typeName: "NSData.WritingOptions")),
     "static let NSData.WritingOptions.fileProtectionMask": .staticValue(boxOpaque(NSData.WritingOptions.fileProtectionMask, typeName: "NSData.WritingOptions")),
     "static let NSData.WritingOptions.atomicWrite": .staticValue(boxOpaque(NSData.WritingOptions.atomicWrite, typeName: "NSData.WritingOptions")),
+    "init NSData.WritingOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSData.WritingOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSData.WritingOptions(rawValue: try toUInt(args[0])), typeName: "NSData.WritingOptions")
+    },
         "init NSData.WritingOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSData.WritingOptions(arrayLiteral:): expected array literal")

@@ -13,6 +13,11 @@ extension FoundationBridges {
         let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
         return .string(recv.name)
     },
+        "set var URLQueryItem.name: String": .structSetter { receiver, newValue in
+            var recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
+            recv.name = try unboxString(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "URLQueryItem")
+        },
     "var URLQueryItem.value: String?": .computed { receiver in
         let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
         if let _v = recv.value {
@@ -20,6 +25,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLQueryItem.value: String?": .structSetter { receiver, newValue in
+            var recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
+            recv.value = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "URLQueryItem")
+        },
     "var URLQueryItem.description: String": .computed { receiver in
         let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
         return .string(recv.description)
@@ -27,6 +37,12 @@ extension FoundationBridges {
     "var URLQueryItem.debugDescription: String": .computed { receiver in
         let recv: URLQueryItem = try unboxOpaque(receiver, as: URLQueryItem.self, typeName: "URLQueryItem")
         return .string(recv.debugDescription)
+    },
+    "init URLQueryItem(name:value:)": .`init` { args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("init URLQueryItem(name:value:): expected 2 argument(s), got \(args.count)")
+        }
+        return boxOpaque(URLQueryItem(name: try unboxString(args[0]), value: try unboxOptionalValue(args[1]).map { try unboxString($0) }), typeName: "URLQueryItem")
     },
         ]
         #if canImport(Darwin)

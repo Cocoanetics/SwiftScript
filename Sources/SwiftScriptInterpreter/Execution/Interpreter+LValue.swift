@@ -124,17 +124,22 @@ extension Interpreter {
             // class instance.
             return nil
         case .opaque(let typeName, _):
-            // Auto-bridged class property setter: the bridge generator
-            // emits a paired `set var Type.member: ...` entry for each
-            // mutable `var` property. Calling it mutates the underlying
-            // Foundation reference in place; the opaque envelope
-            // doesn't need rebuilding.
-            if rest.isEmpty,
-               let entry = propertyIndex["\(typeName).\(head)"],
-               case .setter(let body)? = entry.setter
-            {
-                try await body(container, value)
-                return nil
+            // Auto-bridged property setters. Class-typed receivers
+            // (`.setter`) mutate the underlying reference in place;
+            // struct-typed receivers (`.structSetter`) can't be
+            // mutated through the opaque box, so the bridge returns
+            // a fresh box that propagates back up the chain like a
+            // script-struct field write.
+            if rest.isEmpty, let entry = propertyIndex["\(typeName).\(head)"] {
+                switch entry.setter {
+                case .setter(let body)?:
+                    try await body(container, value)
+                    return nil
+                case .structSetter(let body)?:
+                    return try await body(container, value)
+                default:
+                    break
+                }
             }
             throw RuntimeError.invalid(
                 "value of type '\(typeName)' has no settable member '\(head)'"

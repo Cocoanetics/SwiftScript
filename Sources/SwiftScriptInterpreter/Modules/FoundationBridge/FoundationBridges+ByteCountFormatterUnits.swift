@@ -25,6 +25,12 @@ extension FoundationBridges {
     "static let ByteCountFormatter.Units.useZB": .staticValue(boxOpaque(ByteCountFormatter.Units.useZB, typeName: "ByteCountFormatter.Units")),
     "static let ByteCountFormatter.Units.useYBOrHigher": .staticValue(boxOpaque(ByteCountFormatter.Units.useYBOrHigher, typeName: "ByteCountFormatter.Units")),
     "static let ByteCountFormatter.Units.useAll": .staticValue(boxOpaque(ByteCountFormatter.Units.useAll, typeName: "ByteCountFormatter.Units")),
+    "init ByteCountFormatter.Units(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init ByteCountFormatter.Units(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(ByteCountFormatter.Units(rawValue: try toUInt(args[0])), typeName: "ByteCountFormatter.Units")
+    },
         "init ByteCountFormatter.Units(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("ByteCountFormatter.Units(arrayLiteral:): expected array literal")

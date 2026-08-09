@@ -36,6 +36,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLComponents.scheme: String?": .structSetter { receiver, newValue in
+            var recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+            recv.scheme = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "URLComponents")
+        },
     "var URLComponents.user: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.user {
@@ -43,6 +48,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLComponents.user: String?": .structSetter { receiver, newValue in
+            var recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+            recv.user = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "URLComponents")
+        },
     "var URLComponents.password: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.password {
@@ -50,6 +60,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLComponents.password: String?": .structSetter { receiver, newValue in
+            var recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+            recv.password = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "URLComponents")
+        },
     "var URLComponents.host: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.host {
@@ -57,6 +72,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLComponents.host: String?": .structSetter { receiver, newValue in
+            var recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+            recv.host = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "URLComponents")
+        },
     "var URLComponents.port: Int?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.port {
@@ -64,10 +84,20 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLComponents.port: Int?": .structSetter { receiver, newValue in
+            var recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+            recv.port = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxInt($0) }
+            return boxOpaque(recv, typeName: "URLComponents")
+        },
     "var URLComponents.path: String": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         return .string(recv.path)
     },
+        "set var URLComponents.path: String": .structSetter { receiver, newValue in
+            var recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+            recv.path = try unboxString(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "URLComponents")
+        },
     "var URLComponents.query: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.query {
@@ -75,6 +105,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLComponents.query: String?": .structSetter { receiver, newValue in
+            var recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+            recv.query = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "URLComponents")
+        },
     "var URLComponents.fragment: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.fragment {
@@ -82,6 +117,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLComponents.fragment: String?": .structSetter { receiver, newValue in
+            var recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+            recv.fragment = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "URLComponents")
+        },
     "var URLComponents.percentEncodedUser: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.percentEncodedUser {
@@ -89,6 +129,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLComponents.percentEncodedUser: String?": .structSetter { receiver, newValue in
+            var recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+            recv.percentEncodedUser = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "URLComponents")
+        },
     "var URLComponents.percentEncodedPassword: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.percentEncodedPassword {
@@ -96,6 +141,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLComponents.percentEncodedPassword: String?": .structSetter { receiver, newValue in
+            var recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+            recv.percentEncodedPassword = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "URLComponents")
+        },
     "var URLComponents.percentEncodedHost: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.percentEncodedHost {
@@ -103,6 +153,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLComponents.percentEncodedHost: String?": .structSetter { receiver, newValue in
+            var recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+            recv.percentEncodedHost = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "URLComponents")
+        },
     "var URLComponents.encodedHost: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.encodedHost {
@@ -110,10 +165,20 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLComponents.encodedHost: String?": .structSetter { receiver, newValue in
+            var recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+            recv.encodedHost = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "URLComponents")
+        },
     "var URLComponents.percentEncodedPath: String": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         return .string(recv.percentEncodedPath)
     },
+        "set var URLComponents.percentEncodedPath: String": .structSetter { receiver, newValue in
+            var recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+            recv.percentEncodedPath = try unboxString(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "URLComponents")
+        },
     "var URLComponents.percentEncodedQuery: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.percentEncodedQuery {
@@ -121,6 +186,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLComponents.percentEncodedQuery: String?": .structSetter { receiver, newValue in
+            var recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+            recv.percentEncodedQuery = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "URLComponents")
+        },
     "var URLComponents.percentEncodedFragment: String?": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         if let _v = recv.percentEncodedFragment {
@@ -128,6 +198,35 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLComponents.percentEncodedFragment: String?": .structSetter { receiver, newValue in
+            var recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+            recv.percentEncodedFragment = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "URLComponents")
+        },
+    "var URLComponents.queryItems: [URLQueryItem]?": .computed { receiver in
+        let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+        if let _v = recv.queryItems {
+            return .optional(.array(_v.map { boxOpaque($0, typeName: "URLQueryItem") }))
+        }
+        return .optional(nil)
+    },
+        "set var URLComponents.queryItems: [URLQueryItem]?": .structSetter { receiver, newValue in
+            var recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+            recv.queryItems = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxArray($0).map { try unboxOpaque($0, as: URLQueryItem.self, typeName: "URLQueryItem") } }
+            return boxOpaque(recv, typeName: "URLComponents")
+        },
+    "var URLComponents.percentEncodedQueryItems: [URLQueryItem]?": .computed { receiver in
+        let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+        if let _v = recv.percentEncodedQueryItems {
+            return .optional(.array(_v.map { boxOpaque($0, typeName: "URLQueryItem") }))
+        }
+        return .optional(nil)
+    },
+        "set var URLComponents.percentEncodedQueryItems: [URLQueryItem]?": .structSetter { receiver, newValue in
+            var recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+            recv.percentEncodedQueryItems = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxArray($0).map { try unboxOpaque($0, as: URLQueryItem.self, typeName: "URLQueryItem") } }
+            return boxOpaque(recv, typeName: "URLComponents")
+        },
     "var URLComponents.description: String": .computed { receiver in
         let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
         return .string(recv.description)
@@ -142,6 +241,26 @@ extension FoundationBridges {
         }
         if let _v = URLComponents(string: try unboxString(args[0])) {
             return .optional(boxOpaque(_v, typeName: "URLComponents"))
+        }
+        return .optional(nil)
+    },
+    "func URLComponents.url(relativeTo:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("URLComponents.url: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+        if let _v = recv.url(relativeTo: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: URL.self, typeName: "URL") }) {
+            return .optional(boxOpaque(_v, typeName: "URL"))
+        }
+        return .optional(nil)
+    },
+    "func URLComponents.url()": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("URLComponents.url: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: URLComponents = try unboxOpaque(receiver, as: URLComponents.self, typeName: "URLComponents")
+        if let _v = recv.url(relativeTo: try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: URL.self, typeName: "URL") }) {
+            return .optional(boxOpaque(_v, typeName: "URL"))
         }
         return .optional(nil)
     },

@@ -17,6 +17,12 @@ extension FoundationBridges {
     },
     "static let FileManager.ItemReplacementOptions.usingNewMetadataOnly": .staticValue(boxOpaque(FileManager.ItemReplacementOptions.usingNewMetadataOnly, typeName: "FileManager.ItemReplacementOptions")),
     "static let FileManager.ItemReplacementOptions.withoutDeletingBackupItem": .staticValue(boxOpaque(FileManager.ItemReplacementOptions.withoutDeletingBackupItem, typeName: "FileManager.ItemReplacementOptions")),
+    "init FileManager.ItemReplacementOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init FileManager.ItemReplacementOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(FileManager.ItemReplacementOptions(rawValue: try toUInt(args[0])), typeName: "FileManager.ItemReplacementOptions")
+    },
         "init FileManager.ItemReplacementOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("FileManager.ItemReplacementOptions(arrayLiteral:): expected array literal")

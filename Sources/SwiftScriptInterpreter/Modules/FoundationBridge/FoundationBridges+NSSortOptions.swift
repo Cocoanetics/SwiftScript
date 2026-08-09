@@ -17,6 +17,12 @@ extension FoundationBridges {
     },
     "static let NSSortOptions.concurrent": .staticValue(boxOpaque(NSSortOptions.concurrent, typeName: "NSSortOptions")),
     "static let NSSortOptions.stable": .staticValue(boxOpaque(NSSortOptions.stable, typeName: "NSSortOptions")),
+    "init NSSortOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSSortOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSSortOptions(rawValue: try toUInt(args[0])), typeName: "NSSortOptions")
+    },
         "init NSSortOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSSortOptions(arrayLiteral:): expected array literal")
@@ -36,12 +42,26 @@ extension FoundationBridges {
         let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
         return .bool(recv.isEmpty)
     }
+    d["func NSSortOptions.union(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSSortOptions.union: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
+        return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")), typeName: "NSSortOptions")
+    }
     d["func NSSortOptions.union()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSSortOptions.union: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
         return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")), typeName: "NSSortOptions")
+    }
+    d["func NSSortOptions.intersection(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSSortOptions.intersection: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
+        return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")), typeName: "NSSortOptions")
     }
     d["func NSSortOptions.intersection()"] = .method { receiver, args in
         guard args.count == 1 else {
@@ -50,12 +70,26 @@ extension FoundationBridges {
         let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
         return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")), typeName: "NSSortOptions")
     }
+    d["func NSSortOptions.symmetricDifference(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSSortOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
+        return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")), typeName: "NSSortOptions")
+    }
     d["func NSSortOptions.symmetricDifference()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSSortOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
         return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")), typeName: "NSSortOptions")
+    }
+    d["func NSSortOptions.contains(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSSortOptions.contains: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
+        return .bool(recv.contains(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")))
     }
     d["func NSSortOptions.contains()"] = .method { receiver, args in
         guard args.count == 1 else {
@@ -64,12 +98,90 @@ extension FoundationBridges {
         let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
         return .bool(recv.contains(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")))
     }
+    d["mutating func NSSortOptions.formUnion(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSSortOptions.formUnion: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
+        recv.formUnion(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSSortOptions"))
+    }
+    d["mutating func NSSortOptions.formUnion()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSSortOptions.formUnion: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
+        recv.formUnion(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSSortOptions"))
+    }
+    d["mutating func NSSortOptions.formIntersection(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSSortOptions.formIntersection: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
+        recv.formIntersection(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSSortOptions"))
+    }
+    d["mutating func NSSortOptions.formIntersection()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSSortOptions.formIntersection: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
+        recv.formIntersection(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSSortOptions"))
+    }
+    d["mutating func NSSortOptions.formSymmetricDifference(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSSortOptions.formSymmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
+        recv.formSymmetricDifference(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSSortOptions"))
+    }
+    d["mutating func NSSortOptions.formSymmetricDifference()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSSortOptions.formSymmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
+        recv.formSymmetricDifference(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSSortOptions"))
+    }
+    d["mutating func NSSortOptions.subtract(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSSortOptions.subtract: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
+        recv.subtract(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSSortOptions"))
+    }
+    d["mutating func NSSortOptions.subtract()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSSortOptions.subtract: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
+        recv.subtract(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSSortOptions"))
+    }
+    d["func NSSortOptions.isSubset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSSortOptions.isSubset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
+        return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")))
+    }
     d["func NSSortOptions.isSubset()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSSortOptions.isSubset: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
         return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")))
+    }
+    d["func NSSortOptions.isSuperset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSSortOptions.isSuperset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
+        return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")))
     }
     d["func NSSortOptions.isSuperset()"] = .method { receiver, args in
         guard args.count == 1 else {
@@ -78,12 +190,26 @@ extension FoundationBridges {
         let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
         return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")))
     }
+    d["func NSSortOptions.isDisjoint(with:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSSortOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
+        return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")))
+    }
     d["func NSSortOptions.isDisjoint()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSSortOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
         return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")))
+    }
+    d["func NSSortOptions.subtracting(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSSortOptions.subtracting: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
+        return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")), typeName: "NSSortOptions")
     }
     d["func NSSortOptions.subtracting()"] = .method { receiver, args in
         guard args.count == 1 else {
@@ -92,12 +218,26 @@ extension FoundationBridges {
         let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
         return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")), typeName: "NSSortOptions")
     }
+    d["func NSSortOptions.isStrictSuperset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSSortOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
+        return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")))
+    }
     d["func NSSortOptions.isStrictSuperset()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSSortOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
         return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")))
+    }
+    d["func NSSortOptions.isStrictSubset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSSortOptions.isStrictSubset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSSortOptions = try unboxOpaque(receiver, as: NSSortOptions.self, typeName: "NSSortOptions")
+        return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSSortOptions.self, typeName: "NSSortOptions")))
     }
     d["func NSSortOptions.isStrictSubset()"] = .method { receiver, args in
         guard args.count == 1 else {

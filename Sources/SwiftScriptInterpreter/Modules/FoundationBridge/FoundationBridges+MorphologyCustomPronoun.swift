@@ -22,6 +22,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Morphology.CustomPronoun.subjectForm: String?": .structSetter { receiver, newValue in
+            var recv: Morphology.CustomPronoun = try unboxOpaque(receiver, as: Morphology.CustomPronoun.self, typeName: "Morphology.CustomPronoun")
+            recv.subjectForm = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "Morphology.CustomPronoun")
+        },
     "var Morphology.CustomPronoun.objectForm: String?": .computed { receiver in
         let recv: Morphology.CustomPronoun = try unboxOpaque(receiver, as: Morphology.CustomPronoun.self, typeName: "Morphology.CustomPronoun")
         if let _v = recv.objectForm {
@@ -29,6 +34,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Morphology.CustomPronoun.objectForm: String?": .structSetter { receiver, newValue in
+            var recv: Morphology.CustomPronoun = try unboxOpaque(receiver, as: Morphology.CustomPronoun.self, typeName: "Morphology.CustomPronoun")
+            recv.objectForm = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "Morphology.CustomPronoun")
+        },
     "var Morphology.CustomPronoun.possessiveForm: String?": .computed { receiver in
         let recv: Morphology.CustomPronoun = try unboxOpaque(receiver, as: Morphology.CustomPronoun.self, typeName: "Morphology.CustomPronoun")
         if let _v = recv.possessiveForm {
@@ -36,6 +46,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Morphology.CustomPronoun.possessiveForm: String?": .structSetter { receiver, newValue in
+            var recv: Morphology.CustomPronoun = try unboxOpaque(receiver, as: Morphology.CustomPronoun.self, typeName: "Morphology.CustomPronoun")
+            recv.possessiveForm = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "Morphology.CustomPronoun")
+        },
     "var Morphology.CustomPronoun.possessiveAdjectiveForm: String?": .computed { receiver in
         let recv: Morphology.CustomPronoun = try unboxOpaque(receiver, as: Morphology.CustomPronoun.self, typeName: "Morphology.CustomPronoun")
         if let _v = recv.possessiveAdjectiveForm {
@@ -43,6 +58,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Morphology.CustomPronoun.possessiveAdjectiveForm: String?": .structSetter { receiver, newValue in
+            var recv: Morphology.CustomPronoun = try unboxOpaque(receiver, as: Morphology.CustomPronoun.self, typeName: "Morphology.CustomPronoun")
+            recv.possessiveAdjectiveForm = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "Morphology.CustomPronoun")
+        },
     "var Morphology.CustomPronoun.reflexiveForm: String?": .computed { receiver in
         let recv: Morphology.CustomPronoun = try unboxOpaque(receiver, as: Morphology.CustomPronoun.self, typeName: "Morphology.CustomPronoun")
         if let _v = recv.reflexiveForm {
@@ -50,6 +70,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Morphology.CustomPronoun.reflexiveForm: String?": .structSetter { receiver, newValue in
+            var recv: Morphology.CustomPronoun = try unboxOpaque(receiver, as: Morphology.CustomPronoun.self, typeName: "Morphology.CustomPronoun")
+            recv.reflexiveForm = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "Morphology.CustomPronoun")
+        },
     "static func Morphology.CustomPronoun.isSupported()": .staticMethod { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Morphology.CustomPronoun.isSupported: expected 1 argument(s), got \(args.count)")

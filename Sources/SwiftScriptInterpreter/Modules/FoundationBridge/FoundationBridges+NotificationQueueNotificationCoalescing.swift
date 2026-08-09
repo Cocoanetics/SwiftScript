@@ -18,6 +18,12 @@ extension FoundationBridges {
     "static let NotificationQueue.NotificationCoalescing.none": .staticValue(boxOpaque(NotificationQueue.NotificationCoalescing.none, typeName: "NotificationQueue.NotificationCoalescing")),
     "static let NotificationQueue.NotificationCoalescing.onName": .staticValue(boxOpaque(NotificationQueue.NotificationCoalescing.onName, typeName: "NotificationQueue.NotificationCoalescing")),
     "static let NotificationQueue.NotificationCoalescing.onSender": .staticValue(boxOpaque(NotificationQueue.NotificationCoalescing.onSender, typeName: "NotificationQueue.NotificationCoalescing")),
+    "init NotificationQueue.NotificationCoalescing(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NotificationQueue.NotificationCoalescing(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NotificationQueue.NotificationCoalescing(rawValue: try toUInt(args[0])), typeName: "NotificationQueue.NotificationCoalescing")
+    },
         "init NotificationQueue.NotificationCoalescing(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NotificationQueue.NotificationCoalescing(arrayLiteral:): expected array literal")

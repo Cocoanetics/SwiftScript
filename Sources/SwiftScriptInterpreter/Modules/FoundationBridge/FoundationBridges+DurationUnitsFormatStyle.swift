@@ -13,6 +13,11 @@ extension FoundationBridges {
         let recv: Duration.UnitsFormatStyle = try unboxOpaque(receiver, as: Duration.UnitsFormatStyle.self, typeName: "Duration.UnitsFormatStyle")
         return boxOpaque(recv.locale, typeName: "Locale")
     },
+        "set var Duration.UnitsFormatStyle.locale: Locale": .structSetter { receiver, newValue in
+            var recv: Duration.UnitsFormatStyle = try unboxOpaque(receiver, as: Duration.UnitsFormatStyle.self, typeName: "Duration.UnitsFormatStyle")
+            recv.locale = try unboxOpaque(unwrapForSetter(newValue), as: Locale.self, typeName: "Locale")
+            return boxOpaque(recv, typeName: "Duration.UnitsFormatStyle")
+        },
     "var Duration.UnitsFormatStyle.maximumUnitCount: Int?": .computed { receiver in
         let recv: Duration.UnitsFormatStyle = try unboxOpaque(receiver, as: Duration.UnitsFormatStyle.self, typeName: "Duration.UnitsFormatStyle")
         if let _v = recv.maximumUnitCount {
@@ -20,12 +25,31 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var Duration.UnitsFormatStyle.maximumUnitCount: Int?": .structSetter { receiver, newValue in
+            var recv: Duration.UnitsFormatStyle = try unboxOpaque(receiver, as: Duration.UnitsFormatStyle.self, typeName: "Duration.UnitsFormatStyle")
+            recv.maximumUnitCount = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxInt($0) }
+            return boxOpaque(recv, typeName: "Duration.UnitsFormatStyle")
+        },
+    "func Duration.UnitsFormatStyle.format(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Duration.UnitsFormatStyle.format: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Duration.UnitsFormatStyle = try unboxOpaque(receiver, as: Duration.UnitsFormatStyle.self, typeName: "Duration.UnitsFormatStyle")
+        return .string(recv.format(try unboxOpaque(args[0], as: Duration.self, typeName: "Duration")))
+    },
     "func Duration.UnitsFormatStyle.format()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Duration.UnitsFormatStyle.format: expected 1 argument(s), got \(args.count)")
         }
         let recv: Duration.UnitsFormatStyle = try unboxOpaque(receiver, as: Duration.UnitsFormatStyle.self, typeName: "Duration.UnitsFormatStyle")
         return .string(recv.format(try unboxOpaque(args[0], as: Duration.self, typeName: "Duration")))
+    },
+    "func Duration.UnitsFormatStyle.locale(_:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Duration.UnitsFormatStyle.locale: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: Duration.UnitsFormatStyle = try unboxOpaque(receiver, as: Duration.UnitsFormatStyle.self, typeName: "Duration.UnitsFormatStyle")
+        return boxOpaque(recv.locale(try unboxOpaque(args[0], as: Locale.self, typeName: "Locale")), typeName: "Duration.UnitsFormatStyle")
     },
     "func Duration.UnitsFormatStyle.locale()": .method { receiver, args in
         guard args.count == 1 else {

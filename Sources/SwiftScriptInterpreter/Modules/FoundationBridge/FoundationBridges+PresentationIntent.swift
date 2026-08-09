@@ -9,6 +9,15 @@ import FoundationNetworking
 #if canImport(Darwin)
 extension FoundationBridges {
     nonisolated(unsafe) static let presentationIntent: [String: Bridge] = [
+    "var PresentationIntent.components: [PresentationIntent.IntentType]": .computed { receiver in
+        let recv: PresentationIntent = try unboxOpaque(receiver, as: PresentationIntent.self, typeName: "PresentationIntent")
+        return .array(recv.components.map { boxOpaque($0, typeName: "PresentationIntent.IntentType") })
+    },
+        "set var PresentationIntent.components: [PresentationIntent.IntentType]": .structSetter { receiver, newValue in
+            var recv: PresentationIntent = try unboxOpaque(receiver, as: PresentationIntent.self, typeName: "PresentationIntent")
+            recv.components = try unboxArray(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: PresentationIntent.IntentType.self, typeName: "PresentationIntent.IntentType") }
+            return boxOpaque(recv, typeName: "PresentationIntent")
+        },
     "var PresentationIntent.count: Int": .computed { receiver in
         let recv: PresentationIntent = try unboxOpaque(receiver, as: PresentationIntent.self, typeName: "PresentationIntent")
         return .int(recv.count)
@@ -28,6 +37,12 @@ extension FoundationBridges {
     "var PresentationIntent.hashValue: Int": .computed { receiver in
         let recv: PresentationIntent = try unboxOpaque(receiver, as: PresentationIntent.self, typeName: "PresentationIntent")
         return .int(recv.hashValue)
+    },
+    "init PresentationIntent(types:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init PresentationIntent(types:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(PresentationIntent(types: try unboxArray(args[0]).map { try unboxOpaque($0, as: PresentationIntent.IntentType.self, typeName: "PresentationIntent.IntentType") }), typeName: "PresentationIntent")
     },
     ]
 }

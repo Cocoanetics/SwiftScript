@@ -151,7 +151,23 @@ extension Interpreter {
     /// after the built-in switch fails. Consults the flat `bridges`
     /// table first, then falls through to the legacy `extensions[]`
     /// storage.
-    func extensionMethod(typeName: String, name: String) -> Function? {
+    func extensionMethod(
+        typeName: String,
+        name: String,
+        labels: [String?]? = nil
+    ) -> Function? {
+        // Label-keyed overload first (`func URLSession.data(for:)`),
+        // then the bare-key alias the generator registers for the
+        // simplest overload of each name.
+        if let labels, !labels.isEmpty {
+            let labeledKey = bridgeKey(forMethod: name, on: typeName, labels: labels)
+            if case .method(let body)? = bridges[labeledKey] {
+                return Function(
+                    name: labeledKey, parameters: [],
+                    kind: .builtinMethod(body)
+                )
+            }
+        }
         let key = bridgeKey(forMethod: name, on: typeName, labels: [])
         if case .method(let body)? = bridges[key] {
             return Function(

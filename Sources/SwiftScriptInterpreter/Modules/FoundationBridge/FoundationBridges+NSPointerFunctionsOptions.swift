@@ -31,6 +31,12 @@ extension FoundationBridges {
     "static let NSPointerFunctions.Options.structPersonality": .staticValue(boxOpaque(NSPointerFunctions.Options.structPersonality, typeName: "NSPointerFunctions.Options")),
     "static let NSPointerFunctions.Options.integerPersonality": .staticValue(boxOpaque(NSPointerFunctions.Options.integerPersonality, typeName: "NSPointerFunctions.Options")),
     "static let NSPointerFunctions.Options.copyIn": .staticValue(boxOpaque(NSPointerFunctions.Options.copyIn, typeName: "NSPointerFunctions.Options")),
+    "init NSPointerFunctions.Options(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSPointerFunctions.Options(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSPointerFunctions.Options(rawValue: try toUInt(args[0])), typeName: "NSPointerFunctions.Options")
+    },
         "init NSPointerFunctions.Options(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSPointerFunctions.Options(arrayLiteral:): expected array literal")

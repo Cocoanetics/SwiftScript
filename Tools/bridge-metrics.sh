@@ -35,9 +35,28 @@ bridged_types=$(awk '
 ' "$gen_main")
 blocklist=$(grep -cE '^[A-Za-z][^#]+\(' Resources/foundation-blocklist.txt || true)
 
-# Generated bridge counts. Each registration is one bridge.
-stdlib_bridges=$(grep -cE 'i\.register(Method|Init|Computed|StaticValue|StaticMethod|Comparator|Global)' Sources/SwiftScriptInterpreter/Modules/StdlibBridge.generated.swift || true)
-foundation_bridges=$(grep -cE 'i\.register(Method|Init|Computed|StaticValue|StaticMethod|Comparator|Global)' Sources/SwiftScriptInterpreter/Modules/FoundationBridge.generated.swift || true)
+# Generated bridge counts. The generator writes per-type files under
+# Modules/StdlibBridge/ and Modules/FoundationBridge/ (one dict entry
+# per bridge) plus runtime registrations (globals, comparators) in
+# each manifest.
+count_bridges() {
+    local dir="$1"
+    local entries runtime
+    entries=$(grep -hE '"(func|mutating func|var|set var|init|static let|static func|subscript) ' \
+        "$dir"/*.swift 2>/dev/null | wc -l | tr -d ' ')
+    runtime=$(grep -hcE 'i\.register(Comparator|Global)' \
+        "$dir"/*.swift 2>/dev/null | awk '{s+=$1} END {print s+0}')
+    echo $((entries + runtime))
+}
+stdlib_bridges=$(count_bridges Sources/SwiftScriptInterpreter/Modules/StdlibBridge)
+foundation_bridges=$(count_bridges Sources/SwiftScriptInterpreter/Modules/FoundationBridge)
+
+# Usable-surface metric: bridge *count* overstates coverage (over half
+# the Foundation entries are `.staticValue` constants). Track how many
+# types expose at least one working instance method separately.
+types_with_methods=$(grep -lE '"(func|mutating func) ' \
+    Sources/SwiftScriptInterpreter/Modules/FoundationBridge/FoundationBridges+*.swift 2>/dev/null | wc -l | tr -d ' ')
+foundation_type_files=$(ls Sources/SwiftScriptInterpreter/Modules/FoundationBridge/FoundationBridges+*.swift 2>/dev/null | wc -l | tr -d ' ')
 
 # Functional checks: tests and probes.
 swift build >/dev/null 2>&1 || true
@@ -53,6 +72,7 @@ blocklist-entries:       $blocklist
 stdlib-bridges:          $stdlib_bridges
 foundation-bridges:      $foundation_bridges
 total-bridges:           $((stdlib_bridges + foundation_bridges))
+foundation-types-with-methods: $types_with_methods/$foundation_type_files
 tests-passed:            $test_passed/$test_total
 probes-passed:           $probes_pass
 EOF

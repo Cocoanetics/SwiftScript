@@ -17,6 +17,12 @@ extension FoundationBridges {
     },
     "static let FileManager.VolumeEnumerationOptions.skipHiddenVolumes": .staticValue(boxOpaque(FileManager.VolumeEnumerationOptions.skipHiddenVolumes, typeName: "FileManager.VolumeEnumerationOptions")),
     "static let FileManager.VolumeEnumerationOptions.produceFileReferenceURLs": .staticValue(boxOpaque(FileManager.VolumeEnumerationOptions.produceFileReferenceURLs, typeName: "FileManager.VolumeEnumerationOptions")),
+    "init FileManager.VolumeEnumerationOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init FileManager.VolumeEnumerationOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(FileManager.VolumeEnumerationOptions(rawValue: try toUInt(args[0])), typeName: "FileManager.VolumeEnumerationOptions")
+    },
         "init FileManager.VolumeEnumerationOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("FileManager.VolumeEnumerationOptions(arrayLiteral:): expected array literal")

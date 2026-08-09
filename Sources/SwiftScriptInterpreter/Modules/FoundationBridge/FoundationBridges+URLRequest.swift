@@ -16,10 +16,20 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLRequest.url: URL?": .structSetter { receiver, newValue in
+            var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+            recv.url = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: URL.self, typeName: "URL") }
+            return boxOpaque(recv, typeName: "URLRequest")
+        },
     "var URLRequest.timeoutInterval: Double": .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         return .double(recv.timeoutInterval)
     },
+        "set var URLRequest.timeoutInterval: Double": .structSetter { receiver, newValue in
+            var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+            recv.timeoutInterval = try toDouble(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "URLRequest")
+        },
     "var URLRequest.mainDocumentURL: URL?": .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         if let _v = recv.mainDocumentURL {
@@ -27,10 +37,20 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLRequest.mainDocumentURL: URL?": .structSetter { receiver, newValue in
+            var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+            recv.mainDocumentURL = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: URL.self, typeName: "URL") }
+            return boxOpaque(recv, typeName: "URLRequest")
+        },
     "var URLRequest.allowsCellularAccess: Bool": .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         return .bool(recv.allowsCellularAccess)
     },
+        "set var URLRequest.allowsCellularAccess: Bool": .structSetter { receiver, newValue in
+            var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+            recv.allowsCellularAccess = try unboxBool(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "URLRequest")
+        },
     "var URLRequest.httpMethod: String?": .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         if let _v = recv.httpMethod {
@@ -38,6 +58,23 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLRequest.httpMethod: String?": .structSetter { receiver, newValue in
+            var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+            recv.httpMethod = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxString($0) }
+            return boxOpaque(recv, typeName: "URLRequest")
+        },
+    "var URLRequest.allHTTPHeaderFields: [String: String]?": .computed { receiver in
+        let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+        if let _v = recv.allHTTPHeaderFields {
+            return .optional(.dict(_v.map { DictEntry(key: .string($0.key), value: .string($0.value)) }))
+        }
+        return .optional(nil)
+    },
+        "set var URLRequest.allHTTPHeaderFields: [String: String]?": .structSetter { receiver, newValue in
+            var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+            recv.allHTTPHeaderFields = try unboxOptionalValue(unwrapForSetter(newValue)).map { Dictionary(uniqueKeysWithValues: try unboxDict($0).map { (try unboxString($0.key), try unboxString($0.value)) }) }
+            return boxOpaque(recv, typeName: "URLRequest")
+        },
     "var URLRequest.httpBody: Data?": .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         if let _v = recv.httpBody {
@@ -45,6 +82,11 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLRequest.httpBody: Data?": .structSetter { receiver, newValue in
+            var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+            recv.httpBody = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: Data.self, typeName: "Data") }
+            return boxOpaque(recv, typeName: "URLRequest")
+        },
     "var URLRequest.httpBodyStream: InputStream?": .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         if let _v = recv.httpBodyStream {
@@ -52,10 +94,20 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+        "set var URLRequest.httpBodyStream: InputStream?": .structSetter { receiver, newValue in
+            var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+            recv.httpBodyStream = try unboxOptionalValue(unwrapForSetter(newValue)).map { try unboxOpaque($0, as: InputStream.self, typeName: "InputStream") }
+            return boxOpaque(recv, typeName: "URLRequest")
+        },
     "var URLRequest.httpShouldHandleCookies: Bool": .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         return .bool(recv.httpShouldHandleCookies)
     },
+        "set var URLRequest.httpShouldHandleCookies: Bool": .structSetter { receiver, newValue in
+            var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+            recv.httpShouldHandleCookies = try unboxBool(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "URLRequest")
+        },
     "var URLRequest.description: String": .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         return .string(recv.description)
@@ -63,6 +115,16 @@ extension FoundationBridges {
     "var URLRequest.debugDescription: String": .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         return .string(recv.debugDescription)
+    },
+    "func URLRequest.value(forHTTPHeaderField:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("URLRequest.value: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+        if let _v = recv.value(forHTTPHeaderField: try unboxString(args[0])) {
+            return .optional(.string(_v))
+        }
+        return .optional(nil)
     },
     "func URLRequest.value()": .method { receiver, args in
         guard args.count == 1 else {
@@ -73,6 +135,12 @@ extension FoundationBridges {
             return .optional(.string(_v))
         }
         return .optional(nil)
+    },
+    "init URLRequest(url:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init URLRequest(url:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(URLRequest(url: try unboxOpaque(args[0], as: URL.self, typeName: "URL")), typeName: "URLRequest")
     },
     "init URLRequest(url:timeoutInterval:)": .`init` { args in
         guard args.count == 2 else {
@@ -86,17 +154,64 @@ extension FoundationBridges {
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         return .bool(recv.allowsExpensiveNetworkAccess)
     }
+        d["set var URLRequest.allowsExpensiveNetworkAccess: Bool"] = .structSetter { receiver, newValue in
+            var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+            recv.allowsExpensiveNetworkAccess = try unboxBool(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "URLRequest")
+        }
     d["var URLRequest.allowsConstrainedNetworkAccess: Bool"] = .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         return .bool(recv.allowsConstrainedNetworkAccess)
     }
+        d["set var URLRequest.allowsConstrainedNetworkAccess: Bool"] = .structSetter { receiver, newValue in
+            var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+            recv.allowsConstrainedNetworkAccess = try unboxBool(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "URLRequest")
+        }
     d["var URLRequest.assumesHTTP3Capable: Bool"] = .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         return .bool(recv.assumesHTTP3Capable)
     }
+        d["set var URLRequest.assumesHTTP3Capable: Bool"] = .structSetter { receiver, newValue in
+            var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+            recv.assumesHTTP3Capable = try unboxBool(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "URLRequest")
+        }
     d["var URLRequest.hashValue: Int"] = .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         return .int(recv.hashValue)
+    }
+    d["mutating func URLRequest.setValue(_:forHTTPHeaderField:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("URLRequest.setValue: expected 2 argument(s), got \(args.count)")
+        }
+        var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+        recv.setValue(try unboxOptionalValue(args[0]).map { try unboxString($0) }, forHTTPHeaderField: try unboxString(args[1]))
+        return (.void, boxOpaque(recv, typeName: "URLRequest"))
+    }
+    d["mutating func URLRequest.setValue()"] = .mutatingMethod { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("URLRequest.setValue: expected 2 argument(s), got \(args.count)")
+        }
+        var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+        recv.setValue(try unboxOptionalValue(args[0]).map { try unboxString($0) }, forHTTPHeaderField: try unboxString(args[1]))
+        return (.void, boxOpaque(recv, typeName: "URLRequest"))
+    }
+    d["mutating func URLRequest.addValue(_:forHTTPHeaderField:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("URLRequest.addValue: expected 2 argument(s), got \(args.count)")
+        }
+        var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+        recv.addValue(try unboxString(args[0]), forHTTPHeaderField: try unboxString(args[1]))
+        return (.void, boxOpaque(recv, typeName: "URLRequest"))
+    }
+    d["mutating func URLRequest.addValue()"] = .mutatingMethod { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("URLRequest.addValue: expected 2 argument(s), got \(args.count)")
+        }
+        var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+        recv.addValue(try unboxString(args[0]), forHTTPHeaderField: try unboxString(args[1]))
+        return (.void, boxOpaque(recv, typeName: "URLRequest"))
     }
         #endif
         return d

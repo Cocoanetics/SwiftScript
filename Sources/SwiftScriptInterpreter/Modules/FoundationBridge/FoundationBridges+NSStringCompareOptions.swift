@@ -28,6 +28,12 @@ extension FoundationBridges {
     "static let NSString.CompareOptions.widthInsensitive": .staticValue(boxOpaque(NSString.CompareOptions.widthInsensitive, typeName: "NSString.CompareOptions")),
     "static let NSString.CompareOptions.forcedOrdering": .staticValue(boxOpaque(NSString.CompareOptions.forcedOrdering, typeName: "NSString.CompareOptions")),
     "static let NSString.CompareOptions.regularExpression": .staticValue(boxOpaque(NSString.CompareOptions.regularExpression, typeName: "NSString.CompareOptions")),
+    "init NSString.CompareOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSString.CompareOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSString.CompareOptions(rawValue: try toUInt(args[0])), typeName: "NSString.CompareOptions")
+    },
         "init NSString.CompareOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSString.CompareOptions(arrayLiteral:): expected array literal")

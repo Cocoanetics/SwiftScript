@@ -53,6 +53,13 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+    "func UnsafeMutableRawPointer.distance(to:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("UnsafeMutableRawPointer.distance: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: UnsafeMutableRawPointer = try unboxOpaque(receiver, as: UnsafeMutableRawPointer.self, typeName: "UnsafeMutableRawPointer")
+        return .int(recv.distance(to: try unboxOpaque(args[0], as: UnsafeMutableRawPointer.self, typeName: "UnsafeMutableRawPointer")))
+    },
     "func UnsafeMutableRawPointer.distance()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("UnsafeMutableRawPointer.distance: expected 1 argument(s), got \(args.count)")
@@ -66,6 +73,13 @@ extension FoundationBridges {
         }
         return boxOpaque(UnsafeMutableRawPointer(mutating: try unboxOpaque(args[0], as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer")), typeName: "UnsafeMutableRawPointer")
     },
+    "func UnsafeMutableRawPointer.advanced(by:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("UnsafeMutableRawPointer.advanced: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: UnsafeMutableRawPointer = try unboxOpaque(receiver, as: UnsafeMutableRawPointer.self, typeName: "UnsafeMutableRawPointer")
+        return boxOpaque(recv.advanced(by: try unboxInt(args[0])), typeName: "UnsafeMutableRawPointer")
+    },
     "func UnsafeMutableRawPointer.advanced()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("UnsafeMutableRawPointer.advanced: expected 1 argument(s), got \(args.count)")
@@ -73,12 +87,26 @@ extension FoundationBridges {
         let recv: UnsafeMutableRawPointer = try unboxOpaque(receiver, as: UnsafeMutableRawPointer.self, typeName: "UnsafeMutableRawPointer")
         return boxOpaque(recv.advanced(by: try unboxInt(args[0])), typeName: "UnsafeMutableRawPointer")
     },
+    "func UnsafeMutableRawPointer.alignedUp(toMultipleOf:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("UnsafeMutableRawPointer.alignedUp: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: UnsafeMutableRawPointer = try unboxOpaque(receiver, as: UnsafeMutableRawPointer.self, typeName: "UnsafeMutableRawPointer")
+        return boxOpaque(recv.alignedUp(toMultipleOf: try unboxInt(args[0])), typeName: "UnsafeMutableRawPointer")
+    },
     "func UnsafeMutableRawPointer.alignedUp()": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("UnsafeMutableRawPointer.alignedUp: expected 1 argument(s), got \(args.count)")
         }
         let recv: UnsafeMutableRawPointer = try unboxOpaque(receiver, as: UnsafeMutableRawPointer.self, typeName: "UnsafeMutableRawPointer")
         return boxOpaque(recv.alignedUp(toMultipleOf: try unboxInt(args[0])), typeName: "UnsafeMutableRawPointer")
+    },
+    "func UnsafeMutableRawPointer.alignedDown(toMultipleOf:)": .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("UnsafeMutableRawPointer.alignedDown: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: UnsafeMutableRawPointer = try unboxOpaque(receiver, as: UnsafeMutableRawPointer.self, typeName: "UnsafeMutableRawPointer")
+        return boxOpaque(recv.alignedDown(toMultipleOf: try unboxInt(args[0])), typeName: "UnsafeMutableRawPointer")
     },
     "func UnsafeMutableRawPointer.alignedDown()": .method { receiver, args in
         guard args.count == 1 else {
@@ -92,6 +120,14 @@ extension FoundationBridges {
             throw RuntimeError.invalid("UnsafeMutableRawPointer.allocate: expected 2 argument(s), got \(args.count)")
         }
         return boxOpaque(UnsafeMutableRawPointer.allocate(byteCount: try unboxInt(args[0]), alignment: try unboxInt(args[1])), typeName: "UnsafeMutableRawPointer")
+    },
+    "func UnsafeMutableRawPointer.copyMemory(from:byteCount:)": .method { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("UnsafeMutableRawPointer.copyMemory: expected 2 argument(s), got \(args.count)")
+        }
+        let recv: UnsafeMutableRawPointer = try unboxOpaque(receiver, as: UnsafeMutableRawPointer.self, typeName: "UnsafeMutableRawPointer")
+        recv.copyMemory(from: try unboxOpaque(args[0], as: UnsafeRawPointer.self, typeName: "UnsafeRawPointer"), byteCount: try unboxInt(args[1]))
+            return .void
     },
     "func UnsafeMutableRawPointer.copyMemory()": .method { receiver, args in
         guard args.count == 2 else {

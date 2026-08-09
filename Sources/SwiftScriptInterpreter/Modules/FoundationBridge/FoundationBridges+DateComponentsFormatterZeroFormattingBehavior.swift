@@ -20,6 +20,12 @@ extension FoundationBridges {
     "static let DateComponentsFormatter.ZeroFormattingBehavior.dropTrailing": .staticValue(boxOpaque(DateComponentsFormatter.ZeroFormattingBehavior.dropTrailing, typeName: "DateComponentsFormatter.ZeroFormattingBehavior")),
     "static let DateComponentsFormatter.ZeroFormattingBehavior.dropAll": .staticValue(boxOpaque(DateComponentsFormatter.ZeroFormattingBehavior.dropAll, typeName: "DateComponentsFormatter.ZeroFormattingBehavior")),
     "static let DateComponentsFormatter.ZeroFormattingBehavior.pad": .staticValue(boxOpaque(DateComponentsFormatter.ZeroFormattingBehavior.pad, typeName: "DateComponentsFormatter.ZeroFormattingBehavior")),
+    "init DateComponentsFormatter.ZeroFormattingBehavior(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init DateComponentsFormatter.ZeroFormattingBehavior(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(DateComponentsFormatter.ZeroFormattingBehavior(rawValue: try toUInt(args[0])), typeName: "DateComponentsFormatter.ZeroFormattingBehavior")
+    },
         "init DateComponentsFormatter.ZeroFormattingBehavior(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("DateComponentsFormatter.ZeroFormattingBehavior(arrayLiteral:): expected array literal")

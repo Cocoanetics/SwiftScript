@@ -17,6 +17,12 @@ extension FoundationBridges {
     },
     "static let NSEnumerationOptions.concurrent": .staticValue(boxOpaque(NSEnumerationOptions.concurrent, typeName: "NSEnumerationOptions")),
     "static let NSEnumerationOptions.reverse": .staticValue(boxOpaque(NSEnumerationOptions.reverse, typeName: "NSEnumerationOptions")),
+    "init NSEnumerationOptions(rawValue:)": .`init` { args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("init NSEnumerationOptions(rawValue:): expected 1 argument(s), got \(args.count)")
+        }
+        return boxOpaque(NSEnumerationOptions(rawValue: try toUInt(args[0])), typeName: "NSEnumerationOptions")
+    },
         "init NSEnumerationOptions(arrayLiteral:)": .`init` { args in
             guard args.count == 1, case .array(let elements) = args[0] else {
                 throw RuntimeError.invalid("NSEnumerationOptions(arrayLiteral:): expected array literal")
@@ -36,12 +42,26 @@ extension FoundationBridges {
         let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
         return .bool(recv.isEmpty)
     }
+    d["func NSEnumerationOptions.union(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSEnumerationOptions.union: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
+        return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")), typeName: "NSEnumerationOptions")
+    }
     d["func NSEnumerationOptions.union()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSEnumerationOptions.union: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
         return boxOpaque(recv.union(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")), typeName: "NSEnumerationOptions")
+    }
+    d["func NSEnumerationOptions.intersection(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSEnumerationOptions.intersection: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
+        return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")), typeName: "NSEnumerationOptions")
     }
     d["func NSEnumerationOptions.intersection()"] = .method { receiver, args in
         guard args.count == 1 else {
@@ -50,12 +70,26 @@ extension FoundationBridges {
         let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
         return boxOpaque(recv.intersection(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")), typeName: "NSEnumerationOptions")
     }
+    d["func NSEnumerationOptions.symmetricDifference(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSEnumerationOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
+        return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")), typeName: "NSEnumerationOptions")
+    }
     d["func NSEnumerationOptions.symmetricDifference()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSEnumerationOptions.symmetricDifference: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
         return boxOpaque(recv.symmetricDifference(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")), typeName: "NSEnumerationOptions")
+    }
+    d["func NSEnumerationOptions.contains(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSEnumerationOptions.contains: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
+        return .bool(recv.contains(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")))
     }
     d["func NSEnumerationOptions.contains()"] = .method { receiver, args in
         guard args.count == 1 else {
@@ -64,12 +98,90 @@ extension FoundationBridges {
         let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
         return .bool(recv.contains(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")))
     }
+    d["mutating func NSEnumerationOptions.formUnion(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSEnumerationOptions.formUnion: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
+        recv.formUnion(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSEnumerationOptions"))
+    }
+    d["mutating func NSEnumerationOptions.formUnion()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSEnumerationOptions.formUnion: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
+        recv.formUnion(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSEnumerationOptions"))
+    }
+    d["mutating func NSEnumerationOptions.formIntersection(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSEnumerationOptions.formIntersection: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
+        recv.formIntersection(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSEnumerationOptions"))
+    }
+    d["mutating func NSEnumerationOptions.formIntersection()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSEnumerationOptions.formIntersection: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
+        recv.formIntersection(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSEnumerationOptions"))
+    }
+    d["mutating func NSEnumerationOptions.formSymmetricDifference(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSEnumerationOptions.formSymmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
+        recv.formSymmetricDifference(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSEnumerationOptions"))
+    }
+    d["mutating func NSEnumerationOptions.formSymmetricDifference()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSEnumerationOptions.formSymmetricDifference: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
+        recv.formSymmetricDifference(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSEnumerationOptions"))
+    }
+    d["mutating func NSEnumerationOptions.subtract(_:)"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSEnumerationOptions.subtract: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
+        recv.subtract(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSEnumerationOptions"))
+    }
+    d["mutating func NSEnumerationOptions.subtract()"] = .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSEnumerationOptions.subtract: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
+        recv.subtract(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions"))
+        return (.void, boxOpaque(recv, typeName: "NSEnumerationOptions"))
+    }
+    d["func NSEnumerationOptions.isSubset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSEnumerationOptions.isSubset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
+        return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")))
+    }
     d["func NSEnumerationOptions.isSubset()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSEnumerationOptions.isSubset: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
         return .bool(recv.isSubset(of: try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")))
+    }
+    d["func NSEnumerationOptions.isSuperset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSEnumerationOptions.isSuperset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
+        return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")))
     }
     d["func NSEnumerationOptions.isSuperset()"] = .method { receiver, args in
         guard args.count == 1 else {
@@ -78,12 +190,26 @@ extension FoundationBridges {
         let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
         return .bool(recv.isSuperset(of: try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")))
     }
+    d["func NSEnumerationOptions.isDisjoint(with:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSEnumerationOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
+        return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")))
+    }
     d["func NSEnumerationOptions.isDisjoint()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSEnumerationOptions.isDisjoint: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
         return .bool(recv.isDisjoint(with: try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")))
+    }
+    d["func NSEnumerationOptions.subtracting(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSEnumerationOptions.subtracting: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
+        return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")), typeName: "NSEnumerationOptions")
     }
     d["func NSEnumerationOptions.subtracting()"] = .method { receiver, args in
         guard args.count == 1 else {
@@ -92,12 +218,26 @@ extension FoundationBridges {
         let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
         return boxOpaque(recv.subtracting(try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")), typeName: "NSEnumerationOptions")
     }
+    d["func NSEnumerationOptions.isStrictSuperset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSEnumerationOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
+        return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")))
+    }
     d["func NSEnumerationOptions.isStrictSuperset()"] = .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("NSEnumerationOptions.isStrictSuperset: expected 1 argument(s), got \(args.count)")
         }
         let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
         return .bool(recv.isStrictSuperset(of: try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")))
+    }
+    d["func NSEnumerationOptions.isStrictSubset(of:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("NSEnumerationOptions.isStrictSubset: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: NSEnumerationOptions = try unboxOpaque(receiver, as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")
+        return .bool(recv.isStrictSubset(of: try unboxOpaque(args[0], as: NSEnumerationOptions.self, typeName: "NSEnumerationOptions")))
     }
     d["func NSEnumerationOptions.isStrictSubset()"] = .method { receiver, args in
         guard args.count == 1 else {

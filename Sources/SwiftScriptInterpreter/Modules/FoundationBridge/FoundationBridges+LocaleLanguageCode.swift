@@ -13,6 +13,11 @@ extension FoundationBridges {
         let recv: Locale.LanguageCode = try unboxOpaque(receiver, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode")
         return .string(recv.identifier)
     },
+        "set var Locale.LanguageCode.identifier: String": .structSetter { receiver, newValue in
+            var recv: Locale.LanguageCode = try unboxOpaque(receiver, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode")
+            recv.identifier = try unboxString(unwrapForSetter(newValue))
+            return boxOpaque(recv, typeName: "Locale.LanguageCode")
+        },
     "static let Locale.LanguageCode.unidentified": .staticValue(boxOpaque(Locale.LanguageCode.unidentified, typeName: "Locale.LanguageCode")),
     "static let Locale.LanguageCode.uncoded": .staticValue(boxOpaque(Locale.LanguageCode.uncoded, typeName: "Locale.LanguageCode")),
     "static let Locale.LanguageCode.multiple": .staticValue(boxOpaque(Locale.LanguageCode.multiple, typeName: "Locale.LanguageCode")),
@@ -128,6 +133,7 @@ extension FoundationBridges {
         let recv: Locale.LanguageCode = try unboxOpaque(receiver, as: Locale.LanguageCode.self, typeName: "Locale.LanguageCode")
         return .bool(recv.isISOLanguage)
     },
+    "static let Locale.LanguageCode.isoLanguageCodes": .staticValue(.array(Locale.LanguageCode.isoLanguageCodes.map { boxOpaque($0, typeName: "Locale.LanguageCode") })),
     "init Locale.LanguageCode(stringLiteral:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Locale.LanguageCode(stringLiteral:): expected 1 argument(s), got \(args.count)")

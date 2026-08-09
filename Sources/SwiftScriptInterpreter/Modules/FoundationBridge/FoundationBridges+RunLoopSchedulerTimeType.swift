@@ -13,6 +13,11 @@ extension FoundationBridges {
         let recv: RunLoop.SchedulerTimeType = try unboxOpaque(receiver, as: RunLoop.SchedulerTimeType.self, typeName: "RunLoop.SchedulerTimeType")
         return boxOpaque(recv.date, typeName: "Date")
     },
+        "set var RunLoop.SchedulerTimeType.date: Date": .structSetter { receiver, newValue in
+            var recv: RunLoop.SchedulerTimeType = try unboxOpaque(receiver, as: RunLoop.SchedulerTimeType.self, typeName: "RunLoop.SchedulerTimeType")
+            recv.date = try unboxOpaque(unwrapForSetter(newValue), as: Date.self, typeName: "Date")
+            return boxOpaque(recv, typeName: "RunLoop.SchedulerTimeType")
+        },
     "var RunLoop.SchedulerTimeType.hashValue: Int": .computed { receiver in
         let recv: RunLoop.SchedulerTimeType = try unboxOpaque(receiver, as: RunLoop.SchedulerTimeType.self, typeName: "RunLoop.SchedulerTimeType")
         return .int(recv.hashValue)

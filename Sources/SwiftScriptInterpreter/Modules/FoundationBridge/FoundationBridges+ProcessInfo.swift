@@ -10,6 +10,12 @@ extension FoundationBridges {
     nonisolated(unsafe) static let processInfo: [String: Bridge] = {
         var d: [String: Bridge] = [
     "static let ProcessInfo.processInfo": .staticValue(boxOpaque(ProcessInfo.processInfo, typeName: "ProcessInfo")),
+    "var ProcessInfo.environment: [String: String]": .computed { _ in
+        return .dict(hostEnvironment().map { DictEntry(key: .string($0.key), value: .string($0.value)) })
+    },
+    "var ProcessInfo.arguments: [String]": .computed { _ in
+        return .array(hostProcessArguments().map { .string($0) })
+    },
     "var ProcessInfo.hostName: String": .computed { _ in
         return .string(hostNameOverride())
     },
@@ -18,8 +24,11 @@ extension FoundationBridges {
     },
         "set var ProcessInfo.processName: String": .setter { receiver, newValue in
             let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
-            recv.processName = try unboxString(newValue)
+            recv.processName = try unboxString(unwrapForSetter(newValue))
         },
+    "var ProcessInfo.processIdentifier: Int32": .computed { _ in
+        return .int(Int(hostProcessIdentifier()))
+    },
     "var ProcessInfo.globallyUniqueString: String": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .string(recv.globallyUniqueString)
@@ -36,12 +45,32 @@ extension FoundationBridges {
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .int(recv.activeProcessorCount)
     },
+    "var ProcessInfo.physicalMemory: UInt64": .computed { receiver in
+        let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
+        return try boxUnsignedAsInt(recv.physicalMemory)
+    },
     "var ProcessInfo.systemUptime: Double": .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .double(recv.systemUptime)
     },
         ]
         #if canImport(Darwin)
+    d["func ProcessInfo.disableSuddenTermination()"] = .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("ProcessInfo.disableSuddenTermination: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
+        recv.disableSuddenTermination()
+            return .void
+    }
+    d["func ProcessInfo.enableSuddenTermination()"] = .method { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("ProcessInfo.enableSuddenTermination: expected 0 argument(s), got \(args.count)")
+        }
+        let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
+        recv.enableSuddenTermination()
+            return .void
+    }
     d["var ProcessInfo.isLowPowerModeEnabled: Bool"] = .computed { receiver in
         let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
         return .bool(recv.isLowPowerModeEnabled)
@@ -55,6 +84,38 @@ extension FoundationBridges {
         return .bool(recv.isiOSAppOnMac)
     }
     d["static let ProcessInfo.thermalStateDidChangeNotification"] = .staticValue(boxOpaque(ProcessInfo.thermalStateDidChangeNotification, typeName: "NSNotification.Name"))
+    d["func ProcessInfo.disableAutomaticTermination(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("ProcessInfo.disableAutomaticTermination: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
+        recv.disableAutomaticTermination(try unboxString(args[0]))
+            return .void
+    }
+    d["func ProcessInfo.disableAutomaticTermination()"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("ProcessInfo.disableAutomaticTermination: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
+        recv.disableAutomaticTermination(try unboxString(args[0]))
+            return .void
+    }
+    d["func ProcessInfo.enableAutomaticTermination(_:)"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("ProcessInfo.enableAutomaticTermination: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
+        recv.enableAutomaticTermination(try unboxString(args[0]))
+            return .void
+    }
+    d["func ProcessInfo.enableAutomaticTermination()"] = .method { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("ProcessInfo.enableAutomaticTermination: expected 1 argument(s), got \(args.count)")
+        }
+        let recv: ProcessInfo = try unboxOpaque(receiver, as: ProcessInfo.self, typeName: "ProcessInfo")
+        recv.enableAutomaticTermination(try unboxString(args[0]))
+            return .void
+    }
         #endif
         return d
     }()

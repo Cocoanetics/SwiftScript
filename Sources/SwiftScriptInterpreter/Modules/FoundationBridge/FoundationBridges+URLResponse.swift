@@ -22,6 +22,10 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+    "var URLResponse.expectedContentLength: Int64": .computed { receiver in
+        let recv: URLResponse = try unboxOpaque(receiver, as: URLResponse.self, typeName: "URLResponse")
+        return .int(Int(recv.expectedContentLength))
+    },
     "var URLResponse.textEncodingName: String?": .computed { receiver in
         let recv: URLResponse = try unboxOpaque(receiver, as: URLResponse.self, typeName: "URLResponse")
         if let _v = recv.textEncodingName {
@@ -35,6 +39,12 @@ extension FoundationBridges {
             return .optional(.string(_v))
         }
         return .optional(nil)
+    },
+    "init URLResponse(url:mimeType:expectedContentLength:textEncodingName:)": .`init` { args in
+        guard args.count == 4 else {
+            throw RuntimeError.invalid("init URLResponse(url:mimeType:expectedContentLength:textEncodingName:): expected 4 argument(s), got \(args.count)")
+        }
+        return boxOpaque(URLResponse(url: try unboxOpaque(args[0], as: URL.self, typeName: "URL"), mimeType: try unboxOptionalValue(args[1]).map { try unboxString($0) }, expectedContentLength: try unboxInt(args[2]), textEncodingName: try unboxOptionalValue(args[3]).map { try unboxString($0) }), typeName: "URLResponse")
     },
     ]
 }

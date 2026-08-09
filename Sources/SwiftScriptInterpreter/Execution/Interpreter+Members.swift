@@ -130,6 +130,18 @@ extension Interpreter {
                 )
             }
             return .array(Array(arr[lo..<upper]))
+        case (.string(let s), .opaque(let rangeType, let any))
+            where rangeType == "Range<String.Index>":
+            // `s[range]` with a `Range<String.Index>` from
+            // `range(of:)` — the stock regex-extraction idiom
+            // (`String(s[match])`).
+            guard let range = any as? Range<String.Index>,
+                  range.lowerBound >= s.startIndex,
+                  range.upperBound <= s.endIndex
+            else {
+                throw RuntimeError.invalid("String subscript: range out of bounds")
+            }
+            return .string(String(s[range]))
         case (.string(let s), .range(let lo, let hi, let closed)):
             // `"abcde"[1..<3]` — script-friendly String slicing keyed by
             // grapheme-cluster index. Real Swift requires `String.Index`
@@ -328,7 +340,8 @@ extension Interpreter {
         _ name: String,
         on receiver: Value,
         args: [Value],
-        at offset: Int
+        at offset: Int,
+        labels: [String?]? = nil
     ) async throws -> Value {
         // Ranges share the collection method surface with arrays. Materialize
         // and re-dispatch so `(0..<5).map { … }` works the same as
@@ -1069,7 +1082,7 @@ extension Interpreter {
             default: break
             }
         case .structValue(let typeName, _) where typeName == "FileManager":
-            return try await invokeFileManagerMethod(name, args: args)
+            return try await invokeFileManagerMethod(name, args: args, labels: labels)
         case .optional(let inner):
             // `Optional.map { … }` — apply closure to the wrapped value
             // (if any) and rewrap the result. `Optional.flatMap { … }`
@@ -1144,7 +1157,7 @@ extension Interpreter {
         }
         // User-declared extension on a built-in type (Int, Double, …).
         let recvTypeName = registryTypeName(receiver)
-        if let extFn = extensionMethod(typeName: recvTypeName, name: name) {
+        if let extFn = extensionMethod(typeName: recvTypeName, name: name, labels: labels) {
             return try await invokeBuiltinExtensionMethod(extFn, on: receiver, args: args)
         }
         // Enum extension methods (treated like instance methods).
