@@ -761,13 +761,60 @@ extension Interpreter {
         contextType: String?,
         in scope: Scope
     ) async throws -> Value {
+        // A leading-dot member in *argument* position — `f(.any)`,
+        // `element.typeKey(.escape)`. Resolve it against the
+        // parameter's context type when we know one (a bridge
+        // static-let, a user enum case), otherwise hand the bare case
+        // name to the callee as an unresolved enum marker (issue #11):
+        // a bridged parameter has no declared type for the interpreter
+        // to consult, so the receiving bridge decides what `.any`
+        // means — and a bridge that expects something else raises its
+        // own, clearer error. Restricting the deferral to argument
+        // position keeps a stray `.foo` in general expressions a hard
+        // error (that path in `evaluate(memberAccess:)` still throws).
+        if let member = expr.as(MemberAccessExprSyntax.self), member.base == nil {
+            let caseName = member.declName.baseName.text
+            if let contextType,
+               let resolved = try await resolveContextualMember(
+                caseName, typeName: contextType, in: scope)
+            {
+                return resolved
+            }
+            return .enumValue(typeName: "", caseName: caseName, associatedValues: [])
+        }
         if let contextType {
-            // Resolves both a bare `.member` static-let and an
-            // OptionSet array literal (`[.sortedKeys, .prettyPrinted]`)
-            // against the context type — see `evaluate(_:expectingTypeName:in:)`.
+            // Resolves an OptionSet array literal
+            // (`[.sortedKeys, .prettyPrinted]`) and other contextual
+            // forms against the context type — see
+            // `evaluate(_:expectingTypeName:in:)`.
             return try await evaluate(expr, expectingTypeName: contextType, in: scope)
         }
         return try await evaluate(expr, in: scope)
+    }
+
+    /// Resolve a leading-dot case name against a known context type:
+    /// a bridge `static let` (`.utf8` → `String.Encoding.utf8`,
+    /// `.whitespaces` → `CharacterSet.whitespaces`) or a user enum
+    /// case. Returns `nil` when the name doesn't resolve, so the
+    /// caller can defer to the callee. Mirrors the static-let arm of
+    /// `evaluate(_:expectingTypeName:in:)` for the single-member case.
+    func resolveContextualMember(
+        _ caseName: String,
+        typeName: String,
+        in scope: Scope
+    ) async throws -> Value? {
+        switch bridges["static let \(typeName).\(caseName)"] {
+        case .staticValue(let v)?:
+            return v
+        case .staticComputed(let body)?:
+            return try await body()
+        default:
+            break
+        }
+        if enumDefs[typeName] != nil {
+            return enumCaseAccess(typeName: typeName, caseName: caseName)
+        }
+        return nil
     }
 
     /// Attempt a mutating method call on a stored variable (`Bool.toggle`,

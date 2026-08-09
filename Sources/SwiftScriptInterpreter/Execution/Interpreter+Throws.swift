@@ -8,41 +8,112 @@ extension Interpreter {
     }
 
     /// `do { … } catch <pattern> { … } …` — run the body, dispatch any
-    /// thrown user error to the first matching catch clause.
+    /// thrown error to the first matching catch clause.
+    ///
+    /// Two families of thrown value are catchable: a script-side `throw`
+    /// (a ``UserThrowSignal`` carrying the thrown value) and an error
+    /// raised inside a bridge or interpreter dispatch (a ``RuntimeError``
+    /// or a raw host `Error`). The latter used to fly straight past every
+    /// `catch` and end the script (issue #12); it now arrives as a
+    /// catchable `.opaque(typeName: "Error", …)` value, so
+    /// `catch { print(error) }` binds it like any other error and
+    /// `try?` around a bridged call yields `nil`.
+    ///
+    /// Control-flow signals (`return` / `break` / `continue` /
+    /// `fallthrough` / `exit(_:)`) are *not* errors and must keep
+    /// bypassing `catch` — they're re-thrown explicitly rather than
+    /// swept up by the catch-all.
     func execute(do doStmt: DoStmtSyntax, in scope: Scope) async throws -> Value {
         do {
             return try await executeBlock(doStmt.body, in: scope)
         } catch let signal as UserThrowSignal {
-            // Try each catch clause in order.
-            for catchClause in doStmt.catchClauses {
-                if let bindScope = try await matchCatchClause(
-                    catchClause, value: signal.value, in: scope
-                ) {
-                    return try await executeBlock(catchClause.body, in: bindScope)
-                }
+            if let handled = try await dispatchToCatchClauses(
+                doStmt, value: signal.value, in: scope) {
+                return handled
             }
-            // No matching catch — re-raise.
             throw signal
+        } catch let control as ReturnSignal {
+            throw control
+        } catch let control as BreakSignal {
+            throw control
+        } catch let control as ContinueSignal {
+            throw control
+        } catch let control as FallthroughSignal {
+            throw control
+        } catch let exit as ScriptExit {
+            throw exit
+        } catch {
+            // Bridge / interpreter error — surface it as a catchable
+            // opaque `Error` value. Re-throw the original when no clause
+            // matches so an unhandled bridge error still ends the script
+            // with its own message.
+            let value = Value.opaque(typeName: "Error", value: error)
+            if let handled = try await dispatchToCatchClauses(
+                doStmt, value: value, in: scope) {
+                return handled
+            }
+            throw error
         }
+    }
+
+    /// Run each catch clause in order against a thrown `value`, returning
+    /// the executed clause's result, or `nil` when none match.
+    private func dispatchToCatchClauses(
+        _ doStmt: DoStmtSyntax,
+        value: Value,
+        in scope: Scope
+    ) async throws -> Value? {
+        for catchClause in doStmt.catchClauses {
+            if let bindScope = try await matchCatchClause(
+                catchClause, value: value, in: scope
+            ) {
+                return try await executeBlock(catchClause.body, in: bindScope)
+            }
+        }
+        return nil
     }
 
     /// Evaluate a `try`/`try?`/`try!` expression. The inner expression is
     /// evaluated; the modifier decides how thrown errors are surfaced.
+    ///
+    /// Both a script `throw` (``UserThrowSignal``) and a bridge /
+    /// interpreter error (``RuntimeError`` or a raw host `Error`) are
+    /// handled the same way — `try?` yields `nil`, `try!` traps, plain
+    /// `try` re-raises for an enclosing `do`/`catch` to handle (issue
+    /// #12). Control-flow signals are re-thrown untouched.
     func evaluate(try tryExpr: TryExprSyntax, in scope: Scope) async throws -> Value {
         let mark = tryExpr.questionOrExclamationMark?.text
         do {
             return try await evaluate(tryExpr.expression, in: scope)
         } catch let signal as UserThrowSignal {
-            switch mark {
-            case "?":
-                return .optional(nil)
-            case "!":
-                throw RuntimeError.invalid(
-                    "'try!' expression unexpectedly raised an error: \(signal.value.description)"
-                )
-            default:
-                throw signal
-            }
+            return try surfaceTry(mark: mark, description: signal.value.description, rethrow: signal)
+        } catch let control as ReturnSignal {
+            throw control
+        } catch let control as BreakSignal {
+            throw control
+        } catch let control as ContinueSignal {
+            throw control
+        } catch let control as FallthroughSignal {
+            throw control
+        } catch let exit as ScriptExit {
+            throw exit
+        } catch {
+            return try surfaceTry(mark: mark, description: "\(error)", rethrow: error)
+        }
+    }
+
+    /// Apply the `try` modifier to a caught error: `?` → `nil`, `!` →
+    /// trap, plain `try` → re-raise the original.
+    private func surfaceTry(mark: String?, description: String, rethrow: Error) throws -> Value {
+        switch mark {
+        case "?":
+            return .optional(nil)
+        case "!":
+            throw RuntimeError.invalid(
+                "'try!' expression unexpectedly raised an error: \(description)"
+            )
+        default:
+            throw rethrow
         }
     }
 
