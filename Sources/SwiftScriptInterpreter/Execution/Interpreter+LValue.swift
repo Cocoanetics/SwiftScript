@@ -133,10 +133,10 @@ extension Interpreter {
             if rest.isEmpty, let entry = propertyIndex["\(typeName).\(head)"] {
                 switch entry.setter {
                 case .setter(let body)?:
-                    try await body(container, value)
+                    try await callingBridge { try await body(container, value) }
                     return nil
                 case .structSetter(let body)?:
-                    return try await body(container, value)
+                    return try await callingBridge { try await body(container, value) }
                 default:
                     break
                 }

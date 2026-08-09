@@ -149,14 +149,16 @@ extension Interpreter {
            case .method(let body)? =
             bridges[bridgeKey(forMethod: name, on: "FileManager", labels: labels)]
         {
-            return try await body(
-                boxOpaque(FileManager.default, typeName: "FileManager"), args)
+            return try await callingBridge {
+                try await body(boxOpaque(FileManager.default, typeName: "FileManager"), args)
+            }
         }
         if case .method(let body)? =
             bridges[bridgeKey(forMethod: name, on: "FileManager", labels: [])]
         {
-            return try await body(
-                boxOpaque(FileManager.default, typeName: "FileManager"), args)
+            return try await callingBridge {
+                try await body(boxOpaque(FileManager.default, typeName: "FileManager"), args)
+            }
         }
         throw RuntimeError.invalid("'FileManager' has no method '\(name)'")
     }

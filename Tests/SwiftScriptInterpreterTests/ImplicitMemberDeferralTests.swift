@@ -117,4 +117,35 @@ struct ImplicitMemberDeferralTests {
             _ = try await interp.eval("let x = .any")
         }
     }
+
+    // MARK: - Builtin containers keep the hard error (no silent deferral)
+
+    @Test func bareMemberToBuiltinArrayMethodStillThrows() async throws {
+        // The receiver is a builtin `[Int]`, not a bridged type — there
+        // is no bridge to interpret `.foo`, so it must stay the same
+        // "no such member" error stock Swift gives, not silently
+        // compare a marker that never matches (which would make
+        // `contains` return false).
+        let interp = Interpreter()
+        await #expect(throws: RuntimeError.self) {
+            _ = try await interp.eval("[1, 2, 3].contains(.foo)")
+        }
+    }
+
+    @Test func bareMemberToBuiltinFirstIndexStillThrows() async throws {
+        let interp = Interpreter()
+        await #expect(throws: RuntimeError.self) {
+            _ = try await interp.eval("[1, 2, 3].firstIndex(of: .bar)")
+        }
+    }
+
+    @Test func bareMemberToBuiltinSetStillThrows() async throws {
+        let interp = Interpreter()
+        await #expect(throws: RuntimeError.self) {
+            _ = try await interp.eval(#"""
+                import Foundation
+                Set([1, 2, 3]).contains(.foo)
+                """#)
+        }
+    }
 }

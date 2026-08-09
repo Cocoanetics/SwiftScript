@@ -9,7 +9,38 @@ import Foundation
 @Suite("Catchable bridge errors (issue #12)")
 struct CatchableBridgeErrorTests {
 
-    @Test func bridgeRuntimeErrorIsCaught() async throws {
+    /// A bridge that signals a recoverable failure by throwing — the
+    /// embedder pattern the issue is about (an element that isn't there
+    /// yet, an I/O error worth retrying).
+    private struct FlakyModule: BuiltinModule {
+        let name = "Flaky"
+        func register(into i: Interpreter) {
+            i.bridges["init Widget()"] = .`init` { _ in
+                .opaque(typeName: "Widget", value: "w")
+            }
+            i.bridges["func Widget.mustExist()"] = .method { _, _ in
+                throw RuntimeError.invalid("element not found")
+            }
+        }
+    }
+
+    @Test func embedderBridgeThrowIsCaught() async throws {
+        var out = ""
+        let interp = Interpreter(output: { out += $0 })
+        interp.registerOnImport("Flaky", module: FlakyModule())
+        _ = try await interp.eval(#"""
+            import Flaky
+            do {
+                Widget().mustExist()
+                print("no throw")
+            } catch {
+                print("recovered:", error)
+            }
+            """#)
+        #expect(out == "recovered: element not found\n")
+    }
+
+    @Test func bridgeSubscriptErrorIsCaught() async throws {
         var out = ""
         let interp = Interpreter(output: { out += $0 })
         _ = try await interp.eval(#"""
@@ -117,6 +148,73 @@ struct CatchableBridgeErrorTests {
             }
             """#)
         #expect(status.code == 7)
+    }
+
+    // MARK: - Interpreter traps and programming errors stay fatal
+
+    /// These are raised by the interpreter itself — outside any bridge
+    /// body — so wrapping bridge errors must not make them catchable.
+    /// In stock Swift each is an uncatchable trap or a compile error.
+    private func expectUncatchable(_ source: String) async {
+        let interp = Interpreter(output: { _ in })
+        var caughtInScript = false
+        do {
+            _ = try await interp.eval("""
+                \(source)
+                """)
+        } catch {
+            // The error propagates to the host — it was NOT swallowed
+            // by the script's own catch.
+            caughtInScript = false
+            _ = caughtInScript
+            return
+        }
+        Issue.record("expected the error to terminate the script, but it completed")
+    }
+
+    @Test func fatalErrorNotCatchable() async {
+        await expectUncatchable(#"""
+            import Foundation
+            do { fatalError("boom") } catch { print("caught fatal") }
+            """#)
+    }
+
+    @Test func preconditionFailureNotCatchable() async {
+        await expectUncatchable(#"""
+            import Foundation
+            do { precondition(false, "nope") } catch { print("caught precondition") }
+            """#)
+    }
+
+    @Test func divisionByZeroNotCatchable() async {
+        await expectUncatchable(#"""
+            func f(_ a: Int, _ b: Int) -> Int { a / b }
+            do { _ = f(1, 0) } catch { print("caught division") }
+            """#)
+    }
+
+    @Test func undefinedIdentifierNotCatchable() async {
+        await expectUncatchable(#"""
+            do { let _ = someUndefinedThing() } catch { print("caught undefined") }
+            """#)
+    }
+
+    @Test func noSuchMemberNotCatchable() async {
+        await expectUncatchable(#"""
+            do { let _ = 5.hasPrefix("a") } catch { print("caught nsm") }
+            """#)
+    }
+
+    @Test func tryQuestionDoesNotSuppressTrap() async {
+        // `try?` suppresses a *thrown* error, but never a trap.
+        let interp = Interpreter(output: { _ in })
+        await #expect(throws: (any Error).self) {
+            _ = try await interp.eval(#"""
+                func f(_ a: Int, _ b: Int) -> Int { a / b }
+                let r = (try? f(1, 0)) ?? -1
+                _ = r
+                """#)
+        }
     }
 
     // MARK: - Script throw still works unchanged

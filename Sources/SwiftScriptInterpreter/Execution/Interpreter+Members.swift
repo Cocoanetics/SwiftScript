@@ -102,7 +102,7 @@ extension Interpreter {
             if case .subscriptGet(let body)? =
                 bridges[bridgeKey(forSubscriptGetOn: opaqueType)]
             {
-                return try await body(receiver, args)
+                return try await callingBridge { try await body(receiver, args) }
             }
             throw RuntimeError.invalid(
                 "value of type '\(opaqueType)' has no subscript"

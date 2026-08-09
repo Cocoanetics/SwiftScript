@@ -640,7 +640,7 @@ extension Interpreter {
             }
             let baseValue: Value
             if let body = bridgeInit {
-                baseValue = try await body(args)
+                baseValue = try await callingBridge { try await body(args) }
             } else {
                 baseValue = try await invoke(extensionInit!, args: args)
             }

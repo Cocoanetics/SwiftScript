@@ -584,7 +584,9 @@ extension Interpreter {
                         "value of type '\(opaqueType)' has no settable subscript"
                     )
                 }
-                let updated = try await body(binding.value, args, value)
+                let updated = try await callingBridge {
+                    try await body(binding.value, args, value)
+                }
                 _ = scope.assign(varName, value: updated)
                 return .void
             default:

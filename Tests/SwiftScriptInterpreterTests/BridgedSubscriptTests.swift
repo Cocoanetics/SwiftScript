@@ -36,7 +36,7 @@ struct BridgedSubscriptTests {
 
     @Test func dataSliceOutOfSliceBoundsThrows() async throws {
         let interp = Interpreter()
-        await #expect(throws: RuntimeError.self) {
+        await #expect(throws: (any Error).self) {
             _ = try await interp.eval(#"""
                 import Foundation
                 Data([1, 2, 3, 4, 5])[1..<4][0]
@@ -66,7 +66,7 @@ struct BridgedSubscriptTests {
 
     @Test func dataIndexOutOfBoundsThrows() async throws {
         let interp = Interpreter()
-        await #expect(throws: RuntimeError.self) {
+        await #expect(throws: (any Error).self) {
             _ = try await interp.eval(#"""
                 import Foundation
                 Data([1])[5]
@@ -76,7 +76,7 @@ struct BridgedSubscriptTests {
 
     @Test func dataWriteToLetConstantRejected() async throws {
         let interp = Interpreter()
-        await #expect(throws: RuntimeError.self) {
+        await #expect(throws: (any Error).self) {
             _ = try await interp.eval(#"""
                 import Foundation
                 let d = Data([1, 2])
@@ -165,7 +165,7 @@ struct BridgedSubscriptTests {
 
     @Test func unbridgedOpaqueSubscriptFailsLoudly() async throws {
         let interp = Interpreter()
-        await #expect(throws: RuntimeError.self) {
+        await #expect(throws: (any Error).self) {
             _ = try await interp.eval(#"""
                 import Foundation
                 UUID()[0]

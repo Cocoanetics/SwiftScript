@@ -207,9 +207,10 @@ extension Interpreter {
     ) async throws -> Value {
         switch fn.kind {
         case .builtinMethod(let body):
-            return try await body(receiver, args)
+            // Bridge method / computed body — its errors are catchable.
+            return try await callingBridge { try await body(receiver, args) }
         case .builtin(let body):
-            return try await body(args)
+            return try await callingBridge { try await body(args) }
         case .user(let body, let capturedScope):
             let callScope = Scope(parent: capturedScope)
             callScope.bind("self", value: receiver, mutable: false)

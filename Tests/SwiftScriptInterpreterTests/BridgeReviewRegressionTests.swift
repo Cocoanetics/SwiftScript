@@ -104,7 +104,7 @@ struct BridgeReviewRegressionTests {
 
     @Test func numericInitOverflowThrows() async throws {
         let interp = Interpreter()
-        await #expect(throws: RuntimeError.self) {
+        await #expect(throws: (any Error).self) {
             _ = try await interp.eval(#"""
                 import Foundation
                 UInt8(300)
