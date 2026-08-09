@@ -21,15 +21,27 @@ struct BridgedSubscriptTests {
         #expect(r == .int(20))
     }
 
-    @Test func dataRangeSliceRebasesToZero() async throws {
+    @Test func dataRangeSliceKeepsAbsoluteIndices() async throws {
+        // Stock `Data` range subscripts keep the parent's indices, so
+        // `d[1..<4]` is indexed by 1..<4, not rebased to 0.
         let interp = Interpreter()
         let r = try await interp.eval(#"""
             import Foundation
             let d = Data([1, 2, 3, 4, 5])
             let slice = d[1..<4]
-            (slice.count, slice[0])
+            (slice.count, slice[1], slice[3])
             """#)
-        #expect(r == .tuple([.int(3), .int(2)]))
+        #expect(r == .tuple([.int(3), .int(2), .int(4)]))
+    }
+
+    @Test func dataSliceOutOfSliceBoundsThrows() async throws {
+        let interp = Interpreter()
+        await #expect(throws: RuntimeError.self) {
+            _ = try await interp.eval(#"""
+                import Foundation
+                Data([1, 2, 3, 4, 5])[1..<4][0]
+                """#)
+        }
     }
 
     @Test func dataClosedRangeSlice() async throws {

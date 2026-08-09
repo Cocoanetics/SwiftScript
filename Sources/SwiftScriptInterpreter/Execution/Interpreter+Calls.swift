@@ -182,6 +182,21 @@ extension Interpreter {
             {
                 return result
             }
+            // Bridged mutating method through a member-access l-value
+            // path (`handle.request.httpBody`, `wrapper.data.append(…)`):
+            // read the opaque receiver, run the .mutatingMethod bridge,
+            // and write the updated box back through the same path.
+            if base.is(MemberAccessExprSyntax.self),
+               let path = parseLValuePath(base),
+               let result = try await tryChainedMutatingMethodCall(
+                   methodName: methodName,
+                   path: path,
+                   call: call,
+                   in: scope
+               )
+            {
+                return result
+            }
             if let ref = base.as(DeclReferenceExprSyntax.self),
                isTypeName(ref.baseName.text)
             {
@@ -195,7 +210,18 @@ extension Interpreter {
                         "'\(ref.baseName.text).\(memberAccess.declName.baseName.text)' is not callable"
                     )
                 }
-                var args = try await call.arguments.asyncMap { try await evaluate($0.expression, in: scope) }
+                var args: [Value] = []
+                for arg in call.arguments {
+                    let context = implicitContextForStaticMethod(
+                        typeName: resolveTypeName(ref.baseName.text),
+                        member: memberAccess.declName.baseName.text,
+                        label: arg.label?.text ?? "_")
+                    args.append(try await evaluateArg(
+                        arg.expression,
+                        label: arg.label?.text,
+                        contextType: context,
+                        in: scope))
+                }
                 if let trailing = call.trailingClosure {
                     args.append(try await evaluate(closure: trailing, in: scope))
                     for extra in call.additionalTrailingClosures {
@@ -676,6 +702,24 @@ extension Interpreter {
         }
     }
 
+    /// Context type for an implicit-member / OptionSet-array-literal
+    /// argument of a bridged *static* method, so `JSONSerialization
+    /// .data(withJSONObject:options: [.sortedKeys])` resolves the
+    /// `.sortedKeys` element against `WritingOptions`. Narrow
+    /// allowlist, same spirit as `implicitContextForInit`.
+    func implicitContextForStaticMethod(
+        typeName: String, member: String, label: String
+    ) -> String? {
+        switch (typeName, member, label) {
+        case ("JSONSerialization", "data", "options"):
+            return "JSONSerialization.WritingOptions"
+        case ("JSONSerialization", "jsonObject", "options"):
+            return "JSONSerialization.ReadingOptions"
+        default:
+            return nil
+        }
+    }
+
     func implicitMemberContext(method: String, receiver: Value) -> String? {
         // `Double.rounded(_:)` takes a `FloatingPointRoundingRule`, an
         // inline-cased method (not registered as an extension), so we
@@ -717,15 +761,11 @@ extension Interpreter {
         contextType: String?,
         in scope: Scope
     ) async throws -> Value {
-        if let contextType,
-           let member = expr.as(MemberAccessExprSyntax.self),
-           member.base == nil
-        {
-            return try await lookupStaticMember(
-                typeName: contextType,
-                member: member.declName.baseName.text,
-                at: member.positionAfterSkippingLeadingTrivia.utf8Offset
-            )
+        if let contextType {
+            // Resolves both a bare `.member` static-let and an
+            // OptionSet array literal (`[.sortedKeys, .prettyPrinted]`)
+            // against the context type — see `evaluate(_:expectingTypeName:in:)`.
+            return try await evaluate(expr, expectingTypeName: contextType, in: scope)
         }
         return try await evaluate(expr, in: scope)
     }
@@ -741,6 +781,42 @@ extension Interpreter {
     ///      (`mutating func push() { items.append(x) }`) — the mutation
     ///      flows through `self.items` and writes back via the surrounding
     ///      mutating-method call site.
+    /// Bridged `.mutatingMethod` dispatch when the receiver is a
+    /// member-access l-value path (`obj.buf.append(…)`) rather than a
+    /// bare variable. Reads the opaque receiver at `path`, runs the
+    /// bridge, and writes the returned box back through `path`.
+    /// Returns nil (so the caller falls through) when the receiver
+    /// isn't opaque, has no matching mutating bridge, or the path
+    /// doesn't resolve.
+    func tryChainedMutatingMethodCall(
+        methodName: String,
+        path: LValuePath,
+        call: FunctionCallExprSyntax,
+        in scope: Scope
+    ) async throws -> Value? {
+        guard call.trailingClosure == nil else { return nil }
+        guard let receiver = try readLValuePath(path, in: scope),
+              case .opaque(let opaqueType, _) = receiver
+        else { return nil }
+        let argSyntaxes = Array(call.arguments)
+        let callLabels: [String?] = argSyntaxes.map { $0.label?.text }
+        var found: Bridge? = bridges[
+            bridgeKey(forMutatingMethod: methodName, on: opaqueType, labels: callLabels)]
+        if found == nil {
+            found = bridges[bridgeKey(forMutatingMethod: methodName, on: opaqueType, labels: [])]
+        }
+        guard case .mutatingMethod(let body)? = found else { return nil }
+        let args = try await argSyntaxes.asyncMap {
+            try await evaluate($0.expression, in: scope)
+        }
+        let (result, updated) = try await body(receiver, args)
+        // `writeLValuePath` writes in place through a class boundary
+        // (so `let h` on a class still mutates its Data property) and
+        // enforces `let` immutability for pure-value chains.
+        try await writeLValuePath(path, value: updated, in: scope)
+        return result
+    }
+
     func tryMutatingMethodCall(
         methodName: String,
         varName: String,

@@ -1233,10 +1233,13 @@ func gates(
 
     // Bundle — `init(path:)`, `init(url:)` open a bundle root the
     // script later reads resources from. Gate as `.fsRead` so a
-    // pathological root (`/etc`) gets denied.
-    // `Bundle.path(forResource:ofType:inDirectory:)` similarly
-    // returns a path inside the bundle; the gate at the consumer
-    // call (`String(contentsOfFile:)`) will catch any further hop.
+    // pathological root (`/etc`) gets denied. The static resource
+    // enumerators that take a raw host directory under `inDirectory:`
+    // (`Bundle.paths(forResourcesOfType:inDirectory:)` & friends) are
+    // blocklisted rather than gated — their directory arg is often
+    // `String?`, which the gate can't rewrite, and Bundle's other
+    // String args (`localizedString(forKey:value:table:)`) are not
+    // paths, so a blanket positional gate would mis-authorize them.
     if initFor == "Bundle" || receiverTypeName == "Bundle" {
         scanByLabel(defaultIntent: .fsRead)
     }
@@ -2761,27 +2764,45 @@ for annotated in prioritizedSymbols {
             skippedReasons[path] = "non-value parameter or return"; continue
         }
         let methodName = sym.names.title.split(separator: "(").first.map(String.init) ?? sym.names.title
+        let staticLabels = sig.parameters.map(\.label)
+        // Static methods hit the SAME sandbox gates as instance
+        // methods — `Bundle.path(forResource:ofType:inDirectory:)`
+        // reads a directory the same way an instance door does.
+        // Without this an ungated static path arg is a confinement
+        // escape.
+        if hasUngatablePathParam(
+            receiver: receiverTypeName, initFor: nil,
+            argLabels: staticLabels, signature: sig)
+        {
+            skippedReasons[path] = "optional path-shaped arg cannot be gated"; continue
+        }
         let key = "static-method:\(receiverTypeName).\(methodName)"
         if !claim(key, clashLabel: "\(receiverTypeName).\(methodName)") { continue }
+        let staticGates = gates(
+            forReceiver: receiverTypeName,
+            methodName: methodName,
+            initFor: receiverTypeName,   // static factories gate like inits
+            argLabels: staticLabels,
+            signature: sig)
+        var staticGated = renderGates(staticGates, sig: sig, indent: "        ")
         // Process: static factories (e.g. `Process.launchedProcess`)
         // need the same deny check as instance methods/inits.
-        var staticPrologue: [String] = []
         if denyWhenSandboxedReceivers.contains(receiverTypeName) {
-            staticPrologue.append(contentsOf: denyPrologueLines(indent: "        "))
+            staticGated.prologue.insert(contentsOf: denyPrologueLines(indent: "        "), at: 0)
         }
         record(key, bucket: .type(receiverTypeName), code: renderEmit(EmitConfig(
             registerLine: "\"static func \(receiverTypeName).\(methodName)()\": .staticMethod",
             closureParams: "args",
             arity: sig.parameters.count,
             recvUnboxLine: nil,
-            callExpr: "\(receiverTypeName).\(methodName)(\(unboxedCallArgs(for: sig)))",
+            callExpr: "\(receiverTypeName).\(methodName)(\(staticGated.callArgs))",
             errorPrefix: "\(receiverTypeName).\(methodName)",
             returnType: sig.returnType,
             isOptional: sig.returnIsOptional,
             isThrowing: isThrowing(sym),
-            isAsync: isAsync(sym),
+            isAsync: isAsync(sym) || staticGated.anyAsync,
             tupleElements: sig.returnTupleElements,
-            prologue: staticPrologue
+            prologue: staticGated.prologue
         )))
 
     default:

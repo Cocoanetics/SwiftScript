@@ -323,10 +323,28 @@ extension Interpreter {
     /// cast fails (including `nil as? Int`).
     func castValue(_ value: Value, to type: TypeSyntax) -> Value? {
         let raw = type.description.trimmingCharacters(in: .whitespaces)
+        // `x as Any` / `as AnyObject` box the value *as-is* — a
+        // wrapped Optional stays wrapped (stock Swift prints
+        // `Optional(5)`, not `5`). Never unwrap for an Any target.
+        if raw == "Any" || raw == "AnyObject" { return value }
         let optionalTarget = raw.hasSuffix("?") || raw.hasPrefix("Optional<")
         if !optionalTarget, case .optional(let inner) = value {
             guard let inner else { return nil }
             return castValue(inner, to: type)
+        }
+        // Numeric cross-cast: JSONSerialization surfaces every JSON
+        // number through `NSNumber`, which casts to Int *and* Double
+        // (`json["n"] as? Double` where `n` is `19`). We collapse
+        // NSNumber to a native `.int`/`.double`, so honour the same
+        // widening/narrowing here — laxer than a native `1 as? Double`
+        // (nil in stock) but required for the untyped-JSON idiom, and
+        // consistent with the interpreter's already-dynamic numerics.
+        switch (raw, value) {
+        case ("Double", .int(let n)): return .double(Double(n))
+        case ("Int", .double(let d)) where d.rounded() == d && Double(Int.min) <= d && d <= Double(Int.max):
+            return .int(Int(d))
+        default:
+            break
         }
         // Opaque downcast: a box labelled with a superclass spelling
         // may carry a subclass instance — `response as?

@@ -449,36 +449,6 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
-    "func FileManager.mountedVolumeURLs(includingResourceValuesForKeys:)": .method { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("FileManager.mountedVolumeURLs: expected 1 argument(s), got \(args.count)")
-        }
-        let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        if let _v = recv.mountedVolumeURLs(includingResourceValuesForKeys: try unboxOptionalValue(args[0]).map { try unboxArray($0).map { try unboxOpaque($0, as: URLResourceKey.self, typeName: "URLResourceKey") } }) {
-            return .optional(.array(_v.map { boxOpaque($0, typeName: "URL") }))
-        }
-        return .optional(nil)
-    },
-    "func FileManager.mountedVolumeURLs()": .method { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("FileManager.mountedVolumeURLs: expected 1 argument(s), got \(args.count)")
-        }
-        let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        if let _v = recv.mountedVolumeURLs(includingResourceValuesForKeys: try unboxOptionalValue(args[0]).map { try unboxArray($0).map { try unboxOpaque($0, as: URLResourceKey.self, typeName: "URLResourceKey") } }) {
-            return .optional(.array(_v.map { boxOpaque($0, typeName: "URL") }))
-        }
-        return .optional(nil)
-    },
-    "func FileManager.mountedVolumeURLs(includingResourceValuesForKeys:options:)": .method { receiver, args in
-        guard args.count == 2 else {
-            throw RuntimeError.invalid("FileManager.mountedVolumeURLs: expected 2 argument(s), got \(args.count)")
-        }
-        let recv: FileManager = try unboxOpaque(receiver, as: FileManager.self, typeName: "FileManager")
-        if let _v = recv.mountedVolumeURLs(includingResourceValuesForKeys: try unboxOptionalValue(args[0]).map { try unboxArray($0).map { try unboxOpaque($0, as: URLResourceKey.self, typeName: "URLResourceKey") } }, options: try unboxOpaque(args[1], as: FileManager.VolumeEnumerationOptions.self, typeName: "FileManager.VolumeEnumerationOptions")) {
-            return .optional(.array(_v.map { boxOpaque($0, typeName: "URL") }))
-        }
-        return .optional(nil)
-    },
     "func FileManager.createSymbolicLink(at:withDestinationURL:)": .method { receiver, args in
         guard args.count == 2 else {
             throw RuntimeError.invalid("FileManager.createSymbolicLink: expected 2 argument(s), got \(args.count)")

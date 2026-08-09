@@ -273,35 +273,6 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
-    "static func Bundle.paths()": .staticMethod { args in
-        guard args.count == 2 else {
-            throw RuntimeError.invalid("Bundle.paths: expected 2 argument(s), got \(args.count)")
-        }
-        return .array(Bundle.paths(forResourcesOfType: try unboxOptionalValue(args[0]).map { try unboxString($0) }, inDirectory: try unboxString(args[1])).map { .string($0) })
-    },
-    "func Bundle.paths(forResourcesOfType:inDirectory:)": .method { receiver, args in
-        guard args.count == 2 else {
-            throw RuntimeError.invalid("Bundle.paths: expected 2 argument(s), got \(args.count)")
-        }
-        let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
-        return .array(recv.paths(forResourcesOfType: try unboxOptionalValue(args[0]).map { try unboxString($0) }, inDirectory: try unboxOptionalValue(args[1]).map { try unboxString($0) }).map { .string($0) })
-    },
-    "func Bundle.paths()": .method { receiver, args in
-        guard args.count == 2 else {
-            throw RuntimeError.invalid("Bundle.paths: expected 2 argument(s), got \(args.count)")
-        }
-        let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
-        return .array(recv.paths(forResourcesOfType: try unboxOptionalValue(args[0]).map { try unboxString($0) }, inDirectory: try unboxOptionalValue(args[1]).map { try unboxString($0) }).map { .string($0) })
-    },
-    "static func Bundle.urls()": .staticMethod { args in
-        guard args.count == 3 else {
-            throw RuntimeError.invalid("Bundle.urls: expected 3 argument(s), got \(args.count)")
-        }
-        if let _v = Bundle.urls(forResourcesWithExtension: try unboxOptionalValue(args[0]).map { try unboxString($0) }, subdirectory: try unboxOptionalValue(args[1]).map { try unboxString($0) }, in: try unboxOpaque(args[2], as: URL.self, typeName: "URL")) {
-            return .optional(.array(_v.map { boxOpaque($0, typeName: "URL") }))
-        }
-        return .optional(nil)
-    },
     "func Bundle.urls(forResourcesWithExtension:subdirectory:localization:)": .method { receiver, args in
         guard args.count == 3 else {
             throw RuntimeError.invalid("Bundle.urls: expected 3 argument(s), got \(args.count)")
@@ -312,16 +283,14 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
-    "static func Bundle.path()": .staticMethod { args in
-        guard args.count == 3 else {
-            throw RuntimeError.invalid("Bundle.path: expected 3 argument(s), got \(args.count)")
-        }
-        if let _v = Bundle.path(forResource: try unboxOptionalValue(args[0]).map { try unboxString($0) }, ofType: try unboxOptionalValue(args[1]).map { try unboxString($0) }, inDirectory: try unboxString(args[2])) {
-            return .optional(.string(_v))
-        }
-        return .optional(nil)
-    },
     "func Bundle.paths(forResourcesOfType:inDirectory:forLocalization:)": .method { receiver, args in
+        guard args.count == 3 else {
+            throw RuntimeError.invalid("Bundle.paths: expected 3 argument(s), got \(args.count)")
+        }
+        let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
+        return .array(recv.paths(forResourcesOfType: try unboxOptionalValue(args[0]).map { try unboxString($0) }, inDirectory: try unboxOptionalValue(args[1]).map { try unboxString($0) }, forLocalization: try unboxOptionalValue(args[2]).map { try unboxString($0) }).map { .string($0) })
+    },
+    "func Bundle.paths()": .method { receiver, args in
         guard args.count == 3 else {
             throw RuntimeError.invalid("Bundle.paths: expected 3 argument(s), got \(args.count)")
         }
@@ -341,15 +310,6 @@ extension FoundationBridges {
         }
         let recv: Bundle = try unboxOpaque(receiver, as: Bundle.self, typeName: "Bundle")
         return .string(ShellKit.Shell.displayPath(for: recv.localizedString(forKey: try unboxString(args[0]), value: try unboxOptionalValue(args[1]).map { try unboxString($0) }, table: try unboxOptionalValue(args[2]).map { try unboxString($0) })))
-    },
-    "static func Bundle.url()": .staticMethod { args in
-        guard args.count == 4 else {
-            throw RuntimeError.invalid("Bundle.url: expected 4 argument(s), got \(args.count)")
-        }
-        if let _v = Bundle.url(forResource: try unboxOptionalValue(args[0]).map { try unboxString($0) }, withExtension: try unboxOptionalValue(args[1]).map { try unboxString($0) }, subdirectory: try unboxOptionalValue(args[2]).map { try unboxString($0) }, in: try unboxOpaque(args[3], as: URL.self, typeName: "URL")) {
-            return .optional(boxOpaque(_v, typeName: "URL"))
-        }
-        return .optional(nil)
     },
         ]
         #if canImport(Darwin)

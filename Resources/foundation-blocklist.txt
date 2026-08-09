@@ -80,6 +80,19 @@ URLSession.bytes(for:)
 URLSession.bytes(for:delegate:)
 URLSession.bytes(from:delegate:)
 
+# Host-topology / arbitrary-directory disclosure through the
+# FileManager.default sentinel and Bundle statics. These take no
+# gateable path arg (or an optional one the gate can't rewrite) yet
+# read host state a confined script must not see: the full mounted-
+# volume list, or an arbitrary directory passed as a "bundle path".
+# Blocked outright rather than gated.
+FileManager.mountedVolumeURLs(includingResourceValuesForKeys:)
+FileManager.mountedVolumeURLs(includingResourceValuesForKeys:options:)
+Bundle.paths(forResourcesOfType:inDirectory:)
+Bundle.path(forResource:ofType:inDirectory:)
+Bundle.urls(forResourcesWithExtension:subdirectory:in:)
+Bundle.url(forResource:withExtension:subdirectory:in:)
+
 # More macOS-only entries surfaced by class promotion.
 FileManager.homeDirectoryForCurrentUser
 FileManager.homeDirectory(forUser:)

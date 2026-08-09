@@ -271,6 +271,53 @@ struct ConfinedSandboxTests {
             """#)
     }
 
+    @Test func mountedVolumeTopologyNotDisclosed() async throws {
+        // `FileManager.default.mountedVolumeURLs(...)` would hand a
+        // confined script the whole host volume list. It must not be
+        // a reachable bridge at all.
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        var errorText = ""
+        await fx.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            do {
+                _ = try await interp.eval(#"""
+                    import Foundation
+                    FileManager.default.mountedVolumeURLs(includingResourceValuesForKeys: nil)
+                    """#)
+                Issue.record("mountedVolumeURLs should not be bridged")
+            } catch let error as RuntimeError {
+                errorText = "\(error)"
+            } catch {
+                errorText = "\(error)"
+            }
+        }
+        #expect(errorText.contains("has no method") || errorText.contains("mountedVolumeURLs"))
+        #expect(!errorText.contains("/Volumes"))
+    }
+
+    @Test func bundleStaticDirectoryEnumeratorsNotBridged() async throws {
+        // `Bundle.paths(forResourcesOfType:inDirectory:)` reads an
+        // arbitrary host directory passed as a "bundle path" with no
+        // gate — it must not be a reachable bridge.
+        let fx = try Fixture()
+        defer { fx.tearDown() }
+        var caught = false
+        await fx.shell.shellKit.withCurrent {
+            let interp = Interpreter()
+            do {
+                _ = try await interp.eval(#"""
+                    import Foundation
+                    Bundle.paths(forResourcesOfType: "txt", inDirectory: "/etc")
+                    """#)
+                Issue.record("Bundle.paths(...inDirectory:) should not be bridged")
+            } catch {
+                caught = true
+            }
+        }
+        #expect(caught)
+    }
+
     #if !os(Windows)
     @Test func symlinkEscapeIsDenied() async throws {
         // A link planted inside the mount pointing at the filesystem

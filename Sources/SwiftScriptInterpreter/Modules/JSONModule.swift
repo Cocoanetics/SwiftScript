@@ -166,11 +166,15 @@ struct JSONModule: BuiltinModule {
                 throw RuntimeError.invalid("JSONSerialization.jsonObject(with:): expected 1-2 arguments, got \(args.count)")
             }
             let data: Data = try unboxOpaque(args[0], as: Data.self, typeName: "Data")
-            // options (arg 2) accepted and ignored — `.fragmentsAllowed`
-            // is implied by allowing any top-level value below.
+            // Honour the caller's reading options (default []), so a
+            // bare-scalar top level only parses when the script passed
+            // `.fragmentsAllowed` — matching stock, which throws
+            // otherwise.
+            let options: JSONSerialization.ReadingOptions = args.count == 2
+                ? Self.readingOptions(from: args[1]) : []
             let any: Any
             do {
-                any = try JSONSerialization.jsonObject(with: data, options: [.fragmentsAllowed])
+                any = try JSONSerialization.jsonObject(with: data, options: options)
             } catch {
                 throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
             }
@@ -180,13 +184,8 @@ struct JSONModule: BuiltinModule {
             guard (1...2).contains(args.count) else {
                 throw RuntimeError.invalid("JSONSerialization.data(withJSONObject:): expected 1-2 arguments, got \(args.count)")
             }
-            var options: JSONSerialization.WritingOptions = []
-            if args.count == 2,
-               case .opaque(_, let any) = args[1],
-               let opts = any as? JSONSerialization.WritingOptions
-            {
-                options = opts
-            }
+            let options: JSONSerialization.WritingOptions = args.count == 2
+                ? Self.writingOptions(from: args[1]) : []
             let object = try Self.jsonAny(from: args[0])
             do {
                 let data = try JSONSerialization.data(withJSONObject: object, options: options)
@@ -204,6 +203,44 @@ struct JSONModule: BuiltinModule {
         }
     }
 
+    /// Collapse an options argument — a single `.opaque` OptionSet
+    /// or an array literal of them (`[.sortedKeys, .prettyPrinted]`,
+    /// which the static-method dispatch can't coerce to the set type
+    /// on its own) — into the concrete OptionSet.
+    private static func writingOptions(from value: Value) -> JSONSerialization.WritingOptions {
+        var result: JSONSerialization.WritingOptions = []
+        for element in optionElements(value) {
+            if case .opaque(_, let any) = element,
+               let opt = any as? JSONSerialization.WritingOptions
+            {
+                result.formUnion(opt)
+            }
+        }
+        return result
+    }
+
+    private static func readingOptions(from value: Value) -> JSONSerialization.ReadingOptions {
+        var result: JSONSerialization.ReadingOptions = []
+        for element in optionElements(value) {
+            if case .opaque(_, let any) = element,
+               let opt = any as? JSONSerialization.ReadingOptions
+            {
+                result.formUnion(opt)
+            }
+        }
+        return result
+    }
+
+    /// Flatten an OptionSet argument to its member values: an array
+    /// literal yields its elements, a bare opaque yields itself.
+    private static func optionElements(_ value: Value) -> [Value] {
+        switch value {
+        case .array(let xs): return xs
+        case .optional(let inner?): return optionElements(inner)
+        default: return [value]
+        }
+    }
+
     /// Foundation's untyped JSON tree → interpreter `Value`.
     private static func value(fromJSONAny any: Any) throws -> Value {
         switch any {
@@ -217,19 +254,29 @@ struct JSONModule: BuiltinModule {
             return .string(string)
         case let number as NSNumber:
             // NSNumber collapses bools and numerics; the stored ObjC
-            // type code is the reliable discriminator ("c" == Bool on
-            // both Darwin and corelibs).
-            if String(cString: number.objCType) == "c" {
+            // type code is the reliable discriminator. JSON booleans
+            // are the boolean singletons ("c"/"B"); floating literals
+            // are "f"/"d"; everything else is an integer.
+            let code = String(cString: number.objCType)
+            if code == "c" || code == "B" {
                 return .bool(number.boolValue)
             }
-            let double = number.doubleValue
-            if double.rounded() == double, let int = Int(exactly: number.int64Value),
-               !String(cString: number.objCType).contains("d"),
-               !String(cString: number.objCType).contains("f")
-            {
+            if code == "f" || code == "d" {
+                return .double(number.doubleValue)
+            }
+            // Unsigned integers past Int64.max ("Q") two's-complement-
+            // wrap through int64Value, so route them explicitly: fit
+            // into Int when possible, else fall to Double (lossy but
+            // non-wrapping — `as? Int` then correctly fails rather
+            // than yielding a negative value).
+            if code == "Q" {
+                let u = number.uint64Value
+                return u <= UInt64(Int.max) ? .int(Int(u)) : .double(number.doubleValue)
+            }
+            if let int = Int(exactly: number.int64Value) {
                 return .int(int)
             }
-            return .double(double)
+            return .double(number.doubleValue)
         case is NSNull:
             return .optional(nil)
         default:

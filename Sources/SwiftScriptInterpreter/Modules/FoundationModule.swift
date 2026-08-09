@@ -40,6 +40,107 @@ public struct FoundationModule: BuiltinModule {
         i.bridges["func String.components(separatedBy:)"] = Self.stringComponentsBridge
         registerStringSearchIdioms(into: i)
         registerProcessStandardStreams(into: i)
+        registerNumericConversions(into: i)
+        registerDataAppend(into: i)
+    }
+
+    // MARK: - Numeric-conversion inits
+
+    /// `UInt8(3)`, `Int32(7)`, `Float(2.5)` — the fixed-width and
+    /// Float value-conversion inits. The generated `init T(_:)` binds
+    /// the failable `LosslessStringConvertible` (String) overload, so
+    /// a numeric arg hit "expected String". This dispatcher owns the
+    /// bare `init T(_:)` key and routes on the runtime arg: a numeric
+    /// value converts (range-checked, non-optional like stock), a
+    /// String stays the failable string parse.
+    private func registerNumericConversions(into i: Interpreter) {
+        func convert(_ v: Value, into spelling: String) throws -> Value {
+            switch spelling {
+            case "Int8": return .int(Int(try toInt8(v)))
+            case "Int16": return .int(Int(try toInt16(v)))
+            case "Int32": return .int(Int(try toInt32(v)))
+            case "Int64": return .int(Int(try toInt64(v)))
+            case "UInt8": return .int(Int(try toUInt8(v)))
+            case "UInt16": return .int(Int(try toUInt16(v)))
+            case "UInt32": return .int(Int(try toUInt32(v)))
+            case "UInt64": return try boxUnsignedAsInt(try toUInt64(v))
+            case "UInt": return try boxUnsignedAsInt(try toUInt(v))
+            case "Float": return .double(Double(try toFloat(v)))
+            default: throw RuntimeError.invalid("\(spelling): not a numeric type")
+            }
+        }
+        for spelling in ["Int8", "Int16", "Int32", "Int64",
+                         "UInt8", "UInt16", "UInt32", "UInt64", "UInt", "Float"] {
+            i.bridges["init \(spelling)(_:)"] = .`init` { args in
+                guard args.count == 1 else {
+                    throw RuntimeError.invalid("\(spelling)(_:): expected 1 argument, got \(args.count)")
+                }
+                switch args[0] {
+                case .int, .double:
+                    // Numeric conversion — non-optional, throws on overflow.
+                    return try convert(args[0], into: spelling)
+                case .string(let s):
+                    // Failable string parse — `UInt8("42")` is `UInt8?`.
+                    switch spelling {
+                    case "Int8": return .optional(Int8(s).map { .int(Int($0)) } ?? nil)
+                    case "Int16": return .optional(Int16(s).map { .int(Int($0)) } ?? nil)
+                    case "Int32": return .optional(Int32(s).map { .int(Int($0)) } ?? nil)
+                    case "Int64": return .optional(Int64(s).map { .int(Int($0)) } ?? nil)
+                    case "UInt8": return .optional(UInt8(s).map { .int(Int($0)) } ?? nil)
+                    case "UInt16": return .optional(UInt16(s).map { .int(Int($0)) } ?? nil)
+                    case "UInt32": return .optional(UInt32(s).map { .int(Int($0)) } ?? nil)
+                    case "UInt64": return .optional((UInt64(s).flatMap { Int(exactly: $0) }).map { .int($0) } ?? nil)
+                    case "UInt": return .optional((UInt(s).flatMap { Int(exactly: $0) }).map { .int($0) } ?? nil)
+                    case "Float": return .optional(Float(s).map { .double(Double($0)) } ?? nil)
+                    default: return .optional(nil)
+                    }
+                default:
+                    throw RuntimeError.invalid(
+                        "\(spelling)(_:): expected a number or String, got \(typeName(args[0]))")
+                }
+            }
+        }
+    }
+
+    // MARK: - Data.append (byte + Data overloads)
+
+    /// `data.append(3)` (UInt8) and `data.append(otherData)` share
+    /// the label key `mutating func Data.append(_:)`, so the
+    /// generated single-type entry can only unbox one. This
+    /// dispatcher owns the key and routes on the arg's runtime type.
+    private func registerDataAppend(into i: Interpreter) {
+        let body: Bridge = .mutatingMethod { receiver, args in
+            var data: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
+            guard args.count == 1 else {
+                throw RuntimeError.invalid("Data.append: expected 1 argument, got \(args.count)")
+            }
+            switch args[0] {
+            case .int(let byte):
+                guard (0...255).contains(byte) else {
+                    throw RuntimeError.invalid("Data.append: byte value \(byte) out of UInt8 range")
+                }
+                data.append(UInt8(byte))
+            case .opaque(typeName: "Data", let any):
+                guard let other = any as? Data else {
+                    throw RuntimeError.invalid("Data.append: malformed Data")
+                }
+                data.append(other)
+            case .array(let xs):
+                var bytes: [UInt8] = []
+                for x in xs {
+                    guard case .int(let b) = x, (0...255).contains(b) else {
+                        throw RuntimeError.invalid("Data.append: array element out of UInt8 range")
+                    }
+                    bytes.append(UInt8(b))
+                }
+                data.append(contentsOf: bytes)
+            default:
+                throw RuntimeError.invalid(
+                    "Data.append: expected a UInt8, Data, or [UInt8], got \(typeName(args[0]))")
+            }
+            return (.void, boxOpaque(data, typeName: "Data"))
+        }
+        i.bridges["mutating func Data.append(_:)"] = body
     }
 
     // MARK: - Process stdio wiring
@@ -301,25 +402,28 @@ public struct FoundationModule: BuiltinModule {
             guard args.count == 1 else {
                 throw RuntimeError.invalid("Data subscript expects 1 argument, got \(args.count)")
             }
+            // Indices are absolute (Data's Index == Int), matching
+            // stock: a fresh Data starts at 0, but a slice keeps the
+            // parent's indices, so `d[1..<3][1]` reads absolute 1.
             switch args[0] {
             case .int(let i):
-                guard i >= 0 && i < data.count else {
+                guard i >= data.startIndex && i < data.endIndex else {
                     throw RuntimeError.invalid(
-                        "Data index \(i) out of bounds (count \(data.count))"
+                        "Data index \(i) out of bounds (\(data.startIndex)..<\(data.endIndex))"
                     )
                 }
-                return .int(Int(data[data.startIndex + i]))
+                return .int(Int(data[i]))
             case .range(let lo, let hi, let closed):
                 let upper = closed ? hi + 1 : hi
-                guard lo >= 0, upper <= data.count, lo <= upper else {
+                guard lo >= data.startIndex, upper <= data.endIndex, lo <= upper else {
                     throw RuntimeError.invalid(
-                        "Data slice \(lo)..<\(upper) out of bounds (count \(data.count))"
+                        "Data slice \(lo)..<\(upper) out of bounds (\(data.startIndex)..<\(data.endIndex))"
                     )
                 }
-                let base = data.startIndex
-                return boxOpaque(
-                    data.subdata(in: (base + lo)..<(base + upper)),
-                    typeName: "Data")
+                // Slice, don't `subdata` — stock `Data` range subscripts
+                // keep the parent's absolute indices, so the returned
+                // Data must not rebase to zero.
+                return boxOpaque(data[lo..<upper], typeName: "Data")
             default:
                 throw RuntimeError.invalid(
                     "cannot subscript Data with \(typeName(args[0]))"
@@ -331,9 +435,9 @@ public struct FoundationModule: BuiltinModule {
             guard args.count == 1, case .int(let index) = args[0] else {
                 throw RuntimeError.invalid("Data subscript assignment expects 1 Int index")
             }
-            guard index >= 0 && index < data.count else {
+            guard index >= data.startIndex && index < data.endIndex else {
                 throw RuntimeError.invalid(
-                    "Data index \(index) out of bounds (count \(data.count))"
+                    "Data index \(index) out of bounds (\(data.startIndex)..<\(data.endIndex))"
                 )
             }
             guard case .int(let byte) = newValue, (0...255).contains(byte) else {
@@ -341,7 +445,7 @@ public struct FoundationModule: BuiltinModule {
                     "Data subscript assignment expects a UInt8 (0...255) value"
                 )
             }
-            data[data.startIndex + index] = UInt8(byte)
+            data[index] = UInt8(byte)
             return boxOpaque(data, typeName: "Data")
         }
     }
