@@ -32,6 +32,22 @@ extension FoundationBridges {
         let recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
         return .string(recv.debugDescription)
     },
+    "mutating func Data.reserveCapacity(_:)": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Data.reserveCapacity: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
+        recv.reserveCapacity(try unboxInt(args[0]))
+        return (.void, boxOpaque(recv, typeName: "Data"))
+    },
+    "mutating func Data.reserveCapacity()": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Data.reserveCapacity: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
+        recv.reserveCapacity(try unboxInt(args[0]))
+        return (.void, boxOpaque(recv, typeName: "Data"))
+    },
     "init Data(capacity:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init Data(capacity:): expected 1 argument(s), got \(args.count)")
@@ -43,6 +59,30 @@ extension FoundationBridges {
             throw RuntimeError.invalid("init Data(count:): expected 1 argument(s), got \(args.count)")
         }
         return boxOpaque(Data(count: try unboxInt(args[0])), typeName: "Data")
+    },
+    "mutating func Data.append(_:)": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Data.append: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
+        recv.append(try unboxOpaque(args[0], as: Data.self, typeName: "Data"))
+        return (.void, boxOpaque(recv, typeName: "Data"))
+    },
+    "mutating func Data.append()": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Data.append: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
+        recv.append(try unboxOpaque(args[0], as: Data.self, typeName: "Data"))
+        return (.void, boxOpaque(recv, typeName: "Data"))
+    },
+    "mutating func Data.append(contentsOf:)": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Data.append: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
+        recv.append(contentsOf: try unboxArray(args[0]).map { try toUInt8($0) })
+        return (.void, boxOpaque(recv, typeName: "Data"))
     },
     "func Data.advanced(by:)": .method { receiver, args in
         guard args.count == 1 else {
@@ -229,46 +269,6 @@ extension FoundationBridges {
         }
         var recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
         recv.removeAll(keepingCapacity: try unboxBool(args[0]))
-        return (.void, boxOpaque(recv, typeName: "Data"))
-    }
-    d["mutating func Data.reserveCapacity(_:)"] = .mutatingMethod { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("Data.reserveCapacity: expected 1 argument(s), got \(args.count)")
-        }
-        var recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
-        recv.reserveCapacity(try unboxInt(args[0]))
-        return (.void, boxOpaque(recv, typeName: "Data"))
-    }
-    d["mutating func Data.reserveCapacity()"] = .mutatingMethod { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("Data.reserveCapacity: expected 1 argument(s), got \(args.count)")
-        }
-        var recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
-        recv.reserveCapacity(try unboxInt(args[0]))
-        return (.void, boxOpaque(recv, typeName: "Data"))
-    }
-    d["mutating func Data.append(_:)"] = .mutatingMethod { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("Data.append: expected 1 argument(s), got \(args.count)")
-        }
-        var recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
-        recv.append(try unboxOpaque(args[0], as: Data.self, typeName: "Data"))
-        return (.void, boxOpaque(recv, typeName: "Data"))
-    }
-    d["mutating func Data.append()"] = .mutatingMethod { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("Data.append: expected 1 argument(s), got \(args.count)")
-        }
-        var recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
-        recv.append(try unboxOpaque(args[0], as: Data.self, typeName: "Data"))
-        return (.void, boxOpaque(recv, typeName: "Data"))
-    }
-    d["mutating func Data.append(contentsOf:)"] = .mutatingMethod { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("Data.append: expected 1 argument(s), got \(args.count)")
-        }
-        var recv: Data = try unboxOpaque(receiver, as: Data.self, typeName: "Data")
-        recv.append(contentsOf: try unboxArray(args[0]).map { try toUInt8($0) })
         return (.void, boxOpaque(recv, typeName: "Data"))
     }
         #endif

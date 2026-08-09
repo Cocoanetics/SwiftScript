@@ -136,6 +136,38 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+    "mutating func URLRequest.setValue(_:forHTTPHeaderField:)": .mutatingMethod { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("URLRequest.setValue: expected 2 argument(s), got \(args.count)")
+        }
+        var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+        recv.setValue(try unboxOptionalValue(args[0]).map { try unboxString($0) }, forHTTPHeaderField: try unboxString(args[1]))
+        return (.void, boxOpaque(recv, typeName: "URLRequest"))
+    },
+    "mutating func URLRequest.setValue()": .mutatingMethod { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("URLRequest.setValue: expected 2 argument(s), got \(args.count)")
+        }
+        var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+        recv.setValue(try unboxOptionalValue(args[0]).map { try unboxString($0) }, forHTTPHeaderField: try unboxString(args[1]))
+        return (.void, boxOpaque(recv, typeName: "URLRequest"))
+    },
+    "mutating func URLRequest.addValue(_:forHTTPHeaderField:)": .mutatingMethod { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("URLRequest.addValue: expected 2 argument(s), got \(args.count)")
+        }
+        var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+        recv.addValue(try unboxString(args[0]), forHTTPHeaderField: try unboxString(args[1]))
+        return (.void, boxOpaque(recv, typeName: "URLRequest"))
+    },
+    "mutating func URLRequest.addValue()": .mutatingMethod { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("URLRequest.addValue: expected 2 argument(s), got \(args.count)")
+        }
+        var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
+        recv.addValue(try unboxString(args[0]), forHTTPHeaderField: try unboxString(args[1]))
+        return (.void, boxOpaque(recv, typeName: "URLRequest"))
+    },
     "init URLRequest(url:)": .`init` { args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("init URLRequest(url:): expected 1 argument(s), got \(args.count)")
@@ -180,38 +212,6 @@ extension FoundationBridges {
     d["var URLRequest.hashValue: Int"] = .computed { receiver in
         let recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
         return .int(recv.hashValue)
-    }
-    d["mutating func URLRequest.setValue(_:forHTTPHeaderField:)"] = .mutatingMethod { receiver, args in
-        guard args.count == 2 else {
-            throw RuntimeError.invalid("URLRequest.setValue: expected 2 argument(s), got \(args.count)")
-        }
-        var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
-        recv.setValue(try unboxOptionalValue(args[0]).map { try unboxString($0) }, forHTTPHeaderField: try unboxString(args[1]))
-        return (.void, boxOpaque(recv, typeName: "URLRequest"))
-    }
-    d["mutating func URLRequest.setValue()"] = .mutatingMethod { receiver, args in
-        guard args.count == 2 else {
-            throw RuntimeError.invalid("URLRequest.setValue: expected 2 argument(s), got \(args.count)")
-        }
-        var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
-        recv.setValue(try unboxOptionalValue(args[0]).map { try unboxString($0) }, forHTTPHeaderField: try unboxString(args[1]))
-        return (.void, boxOpaque(recv, typeName: "URLRequest"))
-    }
-    d["mutating func URLRequest.addValue(_:forHTTPHeaderField:)"] = .mutatingMethod { receiver, args in
-        guard args.count == 2 else {
-            throw RuntimeError.invalid("URLRequest.addValue: expected 2 argument(s), got \(args.count)")
-        }
-        var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
-        recv.addValue(try unboxString(args[0]), forHTTPHeaderField: try unboxString(args[1]))
-        return (.void, boxOpaque(recv, typeName: "URLRequest"))
-    }
-    d["mutating func URLRequest.addValue()"] = .mutatingMethod { receiver, args in
-        guard args.count == 2 else {
-            throw RuntimeError.invalid("URLRequest.addValue: expected 2 argument(s), got \(args.count)")
-        }
-        var recv: URLRequest = try unboxOpaque(receiver, as: URLRequest.self, typeName: "URLRequest")
-        recv.addValue(try unboxString(args[0]), forHTTPHeaderField: try unboxString(args[1]))
-        return (.void, boxOpaque(recv, typeName: "URLRequest"))
     }
         #endif
         return d

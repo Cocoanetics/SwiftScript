@@ -35,6 +35,30 @@ extension FoundationBridges {
         }
         return .optional(nil)
     },
+    "mutating func Morphology.setCustomPronoun(_:forLanguage:)": .mutatingMethod { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("Morphology.setCustomPronoun: expected 2 argument(s), got \(args.count)")
+        }
+        var recv: Morphology = try unboxOpaque(receiver, as: Morphology.self, typeName: "Morphology")
+        do {
+            try recv.setCustomPronoun(try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Morphology.CustomPronoun.self, typeName: "Morphology.CustomPronoun") }, forLanguage: try unboxString(args[1]))
+        return (.void, boxOpaque(recv, typeName: "Morphology"))
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
+    "mutating func Morphology.setCustomPronoun()": .mutatingMethod { receiver, args in
+        guard args.count == 2 else {
+            throw RuntimeError.invalid("Morphology.setCustomPronoun: expected 2 argument(s), got \(args.count)")
+        }
+        var recv: Morphology = try unboxOpaque(receiver, as: Morphology.self, typeName: "Morphology")
+        do {
+            try recv.setCustomPronoun(try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Morphology.CustomPronoun.self, typeName: "Morphology.CustomPronoun") }, forLanguage: try unboxString(args[1]))
+        return (.void, boxOpaque(recv, typeName: "Morphology"))
+        } catch {
+            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+        }
+    },
         ]
         #if canImport(Darwin)
     d["var Morphology.hashValue: Int"] = .computed { receiver in
@@ -46,30 +70,6 @@ extension FoundationBridges {
         return .bool(recv.isUnspecified)
     }
     d["static let Morphology.user"] = .staticValue(boxOpaque(Morphology.user, typeName: "Morphology"))
-    d["mutating func Morphology.setCustomPronoun(_:forLanguage:)"] = .mutatingMethod { receiver, args in
-        guard args.count == 2 else {
-            throw RuntimeError.invalid("Morphology.setCustomPronoun: expected 2 argument(s), got \(args.count)")
-        }
-        var recv: Morphology = try unboxOpaque(receiver, as: Morphology.self, typeName: "Morphology")
-        do {
-            try recv.setCustomPronoun(try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Morphology.CustomPronoun.self, typeName: "Morphology.CustomPronoun") }, forLanguage: try unboxString(args[1]))
-        return (.void, boxOpaque(recv, typeName: "Morphology"))
-        } catch {
-            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
-        }
-    }
-    d["mutating func Morphology.setCustomPronoun()"] = .mutatingMethod { receiver, args in
-        guard args.count == 2 else {
-            throw RuntimeError.invalid("Morphology.setCustomPronoun: expected 2 argument(s), got \(args.count)")
-        }
-        var recv: Morphology = try unboxOpaque(receiver, as: Morphology.self, typeName: "Morphology")
-        do {
-            try recv.setCustomPronoun(try unboxOptionalValue(args[0]).map { try unboxOpaque($0, as: Morphology.CustomPronoun.self, typeName: "Morphology.CustomPronoun") }, forLanguage: try unboxString(args[1]))
-        return (.void, boxOpaque(recv, typeName: "Morphology"))
-        } catch {
-            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
-        }
-    }
         #endif
         return d
     }()

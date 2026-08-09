@@ -2081,6 +2081,7 @@ func ownerAndMember(forBridgeKey key: String) -> (String, String)? {
     // tokens are what matter.
     var s = key
     for prefix in ["static let ", "static var ", "static func ",
+                   "mutating func ", "set var ", "subscript ",
                    "let ", "var ", "func ", "init "] {
         if s.hasPrefix(prefix) { s.removeFirst(prefix.count); break }
     }

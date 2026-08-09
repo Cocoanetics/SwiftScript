@@ -1,3 +1,13 @@
+// The goldens are captured from **macOS** stock `swift`
+// (`Tools/regen-probe-expectations.sh`), and several probes exercise
+// Apple-Foundation-only behaviour (regex `range(of:options:)`,
+// CharacterSet set-algebra the scl extractor doesn't surface). On
+// swift-corelibs-foundation those bridges are correctly Darwin-gated
+// and stock Swift itself can diverge, so the golden comparison is
+// only meaningful on Darwin. Cross-platform *build* is covered by the
+// build jobs; a Linux golden set would have to be captured on Linux
+// (out of scope here).
+#if canImport(Darwin)
 import Testing
 import Foundation
 import ShellKit
@@ -55,3 +65,4 @@ struct ProbeConformanceTests {
             "probe \(name) diverged from stock Swift")
     }
 }
+#endif

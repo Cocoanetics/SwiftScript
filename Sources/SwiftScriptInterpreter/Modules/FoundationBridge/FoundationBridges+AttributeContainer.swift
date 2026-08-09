@@ -19,6 +19,22 @@ extension FoundationBridges {
         let recv: AttributeContainer = try unboxOpaque(receiver, as: AttributeContainer.self, typeName: "AttributeContainer")
         return .string(recv.description)
     },
+    "mutating func AttributeContainer.merge(_:)": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributeContainer.merge: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: AttributeContainer = try unboxOpaque(receiver, as: AttributeContainer.self, typeName: "AttributeContainer")
+        recv.merge(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"))
+        return (.void, boxOpaque(recv, typeName: "AttributeContainer"))
+    },
+    "mutating func AttributeContainer.merge()": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("AttributeContainer.merge: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: AttributeContainer = try unboxOpaque(receiver, as: AttributeContainer.self, typeName: "AttributeContainer")
+        recv.merge(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"))
+        return (.void, boxOpaque(recv, typeName: "AttributeContainer"))
+    },
     "func AttributeContainer.merging(_:)": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("AttributeContainer.merging: expected 1 argument(s), got \(args.count)")
@@ -38,22 +54,6 @@ extension FoundationBridges {
     d["var AttributeContainer.hashValue: Int"] = .computed { receiver in
         let recv: AttributeContainer = try unboxOpaque(receiver, as: AttributeContainer.self, typeName: "AttributeContainer")
         return .int(recv.hashValue)
-    }
-    d["mutating func AttributeContainer.merge(_:)"] = .mutatingMethod { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("AttributeContainer.merge: expected 1 argument(s), got \(args.count)")
-        }
-        var recv: AttributeContainer = try unboxOpaque(receiver, as: AttributeContainer.self, typeName: "AttributeContainer")
-        recv.merge(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"))
-        return (.void, boxOpaque(recv, typeName: "AttributeContainer"))
-    }
-    d["mutating func AttributeContainer.merge()"] = .mutatingMethod { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("AttributeContainer.merge: expected 1 argument(s), got \(args.count)")
-        }
-        var recv: AttributeContainer = try unboxOpaque(receiver, as: AttributeContainer.self, typeName: "AttributeContainer")
-        recv.merge(try unboxOpaque(args[0], as: AttributeContainer.self, typeName: "AttributeContainer"))
-        return (.void, boxOpaque(recv, typeName: "AttributeContainer"))
     }
         #endif
         return d

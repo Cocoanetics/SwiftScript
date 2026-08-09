@@ -34,6 +34,22 @@ extension FoundationBridges {
         let recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
         return .string(recv.debugDescription)
     },
+    "mutating func IndexPath.append(_:)": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexPath.append: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
+        recv.append(try unboxOpaque(args[0], as: IndexPath.self, typeName: "IndexPath"))
+        return (.void, boxOpaque(recv, typeName: "IndexPath"))
+    },
+    "mutating func IndexPath.append()": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("IndexPath.append: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
+        recv.append(try unboxOpaque(args[0], as: IndexPath.self, typeName: "IndexPath"))
+        return (.void, boxOpaque(recv, typeName: "IndexPath"))
+    },
     "func IndexPath.appending(_:)": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("IndexPath.appending: expected 1 argument(s), got \(args.count)")
@@ -116,22 +132,6 @@ extension FoundationBridges {
         }
         var recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
         recv.removeFirst(try unboxInt(args[0]))
-        return (.void, boxOpaque(recv, typeName: "IndexPath"))
-    }
-    d["mutating func IndexPath.append(_:)"] = .mutatingMethod { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("IndexPath.append: expected 1 argument(s), got \(args.count)")
-        }
-        var recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
-        recv.append(try unboxOpaque(args[0], as: IndexPath.self, typeName: "IndexPath"))
-        return (.void, boxOpaque(recv, typeName: "IndexPath"))
-    }
-    d["mutating func IndexPath.append()"] = .mutatingMethod { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("IndexPath.append: expected 1 argument(s), got \(args.count)")
-        }
-        var recv: IndexPath = try unboxOpaque(receiver, as: IndexPath.self, typeName: "IndexPath")
-        recv.append(try unboxOpaque(args[0], as: IndexPath.self, typeName: "IndexPath"))
         return (.void, boxOpaque(recv, typeName: "IndexPath"))
     }
         #endif

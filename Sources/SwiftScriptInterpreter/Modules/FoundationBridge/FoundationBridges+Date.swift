@@ -107,6 +107,22 @@ extension FoundationBridges {
         let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
         return boxOpaque(recv.addingTimeInterval(try toDouble(args[0])), typeName: "Date")
     },
+    "mutating func Date.addTimeInterval(_:)": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.addTimeInterval: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
+        recv.addTimeInterval(try toDouble(args[0]))
+        return (.void, boxOpaque(recv, typeName: "Date"))
+    },
+    "mutating func Date.addTimeInterval()": .mutatingMethod { receiver, args in
+        guard args.count == 1 else {
+            throw RuntimeError.invalid("Date.addTimeInterval: expected 1 argument(s), got \(args.count)")
+        }
+        var recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
+        recv.addTimeInterval(try toDouble(args[0]))
+        return (.void, boxOpaque(recv, typeName: "Date"))
+    },
     "func Date.distance(to:)": .method { receiver, args in
         guard args.count == 1 else {
             throw RuntimeError.invalid("Date.distance: expected 1 argument(s), got \(args.count)")
@@ -160,22 +176,6 @@ extension FoundationBridges {
     d["var Date.hashValue: Int"] = .computed { receiver in
         let recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
         return .int(recv.hashValue)
-    }
-    d["mutating func Date.addTimeInterval(_:)"] = .mutatingMethod { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("Date.addTimeInterval: expected 1 argument(s), got \(args.count)")
-        }
-        var recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
-        recv.addTimeInterval(try toDouble(args[0]))
-        return (.void, boxOpaque(recv, typeName: "Date"))
-    }
-    d["mutating func Date.addTimeInterval()"] = .mutatingMethod { receiver, args in
-        guard args.count == 1 else {
-            throw RuntimeError.invalid("Date.addTimeInterval: expected 1 argument(s), got \(args.count)")
-        }
-        var recv: Date = try unboxOpaque(receiver, as: Date.self, typeName: "Date")
-        recv.addTimeInterval(try toDouble(args[0]))
-        return (.void, boxOpaque(recv, typeName: "Date"))
     }
         #endif
         return d

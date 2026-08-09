@@ -85,6 +85,14 @@ extension FoundationBridges {
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return boxOpaque(recv.magnitude, typeName: "Decimal")
     },
+    "mutating func Decimal.negate()": .mutatingMethod { receiver, args in
+        guard args.count == 0 else {
+            throw RuntimeError.invalid("Decimal.negate: expected 0 argument(s), got \(args.count)")
+        }
+        var recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
+        recv.negate()
+        return (.void, boxOpaque(recv, typeName: "Decimal"))
+    },
     "func Decimal.formatted()": .method { receiver, args in
         guard args.count == 0 else {
             throw RuntimeError.invalid("Decimal.formatted: expected 0 argument(s), got \(args.count)")
@@ -249,14 +257,6 @@ extension FoundationBridges {
     d["var Decimal.hashValue: Int"] = .computed { receiver in
         let recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
         return .int(recv.hashValue)
-    }
-    d["mutating func Decimal.negate()"] = .mutatingMethod { receiver, args in
-        guard args.count == 0 else {
-            throw RuntimeError.invalid("Decimal.negate: expected 0 argument(s), got \(args.count)")
-        }
-        var recv: Decimal = try unboxOpaque(receiver, as: Decimal.self, typeName: "Decimal")
-        recv.negate()
-        return (.void, boxOpaque(recv, typeName: "Decimal"))
     }
     d["static let Decimal.zero"] = .staticValue(boxOpaque(Decimal.zero, typeName: "Decimal"))
         #endif
