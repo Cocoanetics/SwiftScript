@@ -104,22 +104,78 @@ enum FoundationBridges {
         FoundationBridges.personNameComponentsAttributedStyle,
         FoundationBridges.personNameComponentsParseStrategy,
         FoundationBridges.dateComponentsFormatStyle,
-        FoundationBridges.uRLSession,
+        FoundationBridges.nSLinguisticTag,
+        FoundationBridges.nSLinguisticTagScheme,
+        FoundationBridges.nSLinguisticTaggerOptions,
+        FoundationBridges.process,
+        FoundationBridges.nSOrderedCollectionDifferenceCalculationOptions,
         FoundationBridges.nSExceptionName,
         FoundationBridges.nSNotificationName,
+        FoundationBridges.nSCalendarIdentifier,
+        FoundationBridges.nSCalendarUnit,
+        FoundationBridges.nSCalendarOptions,
+        FoundationBridges.fileWrapper,
+        FoundationBridges.fileWrapperReadingOptions,
+        FoundationBridges.fileWrapperWritingOptions,
+        FoundationBridges.personNameComponentsFormatterOptions,
+        FoundationBridges.nSPointerFunctionsOptions,
+        FoundationBridges.bundle,
+        FoundationBridges.hTTPCookiePropertyKey,
+        FoundationBridges.hTTPCookieStringPolicy,
+        FoundationBridges.processInfo,
+        FoundationBridges.processInfoActivityOptions,
+        FoundationBridges.nSBinarySearchingOptions,
+        FoundationBridges.nSXPCConnectionOptions,
+        FoundationBridges.measurementFormatterUnitOptions,
+        FoundationBridges.nSComparisonPredicateOptions,
+        FoundationBridges.nSTextCheckingKey,
+        FoundationBridges.byteCountFormatterUnits,
+        FoundationBridges.nSRegularExpressionOptions,
+        FoundationBridges.nSRegularExpressionMatchingOptions,
+        FoundationBridges.nSRegularExpressionMatchingFlags,
+        FoundationBridges.hTTPURLResponse,
+        FoundationBridges.uRLResponse,
+        FoundationBridges.netServiceOptions,
+        FoundationBridges.jSONSerializationReadingOptions,
+        FoundationBridges.jSONSerializationWritingOptions,
+        FoundationBridges.nSKeyValueChangeKey,
+        FoundationBridges.nSKeyValueObservingOptions,
+        FoundationBridges.inputStream,
+        FoundationBridges.outputStream,
+        FoundationBridges.streamNetworkServiceTypeValue,
+        FoundationBridges.streamSOCKSProxyConfiguration,
+        FoundationBridges.streamSOCKSProxyVersion,
+        FoundationBridges.streamSocketSecurityLevel,
+        FoundationBridges.streamPropertyKey,
+        FoundationBridges.streamEvent,
+        FoundationBridges.nSDataReadingOptions,
+        FoundationBridges.nSDataWritingOptions,
+        FoundationBridges.nSDataSearchOptions,
+        FoundationBridges.nSDataBase64EncodingOptions,
+        FoundationBridges.nSDataBase64DecodingOptions,
+        FoundationBridges.dateComponentsFormatterZeroFormattingBehavior,
+        FoundationBridges.progressKind,
+        FoundationBridges.progressUserInfoKey,
+        FoundationBridges.progressFileOperationKind,
+        FoundationBridges.fileAttributeKey,
+        FoundationBridges.fileAttributeType,
+        FoundationBridges.fileManager,
+        FoundationBridges.fileProtectionType,
+        FoundationBridges.nSFileProviderServiceName,
+        FoundationBridges.fileManagerVolumeEnumerationOptions,
+        FoundationBridges.fileManagerDirectoryEnumerationOptions,
+        FoundationBridges.fileManagerItemReplacementOptions,
+        FoundationBridges.uRLSession,
         FoundationBridges.inlinePresentationIntent,
         FoundationBridges.nSAttributedStringFormattingContextKey,
         FoundationBridges.nSAttributedStringEnumerationOptions,
         FoundationBridges.nSAttributedStringKey,
-        FoundationBridges.nSCalendarIdentifier,
-        FoundationBridges.nSCalendarUnit,
-        FoundationBridges.nSCalendarOptions,
-        FoundationBridges.personNameComponentsFormatterOptions,
-        FoundationBridges.nSPointerFunctionsOptions,
-        FoundationBridges.bundle,
+        FoundationBridges.iSO8601DateFormatterOptions,
         FoundationBridges.nSItemProviderFileOptions,
-        FoundationBridges.hTTPCookiePropertyKey,
-        FoundationBridges.hTTPCookieStringPolicy,
+        FoundationBridges.nSFileVersionAddingOptions,
+        FoundationBridges.nSFileVersionReplacingOptions,
+        FoundationBridges.nSMachPortOptions,
+        FoundationBridges.propertyListSerializationMutabilityOptions,
         FoundationBridges.uRLFileProtection,
         FoundationBridges.uRLFileResourceType,
         FoundationBridges.uRLResourceKey,
@@ -129,77 +185,21 @@ enum FoundationBridges {
         FoundationBridges.uRLUbiquitousSharedItemRole,
         FoundationBridges.nSURLBookmarkCreationOptions,
         FoundationBridges.nSURLBookmarkResolutionOptions,
-        FoundationBridges.nSBinarySearchingOptions,
-        FoundationBridges.processInfo,
-        FoundationBridges.processInfoActivityOptions,
-        FoundationBridges.measurementFormatterUnitOptions,
-        FoundationBridges.nSFileVersionAddingOptions,
-        FoundationBridges.nSFileVersionReplacingOptions,
+        FoundationBridges.nSEnumerationOptions,
+        FoundationBridges.nSSortOptions,
+        FoundationBridges.runLoopMode,
         FoundationBridges.nSValueTransformerName,
         FoundationBridges.nSFileCoordinatorReadingOptions,
         FoundationBridges.nSFileCoordinatorWritingOptions,
-        FoundationBridges.nSRegularExpressionOptions,
-        FoundationBridges.nSRegularExpressionMatchingOptions,
-        FoundationBridges.nSRegularExpressionMatchingFlags,
+        FoundationBridges.notificationQueueNotificationCoalescing,
+        FoundationBridges.fileManagerSearchPathDomainMask,
+        FoundationBridges.nSLocaleKey,
         FoundationBridges.stringEncodingDetectionOptionsKey,
         FoundationBridges.stringTransform,
         FoundationBridges.nSStringCompareOptions,
         FoundationBridges.nSStringEncodingConversionOptions,
         FoundationBridges.nSStringEnumerationOptions,
-        FoundationBridges.jSONSerializationReadingOptions,
-        FoundationBridges.jSONSerializationWritingOptions,
-        FoundationBridges.nSKeyValueChangeKey,
-        FoundationBridges.nSKeyValueObservingOptions,
-        FoundationBridges.nSDataReadingOptions,
-        FoundationBridges.nSDataWritingOptions,
-        FoundationBridges.nSDataSearchOptions,
-        FoundationBridges.nSDataBase64EncodingOptions,
-        FoundationBridges.nSDataBase64DecodingOptions,
-        FoundationBridges.fileAttributeKey,
-        FoundationBridges.fileAttributeType,
-        FoundationBridges.fileManager,
-        FoundationBridges.fileProtectionType,
-        FoundationBridges.nSFileProviderServiceName,
-        FoundationBridges.fileManagerVolumeEnumerationOptions,
-        FoundationBridges.fileManagerDirectoryEnumerationOptions,
-        FoundationBridges.fileManagerItemReplacementOptions,
-        FoundationBridges.nSLinguisticTag,
-        FoundationBridges.nSLinguisticTagScheme,
-        FoundationBridges.nSLinguisticTaggerOptions,
-        FoundationBridges.nSOrderedCollectionDifferenceCalculationOptions,
-        FoundationBridges.process,
-        FoundationBridges.iSO8601DateFormatterOptions,
-        FoundationBridges.fileWrapper,
-        FoundationBridges.fileWrapperReadingOptions,
-        FoundationBridges.fileWrapperWritingOptions,
-        FoundationBridges.nSMachPortOptions,
-        FoundationBridges.propertyListSerializationMutabilityOptions,
-        FoundationBridges.nSXPCConnectionOptions,
-        FoundationBridges.nSEnumerationOptions,
-        FoundationBridges.nSSortOptions,
-        FoundationBridges.runLoopMode,
-        FoundationBridges.nSComparisonPredicateOptions,
-        FoundationBridges.notificationQueueNotificationCoalescing,
-        FoundationBridges.fileManagerSearchPathDomainMask,
-        FoundationBridges.nSLocaleKey,
-        FoundationBridges.byteCountFormatterUnits,
-        FoundationBridges.nSTextCheckingKey,
-        FoundationBridges.netServiceOptions,
-        FoundationBridges.hTTPURLResponse,
-        FoundationBridges.uRLResponse,
-        FoundationBridges.inputStream,
-        FoundationBridges.outputStream,
-        FoundationBridges.streamNetworkServiceTypeValue,
-        FoundationBridges.streamSOCKSProxyConfiguration,
-        FoundationBridges.streamSOCKSProxyVersion,
-        FoundationBridges.streamSocketSecurityLevel,
-        FoundationBridges.streamPropertyKey,
-        FoundationBridges.streamEvent,
         FoundationBridges.nSKeyValueOperator,
-        FoundationBridges.dateComponentsFormatterZeroFormattingBehavior,
-        FoundationBridges.progressKind,
-        FoundationBridges.progressUserInfoKey,
-        FoundationBridges.progressFileOperationKind,
         FoundationBridges.duration,
         FoundationBridges.durationTimeFormatStyle,
         FoundationBridges.durationUnitsFormatStyle,
@@ -226,6 +226,15 @@ extension FoundationModule {
     func registerGenerated(into i: Interpreter) {
         for (k, v) in FoundationBridges.all { i.bridges[k] = v }
 #if canImport(Darwin)
+        i.registerGlobal(name: "NSHostByteOrder") { args in
+            guard args.count == 0 else {
+                throw RuntimeError.invalid("NSHostByteOrder: expected 0 argument(s), got \(args.count)")
+            }
+            return .int(NSHostByteOrder())
+        }
+#endif
+
+#if canImport(Darwin)
         i.registerGlobal(name: "NSLogPageSize") { args in
             guard args.count == 0 else {
                 throw RuntimeError.invalid("NSLogPageSize: expected 0 argument(s), got \(args.count)")
@@ -240,15 +249,6 @@ extension FoundationModule {
             }
             return .int(NSPageSize())
         }
-
-#if canImport(Darwin)
-        i.registerGlobal(name: "NSHostByteOrder") { args in
-            guard args.count == 0 else {
-                throw RuntimeError.invalid("NSHostByteOrder: expected 0 argument(s), got \(args.count)")
-            }
-            return .int(NSHostByteOrder())
-        }
-#endif
 
         i.registerGlobal(name: "NSFullUserName") { args in
             guard args.count == 0 else {
@@ -356,18 +356,412 @@ extension FoundationModule {
             }
         }
 
-        i.registerComparator(on: "JSONEncoder.OutputFormatting") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? JSONEncoder.OutputFormatting,
-              case .opaque(_, let b) = rhs, let lb = b as? JSONEncoder.OutputFormatting
-        else { throw RuntimeError.invalid("JSONEncoder.OutputFormatting comparison: bad payloads") }
+#if canImport(Darwin)
+        i.registerComparator(on: "URLFileProtection") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLFileProtection,
+              case .opaque(_, let b) = rhs, let lb = b as? URLFileProtection
+        else { throw RuntimeError.invalid("URLFileProtection comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "PropertyListSerialization.MutabilityOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PropertyListSerialization.MutabilityOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? PropertyListSerialization.MutabilityOptions
+        else { throw RuntimeError.invalid("PropertyListSerialization.MutabilityOptions comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
 #if canImport(Darwin)
-        i.registerComparator(on: "URLResource") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLResource,
-              case .opaque(_, let b) = rhs, let lb = b as? URLResource
-        else { throw RuntimeError.invalid("URLResource comparison: bad payloads") }
+        i.registerComparator(on: "PresentationIntent.TableColumn") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PresentationIntent.TableColumn,
+              case .opaque(_, let b) = rhs, let lb = b as? PresentationIntent.TableColumn
+        else { throw RuntimeError.invalid("PresentationIntent.TableColumn comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if !os(iOS) && !os(tvOS) && !os(watchOS) && !os(visionOS)
+        i.registerComparator(on: "Process") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Process,
+              case .opaque(_, let b) = rhs, let lb = b as? Process
+        else { throw RuntimeError.invalid("Process comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "ProcessInfo.ActivityOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ProcessInfo.ActivityOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? ProcessInfo.ActivityOptions
+        else { throw RuntimeError.invalid("ProcessInfo.ActivityOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "NSString.EnumerationOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSString.EnumerationOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSString.EnumerationOptions
+        else { throw RuntimeError.invalid("NSString.EnumerationOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "NSComparisonPredicate.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSComparisonPredicate.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? NSComparisonPredicate.Options
+        else { throw RuntimeError.invalid("NSComparisonPredicate.Options comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "NSKeyValueChangeKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSKeyValueChangeKey,
+              case .opaque(_, let b) = rhs, let lb = b as? NSKeyValueChangeKey
+        else { throw RuntimeError.invalid("NSKeyValueChangeKey comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "URLThumbnailDictionaryItem") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLThumbnailDictionaryItem,
+              case .opaque(_, let b) = rhs, let lb = b as? URLThumbnailDictionaryItem
+        else { throw RuntimeError.invalid("URLThumbnailDictionaryItem comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "StreamNetworkServiceTypeValue") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? StreamNetworkServiceTypeValue,
+              case .opaque(_, let b) = rhs, let lb = b as? StreamNetworkServiceTypeValue
+        else { throw RuntimeError.invalid("StreamNetworkServiceTypeValue comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Date") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date,
+              case .opaque(_, let b) = rhs, let lb = b as? Date
+        else { throw RuntimeError.invalid("Date comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+        i.registerComparator(on: "NSNotification.Name") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSNotification.Name,
+              case .opaque(_, let b) = rhs, let lb = b as? NSNotification.Name
+        else { throw RuntimeError.invalid("NSNotification.Name comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "DateComponents") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? DateComponents,
+              case .opaque(_, let b) = rhs, let lb = b as? DateComponents
+        else { throw RuntimeError.invalid("DateComponents comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Stream.Event") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Stream.Event,
+              case .opaque(_, let b) = rhs, let lb = b as? Stream.Event
+        else { throw RuntimeError.invalid("Stream.Event comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "NetService.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NetService.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? NetService.Options
+        else { throw RuntimeError.invalid("NetService.Options comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "URL.ParseStrategy") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URL.ParseStrategy,
+              case .opaque(_, let b) = rhs, let lb = b as? URL.ParseStrategy
+        else { throw RuntimeError.invalid("URL.ParseStrategy comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "NSOrderedCollectionDifferenceCalculationOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSOrderedCollectionDifferenceCalculationOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSOrderedCollectionDifferenceCalculationOptions
+        else { throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "URL") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URL,
+              case .opaque(_, let b) = rhs, let lb = b as? URL
+        else { throw RuntimeError.invalid("URL comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSLocale.Key") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSLocale.Key,
+              case .opaque(_, let b) = rhs, let lb = b as? NSLocale.Key
+        else { throw RuntimeError.invalid("NSLocale.Key comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "FileHandle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileHandle,
+              case .opaque(_, let b) = rhs, let lb = b as? FileHandle
+        else { throw RuntimeError.invalid("FileHandle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "NSEnumerationOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSEnumerationOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSEnumerationOptions
+        else { throw RuntimeError.invalid("NSEnumerationOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy,
+              case .opaque(_, let b) = rhs, let lb = b as? NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy
+        else { throw RuntimeError.invalid("NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "FileAttributeKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileAttributeKey,
+              case .opaque(_, let b) = rhs, let lb = b as? FileAttributeKey
+        else { throw RuntimeError.invalid("FileAttributeKey comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSAttributedString.EnumerationOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSAttributedString.EnumerationOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSAttributedString.EnumerationOptions
+        else { throw RuntimeError.invalid("NSAttributedString.EnumerationOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "ByteCountFormatStyle.Units") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ByteCountFormatStyle.Units,
+              case .opaque(_, let b) = rhs, let lb = b as? ByteCountFormatStyle.Units
+        else { throw RuntimeError.invalid("ByteCountFormatStyle.Units comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "FileManager.SearchPathDomainMask") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileManager.SearchPathDomainMask,
+              case .opaque(_, let b) = rhs, let lb = b as? FileManager.SearchPathDomainMask
+        else { throw RuntimeError.invalid("FileManager.SearchPathDomainMask comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "URLUbiquitousSharedItemRole") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLUbiquitousSharedItemRole,
+              case .opaque(_, let b) = rhs, let lb = b as? URLUbiquitousSharedItemRole
+        else { throw RuntimeError.invalid("URLUbiquitousSharedItemRole comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "NSKeyValueOperator") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSKeyValueOperator,
+              case .opaque(_, let b) = rhs, let lb = b as? NSKeyValueOperator
+        else { throw RuntimeError.invalid("NSKeyValueOperator comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "TimeZone") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? TimeZone,
+              case .opaque(_, let b) = rhs, let lb = b as? TimeZone
+        else { throw RuntimeError.invalid("TimeZone comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSRegularExpression.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSRegularExpression.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? NSRegularExpression.Options
+        else { throw RuntimeError.invalid("NSRegularExpression.Options comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "PersonNameComponents") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PersonNameComponents,
+              case .opaque(_, let b) = rhs, let lb = b as? PersonNameComponents
+        else { throw RuntimeError.invalid("PersonNameComponents comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "IndexSet.Index") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? IndexSet.Index,
+              case .opaque(_, let b) = rhs, let lb = b as? IndexSet.Index
+        else { throw RuntimeError.invalid("IndexSet.Index comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+        i.registerComparator(on: "NSString.EncodingConversionOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSString.EncodingConversionOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSString.EncodingConversionOptions
+        else { throw RuntimeError.invalid("NSString.EncodingConversionOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "CurrencyFormatStyleConfiguration.SignDisplayStrategy") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? CurrencyFormatStyleConfiguration.SignDisplayStrategy,
+              case .opaque(_, let b) = rhs, let lb = b as? CurrencyFormatStyleConfiguration.SignDisplayStrategy
+        else { throw RuntimeError.invalid("CurrencyFormatStyleConfiguration.SignDisplayStrategy comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Locale.Region") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Region,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.Region
+        else { throw RuntimeError.invalid("Locale.Region comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "AttributedString.InterpolationOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.InterpolationOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.InterpolationOptions
+        else { throw RuntimeError.invalid("AttributedString.InterpolationOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "DateComponentsFormatter.ZeroFormattingBehavior") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? DateComponentsFormatter.ZeroFormattingBehavior,
+              case .opaque(_, let b) = rhs, let lb = b as? DateComponentsFormatter.ZeroFormattingBehavior
+        else { throw RuntimeError.invalid("DateComponentsFormatter.ZeroFormattingBehavior comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "Bundle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Bundle,
+              case .opaque(_, let b) = rhs, let lb = b as? Bundle
+        else { throw RuntimeError.invalid("Bundle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "URLComponents") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLComponents,
+              case .opaque(_, let b) = rhs, let lb = b as? URLComponents
+        else { throw RuntimeError.invalid("URLComponents comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "NSAttributedStringFormattingContextKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSAttributedStringFormattingContextKey,
+              case .opaque(_, let b) = rhs, let lb = b as? NSAttributedStringFormattingContextKey
+        else { throw RuntimeError.invalid("NSAttributedStringFormattingContextKey comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "FileAttributeType") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileAttributeType,
+              case .opaque(_, let b) = rhs, let lb = b as? FileAttributeType
+        else { throw RuntimeError.invalid("FileAttributeType comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "AttributedString.MarkdownSourcePosition") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.MarkdownSourcePosition,
+              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.MarkdownSourcePosition
+        else { throw RuntimeError.invalid("AttributedString.MarkdownSourcePosition comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "Date.FormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date.FormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Date.FormatStyle
+        else { throw RuntimeError.invalid("Date.FormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "AttributedSubstring") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? AttributedSubstring,
+              case .opaque(_, let b) = rhs, let lb = b as? AttributedSubstring
+        else { throw RuntimeError.invalid("AttributedSubstring comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "RunLoop.Mode") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? RunLoop.Mode,
+              case .opaque(_, let b) = rhs, let lb = b as? RunLoop.Mode
+        else { throw RuntimeError.invalid("RunLoop.Mode comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "FileWrapper.WritingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileWrapper.WritingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? FileWrapper.WritingOptions
+        else { throw RuntimeError.invalid("FileWrapper.WritingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "Locale.Components") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Components,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.Components
+        else { throw RuntimeError.invalid("Locale.Components comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Date.AttributedStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date.AttributedStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Date.AttributedStyle
+        else { throw RuntimeError.invalid("Date.AttributedStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "HTTPURLResponse") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? HTTPURLResponse,
+              case .opaque(_, let b) = rhs, let lb = b as? HTTPURLResponse
+        else { throw RuntimeError.invalid("HTTPURLResponse comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "Date.IntervalFormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date.IntervalFormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Date.IntervalFormatStyle
+        else { throw RuntimeError.invalid("Date.IntervalFormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "AttributedString") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString,
+              case .opaque(_, let b) = rhs, let lb = b as? AttributedString
+        else { throw RuntimeError.invalid("AttributedString comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "NSLinguisticTagScheme") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSLinguisticTagScheme,
+              case .opaque(_, let b) = rhs, let lb = b as? NSLinguisticTagScheme
+        else { throw RuntimeError.invalid("NSLinguisticTagScheme comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 #endif
@@ -386,128 +780,6 @@ extension FoundationModule {
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "DateInterval") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? DateInterval,
-              case .opaque(_, let b) = rhs, let lb = b as? DateInterval
-        else { throw RuntimeError.invalid("DateInterval comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-
-        i.registerComparator(on: "Morphology.CustomPronoun") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Morphology.CustomPronoun,
-              case .opaque(_, let b) = rhs, let lb = b as? Morphology.CustomPronoun
-        else { throw RuntimeError.invalid("Morphology.CustomPronoun comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Locale.LanguageCode") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.LanguageCode,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.LanguageCode
-        else { throw RuntimeError.invalid("Locale.LanguageCode comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Date.FormatString") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date.FormatString,
-              case .opaque(_, let b) = rhs, let lb = b as? Date.FormatString
-        else { throw RuntimeError.invalid("Date.FormatString comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Locale.NumberingSystem") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.NumberingSystem,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.NumberingSystem
-        else { throw RuntimeError.invalid("Locale.NumberingSystem comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "CocoaError") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? CocoaError,
-              case .opaque(_, let b) = rhs, let lb = b as? CocoaError
-        else { throw RuntimeError.invalid("CocoaError comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Date.VerbatimFormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date.VerbatimFormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Date.VerbatimFormatStyle
-        else { throw RuntimeError.invalid("Date.VerbatimFormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "PersonNameComponents.AttributedStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PersonNameComponents.AttributedStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? PersonNameComponents.AttributedStyle
-        else { throw RuntimeError.invalid("PersonNameComponents.AttributedStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "NumberFormatStyleConfiguration.Grouping") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NumberFormatStyleConfiguration.Grouping,
-              case .opaque(_, let b) = rhs, let lb = b as? NumberFormatStyleConfiguration.Grouping
-        else { throw RuntimeError.invalid("NumberFormatStyleConfiguration.Grouping comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "FileProtectionType") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileProtectionType,
-              case .opaque(_, let b) = rhs, let lb = b as? FileProtectionType
-        else { throw RuntimeError.invalid("FileProtectionType comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "PersonNameComponentsFormatter.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PersonNameComponentsFormatter.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? PersonNameComponentsFormatter.Options
-        else { throw RuntimeError.invalid("PersonNameComponentsFormatter.Options comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "URLError") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLError,
-              case .opaque(_, let b) = rhs, let lb = b as? URLError
-        else { throw RuntimeError.invalid("URLError comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "StringTransform") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? StringTransform,
-              case .opaque(_, let b) = rhs, let lb = b as? StringTransform
-        else { throw RuntimeError.invalid("StringTransform comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NSURL.BookmarkCreationOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSURL.BookmarkCreationOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSURL.BookmarkCreationOptions
-        else { throw RuntimeError.invalid("NSURL.BookmarkCreationOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "URLSession") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLSession,
-              case .opaque(_, let b) = rhs, let lb = b as? URLSession
-        else { throw RuntimeError.invalid("URLSession comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "Bundle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Bundle,
-              case .opaque(_, let b) = rhs, let lb = b as? Bundle
-        else { throw RuntimeError.invalid("Bundle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
         i.registerComparator(on: "Date.RelativeFormatStyle") { lhs, rhs in
             guard case .opaque(_, let a) = lhs, let la = a as? Date.RelativeFormatStyle,
               case .opaque(_, let b) = rhs, let lb = b as? Date.RelativeFormatStyle
@@ -515,200 +787,18 @@ extension FoundationModule {
         return la == lb ? 0 : -1
         }
 
-#if canImport(Darwin)
-        i.registerComparator(on: "NSFileProviderServiceName") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSFileProviderServiceName,
-              case .opaque(_, let b) = rhs, let lb = b as? NSFileProviderServiceName
-        else { throw RuntimeError.invalid("NSFileProviderServiceName comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "Date.AttributedStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date.AttributedStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Date.AttributedStyle
-        else { throw RuntimeError.invalid("Date.AttributedStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy,
-              case .opaque(_, let b) = rhs, let lb = b as? NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy
-        else { throw RuntimeError.invalid("NumberFormatStyleConfiguration.DecimalSeparatorDisplayStrategy comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "URLComponents") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLComponents,
-              case .opaque(_, let b) = rhs, let lb = b as? URLComponents
-        else { throw RuntimeError.invalid("URLComponents comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "RunLoop.Mode") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? RunLoop.Mode,
-              case .opaque(_, let b) = rhs, let lb = b as? RunLoop.Mode
-        else { throw RuntimeError.invalid("RunLoop.Mode comparison: bad payloads") }
+        i.registerComparator(on: "StringStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? StringStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? StringStyle
+        else { throw RuntimeError.invalid("StringStyle comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
 #if canImport(Darwin)
-        i.registerComparator(on: "FileWrapper") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileWrapper,
-              case .opaque(_, let b) = rhs, let lb = b as? FileWrapper
-        else { throw RuntimeError.invalid("FileWrapper comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NSFileVersion.ReplacingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSFileVersion.ReplacingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSFileVersion.ReplacingOptions
-        else { throw RuntimeError.invalid("NSFileVersion.ReplacingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "CurrencyFormatStyleConfiguration.SignDisplayStrategy") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? CurrencyFormatStyleConfiguration.SignDisplayStrategy,
-              case .opaque(_, let b) = rhs, let lb = b as? CurrencyFormatStyleConfiguration.SignDisplayStrategy
-        else { throw RuntimeError.invalid("CurrencyFormatStyleConfiguration.SignDisplayStrategy comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSRegularExpression.MatchingFlags") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSRegularExpression.MatchingFlags,
-              case .opaque(_, let b) = rhs, let lb = b as? NSRegularExpression.MatchingFlags
-        else { throw RuntimeError.invalid("NSRegularExpression.MatchingFlags comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "PropertyListSerialization.MutabilityOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PropertyListSerialization.MutabilityOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? PropertyListSerialization.MutabilityOptions
-        else { throw RuntimeError.invalid("PropertyListSerialization.MutabilityOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Locale.Collation") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Collation,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.Collation
-        else { throw RuntimeError.invalid("Locale.Collation comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "JSONSerialization.ReadingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? JSONSerialization.ReadingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? JSONSerialization.ReadingOptions
-        else { throw RuntimeError.invalid("JSONSerialization.ReadingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "HTTPURLResponse") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? HTTPURLResponse,
-              case .opaque(_, let b) = rhs, let lb = b as? HTTPURLResponse
-        else { throw RuntimeError.invalid("HTTPURLResponse comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "FileManager.ItemReplacementOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileManager.ItemReplacementOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? FileManager.ItemReplacementOptions
-        else { throw RuntimeError.invalid("FileManager.ItemReplacementOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NSKeyValueOperator") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSKeyValueOperator,
-              case .opaque(_, let b) = rhs, let lb = b as? NSKeyValueOperator
-        else { throw RuntimeError.invalid("NSKeyValueOperator comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "NSLocale.Key") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSLocale.Key,
-              case .opaque(_, let b) = rhs, let lb = b as? NSLocale.Key
-        else { throw RuntimeError.invalid("NSLocale.Key comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Locale.Script") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Script,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.Script
-        else { throw RuntimeError.invalid("Locale.Script comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSAttributedString.Key") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSAttributedString.Key,
-              case .opaque(_, let b) = rhs, let lb = b as? NSAttributedString.Key
-        else { throw RuntimeError.invalid("NSAttributedString.Key comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "StreamNetworkServiceTypeValue") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? StreamNetworkServiceTypeValue,
-              case .opaque(_, let b) = rhs, let lb = b as? StreamNetworkServiceTypeValue
-        else { throw RuntimeError.invalid("StreamNetworkServiceTypeValue comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSCalendar.Unit") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSCalendar.Unit,
-              case .opaque(_, let b) = rhs, let lb = b as? NSCalendar.Unit
-        else { throw RuntimeError.invalid("NSCalendar.Unit comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSSortOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSSortOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSSortOptions
-        else { throw RuntimeError.invalid("NSSortOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "PresentationIntent.TableColumn") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PresentationIntent.TableColumn,
-              case .opaque(_, let b) = rhs, let lb = b as? PresentationIntent.TableColumn
-        else { throw RuntimeError.invalid("PresentationIntent.TableColumn comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "CurrencyFormatStyleConfiguration.Presentation") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? CurrencyFormatStyleConfiguration.Presentation,
-              case .opaque(_, let b) = rhs, let lb = b as? CurrencyFormatStyleConfiguration.Presentation
-        else { throw RuntimeError.invalid("CurrencyFormatStyleConfiguration.Presentation comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Date") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date,
-              case .opaque(_, let b) = rhs, let lb = b as? Date
-        else { throw RuntimeError.invalid("Date comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "PersonNameComponents.ParseStrategy") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PersonNameComponents.ParseStrategy,
-              case .opaque(_, let b) = rhs, let lb = b as? PersonNameComponents.ParseStrategy
-        else { throw RuntimeError.invalid("PersonNameComponents.ParseStrategy comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "URLThumbnailDictionaryItem") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLThumbnailDictionaryItem,
-              case .opaque(_, let b) = rhs, let lb = b as? URLThumbnailDictionaryItem
-        else { throw RuntimeError.invalid("URLThumbnailDictionaryItem comparison: bad payloads") }
+        i.registerComparator(on: "NSFileCoordinator.WritingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSFileCoordinator.WritingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSFileCoordinator.WritingOptions
+        else { throw RuntimeError.invalid("NSFileCoordinator.WritingOptions comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 #endif
@@ -718,194 +808,6 @@ extension FoundationModule {
             guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.FormattingOptions,
               case .opaque(_, let b) = rhs, let lb = b as? AttributedString.FormattingOptions
         else { throw RuntimeError.invalid("AttributedString.FormattingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "IndexSet.Index") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? IndexSet.Index,
-              case .opaque(_, let b) = rhs, let lb = b as? IndexSet.Index
-        else { throw RuntimeError.invalid("IndexSet.Index comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-
-        i.registerComparator(on: "Stream.PropertyKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Stream.PropertyKey,
-              case .opaque(_, let b) = rhs, let lb = b as? Stream.PropertyKey
-        else { throw RuntimeError.invalid("Stream.PropertyKey comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NSLinguisticTagScheme") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSLinguisticTagScheme,
-              case .opaque(_, let b) = rhs, let lb = b as? NSLinguisticTagScheme
-        else { throw RuntimeError.invalid("NSLinguisticTagScheme comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "NSAttributedString.EnumerationOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSAttributedString.EnumerationOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSAttributedString.EnumerationOptions
-        else { throw RuntimeError.invalid("NSAttributedString.EnumerationOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NSMachPort.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSMachPort.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? NSMachPort.Options
-        else { throw RuntimeError.invalid("NSMachPort.Options comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "Locale") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale
-        else { throw RuntimeError.invalid("Locale comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSExceptionName") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSExceptionName,
-              case .opaque(_, let b) = rhs, let lb = b as? NSExceptionName
-        else { throw RuntimeError.invalid("NSExceptionName comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSTextCheckingKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSTextCheckingKey,
-              case .opaque(_, let b) = rhs, let lb = b as? NSTextCheckingKey
-        else { throw RuntimeError.invalid("NSTextCheckingKey comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "FileManager.VolumeEnumerationOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileManager.VolumeEnumerationOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? FileManager.VolumeEnumerationOptions
-        else { throw RuntimeError.invalid("FileManager.VolumeEnumerationOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NSValueTransformerName") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSValueTransformerName,
-              case .opaque(_, let b) = rhs, let lb = b as? NSValueTransformerName
-        else { throw RuntimeError.invalid("NSValueTransformerName comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "FileWrapper.WritingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileWrapper.WritingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? FileWrapper.WritingOptions
-        else { throw RuntimeError.invalid("FileWrapper.WritingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "ByteCountFormatter.Units") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ByteCountFormatter.Units,
-              case .opaque(_, let b) = rhs, let lb = b as? ByteCountFormatter.Units
-        else { throw RuntimeError.invalid("ByteCountFormatter.Units comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "HTTPCookiePropertyKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? HTTPCookiePropertyKey,
-              case .opaque(_, let b) = rhs, let lb = b as? HTTPCookiePropertyKey
-        else { throw RuntimeError.invalid("HTTPCookiePropertyKey comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "MeasurementFormatter.UnitOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? MeasurementFormatter.UnitOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? MeasurementFormatter.UnitOptions
-        else { throw RuntimeError.invalid("MeasurementFormatter.UnitOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "Date.IntervalFormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date.IntervalFormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Date.IntervalFormatStyle
-        else { throw RuntimeError.invalid("Date.IntervalFormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "JSONSerialization.WritingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? JSONSerialization.WritingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? JSONSerialization.WritingOptions
-        else { throw RuntimeError.invalid("JSONSerialization.WritingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NSData.ReadingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSData.ReadingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSData.ReadingOptions
-        else { throw RuntimeError.invalid("NSData.ReadingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "FormatStyleCapitalizationContext") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FormatStyleCapitalizationContext,
-              case .opaque(_, let b) = rhs, let lb = b as? FormatStyleCapitalizationContext
-        else { throw RuntimeError.invalid("FormatStyleCapitalizationContext comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "FileHandle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileHandle,
-              case .opaque(_, let b) = rhs, let lb = b as? FileHandle
-        else { throw RuntimeError.invalid("FileHandle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "ByteCountFormatStyle.Attributed") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ByteCountFormatStyle.Attributed,
-              case .opaque(_, let b) = rhs, let lb = b as? ByteCountFormatStyle.Attributed
-        else { throw RuntimeError.invalid("ByteCountFormatStyle.Attributed comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NSKeyValueObservingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSKeyValueObservingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSKeyValueObservingOptions
-        else { throw RuntimeError.invalid("NSKeyValueObservingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "FileAttributeKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileAttributeKey,
-              case .opaque(_, let b) = rhs, let lb = b as? FileAttributeKey
-        else { throw RuntimeError.invalid("FileAttributeKey comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NSData.SearchOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSData.SearchOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSData.SearchOptions
-        else { throw RuntimeError.invalid("NSData.SearchOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NSString.CompareOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSString.CompareOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSString.CompareOptions
-        else { throw RuntimeError.invalid("NSString.CompareOptions comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 #endif
@@ -920,45 +822,34 @@ extension FoundationModule {
 #endif
 
 #if canImport(Darwin)
-        i.registerComparator(on: "NSLinguisticTag") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSLinguisticTag,
-              case .opaque(_, let b) = rhs, let lb = b as? NSLinguisticTag
-        else { throw RuntimeError.invalid("NSLinguisticTag comparison: bad payloads") }
+        i.registerComparator(on: "NSFileCoordinator.ReadingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSFileCoordinator.ReadingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSFileCoordinator.ReadingOptions
+        else { throw RuntimeError.invalid("NSFileCoordinator.ReadingOptions comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 #endif
 
 #if canImport(Darwin)
-        i.registerComparator(on: "DateComponentsFormatter.ZeroFormattingBehavior") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? DateComponentsFormatter.ZeroFormattingBehavior,
-              case .opaque(_, let b) = rhs, let lb = b as? DateComponentsFormatter.ZeroFormattingBehavior
-        else { throw RuntimeError.invalid("DateComponentsFormatter.ZeroFormattingBehavior comparison: bad payloads") }
+        i.registerComparator(on: "NSPointerFunctions.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSPointerFunctions.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? NSPointerFunctions.Options
+        else { throw RuntimeError.invalid("NSPointerFunctions.Options comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 #endif
 
-#if canImport(Darwin)
-        i.registerComparator(on: "ErrorUserInfoKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ErrorUserInfoKey,
-              case .opaque(_, let b) = rhs, let lb = b as? ErrorUserInfoKey
-        else { throw RuntimeError.invalid("ErrorUserInfoKey comparison: bad payloads") }
+        i.registerComparator(on: "FileManager.VolumeEnumerationOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileManager.VolumeEnumerationOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? FileManager.VolumeEnumerationOptions
+        else { throw RuntimeError.invalid("FileManager.VolumeEnumerationOptions comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
-#endif
 
-#if canImport(Darwin)
-        i.registerComparator(on: "NSKeyValueChangeKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSKeyValueChangeKey,
-              case .opaque(_, let b) = rhs, let lb = b as? NSKeyValueChangeKey
-        else { throw RuntimeError.invalid("NSKeyValueChangeKey comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "IndexSet.RangeView") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? IndexSet.RangeView,
-              case .opaque(_, let b) = rhs, let lb = b as? IndexSet.RangeView
-        else { throw RuntimeError.invalid("IndexSet.RangeView comparison: bad payloads") }
+        i.registerComparator(on: "Locale.Script") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Script,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.Script
+        else { throw RuntimeError.invalid("Locale.Script comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
@@ -969,159 +860,12 @@ extension FoundationModule {
         return la == lb ? 0 : -1
         }
 
-#if canImport(Darwin)
-        i.registerComparator(on: "FileWrapper.ReadingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileWrapper.ReadingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? FileWrapper.ReadingOptions
-        else { throw RuntimeError.invalid("FileWrapper.ReadingOptions comparison: bad payloads") }
+        i.registerComparator(on: "Locale.Language") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Language,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.Language
+        else { throw RuntimeError.invalid("Locale.Language comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
-#endif
-
-        i.registerComparator(on: "NSString.EnumerationOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSString.EnumerationOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSString.EnumerationOptions
-        else { throw RuntimeError.invalid("NSString.EnumerationOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSNotification.Name") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSNotification.Name,
-              case .opaque(_, let b) = rhs, let lb = b as? NSNotification.Name
-        else { throw RuntimeError.invalid("NSNotification.Name comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "URLResourceKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLResourceKey,
-              case .opaque(_, let b) = rhs, let lb = b as? URLResourceKey
-        else { throw RuntimeError.invalid("URLResourceKey comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NumberFormatStyleConfiguration.Notation") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NumberFormatStyleConfiguration.Notation,
-              case .opaque(_, let b) = rhs, let lb = b as? NumberFormatStyleConfiguration.Notation
-        else { throw RuntimeError.invalid("NumberFormatStyleConfiguration.Notation comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NSOrderedCollectionDifferenceCalculationOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSOrderedCollectionDifferenceCalculationOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSOrderedCollectionDifferenceCalculationOptions
-        else { throw RuntimeError.invalid("NSOrderedCollectionDifferenceCalculationOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "StreamSOCKSProxyConfiguration") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? StreamSOCKSProxyConfiguration,
-              case .opaque(_, let b) = rhs, let lb = b as? StreamSOCKSProxyConfiguration
-        else { throw RuntimeError.invalid("StreamSOCKSProxyConfiguration comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Locale.Variant") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Variant,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.Variant
-        else { throw RuntimeError.invalid("Locale.Variant comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "URLUbiquitousSharedItemPermissions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLUbiquitousSharedItemPermissions,
-              case .opaque(_, let b) = rhs, let lb = b as? URLUbiquitousSharedItemPermissions
-        else { throw RuntimeError.invalid("URLUbiquitousSharedItemPermissions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "URLQueryItem") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLQueryItem,
-              case .opaque(_, let b) = rhs, let lb = b as? URLQueryItem
-        else { throw RuntimeError.invalid("URLQueryItem comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Notification") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Notification,
-              case .opaque(_, let b) = rhs, let lb = b as? Notification
-        else { throw RuntimeError.invalid("Notification comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Decimal") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Decimal,
-              case .opaque(_, let b) = rhs, let lb = b as? Decimal
-        else { throw RuntimeError.invalid("Decimal comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "FileManager") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileManager,
-              case .opaque(_, let b) = rhs, let lb = b as? FileManager
-        else { throw RuntimeError.invalid("FileManager comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "ProcessInfo") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ProcessInfo,
-              case .opaque(_, let b) = rhs, let lb = b as? ProcessInfo
-        else { throw RuntimeError.invalid("ProcessInfo comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "CocoaError.Code") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? CocoaError.Code,
-              case .opaque(_, let b) = rhs, let lb = b as? CocoaError.Code
-        else { throw RuntimeError.invalid("CocoaError.Code comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSRegularExpression.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSRegularExpression.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? NSRegularExpression.Options
-        else { throw RuntimeError.invalid("NSRegularExpression.Options comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "POSIXError") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? POSIXError,
-              case .opaque(_, let b) = rhs, let lb = b as? POSIXError
-        else { throw RuntimeError.invalid("POSIXError comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NSFileCoordinator.ReadingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSFileCoordinator.ReadingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSFileCoordinator.ReadingOptions
-        else { throw RuntimeError.invalid("NSFileCoordinator.ReadingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "DateComponents") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? DateComponents,
-              case .opaque(_, let b) = rhs, let lb = b as? DateComponents
-        else { throw RuntimeError.invalid("DateComponents comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "AttributedString.Index") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.Index,
-              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.Index
-        else { throw RuntimeError.invalid("AttributedString.Index comparison: bad payloads") }
-        return la < lb ? -1 : (la > lb ? 1 : 0)
-        }
-#endif
 
         i.registerComparator(on: "ProgressUserInfoKey") { lhs, rhs in
             guard case .opaque(_, let a) = lhs, let la = a as? ProgressUserInfoKey,
@@ -1130,17 +874,49 @@ extension FoundationModule {
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "ByteCountFormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ByteCountFormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? ByteCountFormatStyle
-        else { throw RuntimeError.invalid("ByteCountFormatStyle comparison: bad payloads") }
+#if canImport(Darwin)
+        i.registerComparator(on: "NSURL.BookmarkCreationOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSURL.BookmarkCreationOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSURL.BookmarkCreationOptions
+        else { throw RuntimeError.invalid("NSURL.BookmarkCreationOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "URLRequest") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLRequest,
+              case .opaque(_, let b) = rhs, let lb = b as? URLRequest
+        else { throw RuntimeError.invalid("URLRequest comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "Locale.Region") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Region,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.Region
-        else { throw RuntimeError.invalid("Locale.Region comparison: bad payloads") }
+#if canImport(Darwin)
+        i.registerComparator(on: "NSKeyValueObservingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSKeyValueObservingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSKeyValueObservingOptions
+        else { throw RuntimeError.invalid("NSKeyValueObservingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "Locale.Collation") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Collation,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.Collation
+        else { throw RuntimeError.invalid("Locale.Collation comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Date.VerbatimFormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date.VerbatimFormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Date.VerbatimFormatStyle
+        else { throw RuntimeError.invalid("Date.VerbatimFormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "URLQueryItem") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLQueryItem,
+              case .opaque(_, let b) = rhs, let lb = b as? URLQueryItem
+        else { throw RuntimeError.invalid("URLQueryItem comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
@@ -1148,230 +924,6 @@ extension FoundationModule {
             guard case .opaque(_, let a) = lhs, let la = a as? NSCalendar.Identifier,
               case .opaque(_, let b) = rhs, let lb = b as? NSCalendar.Identifier
         else { throw RuntimeError.invalid("NSCalendar.Identifier comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NSURL.BookmarkResolutionOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSURL.BookmarkResolutionOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSURL.BookmarkResolutionOptions
-        else { throw RuntimeError.invalid("NSURL.BookmarkResolutionOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "IndexSet") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? IndexSet,
-              case .opaque(_, let b) = rhs, let lb = b as? IndexSet
-        else { throw RuntimeError.invalid("IndexSet comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "FileAttributeType") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileAttributeType,
-              case .opaque(_, let b) = rhs, let lb = b as? FileAttributeType
-        else { throw RuntimeError.invalid("FileAttributeType comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "InputStream") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? InputStream,
-              case .opaque(_, let b) = rhs, let lb = b as? InputStream
-        else { throw RuntimeError.invalid("InputStream comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "Stream.Event") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Stream.Event,
-              case .opaque(_, let b) = rhs, let lb = b as? Stream.Event
-        else { throw RuntimeError.invalid("Stream.Event comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSString.EncodingConversionOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSString.EncodingConversionOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSString.EncodingConversionOptions
-        else { throw RuntimeError.invalid("NSString.EncodingConversionOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "ByteCountFormatStyle.Units") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ByteCountFormatStyle.Units,
-              case .opaque(_, let b) = rhs, let lb = b as? ByteCountFormatStyle.Units
-        else { throw RuntimeError.invalid("ByteCountFormatStyle.Units comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "InlinePresentationIntent") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? InlinePresentationIntent,
-              case .opaque(_, let b) = rhs, let lb = b as? InlinePresentationIntent
-        else { throw RuntimeError.invalid("InlinePresentationIntent comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "AttributedString.MarkdownSourcePosition") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.MarkdownSourcePosition,
-              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.MarkdownSourcePosition
-        else { throw RuntimeError.invalid("AttributedString.MarkdownSourcePosition comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "Locale.Currency") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Currency,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.Currency
-        else { throw RuntimeError.invalid("Locale.Currency comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NSLinguisticTagger.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSLinguisticTagger.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? NSLinguisticTagger.Options
-        else { throw RuntimeError.invalid("NSLinguisticTagger.Options comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "Date.ParseStrategy") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date.ParseStrategy,
-              case .opaque(_, let b) = rhs, let lb = b as? Date.ParseStrategy
-        else { throw RuntimeError.invalid("Date.ParseStrategy comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "MachError") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? MachError,
-              case .opaque(_, let b) = rhs, let lb = b as? MachError
-        else { throw RuntimeError.invalid("MachError comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "TimeZone") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? TimeZone,
-              case .opaque(_, let b) = rhs, let lb = b as? TimeZone
-        else { throw RuntimeError.invalid("TimeZone comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "StringStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? StringStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? StringStyle
-        else { throw RuntimeError.invalid("StringStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "NSBinarySearchingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSBinarySearchingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSBinarySearchingOptions
-        else { throw RuntimeError.invalid("NSBinarySearchingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "URL.FormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URL.FormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? URL.FormatStyle
-        else { throw RuntimeError.invalid("URL.FormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NSData.Base64DecodingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSData.Base64DecodingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSData.Base64DecodingOptions
-        else { throw RuntimeError.invalid("NSData.Base64DecodingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "AttributedString.Runs") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.Runs,
-              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.Runs
-        else { throw RuntimeError.invalid("AttributedString.Runs comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if !os(iOS) && !os(tvOS) && !os(watchOS) && !os(visionOS)
-        i.registerComparator(on: "Process") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Process,
-              case .opaque(_, let b) = rhs, let lb = b as? Process
-        else { throw RuntimeError.invalid("Process comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "DescriptiveNumberFormatConfiguration.Presentation") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? DescriptiveNumberFormatConfiguration.Presentation,
-              case .opaque(_, let b) = rhs, let lb = b as? DescriptiveNumberFormatConfiguration.Presentation
-        else { throw RuntimeError.invalid("DescriptiveNumberFormatConfiguration.Presentation comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "AttributedSubstring") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? AttributedSubstring,
-              case .opaque(_, let b) = rhs, let lb = b as? AttributedSubstring
-        else { throw RuntimeError.invalid("AttributedSubstring comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "OutputStream") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? OutputStream,
-              case .opaque(_, let b) = rhs, let lb = b as? OutputStream
-        else { throw RuntimeError.invalid("OutputStream comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "AttributeContainer") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? AttributeContainer,
-              case .opaque(_, let b) = rhs, let lb = b as? AttributeContainer
-        else { throw RuntimeError.invalid("AttributeContainer comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "AttributedString") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString,
-              case .opaque(_, let b) = rhs, let lb = b as? AttributedString
-        else { throw RuntimeError.invalid("AttributedString comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "URL") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URL,
-              case .opaque(_, let b) = rhs, let lb = b as? URL
-        else { throw RuntimeError.invalid("URL comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NetService.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NetService.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? NetService.Options
-        else { throw RuntimeError.invalid("NetService.Options comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "URLFileResourceType") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLFileResourceType,
-              case .opaque(_, let b) = rhs, let lb = b as? URLFileResourceType
-        else { throw RuntimeError.invalid("URLFileResourceType comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
@@ -1385,153 +937,25 @@ extension FoundationModule {
 #endif
 
 #if canImport(Darwin)
-        i.registerComparator(on: "NSData.Base64EncodingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSData.Base64EncodingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSData.Base64EncodingOptions
-        else { throw RuntimeError.invalid("NSData.Base64EncodingOptions comparison: bad payloads") }
+        i.registerComparator(on: "NSData.ReadingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSData.ReadingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSData.ReadingOptions
+        else { throw RuntimeError.invalid("NSData.ReadingOptions comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 #endif
 
-#if canImport(Darwin)
-        i.registerComparator(on: "LocalizedStringResource") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? LocalizedStringResource,
-              case .opaque(_, let b) = rhs, let lb = b as? LocalizedStringResource
-        else { throw RuntimeError.invalid("LocalizedStringResource comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "Data") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Data,
-              case .opaque(_, let b) = rhs, let lb = b as? Data
-        else { throw RuntimeError.invalid("Data comparison: bad payloads") }
+        i.registerComparator(on: "Locale.Currency") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Currency,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.Currency
+        else { throw RuntimeError.invalid("Locale.Currency comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "NumberFormatStyleConfiguration.Precision") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NumberFormatStyleConfiguration.Precision,
-              case .opaque(_, let b) = rhs, let lb = b as? NumberFormatStyleConfiguration.Precision
-        else { throw RuntimeError.invalid("NumberFormatStyleConfiguration.Precision comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NSXPCConnection.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSXPCConnection.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? NSXPCConnection.Options
-        else { throw RuntimeError.invalid("NSXPCConnection.Options comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "ProcessInfo.ActivityOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? ProcessInfo.ActivityOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? ProcessInfo.ActivityOptions
-        else { throw RuntimeError.invalid("ProcessInfo.ActivityOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "Date.FormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date.FormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Date.FormatStyle
-        else { throw RuntimeError.invalid("Date.FormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Date.ComponentsFormatStyle") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Date.ComponentsFormatStyle,
-              case .opaque(_, let b) = rhs, let lb = b as? Date.ComponentsFormatStyle
-        else { throw RuntimeError.invalid("Date.ComponentsFormatStyle comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NSAttributedStringFormattingContextKey") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSAttributedStringFormattingContextKey,
-              case .opaque(_, let b) = rhs, let lb = b as? NSAttributedStringFormattingContextKey
-        else { throw RuntimeError.invalid("NSAttributedStringFormattingContextKey comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "Locale.Language") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Language,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.Language
-        else { throw RuntimeError.invalid("Locale.Language comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-#if canImport(Darwin)
-        i.registerComparator(on: "URLResponse") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLResponse,
-              case .opaque(_, let b) = rhs, let lb = b as? URLResponse
-        else { throw RuntimeError.invalid("URLResponse comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "NSFileCoordinator.WritingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSFileCoordinator.WritingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSFileCoordinator.WritingOptions
-        else { throw RuntimeError.invalid("NSFileCoordinator.WritingOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "PresentationIntent") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PresentationIntent,
-              case .opaque(_, let b) = rhs, let lb = b as? PresentationIntent
-        else { throw RuntimeError.invalid("PresentationIntent comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "URLUbiquitousSharedItemRole") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLUbiquitousSharedItemRole,
-              case .opaque(_, let b) = rhs, let lb = b as? URLUbiquitousSharedItemRole
-        else { throw RuntimeError.invalid("URLUbiquitousSharedItemRole comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "Progress.FileOperationKind") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Progress.FileOperationKind,
-              case .opaque(_, let b) = rhs, let lb = b as? Progress.FileOperationKind
-        else { throw RuntimeError.invalid("Progress.FileOperationKind comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "StreamSOCKSProxyVersion") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? StreamSOCKSProxyVersion,
-              case .opaque(_, let b) = rhs, let lb = b as? StreamSOCKSProxyVersion
-        else { throw RuntimeError.invalid("StreamSOCKSProxyVersion comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "URLError.Code") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLError.Code,
-              case .opaque(_, let b) = rhs, let lb = b as? URLError.Code
-        else { throw RuntimeError.invalid("URLError.Code comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Locale.Components") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Components,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.Components
-        else { throw RuntimeError.invalid("Locale.Components comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
-        i.registerComparator(on: "Locale.Subdivision") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Subdivision,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.Subdivision
-        else { throw RuntimeError.invalid("Locale.Subdivision comparison: bad payloads") }
+        i.registerComparator(on: "Morphology.CustomPronoun") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Morphology.CustomPronoun,
+              case .opaque(_, let b) = rhs, let lb = b as? Morphology.CustomPronoun
+        else { throw RuntimeError.invalid("Morphology.CustomPronoun comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
@@ -1542,25 +966,84 @@ extension FoundationModule {
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "PersonNameComponents") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PersonNameComponents,
-              case .opaque(_, let b) = rhs, let lb = b as? PersonNameComponents
-        else { throw RuntimeError.invalid("PersonNameComponents comparison: bad payloads") }
+#if canImport(Darwin)
+        i.registerComparator(on: "NSData.Base64EncodingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSData.Base64EncodingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSData.Base64EncodingOptions
+        else { throw RuntimeError.invalid("NSData.Base64EncodingOptions comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
+#endif
 
-        i.registerComparator(on: "NSEnumerationOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSEnumerationOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSEnumerationOptions
-        else { throw RuntimeError.invalid("NSEnumerationOptions comparison: bad payloads") }
+#if canImport(Darwin)
+        i.registerComparator(on: "URLUbiquitousItemDownloadingStatus") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLUbiquitousItemDownloadingStatus,
+              case .opaque(_, let b) = rhs, let lb = b as? URLUbiquitousItemDownloadingStatus
+        else { throw RuntimeError.invalid("URLUbiquitousItemDownloadingStatus comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
+#endif
 
-        i.registerComparator(on: "IndexPath") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? IndexPath,
-              case .opaque(_, let b) = rhs, let lb = b as? IndexPath
-        else { throw RuntimeError.invalid("IndexPath comparison: bad payloads") }
+#if canImport(Darwin)
+        i.registerComparator(on: "InputStream") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? InputStream,
+              case .opaque(_, let b) = rhs, let lb = b as? InputStream
+        else { throw RuntimeError.invalid("InputStream comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "DateInterval") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? DateInterval,
+              case .opaque(_, let b) = rhs, let lb = b as? DateInterval
+        else { throw RuntimeError.invalid("DateInterval comparison: bad payloads") }
         return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+        i.registerComparator(on: "Decimal") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Decimal,
+              case .opaque(_, let b) = rhs, let lb = b as? Decimal
+        else { throw RuntimeError.invalid("Decimal comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "MeasurementFormatter.UnitOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? MeasurementFormatter.UnitOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? MeasurementFormatter.UnitOptions
+        else { throw RuntimeError.invalid("MeasurementFormatter.UnitOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "FileWrapper") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileWrapper,
+              case .opaque(_, let b) = rhs, let lb = b as? FileWrapper
+        else { throw RuntimeError.invalid("FileWrapper comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "NSTextCheckingResult.CheckingType") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSTextCheckingResult.CheckingType,
+              case .opaque(_, let b) = rhs, let lb = b as? NSTextCheckingResult.CheckingType
+        else { throw RuntimeError.invalid("NSTextCheckingResult.CheckingType comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "ByteCountFormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ByteCountFormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? ByteCountFormatStyle
+        else { throw RuntimeError.invalid("ByteCountFormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Locale.MeasurementSystem") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.MeasurementSystem,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.MeasurementSystem
+        else { throw RuntimeError.invalid("Locale.MeasurementSystem comparison: bad payloads") }
+        return la == lb ? 0 : -1
         }
 
 #if canImport(Darwin)
@@ -1572,18 +1055,167 @@ extension FoundationModule {
         }
 #endif
 
-        i.registerComparator(on: "CharacterSet") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? CharacterSet,
-              case .opaque(_, let b) = rhs, let lb = b as? CharacterSet
-        else { throw RuntimeError.invalid("CharacterSet comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-
 #if canImport(Darwin)
         i.registerComparator(on: "NSItemProviderFileOptions") { lhs, rhs in
             guard case .opaque(_, let a) = lhs, let la = a as? NSItemProviderFileOptions,
               case .opaque(_, let b) = rhs, let lb = b as? NSItemProviderFileOptions
         else { throw RuntimeError.invalid("NSItemProviderFileOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "NSBinarySearchingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSBinarySearchingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSBinarySearchingOptions
+        else { throw RuntimeError.invalid("NSBinarySearchingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "IndexPath") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? IndexPath,
+              case .opaque(_, let b) = rhs, let lb = b as? IndexPath
+        else { throw RuntimeError.invalid("IndexPath comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "AttributedString.Index") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.Index,
+              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.Index
+        else { throw RuntimeError.invalid("AttributedString.Index comparison: bad payloads") }
+        return la < lb ? -1 : (la > lb ? 1 : 0)
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "NSData.SearchOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSData.SearchOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSData.SearchOptions
+        else { throw RuntimeError.invalid("NSData.SearchOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "NumberFormatStyleConfiguration.Precision") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NumberFormatStyleConfiguration.Precision,
+              case .opaque(_, let b) = rhs, let lb = b as? NumberFormatStyleConfiguration.Precision
+        else { throw RuntimeError.invalid("NumberFormatStyleConfiguration.Precision comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Date.ParseStrategy") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date.ParseStrategy,
+              case .opaque(_, let b) = rhs, let lb = b as? Date.ParseStrategy
+        else { throw RuntimeError.invalid("Date.ParseStrategy comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "FileProtectionType") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileProtectionType,
+              case .opaque(_, let b) = rhs, let lb = b as? FileProtectionType
+        else { throw RuntimeError.invalid("FileProtectionType comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Morphology") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Morphology,
+              case .opaque(_, let b) = rhs, let lb = b as? Morphology
+        else { throw RuntimeError.invalid("Morphology comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "FileWrapper.ReadingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileWrapper.ReadingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? FileWrapper.ReadingOptions
+        else { throw RuntimeError.invalid("FileWrapper.ReadingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "DescriptiveNumberFormatConfiguration.Presentation") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? DescriptiveNumberFormatConfiguration.Presentation,
+              case .opaque(_, let b) = rhs, let lb = b as? DescriptiveNumberFormatConfiguration.Presentation
+        else { throw RuntimeError.invalid("DescriptiveNumberFormatConfiguration.Presentation comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSRegularExpression.MatchingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSRegularExpression.MatchingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSRegularExpression.MatchingOptions
+        else { throw RuntimeError.invalid("NSRegularExpression.MatchingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "FileManager") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileManager,
+              case .opaque(_, let b) = rhs, let lb = b as? FileManager
+        else { throw RuntimeError.invalid("FileManager comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "InlinePresentationIntent") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? InlinePresentationIntent,
+              case .opaque(_, let b) = rhs, let lb = b as? InlinePresentationIntent
+        else { throw RuntimeError.invalid("InlinePresentationIntent comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "PresentationIntent.IntentType") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PresentationIntent.IntentType,
+              case .opaque(_, let b) = rhs, let lb = b as? PresentationIntent.IntentType
+        else { throw RuntimeError.invalid("PresentationIntent.IntentType comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "URLError") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLError,
+              case .opaque(_, let b) = rhs, let lb = b as? URLError
+        else { throw RuntimeError.invalid("URLError comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "CocoaError.Code") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? CocoaError.Code,
+              case .opaque(_, let b) = rhs, let lb = b as? CocoaError.Code
+        else { throw RuntimeError.invalid("CocoaError.Code comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "StringTransform") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? StringTransform,
+              case .opaque(_, let b) = rhs, let lb = b as? StringTransform
+        else { throw RuntimeError.invalid("StringTransform comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Locale.Subdivision") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Subdivision,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.Subdivision
+        else { throw RuntimeError.invalid("Locale.Subdivision comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "NSFileProviderServiceName") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSFileProviderServiceName,
+              case .opaque(_, let b) = rhs, let lb = b as? NSFileProviderServiceName
+        else { throw RuntimeError.invalid("NSFileProviderServiceName comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "URLUbiquitousSharedItemPermissions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLUbiquitousSharedItemPermissions,
+              case .opaque(_, let b) = rhs, let lb = b as? URLUbiquitousSharedItemPermissions
+        else { throw RuntimeError.invalid("URLUbiquitousSharedItemPermissions comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 #endif
@@ -1597,6 +1229,45 @@ extension FoundationModule {
         }
 #endif
 
+#if canImport(Darwin)
+        i.registerComparator(on: "NSValueTransformerName") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSValueTransformerName,
+              case .opaque(_, let b) = rhs, let lb = b as? NSValueTransformerName
+        else { throw RuntimeError.invalid("NSValueTransformerName comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "NSLinguisticTag") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSLinguisticTag,
+              case .opaque(_, let b) = rhs, let lb = b as? NSLinguisticTag
+        else { throw RuntimeError.invalid("NSLinguisticTag comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "ByteCountFormatStyle.Attributed") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ByteCountFormatStyle.Attributed,
+              case .opaque(_, let b) = rhs, let lb = b as? ByteCountFormatStyle.Attributed
+        else { throw RuntimeError.invalid("ByteCountFormatStyle.Attributed comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Calendar") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Calendar,
+              case .opaque(_, let b) = rhs, let lb = b as? Calendar
+        else { throw RuntimeError.invalid("Calendar comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Locale.NumberingSystem") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.NumberingSystem,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.NumberingSystem
+        else { throw RuntimeError.invalid("Locale.NumberingSystem comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
         i.registerComparator(on: "NotificationQueue.NotificationCoalescing") { lhs, rhs in
             guard case .opaque(_, let a) = lhs, let la = a as? NotificationQueue.NotificationCoalescing,
               case .opaque(_, let b) = rhs, let lb = b as? NotificationQueue.NotificationCoalescing
@@ -1604,10 +1275,97 @@ extension FoundationModule {
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "Locale.MeasurementSystem") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Locale.MeasurementSystem,
-              case .opaque(_, let b) = rhs, let lb = b as? Locale.MeasurementSystem
-        else { throw RuntimeError.invalid("Locale.MeasurementSystem comparison: bad payloads") }
+        i.registerComparator(on: "FileManager.ItemReplacementOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FileManager.ItemReplacementOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? FileManager.ItemReplacementOptions
+        else { throw RuntimeError.invalid("FileManager.ItemReplacementOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "NSMachPort.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSMachPort.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? NSMachPort.Options
+        else { throw RuntimeError.invalid("NSMachPort.Options comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "NumberFormatStyleConfiguration.Notation") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NumberFormatStyleConfiguration.Notation,
+              case .opaque(_, let b) = rhs, let lb = b as? NumberFormatStyleConfiguration.Notation
+        else { throw RuntimeError.invalid("NumberFormatStyleConfiguration.Notation comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "PersonNameComponents.ParseStrategy") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PersonNameComponents.ParseStrategy,
+              case .opaque(_, let b) = rhs, let lb = b as? PersonNameComponents.ParseStrategy
+        else { throw RuntimeError.invalid("PersonNameComponents.ParseStrategy comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "HTTPCookiePropertyKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? HTTPCookiePropertyKey,
+              case .opaque(_, let b) = rhs, let lb = b as? HTTPCookiePropertyKey
+        else { throw RuntimeError.invalid("HTTPCookiePropertyKey comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "CharacterSet") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? CharacterSet,
+              case .opaque(_, let b) = rhs, let lb = b as? CharacterSet
+        else { throw RuntimeError.invalid("CharacterSet comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "PersonNameComponents.AttributedStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PersonNameComponents.AttributedStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? PersonNameComponents.AttributedStyle
+        else { throw RuntimeError.invalid("PersonNameComponents.AttributedStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "NSExceptionName") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSExceptionName,
+              case .opaque(_, let b) = rhs, let lb = b as? NSExceptionName
+        else { throw RuntimeError.invalid("NSExceptionName comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "AttributedString.Runs") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.Runs,
+              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.Runs
+        else { throw RuntimeError.invalid("AttributedString.Runs comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "IndexSet") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? IndexSet,
+              case .opaque(_, let b) = rhs, let lb = b as? IndexSet
+        else { throw RuntimeError.invalid("IndexSet comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "URLResource") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLResource,
+              case .opaque(_, let b) = rhs, let lb = b as? URLResource
+        else { throw RuntimeError.invalid("URLResource comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "ByteCountFormatter.Units") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ByteCountFormatter.Units,
+              case .opaque(_, let b) = rhs, let lb = b as? ByteCountFormatter.Units
+        else { throw RuntimeError.invalid("ByteCountFormatter.Units comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
@@ -1618,14 +1376,216 @@ extension FoundationModule {
         return la == lb ? 0 : -1
         }
 
+        i.registerComparator(on: "NumberFormatStyleConfiguration.Grouping") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NumberFormatStyleConfiguration.Grouping,
+              case .opaque(_, let b) = rhs, let lb = b as? NumberFormatStyleConfiguration.Grouping
+        else { throw RuntimeError.invalid("NumberFormatStyleConfiguration.Grouping comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSRegularExpression.MatchingFlags") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSRegularExpression.MatchingFlags,
+              case .opaque(_, let b) = rhs, let lb = b as? NSRegularExpression.MatchingFlags
+        else { throw RuntimeError.invalid("NSRegularExpression.MatchingFlags comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "URLFileResourceType") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLFileResourceType,
+              case .opaque(_, let b) = rhs, let lb = b as? URLFileResourceType
+        else { throw RuntimeError.invalid("URLFileResourceType comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Stream.PropertyKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Stream.PropertyKey,
+              case .opaque(_, let b) = rhs, let lb = b as? Stream.PropertyKey
+        else { throw RuntimeError.invalid("Stream.PropertyKey comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Date.ComponentsFormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date.ComponentsFormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? Date.ComponentsFormatStyle
+        else { throw RuntimeError.invalid("Date.ComponentsFormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
 #if canImport(Darwin)
-        i.registerComparator(on: "NSComparisonPredicate.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSComparisonPredicate.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? NSComparisonPredicate.Options
-        else { throw RuntimeError.invalid("NSComparisonPredicate.Options comparison: bad payloads") }
+        i.registerComparator(on: "PersonNameComponentsFormatter.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PersonNameComponentsFormatter.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? PersonNameComponentsFormatter.Options
+        else { throw RuntimeError.invalid("PersonNameComponentsFormatter.Options comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 #endif
+
+        i.registerComparator(on: "JSONEncoder.OutputFormatting") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? JSONEncoder.OutputFormatting,
+              case .opaque(_, let b) = rhs, let lb = b as? JSONEncoder.OutputFormatting
+        else { throw RuntimeError.invalid("JSONEncoder.OutputFormatting comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "PresentationIntent") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? PresentationIntent,
+              case .opaque(_, let b) = rhs, let lb = b as? PresentationIntent
+        else { throw RuntimeError.invalid("PresentationIntent comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "CocoaError") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? CocoaError,
+              case .opaque(_, let b) = rhs, let lb = b as? CocoaError
+        else { throw RuntimeError.invalid("CocoaError comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Progress.FileOperationKind") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Progress.FileOperationKind,
+              case .opaque(_, let b) = rhs, let lb = b as? Progress.FileOperationKind
+        else { throw RuntimeError.invalid("Progress.FileOperationKind comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "URLResponse") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLResponse,
+              case .opaque(_, let b) = rhs, let lb = b as? URLResponse
+        else { throw RuntimeError.invalid("URLResponse comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "URLSession") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLSession,
+              case .opaque(_, let b) = rhs, let lb = b as? URLSession
+        else { throw RuntimeError.invalid("URLSession comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "URL.FormatStyle") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URL.FormatStyle,
+              case .opaque(_, let b) = rhs, let lb = b as? URL.FormatStyle
+        else { throw RuntimeError.invalid("URL.FormatStyle comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "URLResourceKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLResourceKey,
+              case .opaque(_, let b) = rhs, let lb = b as? URLResourceKey
+        else { throw RuntimeError.invalid("URLResourceKey comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Locale.LanguageCode") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.LanguageCode,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.LanguageCode
+        else { throw RuntimeError.invalid("Locale.LanguageCode comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSTextCheckingKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSTextCheckingKey,
+              case .opaque(_, let b) = rhs, let lb = b as? NSTextCheckingKey
+        else { throw RuntimeError.invalid("NSTextCheckingKey comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSAttributedString.Key") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSAttributedString.Key,
+              case .opaque(_, let b) = rhs, let lb = b as? NSAttributedString.Key
+        else { throw RuntimeError.invalid("NSAttributedString.Key comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "FormatStyleCapitalizationContext") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? FormatStyleCapitalizationContext,
+              case .opaque(_, let b) = rhs, let lb = b as? FormatStyleCapitalizationContext
+        else { throw RuntimeError.invalid("FormatStyleCapitalizationContext comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Notification") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Notification,
+              case .opaque(_, let b) = rhs, let lb = b as? Notification
+        else { throw RuntimeError.invalid("Notification comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "NSString.CompareOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSString.CompareOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSString.CompareOptions
+        else { throw RuntimeError.invalid("NSString.CompareOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "OutputStream") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? OutputStream,
+              case .opaque(_, let b) = rhs, let lb = b as? OutputStream
+        else { throw RuntimeError.invalid("OutputStream comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "IndexSet.RangeView") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? IndexSet.RangeView,
+              case .opaque(_, let b) = rhs, let lb = b as? IndexSet.RangeView
+        else { throw RuntimeError.invalid("IndexSet.RangeView comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "ProcessInfo") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ProcessInfo,
+              case .opaque(_, let b) = rhs, let lb = b as? ProcessInfo
+        else { throw RuntimeError.invalid("ProcessInfo comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "NSFileVersion.ReplacingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSFileVersion.ReplacingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSFileVersion.ReplacingOptions
+        else { throw RuntimeError.invalid("NSFileVersion.ReplacingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "LocalizedStringResource") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? LocalizedStringResource,
+              case .opaque(_, let b) = rhs, let lb = b as? LocalizedStringResource
+        else { throw RuntimeError.invalid("LocalizedStringResource comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+#if canImport(Darwin)
+        i.registerComparator(on: "MachError") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? MachError,
+              case .opaque(_, let b) = rhs, let lb = b as? MachError
+        else { throw RuntimeError.invalid("MachError comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "AttributeContainer") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? AttributeContainer,
+              case .opaque(_, let b) = rhs, let lb = b as? AttributeContainer
+        else { throw RuntimeError.invalid("AttributeContainer comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
 
 #if canImport(Darwin)
         i.registerComparator(on: "NSFileVersion.AddingOptions") { lhs, rhs in
@@ -1636,10 +1596,40 @@ extension FoundationModule {
         }
 #endif
 
-        i.registerComparator(on: "StreamSocketSecurityLevel") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? StreamSocketSecurityLevel,
-              case .opaque(_, let b) = rhs, let lb = b as? StreamSocketSecurityLevel
-        else { throw RuntimeError.invalid("StreamSocketSecurityLevel comparison: bad payloads") }
+#if canImport(Darwin)
+        i.registerComparator(on: "ErrorUserInfoKey") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? ErrorUserInfoKey,
+              case .opaque(_, let b) = rhs, let lb = b as? ErrorUserInfoKey
+        else { throw RuntimeError.invalid("ErrorUserInfoKey comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "Locale") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale
+        else { throw RuntimeError.invalid("Locale comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "CurrencyFormatStyleConfiguration.Presentation") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? CurrencyFormatStyleConfiguration.Presentation,
+              case .opaque(_, let b) = rhs, let lb = b as? CurrencyFormatStyleConfiguration.Presentation
+        else { throw RuntimeError.invalid("CurrencyFormatStyleConfiguration.Presentation comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "NSSortOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSSortOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSSortOptions
+        else { throw RuntimeError.invalid("NSSortOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "StreamSOCKSProxyConfiguration") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? StreamSOCKSProxyConfiguration,
+              case .opaque(_, let b) = rhs, let lb = b as? StreamSOCKSProxyConfiguration
+        else { throw RuntimeError.invalid("StreamSOCKSProxyConfiguration comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
@@ -1651,43 +1641,82 @@ extension FoundationModule {
         }
 
 #if canImport(Darwin)
-        i.registerComparator(on: "NSPointerFunctions.Options") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSPointerFunctions.Options,
-              case .opaque(_, let b) = rhs, let lb = b as? NSPointerFunctions.Options
-        else { throw RuntimeError.invalid("NSPointerFunctions.Options comparison: bad payloads") }
+        i.registerComparator(on: "HTTPCookieStringPolicy") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? HTTPCookieStringPolicy,
+              case .opaque(_, let b) = rhs, let lb = b as? HTTPCookieStringPolicy
+        else { throw RuntimeError.invalid("HTTPCookieStringPolicy comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 #endif
 
-        i.registerComparator(on: "NSRegularExpression.MatchingOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSRegularExpression.MatchingOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? NSRegularExpression.MatchingOptions
-        else { throw RuntimeError.invalid("NSRegularExpression.MatchingOptions comparison: bad payloads") }
+        i.registerComparator(on: "StreamSOCKSProxyVersion") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? StreamSOCKSProxyVersion,
+              case .opaque(_, let b) = rhs, let lb = b as? StreamSOCKSProxyVersion
+        else { throw RuntimeError.invalid("StreamSOCKSProxyVersion comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
 #if canImport(Darwin)
-        i.registerComparator(on: "URLUbiquitousItemDownloadingStatus") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLUbiquitousItemDownloadingStatus,
-              case .opaque(_, let b) = rhs, let lb = b as? URLUbiquitousItemDownloadingStatus
-        else { throw RuntimeError.invalid("URLUbiquitousItemDownloadingStatus comparison: bad payloads") }
+        i.registerComparator(on: "NSXPCConnection.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSXPCConnection.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? NSXPCConnection.Options
+        else { throw RuntimeError.invalid("NSXPCConnection.Options comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 #endif
 
 #if canImport(Darwin)
-        i.registerComparator(on: "URLFileProtection") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLFileProtection,
-              case .opaque(_, let b) = rhs, let lb = b as? URLFileProtection
-        else { throw RuntimeError.invalid("URLFileProtection comparison: bad payloads") }
+        i.registerComparator(on: "NSURL.BookmarkResolutionOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSURL.BookmarkResolutionOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSURL.BookmarkResolutionOptions
+        else { throw RuntimeError.invalid("NSURL.BookmarkResolutionOptions comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 #endif
 
-        i.registerComparator(on: "FileManager.SearchPathDomainMask") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? FileManager.SearchPathDomainMask,
-              case .opaque(_, let b) = rhs, let lb = b as? FileManager.SearchPathDomainMask
-        else { throw RuntimeError.invalid("FileManager.SearchPathDomainMask comparison: bad payloads") }
+        i.registerComparator(on: "Date.FormatString") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Date.FormatString,
+              case .opaque(_, let b) = rhs, let lb = b as? Date.FormatString
+        else { throw RuntimeError.invalid("Date.FormatString comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "NSData.Base64DecodingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSData.Base64DecodingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? NSData.Base64DecodingOptions
+        else { throw RuntimeError.invalid("NSData.Base64DecodingOptions comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "POSIXError") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? POSIXError,
+              case .opaque(_, let b) = rhs, let lb = b as? POSIXError
+        else { throw RuntimeError.invalid("POSIXError comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+#if canImport(Darwin)
+        i.registerComparator(on: "NSLinguisticTagger.Options") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSLinguisticTagger.Options,
+              case .opaque(_, let b) = rhs, let lb = b as? NSLinguisticTagger.Options
+        else { throw RuntimeError.invalid("NSLinguisticTagger.Options comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+#endif
+
+        i.registerComparator(on: "NSCalendar.Unit") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? NSCalendar.Unit,
+              case .opaque(_, let b) = rhs, let lb = b as? NSCalendar.Unit
+        else { throw RuntimeError.invalid("NSCalendar.Unit comparison: bad payloads") }
+        return la == lb ? 0 : -1
+        }
+
+        i.registerComparator(on: "Locale.Variant") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Locale.Variant,
+              case .opaque(_, let b) = rhs, let lb = b as? Locale.Variant
+        else { throw RuntimeError.invalid("Locale.Variant comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
@@ -1698,68 +1727,39 @@ extension FoundationModule {
         return la == lb ? 0 : -1
         }
 
-#if canImport(Darwin)
-        i.registerComparator(on: "PresentationIntent.IntentType") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? PresentationIntent.IntentType,
-              case .opaque(_, let b) = rhs, let lb = b as? PresentationIntent.IntentType
-        else { throw RuntimeError.invalid("PresentationIntent.IntentType comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "HTTPCookieStringPolicy") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? HTTPCookieStringPolicy,
-              case .opaque(_, let b) = rhs, let lb = b as? HTTPCookieStringPolicy
-        else { throw RuntimeError.invalid("HTTPCookieStringPolicy comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-#if canImport(Darwin)
-        i.registerComparator(on: "AttributedString.InterpolationOptions") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? AttributedString.InterpolationOptions,
-              case .opaque(_, let b) = rhs, let lb = b as? AttributedString.InterpolationOptions
-        else { throw RuntimeError.invalid("AttributedString.InterpolationOptions comparison: bad payloads") }
-        return la == lb ? 0 : -1
-        }
-#endif
-
-        i.registerComparator(on: "URLRequest") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URLRequest,
-              case .opaque(_, let b) = rhs, let lb = b as? URLRequest
-        else { throw RuntimeError.invalid("URLRequest comparison: bad payloads") }
+        i.registerComparator(on: "JSONSerialization.ReadingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? JSONSerialization.ReadingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? JSONSerialization.ReadingOptions
+        else { throw RuntimeError.invalid("JSONSerialization.ReadingOptions comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "Calendar") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Calendar,
-              case .opaque(_, let b) = rhs, let lb = b as? Calendar
-        else { throw RuntimeError.invalid("Calendar comparison: bad payloads") }
+        i.registerComparator(on: "JSONSerialization.WritingOptions") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? JSONSerialization.WritingOptions,
+              case .opaque(_, let b) = rhs, let lb = b as? JSONSerialization.WritingOptions
+        else { throw RuntimeError.invalid("JSONSerialization.WritingOptions comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "Morphology") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? Morphology,
-              case .opaque(_, let b) = rhs, let lb = b as? Morphology
-        else { throw RuntimeError.invalid("Morphology comparison: bad payloads") }
+        i.registerComparator(on: "Data") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? Data,
+              case .opaque(_, let b) = rhs, let lb = b as? Data
+        else { throw RuntimeError.invalid("Data comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-        i.registerComparator(on: "NSTextCheckingResult.CheckingType") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? NSTextCheckingResult.CheckingType,
-              case .opaque(_, let b) = rhs, let lb = b as? NSTextCheckingResult.CheckingType
-        else { throw RuntimeError.invalid("NSTextCheckingResult.CheckingType comparison: bad payloads") }
+        i.registerComparator(on: "URLError.Code") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? URLError.Code,
+              case .opaque(_, let b) = rhs, let lb = b as? URLError.Code
+        else { throw RuntimeError.invalid("URLError.Code comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
 
-#if canImport(Darwin)
-        i.registerComparator(on: "URL.ParseStrategy") { lhs, rhs in
-            guard case .opaque(_, let a) = lhs, let la = a as? URL.ParseStrategy,
-              case .opaque(_, let b) = rhs, let lb = b as? URL.ParseStrategy
-        else { throw RuntimeError.invalid("URL.ParseStrategy comparison: bad payloads") }
+        i.registerComparator(on: "StreamSocketSecurityLevel") { lhs, rhs in
+            guard case .opaque(_, let a) = lhs, let la = a as? StreamSocketSecurityLevel,
+              case .opaque(_, let b) = rhs, let lb = b as? StreamSocketSecurityLevel
+        else { throw RuntimeError.invalid("StreamSocketSecurityLevel comparison: bad payloads") }
         return la == lb ? 0 : -1
         }
-#endif
     }
 }
