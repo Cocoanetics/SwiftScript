@@ -7,7 +7,7 @@
       "location" : "https://github.com/Cocoanetics/ShellKit",
       "state" : {
         "branch" : "main",
-        "revision" : "4395986d5c90e763daf8a92af739c5382b675bea"
+        "revision" : "ce2147463e7f08732112bb8929cd79944942f9d9"
       }
     },
     {
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-subprocess",
       "state" : {
-        "revision" : "13d087685b95d64d6aac9b94500d347bbe84c39b",
-        "version" : "0.4.0"
+        "revision" : "11633673a41f509f8945f23c96c7acd4adafd679",
+        "version" : "0.5.0"
       }
     },
     {
