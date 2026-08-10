@@ -21,11 +21,19 @@ extension Interpreter {
     /// `fatalError` / `precondition` / division-by-zero traps — are
     /// raised outside any bridge closure and so keep terminating the
     /// script, exactly as stock Swift traps.
+    ///
+    /// On the way out, every wrapped error is stamped with the source
+    /// offset of the expression that invoked the bridge (issue #15),
+    /// read from the task-local ``Interpreter/evaluationOffset`` — the
+    /// bridge body itself has no idea where it was called from, but the
+    /// evaluator binding is still in scope here. An error that already
+    /// carries a position (a script `throw` unwinding through the
+    /// bridge, a pre-positioned RuntimeError) keeps its own.
     func callingBridge<T>(_ body: () async throws -> T) async throws -> T {
         do {
             return try await body()
         } catch let signal as UserThrowSignal {
-            throw signal
+            throw signal.positioned(at: Interpreter.evaluationOffset)
         } catch let control as ReturnSignal {
             throw control
         } catch let control as BreakSignal {
@@ -36,15 +44,74 @@ extension Interpreter {
             throw control
         } catch let exit as ScriptExit {
             throw exit
+        } catch let sentinel as any ScriptUncatchableError {
+            // Host control-flow (skip, deadline, quota, …) — must reach
+            // the host, so it is never boxed into a catchable value.
+            throw sentinel
+        } catch let runtime as RuntimeError {
+            // Position the error itself as well as the signal, so a host
+            // that digs the RuntimeError back out of the opaque payload
+            // can still ask it where it happened.
+            let positioned = runtime.positioned(at: Interpreter.evaluationOffset)
+            throw UserThrowSignal(
+                value: .opaque(typeName: "Error", value: positioned),
+                offset: positioned.offset
+            )
         } catch {
-            throw UserThrowSignal(value: .opaque(typeName: "Error", value: error))
+            throw UserThrowSignal(
+                value: .opaque(typeName: "Error", value: error),
+                offset: Interpreter.evaluationOffset
+            )
         }
     }
 
-    /// `throw expr` — evaluate the expression and raise it as a user error.
+    /// Run a host-registered builtin (`registerGlobal` / `registerBuiltin`
+    /// closures, and bridge static methods packaged as `.builtin`
+    /// Functions). Same contract as ``callingBridge(_:)`` for an
+    /// arbitrary host error — it becomes a catchable `ScriptError`
+    /// stamped with the invoking call's offset — but a `RuntimeError`
+    /// passes through raw: the diagnostic builtins (`fatalError`,
+    /// `precondition`, `assert`) signal traps that way, and traps must
+    /// keep terminating the script the way stock Swift's do. (The
+    /// expression dispatcher still stamps the raw `RuntimeError` with
+    /// its position on the way out.) `ScriptUncatchableError`s pass
+    /// through raw as well — host control flow, not script-visible.
+    func callingBuiltin<T>(_ body: () async throws -> T) async throws -> T {
+        do {
+            return try await body()
+        } catch let runtime as RuntimeError {
+            throw runtime
+        } catch let signal as UserThrowSignal {
+            throw signal.positioned(at: Interpreter.evaluationOffset)
+        } catch let control as ReturnSignal {
+            throw control
+        } catch let control as BreakSignal {
+            throw control
+        } catch let control as ContinueSignal {
+            throw control
+        } catch let control as FallthroughSignal {
+            throw control
+        } catch let exit as ScriptExit {
+            throw exit
+        } catch let sentinel as any ScriptUncatchableError {
+            throw sentinel
+        } catch {
+            throw UserThrowSignal(
+                value: .opaque(typeName: "Error", value: error),
+                offset: Interpreter.evaluationOffset
+            )
+        }
+    }
+
+    /// `throw expr` — evaluate the expression and raise it as a user
+    /// error, stamped with the `throw` statement's own position so an
+    /// uncaught script throw can name its line.
     func execute(throw throwStmt: ThrowStmtSyntax, in scope: Scope) async throws -> Value {
         let value = try await evaluate(throwStmt.expression, in: scope)
-        throw UserThrowSignal(value: value)
+        throw UserThrowSignal(
+            value: value,
+            offset: throwStmt.positionAfterSkippingLeadingTrivia.utf8Offset
+        )
     }
 
     /// `do { … } catch <pattern> { … } …` — run the body, dispatch any

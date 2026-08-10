@@ -4,7 +4,53 @@ import ObjectiveC
 #endif
 
 extension Interpreter {
+    /// Central expression dispatcher. Wraps the per-kind dispatch in two
+    /// bits of position bookkeeping (issues #15/#16):
+    ///
+    /// - Binds ``Interpreter/evaluationOffset`` to this node's offset for
+    ///   the duration of its evaluation, so the innermost binding at any
+    ///   moment names the expression being evaluated — which, while a
+    ///   builtin or bridge body runs, is the call that invoked it.
+    /// - Stamps that offset onto any `RuntimeError` / `ScriptError`
+    ///   escaping this node without a position. Inner frames stamp
+    ///   first, so the tightest position wins and outer frames no-op.
     func evaluate(_ expr: ExprSyntax, in scope: Scope) async throws -> Value {
+        let offset = Self.diagnosticAnchor(for: expr)
+        return try await Interpreter.$evaluationOffset.withValue(offset) {
+            do {
+                return try await evaluateExpression(expr, in: scope)
+            } catch let runtime as RuntimeError where runtime.offset == nil {
+                throw runtime.positioned(at: offset)
+            } catch let signal as UserThrowSignal where signal.offset == nil {
+                throw signal.positioned(at: offset)
+            }
+        }
+    }
+
+    /// UTF-8 offset diagnostics for `expr` should point at. Postfix
+    /// forms anchor on their own token — the member name for a member
+    /// access (and for a call whose callee is one), the opening bracket
+    /// for a subscript — rather than the start of the receiver, so a
+    /// line-broken chain (`app\n  .buttons["x"]\n  .tap()`) blames the
+    /// failing member's line, matching where stock Swift attributes
+    /// member diagnostics and `#line`. Everything else anchors at the
+    /// expression's start.
+    static func diagnosticAnchor(for expr: ExprSyntax) -> Int {
+        if let member = expr.as(MemberAccessExprSyntax.self) {
+            return member.declName.positionAfterSkippingLeadingTrivia.utf8Offset
+        }
+        if let call = expr.as(FunctionCallExprSyntax.self),
+           let member = call.calledExpression.as(MemberAccessExprSyntax.self)
+        {
+            return member.declName.positionAfterSkippingLeadingTrivia.utf8Offset
+        }
+        if let subscriptCall = expr.as(SubscriptCallExprSyntax.self) {
+            return subscriptCall.leftSquare.positionAfterSkippingLeadingTrivia.utf8Offset
+        }
+        return expr.positionAfterSkippingLeadingTrivia.utf8Offset
+    }
+
+    private func evaluateExpression(_ expr: ExprSyntax, in scope: Scope) async throws -> Value {
         if let intLit = expr.as(IntegerLiteralExprSyntax.self) {
             return try await evaluate(integerLiteral: intLit)
         }

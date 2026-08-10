@@ -2,16 +2,31 @@ import Foundation
 
 public enum RuntimeError: Error, CustomStringConvertible {
     case unsupported(String, at: Int)
-    case invalid(String)
+    /// `at:` is the source offset of the failing expression, attached
+    /// by the evaluator on the way out when the raising site didn't
+    /// know it (issue #15). It's a payload, not a wrapper case, so
+    /// position never changes what the error *is* — `if case
+    /// .invalid(let msg, _)` matches whether or not a position was
+    /// attached. Position-less throw sites keep the old one-argument
+    /// spelling via the `invalid(_:)` factory below.
+    case invalid(String, at: Int?)
     case unknownIdentifier(String, at: Int)
     case noMacro(String, at: Int)
-    case divisionByZero
+    case divisionByZero(at: Int?)
+
+    /// Source-compatible constructor for the position-less spelling —
+    /// `RuntimeError.invalid("message")` at a raise site resolves here
+    /// and produces `.invalid("message", at: nil)`. (Enum cases can't
+    /// take default arguments, so the default lives in this factory.)
+    public static func invalid(_ message: String) -> RuntimeError {
+        .invalid(message, at: nil)
+    }
 
     public var description: String {
         switch self {
         case .unsupported(let s, _):
             return "unsupported \(s)"
-        case .invalid(let s):
+        case .invalid(let s, _):
             return s
         case .unknownIdentifier(let n, _):
             return "cannot find '\(n)' in scope"
@@ -29,7 +44,23 @@ public enum RuntimeError: Error, CustomStringConvertible {
         case .unsupported(_, let at):       return at
         case .unknownIdentifier(_, let at): return at
         case .noMacro(_, let at):           return at
-        case .invalid, .divisionByZero:     return nil
+        case .invalid(_, let at):           return at
+        case .divisionByZero(let at):       return at
+        }
+    }
+
+    /// Attach a source offset to an error that doesn't carry one yet.
+    /// An error that already knows its position keeps it — the earliest
+    /// (innermost) stamp wins, since it is the most precise.
+    public func positioned(at offset: Int?) -> RuntimeError {
+        guard let offset, self.offset == nil else { return self }
+        switch self {
+        case .invalid(let message, _):
+            return .invalid(message, at: offset)
+        case .divisionByZero:
+            return .divisionByZero(at: offset)
+        case .unsupported, .unknownIdentifier, .noMacro:
+            return self
         }
     }
 }
@@ -47,6 +78,17 @@ struct BreakSignal: Error { let label: String? }
 /// targets a specific labeled loop; if `nil`, continues the innermost.
 struct ContinueSignal: Error { let label: String? }
 
+/// Marker for host errors that must reach the host — never a script
+/// `catch`. By default, an error thrown from a bridge or registered
+/// builtin becomes a catchable `ScriptError`, which means any script
+/// can `try?` it away. A host that throws errors *as control flow* —
+/// skip this run, deadline exceeded, quota exhausted — conforms those
+/// types to this protocol, and both invocation boundaries let them
+/// pass through raw, the way `ScriptExit` already does. No source
+/// position is attached: these are signals to the host, not
+/// diagnostics for the script.
+public protocol ScriptUncatchableError: Error {}
+
 /// Wraps a value thrown from script `throw` so it can travel through
 /// host async/throwing code and be caught with normal Swift `catch`
 /// clauses. The thrown enum / struct payload is available as `value`,
@@ -54,15 +96,33 @@ struct ContinueSignal: Error { let label: String? }
 public struct ScriptError: Error, CustomStringConvertible {
     public let value: Value
 
-    public init(_ value: Value) {
+    /// UTF-8 source offset of the expression or `throw` statement this
+    /// error was raised from, when known — issue #15. Set by the
+    /// interpreter (at the bridge boundary, at `throw` statements, and
+    /// as a fallback by the expression evaluator) so an uncaught error
+    /// can be rendered with source context via
+    /// ``Interpreter/renderRuntimeError(_:)``.
+    public let offset: Int?
+
+    public init(_ value: Value, offset: Int? = nil) {
         self.value = value
+        self.offset = offset
     }
 
     /// Compatibility init matching the old `UserThrowSignal(value:)`
     /// shape used at every interpreter throw site. Keeps the existing
     /// runtime call sites unchanged.
-    init(value: Value) {
+    init(value: Value, offset: Int? = nil) {
         self.value = value
+        self.offset = offset
+    }
+
+    /// Attach a source offset if this error doesn't carry one yet; the
+    /// earliest (innermost) stamp wins. Same contract as
+    /// ``RuntimeError/positioned(at:)``.
+    func positioned(at offset: Int?) -> ScriptError {
+        guard let offset, self.offset == nil else { return self }
+        return ScriptError(value: value, offset: offset)
     }
 
     /// Type name of the thrown value (`E` in `throw E.bad`, struct name
@@ -80,6 +140,16 @@ public struct ScriptError: Error, CustomStringConvertible {
     /// Case name when the thrown value is an enum case.
     public var caseName: String? {
         if case .enumValue(_, let c, _) = value { return c }
+        return nil
+    }
+
+    /// The underlying host `Error` when this wraps one — an error a
+    /// bridge or registered builtin threw, boxed opaquely so script
+    /// `catch` could bind it. Hosts recover their own error types here
+    /// (`scriptError.hostError as? MySentinel`) instead of unpacking
+    /// the `.opaque` payload by hand. Nil for script-thrown values.
+    public var hostError: (any Error)? {
+        if case .opaque(_, let payload) = value { return payload as? any Error }
         return nil
     }
 

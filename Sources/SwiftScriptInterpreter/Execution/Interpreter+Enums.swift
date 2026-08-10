@@ -214,7 +214,7 @@ extension Interpreter {
                 case .staticValue(let v)?:
                     return v
                 case .staticComputed(let body)?:
-                    return try await body()
+                    return try await callingBridge { try await body() }
                 default:
                     break
                 }

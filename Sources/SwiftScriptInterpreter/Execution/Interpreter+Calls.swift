@@ -504,12 +504,12 @@ extension Interpreter {
     ) async throws -> Value {
         switch fn.kind {
         case .builtin(let body):
-            return try await body(args)
+            return try await callingBuiltin { try await body(args) }
 
         case .builtinMethod(let body):
             // A module-registered method invoked as a free function (no
             // receiver). Pass `.void` so the body can error if it needs one.
-            return try await body(.void, args)
+            return try await callingBuiltin { try await body(.void, args) }
 
         case .user(let body, let capturedScope):
             // Generic-parameter scope for type validation inside the
@@ -822,7 +822,7 @@ extension Interpreter {
         case .staticValue(let v)?:
             return v
         case .staticComputed(let body)?:
-            return try await body()
+            return try await callingBridge { try await body() }
         default:
             break
         }
