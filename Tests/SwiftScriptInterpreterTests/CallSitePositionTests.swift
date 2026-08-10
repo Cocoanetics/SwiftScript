@@ -201,6 +201,69 @@ struct CallSitePositionTests {
         }
     }
 
+    // MARK: - Registered globals sit on the same boundary
+
+    @Test func hostErrorFromRegisteredGlobalRendersWithPosition() async throws {
+        // A custom host error thrown from a `registerGlobal` closure is
+        // wrapped and stamped like a bridge error would be — not left to
+        // escape raw with no position.
+        let interp = Interpreter(output: { _ in })
+        interp.registerGlobal(name: "flaky") { _ in throw HostFailure() }
+        do {
+            _ = try await interp.eval(#"""
+                let x = 1
+                flaky()
+                """#, fileName: "check.swift")
+            Issue.record("expected the host error to end the script")
+        } catch {
+            let script = try #require(error as? ScriptError)
+            #expect(script.offset != nil)
+            let rendered = interp.renderRuntimeError(error)
+            #expect(rendered.contains("check.swift:2:1: error:"))
+            #expect(rendered.contains("HostFailure"))
+        }
+    }
+
+    @Test func hostErrorFromRegisteredGlobalIsCatchable() async throws {
+        // Same catchability contract as a bridge body (#13): a host
+        // error is a recoverable failure, not an interpreter trap.
+        var out = ""
+        let interp = Interpreter(output: { out += $0 })
+        interp.registerGlobal(name: "flaky") { _ in throw HostFailure() }
+        _ = try await interp.eval(#"""
+            do {
+                flaky()
+            } catch {
+                print("recovered:", error)
+            }
+            """#)
+        #expect(out.contains("recovered:"))
+        #expect(out.contains("HostFailure"))
+    }
+
+    @Test func runtimeErrorFromRegisteredGlobalStaysFatal() async throws {
+        // The trap side of the boundary is unchanged: `RuntimeError`
+        // from a global (the `fatalError` / `precondition` shape) still
+        // terminates the script past any `catch` — but positioned now.
+        let interp = Interpreter(output: { _ in })
+        interp.registerGlobal(name: "trap") { _ in
+            throw RuntimeError.invalid("deliberate trap")
+        }
+        do {
+            _ = try await interp.eval(#"""
+                do {
+                    trap()
+                } catch {
+                    print("should not catch a trap")
+                }
+                """#, fileName: "check.swift")
+            Issue.record("expected the trap to end the script")
+        } catch {
+            let rendered = interp.renderRuntimeError(error)
+            #expect(rendered.contains("check.swift:2:5: error: deliberate trap"))
+        }
+    }
+
     // MARK: - Issue #16: the call site is visible to builtins
 
     @Test func recordedAssertionFailureNamesItsLine() async throws {

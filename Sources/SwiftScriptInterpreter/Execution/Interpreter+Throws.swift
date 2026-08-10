@@ -61,6 +61,41 @@ extension Interpreter {
         }
     }
 
+    /// Run a host-registered builtin (`registerGlobal` / `registerBuiltin`
+    /// closures, and bridge static methods packaged as `.builtin`
+    /// Functions). Same contract as ``callingBridge(_:)`` for an
+    /// arbitrary host error — it becomes a catchable `ScriptError`
+    /// stamped with the invoking call's offset — but a `RuntimeError`
+    /// passes through raw: the diagnostic builtins (`fatalError`,
+    /// `precondition`, `assert`) signal traps that way, and traps must
+    /// keep terminating the script the way stock Swift's do. (The
+    /// expression dispatcher still stamps the raw `RuntimeError` with
+    /// its position on the way out.)
+    func callingBuiltin<T>(_ body: () async throws -> T) async throws -> T {
+        do {
+            return try await body()
+        } catch let runtime as RuntimeError {
+            throw runtime
+        } catch let signal as UserThrowSignal {
+            throw signal.positioned(at: Interpreter.evaluationOffset)
+        } catch let control as ReturnSignal {
+            throw control
+        } catch let control as BreakSignal {
+            throw control
+        } catch let control as ContinueSignal {
+            throw control
+        } catch let control as FallthroughSignal {
+            throw control
+        } catch let exit as ScriptExit {
+            throw exit
+        } catch {
+            throw UserThrowSignal(
+                value: .opaque(typeName: "Error", value: error),
+                offset: Interpreter.evaluationOffset
+            )
+        }
+    }
+
     /// `throw expr` — evaluate the expression and raise it as a user
     /// error, stamped with the `throw` statement's own position so an
     /// uncaught script throw can name its line.

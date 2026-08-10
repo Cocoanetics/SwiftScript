@@ -75,7 +75,10 @@ extension Interpreter {
         case .staticValue(let v)?:
             return v
         case .staticComputed(let body)?:
-            return try await body()
+            // Bridge body — route through `callingBridge` so its errors
+            // are catchable and stamped with the access position, same
+            // as instance computed properties.
+            return try await callingBridge { try await body() }
         default:
             break
         }
