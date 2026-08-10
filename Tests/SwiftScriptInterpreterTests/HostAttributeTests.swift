@@ -116,6 +116,19 @@ struct HostAttributeTests {
         #expect(interp.declarations(withAttribute: "Test").isEmpty)
     }
 
+    @Test func suiteEnumIsRecorded() async throws {
+        // Swift Testing allows enums as suite containers — the enum
+        // path records registered attributes like structs and classes.
+        let interp = Interpreter()
+        interp.registerAttribute("Suite")
+        _ = try await interp.eval("""
+            @Suite enum Fixtures {}
+            """)
+        let suites = interp.declarations(withAttribute: "Suite")
+        #expect(suites.map(\.name) == ["Fixtures"])
+        #expect(suites[0].invocable == nil)
+    }
+
     @Test func reEvaluationReplacesInsteadOfDuplicating() async throws {
         let interp = Interpreter()
         interp.registerAttribute("Test")

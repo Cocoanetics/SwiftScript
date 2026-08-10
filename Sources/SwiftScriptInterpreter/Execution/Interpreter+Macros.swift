@@ -28,20 +28,9 @@ extension Interpreter {
         }
         var args: [MacroArgument] = []
         for element in node.arguments {
-            // Leading-dot members defer to the callee (issue #11's rule
-            // for bridged receivers): the macro's parameter types live
-            // on the host, so `.someCase` can only mean what the
-            // handler says it means.
-            let value = try await evaluateArg(
-                element.expression,
-                label: element.label?.text,
-                contextType: nil,
-                in: scope,
-                deferToCallee: true
-            )
             args.append(MacroArgument(
                 label: element.label?.text,
-                value: value,
+                value: try await evaluateHostArgument(element.expression, in: scope),
                 sourceText: element.expression.trimmedDescription
             ))
         }
@@ -95,7 +84,7 @@ extension Interpreter {
                 for arg in list {
                     args.append(MacroArgument(
                         label: arg.label?.text,
-                        value: try await evaluateAttributeArgument(arg.expression, in: scope),
+                        value: try await evaluateHostArgument(arg.expression, in: scope),
                         sourceText: arg.expression.trimmedDescription
                     ))
                 }
@@ -112,14 +101,15 @@ extension Interpreter {
         }
     }
 
-    /// Evaluate one attribute argument. The attribute's parameter types
-    /// exist only on the host, so implicit-member forms — bare
-    /// (`.serialized`) and call-shaped (`.disabled("flaky")`, including
-    /// nested ones like `.tags(.critical)`) — become unresolved enum
-    /// markers (`typeName: ""`) for the host to interpret, extending
-    /// issue #11's defer-to-the-callee rule. Everything else evaluates
+    /// Evaluate one macro or attribute argument. The parameter types of
+    /// a registered macro / attribute exist only on the host, so
+    /// implicit-member forms — bare (`.serialized`) and call-shaped
+    /// (`.disabled("flaky")`, including nested ones like
+    /// `.tags(.critical)`) — become unresolved enum markers
+    /// (`typeName: ""`) for the host to interpret, extending issue
+    /// #11's defer-to-the-callee rule. Everything else evaluates
     /// normally.
-    private func evaluateAttributeArgument(
+    private func evaluateHostArgument(
         _ expr: ExprSyntax,
         in scope: Scope
     ) async throws -> Value {
@@ -136,7 +126,7 @@ extension Interpreter {
         {
             var payload: [Value] = []
             for arg in call.arguments {
-                payload.append(try await evaluateAttributeArgument(arg.expression, in: scope))
+                payload.append(try await evaluateHostArgument(arg.expression, in: scope))
             }
             return .enumValue(
                 typeName: "",

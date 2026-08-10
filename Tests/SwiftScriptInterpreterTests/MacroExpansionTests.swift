@@ -109,6 +109,21 @@ struct MacroExpansionTests {
         #expect(got == .enumValue(typeName: "", caseName: "someCase", associatedValues: []))
     }
 
+    @Test func callShapedLeadingDotArgumentDefersToHandler() async throws {
+        // `.caseName(1)` — call-shaped implicit member, same deferral
+        // as the bare form (and as attribute arguments).
+        let interp = Interpreter()
+        var got: Value? = nil
+        interp.registerMacro("probe") { args in
+            got = args[0].value
+            return .void
+        }
+        _ = try await interp.eval("#probe(.caseName(1))")
+        #expect(got == .enumValue(
+            typeName: "", caseName: "caseName", associatedValues: [.int(1)]
+        ))
+    }
+
     @Test func trailingClosureFoldsIntoArguments() async throws {
         let interp = Interpreter()
         var sourceTexts: [String] = []

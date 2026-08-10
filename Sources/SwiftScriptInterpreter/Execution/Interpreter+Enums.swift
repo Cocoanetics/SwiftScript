@@ -131,6 +131,14 @@ extension Interpreter {
             methods: methods,
             staticMembers: staticMembers
         )
+        // `@Suite enum Fixtures { … }` — record host-registered
+        // attributes, same as the struct / class paths.
+        try await recordAttributedDeclarations(
+            enumDecl.attributes,
+            declarationName: name,
+            invocable: nil,
+            in: scope
+        )
         return .void
     }
 
