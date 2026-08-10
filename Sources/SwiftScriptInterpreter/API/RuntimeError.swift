@@ -2,29 +2,35 @@ import Foundation
 
 public enum RuntimeError: Error, CustomStringConvertible {
     case unsupported(String, at: Int)
-    case invalid(String)
+    /// `at:` is the source offset of the failing expression, attached
+    /// by the evaluator on the way out when the raising site didn't
+    /// know it (issue #15). It's a payload, not a wrapper case, so
+    /// position never changes what the error *is* — `if case
+    /// .invalid(let msg, _)` matches whether or not a position was
+    /// attached. Position-less throw sites keep the old one-argument
+    /// spelling via the `invalid(_:)` factory below.
+    case invalid(String, at: Int?)
     case unknownIdentifier(String, at: Int)
-    case divisionByZero
-    /// Any of the other cases with a source position attached after the
-    /// fact — issue #15. Errors like `.invalid` are raised deep inside
-    /// bridge/builtin bodies that don't know where they were called
-    /// from; the evaluator wraps them in this case on the way out so
-    /// `renderRuntimeError` can point at the failing expression. Build
-    /// via ``positioned(at:)``, which never double-wraps.
-    indirect case positioned(RuntimeError, at: Int)
+    case divisionByZero(at: Int?)
+
+    /// Source-compatible constructor for the position-less spelling —
+    /// `RuntimeError.invalid("message")` at a raise site resolves here
+    /// and produces `.invalid("message", at: nil)`. (Enum cases can't
+    /// take default arguments, so the default lives in this factory.)
+    public static func invalid(_ message: String) -> RuntimeError {
+        .invalid(message, at: nil)
+    }
 
     public var description: String {
         switch self {
         case .unsupported(let s, _):
             return "unsupported \(s)"
-        case .invalid(let s):
+        case .invalid(let s, _):
             return s
         case .unknownIdentifier(let n, _):
             return "cannot find '\(n)' in scope"
         case .divisionByZero:
             return "division by zero"
-        case .positioned(let inner, _):
-            return inner.description
         }
     }
 
@@ -34,8 +40,8 @@ public enum RuntimeError: Error, CustomStringConvertible {
         switch self {
         case .unsupported(_, let at):       return at
         case .unknownIdentifier(_, let at): return at
-        case .positioned(_, let at):        return at
-        case .invalid, .divisionByZero:     return nil
+        case .invalid(_, let at):           return at
+        case .divisionByZero(let at):       return at
         }
     }
 
@@ -44,7 +50,14 @@ public enum RuntimeError: Error, CustomStringConvertible {
     /// (innermost) stamp wins, since it is the most precise.
     public func positioned(at offset: Int?) -> RuntimeError {
         guard let offset, self.offset == nil else { return self }
-        return .positioned(self, at: offset)
+        switch self {
+        case .invalid(let message, _):
+            return .invalid(message, at: offset)
+        case .divisionByZero:
+            return .divisionByZero(at: offset)
+        case .unsupported, .unknownIdentifier:
+            return self
+        }
     }
 }
 
@@ -60,6 +73,17 @@ struct BreakSignal: Error { let label: String? }
 /// Thrown by `continue`, caught by the enclosing loop. An optional `label`
 /// targets a specific labeled loop; if `nil`, continues the innermost.
 struct ContinueSignal: Error { let label: String? }
+
+/// Marker for host errors that must reach the host — never a script
+/// `catch`. By default, an error thrown from a bridge or registered
+/// builtin becomes a catchable `ScriptError`, which means any script
+/// can `try?` it away. A host that throws errors *as control flow* —
+/// skip this run, deadline exceeded, quota exhausted — conforms those
+/// types to this protocol, and both invocation boundaries let them
+/// pass through raw, the way `ScriptExit` already does. No source
+/// position is attached: these are signals to the host, not
+/// diagnostics for the script.
+public protocol ScriptUncatchableError: Error {}
 
 /// Wraps a value thrown from script `throw` so it can travel through
 /// host async/throwing code and be caught with normal Swift `catch`
@@ -112,6 +136,16 @@ public struct ScriptError: Error, CustomStringConvertible {
     /// Case name when the thrown value is an enum case.
     public var caseName: String? {
         if case .enumValue(_, let c, _) = value { return c }
+        return nil
+    }
+
+    /// The underlying host `Error` when this wraps one — an error a
+    /// bridge or registered builtin threw, boxed opaquely so script
+    /// `catch` could bind it. Hosts recover their own error types here
+    /// (`scriptError.hostError as? MySentinel`) instead of unpacking
+    /// the `.opaque` payload by hand. Nil for script-thrown values.
+    public var hostError: (any Error)? {
+        if case .opaque(_, let payload) = value { return payload as? any Error }
         return nil
     }
 

@@ -32,7 +32,9 @@ extension Interpreter {
     ///
     /// Falls back to a plain `error: <msg>` line when no source tree is
     /// in scope (nothing evaluated yet). Offsets outside the current
-    /// tree are clamped to its end.
+    /// tree are clamped to its end. Offsets are only meaningful against
+    /// the script they came from — render recorded issues before
+    /// evaluating another script on the same interpreter.
     public func renderSourceContext(at offset: Int, message: String) -> String {
         guard let tree = currentSourceFile, let fileName = currentFileName else {
             return "error: \(message)\n"

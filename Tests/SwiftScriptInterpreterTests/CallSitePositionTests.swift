@@ -57,9 +57,30 @@ struct CallSitePositionTests {
             let script = try #require(error as? ScriptError)
             #expect(script.offset != nil)
             let rendered = interp.renderRuntimeError(error)
+            // Anchored on the member name, where stock Swift points
+            // member diagnostics — not on the receiver.
             #expect(rendered.contains(
-                "check.swift:3:1: error: no element matches buttons[\"missing\"]"))
+                "check.swift:3:3: error: no element matches buttons[\"missing\"]"))
             #expect(rendered.contains("`- error: no element matches"))
+        }
+    }
+
+    @Test func lineBrokenChainBlamesTheFailingMemberLine() async throws {
+        // Conventional XCUITest formatting: each postfix step on its own
+        // line. The caret must land on the failing member's line, not on
+        // the receiver at the start of the chain.
+        let interp = makeFlakyInterpreter()
+        do {
+            _ = try await interp.eval(#"""
+                import Flaky
+                let w = Widget()
+                w
+                    .mustExist()
+                """#, fileName: "chain.swift")
+            Issue.record("expected the bridge error to end the script")
+        } catch {
+            let rendered = interp.renderRuntimeError(error)
+            #expect(rendered.contains("chain.swift:4:6: error: no element matches"))
         }
     }
 
@@ -75,14 +96,33 @@ struct CallSitePositionTests {
             Issue.record("expected the bridge error to end the script")
         } catch {
             let script = try #require(error as? ScriptError)
-            guard case .opaque("Error", let payload) = script.value,
-                  let runtime = payload as? RuntimeError
-            else {
-                Issue.record("expected an opaque RuntimeError payload, got \(script.value)")
-                return
-            }
+            let runtime = try #require(script.hostError as? RuntimeError)
             #expect(runtime.offset == script.offset)
             #expect(runtime.description == "no element matches buttons[\"missing\"]")
+            // The positioned error still matches its case pattern —
+            // position is a payload, not a wrapper that changes what
+            // the error is.
+            guard case .invalid(let message, let at) = runtime else {
+                Issue.record("positioned error no longer matches .invalid")
+                return
+            }
+            #expect(message == "no element matches buttons[\"missing\"]")
+            #expect(at == script.offset)
+        }
+    }
+
+    @Test func positionedDivisionByZeroStillMatchesItsCase() async throws {
+        let interp = Interpreter(output: { _ in })
+        do {
+            _ = try await interp.eval("1 / 0", fileName: "check.swift")
+            Issue.record("expected the division to trap")
+        } catch {
+            let runtime = try #require(error as? RuntimeError)
+            #expect(runtime.offset != nil)
+            guard case .divisionByZero = runtime else {
+                Issue.record("positioned error no longer matches .divisionByZero")
+                return
+            }
         }
     }
 
@@ -99,7 +139,7 @@ struct CallSitePositionTests {
             Issue.record("expected the host error to end the script")
         } catch {
             let rendered = interp.renderRuntimeError(error)
-            #expect(rendered.contains("check.swift:3:1: error:"))
+            #expect(rendered.contains("check.swift:3:3: error:"))
             #expect(rendered.contains("HostFailure"))
         }
     }
@@ -135,7 +175,8 @@ struct CallSitePositionTests {
             Issue.record("expected the out-of-bounds error to end the script")
         } catch {
             let rendered = interp.renderRuntimeError(error)
-            #expect(rendered.contains("check.swift:3:9: error: Data index 99 out of bounds"))
+            // Anchored on the subscript's opening bracket.
+            #expect(rendered.contains("check.swift:3:10: error: Data index 99 out of bounds"))
         }
     }
 
@@ -261,6 +302,60 @@ struct CallSitePositionTests {
         } catch {
             let rendered = interp.renderRuntimeError(error)
             #expect(rendered.contains("check.swift:2:5: error: deliberate trap"))
+        }
+    }
+
+    // MARK: - Host control-flow sentinels bypass script catch
+
+    /// The Loupe regression: a host that throws a sentinel as control
+    /// flow (XCTSkip-style) must always get it back — script `catch`
+    /// and `try?` must not be able to swallow it.
+    private struct SkipSentinel: Error, ScriptUncatchableError {}
+
+    @Test func uncatchableSentinelFromGlobalReachesTheHostIntact() async throws {
+        let interp = Interpreter(output: { _ in })
+        interp.registerGlobal(name: "skipRun") { _ in throw SkipSentinel() }
+        do {
+            _ = try await interp.eval(#"""
+                do {
+                    let x = try? skipRun()
+                } catch {
+                    print("script must not see the sentinel")
+                }
+                """#)
+            Issue.record("expected the sentinel to end the script")
+        } catch {
+            // Raw and typed — not boxed into a ScriptError.
+            #expect(error is SkipSentinel)
+        }
+    }
+
+    @Test func uncatchableSentinelFromBridgeReachesTheHostIntact() async throws {
+        let interp = Interpreter(output: { _ in })
+        struct SkipModule: BuiltinModule {
+            let name = "Skip"
+            func register(into i: Interpreter) {
+                i.bridges["init Gate()"] = .`init` { _ in
+                    .opaque(typeName: "Gate", value: "g")
+                }
+                i.bridges["func Gate.check()"] = .method { _, _ in
+                    throw SkipSentinel()
+                }
+            }
+        }
+        interp.registerOnImport("Skip", module: SkipModule())
+        do {
+            _ = try await interp.eval(#"""
+                import Skip
+                do {
+                    Gate().check()
+                } catch {
+                    print("script must not see the sentinel")
+                }
+                """#)
+            Issue.record("expected the sentinel to end the script")
+        } catch {
+            #expect(error is SkipSentinel)
         }
     }
 

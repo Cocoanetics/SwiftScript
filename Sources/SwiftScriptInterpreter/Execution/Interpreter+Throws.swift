@@ -44,6 +44,10 @@ extension Interpreter {
             throw control
         } catch let exit as ScriptExit {
             throw exit
+        } catch let sentinel as any ScriptUncatchableError {
+            // Host control-flow (skip, deadline, quota, …) — must reach
+            // the host, so it is never boxed into a catchable value.
+            throw sentinel
         } catch let runtime as RuntimeError {
             // Position the error itself as well as the signal, so a host
             // that digs the RuntimeError back out of the opaque payload
@@ -70,7 +74,8 @@ extension Interpreter {
     /// `precondition`, `assert`) signal traps that way, and traps must
     /// keep terminating the script the way stock Swift's do. (The
     /// expression dispatcher still stamps the raw `RuntimeError` with
-    /// its position on the way out.)
+    /// its position on the way out.) `ScriptUncatchableError`s pass
+    /// through raw as well — host control flow, not script-visible.
     func callingBuiltin<T>(_ body: () async throws -> T) async throws -> T {
         do {
             return try await body()
@@ -88,6 +93,8 @@ extension Interpreter {
             throw control
         } catch let exit as ScriptExit {
             throw exit
+        } catch let sentinel as any ScriptUncatchableError {
+            throw sentinel
         } catch {
             throw UserThrowSignal(
                 value: .opaque(typeName: "Error", value: error),
