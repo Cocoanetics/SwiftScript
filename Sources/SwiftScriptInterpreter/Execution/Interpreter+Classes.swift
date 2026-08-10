@@ -7,12 +7,21 @@ extension Interpreter {
     /// a value, and we record the optional superclass so dispatch can walk
     /// the chain.
     func execute(classDecl: ClassDeclSyntax, in scope: Scope) async throws -> Value {
-        return try await registerClassLike(
+        let result = try await registerClassLike(
             name: classDecl.name.text,
             inheritance: classDecl.inheritanceClause,
             memberBlock: classDecl.memberBlock,
             in: scope
         )
+        // `@Suite class …` — record host-registered attributes, same
+        // as the struct path.
+        try await recordAttributedDeclarations(
+            classDecl.attributes,
+            declarationName: classDecl.name.text,
+            invocable: nil,
+            in: scope
+        )
+        return result
     }
 
     /// `actor Foo { … }` — registered as a class, since this single-
@@ -20,12 +29,19 @@ extension Interpreter {
     /// directly without `await` (the `await` keyword is already a no-op
     /// at the expression level).
     func execute(actorDecl: ActorDeclSyntax, in scope: Scope) async throws -> Value {
-        return try await registerClassLike(
+        let result = try await registerClassLike(
             name: actorDecl.name.text,
             inheritance: actorDecl.inheritanceClause,
             memberBlock: actorDecl.memberBlock,
             in: scope
         )
+        try await recordAttributedDeclarations(
+            actorDecl.attributes,
+            declarationName: actorDecl.name.text,
+            invocable: nil,
+            in: scope
+        )
+        return result
     }
 
     private func registerClassLike(
@@ -80,6 +96,7 @@ extension Interpreter {
 
         for member in memberBlock.members {
             let decl = member.decl
+            try rejectMacroMember(decl)
             if let varDecl = decl.as(VariableDeclSyntax.self) {
                 let isStatic = varDecl.modifiers.contains {
                     $0.name.tokenKind == .keyword(.static)

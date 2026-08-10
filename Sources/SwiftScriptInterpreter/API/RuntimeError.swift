@@ -4,6 +4,7 @@ public enum RuntimeError: Error, CustomStringConvertible {
     case unsupported(String, at: Int)
     case invalid(String)
     case unknownIdentifier(String, at: Int)
+    case noMacro(String, at: Int)
     case divisionByZero
 
     public var description: String {
@@ -14,6 +15,8 @@ public enum RuntimeError: Error, CustomStringConvertible {
             return s
         case .unknownIdentifier(let n, _):
             return "cannot find '\(n)' in scope"
+        case .noMacro(let n, _):
+            return "no macro named '\(n)'"
         case .divisionByZero:
             return "division by zero"
         }
@@ -25,6 +28,7 @@ public enum RuntimeError: Error, CustomStringConvertible {
         switch self {
         case .unsupported(_, let at):       return at
         case .unknownIdentifier(_, let at): return at
+        case .noMacro(_, let at):           return at
         case .invalid, .divisionByZero:     return nil
         }
     }

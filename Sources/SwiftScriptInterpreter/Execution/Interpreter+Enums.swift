@@ -26,6 +26,7 @@ extension Interpreter {
 
         for member in enumDecl.memberBlock.members {
             let decl = member.decl
+            try rejectMacroMember(decl)
             if let caseDecl = decl.as(EnumCaseDeclSyntax.self) {
                 for element in caseDecl.elements {
                     let caseName = element.name.text

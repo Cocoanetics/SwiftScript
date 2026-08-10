@@ -162,6 +162,13 @@ extension Interpreter {
         if let keyPath = expr.as(KeyPathExprSyntax.self) {
             return try evaluate(keyPath: keyPath)
         }
+        // `#expect(a == b)` — freestanding macro expansion, dispatched
+        // to the host-registered handler. Covers every position the
+        // parser produces the expr node in: top level, statement
+        // position in a body, and inside a binding (`try #require(…)`).
+        if let macroExpansion = expr.as(MacroExpansionExprSyntax.self) {
+            return try await evaluate(macroExpansion: macroExpansion, in: scope)
+        }
         if let seq = expr.as(SequenceExprSyntax.self) {
             // Operator folding should have eliminated these. If we still see one,
             // it's a sign the input contained an operator we don't know about.

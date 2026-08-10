@@ -21,6 +21,7 @@ extension Interpreter {
 
         for member in extensionDecl.memberBlock.members {
             let decl = member.decl
+            try rejectMacroMember(decl)
             if let funcDecl = decl.as(FunctionDeclSyntax.self) {
                 guard let body = funcDecl.body else { continue }
                 let methodName = funcDecl.name.text

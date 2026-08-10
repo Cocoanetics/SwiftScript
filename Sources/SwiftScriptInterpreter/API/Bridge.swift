@@ -70,6 +70,14 @@ public enum Bridge {
     /// it back to the variable; reference-typed carriers mutate in
     /// place and return the receiver unchanged.
     case subscriptSet((Value, [Value], Value) async throws -> Value)
+    /// Freestanding macro expansion (`#expect(...)`) — keyed
+    /// `"macro #expect"`. Receives each argument evaluated *and* with
+    /// its exact source spelling (see ``MacroArgument``), because the
+    /// point of a macro over a function is access to the source text:
+    /// `#expect(a == b)` can report "a == b" alongside the `false` it
+    /// received. One entry serves every arity — the handler switches
+    /// on the argument shapes it supports.
+    case macro(([MacroArgument]) async throws -> Value)
 }
 
 /// Indexed view of a property bridge — getter (always present for
@@ -299,5 +307,11 @@ extension Interpreter {
     /// `subscript Type.set` — write access on a bridged type.
     func bridgeKey(forSubscriptSetOn typeName: String) -> String {
         "subscript \(typeName).set"
+    }
+
+    /// `macro #expect` — freestanding macro expansion. `name` is the
+    /// bare macro name without the `#`.
+    func bridgeKey(forMacro name: String) -> String {
+        "macro #\(name)"
     }
 }

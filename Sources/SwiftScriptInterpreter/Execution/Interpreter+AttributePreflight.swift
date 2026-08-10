@@ -37,14 +37,23 @@ private let ignorableDeclAttributes: Set<String> = [
 /// Walks a parsed source file and records the first declaration
 /// attribute the interpreter cannot honor. Type-position attributes
 /// (`@escaping`, `@Sendable` inside a function type) are exempt —
-/// they constrain the type system, not runtime behavior.
+/// they constrain the type system, not runtime behavior. Attributes
+/// the host registered via `registerAttribute` (`@Test`, `@Suite`)
+/// are exempt too — the host declared it knows their semantics.
 final class UnsupportedAttributeScanner: SyntaxVisitor {
     private(set) var offense: (name: String, offset: Int, reason: String)?
+    private let hostRegistered: Set<String>
+
+    private init(hostRegistered: Set<String>) {
+        self.hostRegistered = hostRegistered
+        super.init(viewMode: .sourceAccurate)
+    }
 
     static func firstOffense(
-        in file: SourceFileSyntax
+        in file: SourceFileSyntax,
+        allowing hostRegistered: Set<String> = []
     ) -> (name: String, offset: Int, reason: String)? {
-        let scanner = UnsupportedAttributeScanner(viewMode: .sourceAccurate)
+        let scanner = UnsupportedAttributeScanner(hostRegistered: hostRegistered)
         scanner.walk(file)
         return scanner.offense
     }
@@ -67,7 +76,8 @@ final class UnsupportedAttributeScanner: SyntaxVisitor {
             .trimmingCharacters(in: .whitespacesAndNewlines)
         let offset = node.positionAfterSkippingLeadingTrivia.utf8Offset
         switch name {
-        case _ where ignorableDeclAttributes.contains(name):
+        case _ where ignorableDeclAttributes.contains(name)
+            || hostRegistered.contains(name):
             break
         case "propertyWrapper":
             offense = (name, offset,
@@ -95,7 +105,9 @@ extension Interpreter {
     /// interpreter would otherwise silently ignore. Called from
     /// ``eval(_:fileName:)`` after parsing, before execution.
     func rejectUnsupportedAttributes(in file: SourceFileSyntax) throws {
-        if let offense = UnsupportedAttributeScanner.firstOffense(in: file) {
+        if let offense = UnsupportedAttributeScanner.firstOffense(
+            in: file, allowing: registeredAttributes
+        ) {
             throw RuntimeError.unsupported(
                 "attribute '@\(offense.name)': \(offense.reason)",
                 at: offense.offset

@@ -226,6 +226,14 @@ extension Interpreter {
             kind: .user(body: body.statements, capturedScope: scope)
         )
         scope.bind(name, value: .function(function), mutable: false)
+        // `@Test func loginWorks()` — a host-registered attribute makes
+        // the declaration enumerable (and invocable) by the host.
+        try await recordAttributedDeclarations(
+            funcDecl.attributes,
+            declarationName: name,
+            invocable: .function(function),
+            in: scope
+        )
         return .void
     }
 

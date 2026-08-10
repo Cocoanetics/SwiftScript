@@ -157,6 +157,17 @@ public final class Interpreter: @unchecked Sendable {
     /// matching type names, so script code can write `dateA < dateB`.
     var opaqueComparators: [String: (Value, Value) throws -> Int] = [:]
 
+    /// Attached-attribute names the host has declared it understands
+    /// (`registerAttribute("Test")`). The unsupported-attribute
+    /// preflight skips these, and declarations carrying one are
+    /// recorded in `attributedDeclarations`.
+    var registeredAttributes: Set<String> = []
+
+    /// Declarations observed carrying a registered attribute, in
+    /// execution order. Enumerated by `declarations(withAttribute:)`;
+    /// re-executing a declaration replaces its earlier entry.
+    var attributedDeclarations: [AttributedDeclaration] = []
+
     /// The most recently parsed source file and its file name, retained
     /// after `eval(...)` returns so runtime errors can be rendered with
     /// source-listing context (`renderRuntimeError`).

@@ -31,6 +31,7 @@ extension Interpreter {
 
         for member in structDecl.memberBlock.members {
             let decl = member.decl
+            try rejectMacroMember(decl)
             if let varDecl = decl.as(VariableDeclSyntax.self) {
                 let isStatic = varDecl.modifiers.contains { mod in
                     mod.name.tokenKind == .keyword(.static)
@@ -163,6 +164,15 @@ extension Interpreter {
         for (memberName, fn) in staticMethods {
             structDefs[name]!.staticMembers[memberName] = .function(fn)
         }
+        // `@Suite struct LoginTests { … }` — record host-registered
+        // attributes so the host can enumerate suite types. No
+        // invocable; the host instantiates through normal script paths.
+        try await recordAttributedDeclarations(
+            structDecl.attributes,
+            declarationName: name,
+            invocable: nil,
+            in: scope
+        )
         return .void
     }
 
