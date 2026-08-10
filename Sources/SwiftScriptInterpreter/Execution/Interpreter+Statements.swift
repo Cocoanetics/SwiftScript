@@ -17,13 +17,24 @@ func paramIsInout(_ type: TypeSyntax) -> Bool {
 
 extension Interpreter {
     func execute(item: CodeBlockItemSyntax, in scope: Scope) async throws -> Value {
-        switch item.item {
-        case .decl(let decl):
-            return try await execute(decl: decl, in: scope)
-        case .stmt(let stmt):
-            return try await execute(stmt: stmt, in: scope)
-        case .expr(let expr):
-            return try await evaluate(expr, in: scope)
+        do {
+            switch item.item {
+            case .decl(let decl):
+                return try await execute(decl: decl, in: scope)
+            case .stmt(let stmt):
+                return try await execute(stmt: stmt, in: scope)
+            case .expr(let expr):
+                return try await evaluate(expr, in: scope)
+            }
+        } catch let runtime as RuntimeError where runtime.offset == nil {
+            // Coarse fallback for errors raised at statement level,
+            // outside any expression frame (declaration validation and
+            // the like) — at least name the statement. Anything raised
+            // under an expression was already stamped, more precisely,
+            // by the expression dispatcher.
+            throw runtime.positioned(
+                at: item.positionAfterSkippingLeadingTrivia.utf8Offset
+            )
         }
     }
 

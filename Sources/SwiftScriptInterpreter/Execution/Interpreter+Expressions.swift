@@ -4,7 +4,30 @@ import ObjectiveC
 #endif
 
 extension Interpreter {
+    /// Central expression dispatcher. Wraps the per-kind dispatch in two
+    /// bits of position bookkeeping (issues #15/#16):
+    ///
+    /// - Binds ``Interpreter/evaluationOffset`` to this node's offset for
+    ///   the duration of its evaluation, so the innermost binding at any
+    ///   moment names the expression being evaluated — which, while a
+    ///   builtin or bridge body runs, is the call that invoked it.
+    /// - Stamps that offset onto any `RuntimeError` / `ScriptError`
+    ///   escaping this node without a position. Inner frames stamp
+    ///   first, so the tightest position wins and outer frames no-op.
     func evaluate(_ expr: ExprSyntax, in scope: Scope) async throws -> Value {
+        let offset = expr.positionAfterSkippingLeadingTrivia.utf8Offset
+        return try await Interpreter.$evaluationOffset.withValue(offset) {
+            do {
+                return try await evaluateExpression(expr, in: scope)
+            } catch let runtime as RuntimeError where runtime.offset == nil {
+                throw runtime.positioned(at: offset)
+            } catch let signal as UserThrowSignal where signal.offset == nil {
+                throw signal.positioned(at: offset)
+            }
+        }
+    }
+
+    private func evaluateExpression(_ expr: ExprSyntax, in scope: Scope) async throws -> Value {
         if let intLit = expr.as(IntegerLiteralExprSyntax.self) {
             return try await evaluate(integerLiteral: intLit)
         }

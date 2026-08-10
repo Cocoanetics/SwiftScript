@@ -163,6 +163,31 @@ public final class Interpreter: @unchecked Sendable {
     var currentSourceFile: SourceFileSyntax?
     var currentFileName: String?
 
+    /// UTF-8 offset of the innermost expression currently being
+    /// evaluated. Task-local rather than instance state so concurrent
+    /// script tasks (`Task { … }` in script code) each see their own
+    /// evaluation position, and so the value unwinds automatically —
+    /// no save/restore discipline that an interleaved `await` could
+    /// corrupt. Bound by the expression dispatcher around every node;
+    /// read at the bridge/builtin boundary to attach source positions
+    /// to errors (issue #15) and surfaced to host-registered builtins
+    /// as ``currentCallOffset`` (issue #16).
+    @TaskLocal static var evaluationOffset: Int?
+
+    /// Source offset (UTF-8) of the call currently being evaluated, if
+    /// any — issue #16. Valid for the duration of a builtin or bridge
+    /// invocation: while a closure registered via
+    /// ``registerGlobal(name:body:)`` (or any bridge body) runs, this
+    /// is the offset of the call expression that invoked it. A host
+    /// that *records* a failure instead of throwing (Swift Testing /
+    /// XCTest-style assertions) captures this alongside the issue and
+    /// later renders it with ``renderSourceContext(at:message:)``.
+    ///
+    /// Outside evaluation this is `nil`. The value is task-scoped, not
+    /// interpreter-scoped: with nested interpreters it reflects the one
+    /// currently evaluating on this task.
+    public var currentCallOffset: Int? { Interpreter.evaluationOffset }
+
     /// Construct an interpreter.
     ///
     /// Without arguments, output and error route through

@@ -5,6 +5,13 @@ public enum RuntimeError: Error, CustomStringConvertible {
     case invalid(String)
     case unknownIdentifier(String, at: Int)
     case divisionByZero
+    /// Any of the other cases with a source position attached after the
+    /// fact — issue #15. Errors like `.invalid` are raised deep inside
+    /// bridge/builtin bodies that don't know where they were called
+    /// from; the evaluator wraps them in this case on the way out so
+    /// `renderRuntimeError` can point at the failing expression. Build
+    /// via ``positioned(at:)``, which never double-wraps.
+    indirect case positioned(RuntimeError, at: Int)
 
     public var description: String {
         switch self {
@@ -16,6 +23,8 @@ public enum RuntimeError: Error, CustomStringConvertible {
             return "cannot find '\(n)' in scope"
         case .divisionByZero:
             return "division by zero"
+        case .positioned(let inner, _):
+            return inner.description
         }
     }
 
@@ -25,8 +34,17 @@ public enum RuntimeError: Error, CustomStringConvertible {
         switch self {
         case .unsupported(_, let at):       return at
         case .unknownIdentifier(_, let at): return at
+        case .positioned(_, let at):        return at
         case .invalid, .divisionByZero:     return nil
         }
+    }
+
+    /// Attach a source offset to an error that doesn't carry one yet.
+    /// An error that already knows its position keeps it — the earliest
+    /// (innermost) stamp wins, since it is the most precise.
+    public func positioned(at offset: Int?) -> RuntimeError {
+        guard let offset, self.offset == nil else { return self }
+        return .positioned(self, at: offset)
     }
 }
 
@@ -50,15 +68,33 @@ struct ContinueSignal: Error { let label: String? }
 public struct ScriptError: Error, CustomStringConvertible {
     public let value: Value
 
-    public init(_ value: Value) {
+    /// UTF-8 source offset of the expression or `throw` statement this
+    /// error was raised from, when known — issue #15. Set by the
+    /// interpreter (at the bridge boundary, at `throw` statements, and
+    /// as a fallback by the expression evaluator) so an uncaught error
+    /// can be rendered with source context via
+    /// ``Interpreter/renderRuntimeError(_:)``.
+    public let offset: Int?
+
+    public init(_ value: Value, offset: Int? = nil) {
         self.value = value
+        self.offset = offset
     }
 
     /// Compatibility init matching the old `UserThrowSignal(value:)`
     /// shape used at every interpreter throw site. Keeps the existing
     /// runtime call sites unchanged.
-    init(value: Value) {
+    init(value: Value, offset: Int? = nil) {
         self.value = value
+        self.offset = offset
+    }
+
+    /// Attach a source offset if this error doesn't carry one yet; the
+    /// earliest (innermost) stamp wins. Same contract as
+    /// ``RuntimeError/positioned(at:)``.
+    func positioned(at offset: Int?) -> ScriptError {
+        guard let offset, self.offset == nil else { return self }
+        return ScriptError(value: value, offset: offset)
     }
 
     /// Type name of the thrown value (`E` in `throw E.bad`, struct name
