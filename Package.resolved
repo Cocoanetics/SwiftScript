@@ -1,13 +1,13 @@
 {
-  "originHash" : "0cd8515406137deb69d604344cc3fc16f80b2518f4dd27a5eeda64f7673d3cbd",
+  "originHash" : "4a541144be2c0eeb933e247eb979bdd12bfc3b3d61a512ccb733fcf9df22079d",
   "pins" : [
     {
       "identity" : "shellkit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Cocoanetics/ShellKit",
       "state" : {
-        "branch" : "main",
-        "revision" : "ce2147463e7f08732112bb8929cd79944942f9d9"
+        "revision" : "40c1b417e6c6318d2ca644d9a3062dc6befd0e31",
+        "version" : "0.1.0"
       }
     },
     {
