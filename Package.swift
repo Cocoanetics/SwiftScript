@@ -31,8 +31,14 @@ let package = Package(
         // virtualised Shell). The standalone `swift-script` CLI uses
         // `Shell.processDefault` so the binary still talks to real
         // FileHandles when run on its own.
+        //
+        // Versioned (not `branch: "main"`) so SwiftScript itself can be
+        // required by version: SwiftPM refuses a version requirement on a
+        // package whose own dependencies are branch-pinned. `upToNextMinor`
+        // because ShellKit is 0.x and a minor bump may change API; the
+        // family moves minors together (Cocoanetics/SwiftBash#89).
         .package(url: "https://github.com/Cocoanetics/ShellKit",
-                 branch: "main"),
+                 .upToNextMinor(from: "0.1.0")),
     ],
     targets: [
         .target(
